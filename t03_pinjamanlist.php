@@ -345,7 +345,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Kontrak_No->SetVisibility();
 		$this->Kontrak_Tgl->SetVisibility();
 		$this->nasabah_id->SetVisibility();
-		$this->jaminan->SetVisibility();
+		$this->jaminan_id->SetVisibility();
 		$this->Pinjaman->SetVisibility();
 		$this->Angsuran_Lama->SetVisibility();
 		$this->Angsuran_Bunga_Prosen->SetVisibility();
@@ -538,13 +538,15 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			}
 
 			// Get default search criteria
-			ew_AddFilter($this->DefaultSearchWhere, $this->BasicSearchWhere(TRUE));
+			ew_AddFilter($this->DefaultSearchWhere, $this->AdvancedSearchWhere(TRUE));
 
-			// Get basic search values
-			$this->LoadBasicSearchValues();
+			// Get and validate search values for advanced search
+			$this->LoadSearchValues(); // Get search values
 
 			// Process filter list
 			$this->ProcessFilterList();
+			if (!$this->ValidateSearch())
+				$this->setFailureMessage($gsSearchError);
 
 			// Restore search parms from Session if not searching / reset / export
 			if (($this->Export <> "" || $this->Command <> "search" && $this->Command <> "reset" && $this->Command <> "resetall") && $this->CheckSearchParms())
@@ -556,9 +558,9 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			// Set up sorting order
 			$this->SetUpSortOrder();
 
-			// Get basic search criteria
+			// Get search criteria for advanced search
 			if ($gsSearchError == "")
-				$sSrchBasic = $this->BasicSearchWhere();
+				$sSrchAdvanced = $this->AdvancedSearchWhere();
 		}
 
 		// Restore display records
@@ -574,10 +576,10 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// Load search default if no existing search criteria
 		if (!$this->CheckSearchParms()) {
 
-			// Load basic search from default
-			$this->BasicSearch->LoadDefault();
-			if ($this->BasicSearch->Keyword != "")
-				$sSrchBasic = $this->BasicSearchWhere();
+			// Load advanced search from default
+			if ($this->LoadAdvancedSearchDefault()) {
+				$sSrchAdvanced = $this->AdvancedSearchWhere();
+			}
 		}
 
 		// Build search criteria
@@ -600,6 +602,10 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$sFilter = "";
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
+		if ($sFilter == "") {
+			$sFilter = "0=101";
+			$this->SearchWhere = $sFilter;
+		}
 
 		// Set up filter in session
 		$this->setSessionWhere($sFilter);
@@ -675,7 +681,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$sFilterList = ew_Concat($sFilterList, $this->Kontrak_No->AdvancedSearch->ToJSON(), ","); // Field Kontrak_No
 		$sFilterList = ew_Concat($sFilterList, $this->Kontrak_Tgl->AdvancedSearch->ToJSON(), ","); // Field Kontrak_Tgl
 		$sFilterList = ew_Concat($sFilterList, $this->nasabah_id->AdvancedSearch->ToJSON(), ","); // Field nasabah_id
-		$sFilterList = ew_Concat($sFilterList, $this->jaminan->AdvancedSearch->ToJSON(), ","); // Field jaminan
+		$sFilterList = ew_Concat($sFilterList, $this->jaminan_id->AdvancedSearch->ToJSON(), ","); // Field jaminan_id
 		$sFilterList = ew_Concat($sFilterList, $this->Pinjaman->AdvancedSearch->ToJSON(), ","); // Field Pinjaman
 		$sFilterList = ew_Concat($sFilterList, $this->Angsuran_Lama->AdvancedSearch->ToJSON(), ","); // Field Angsuran_Lama
 		$sFilterList = ew_Concat($sFilterList, $this->Angsuran_Bunga_Prosen->AdvancedSearch->ToJSON(), ","); // Field Angsuran_Bunga_Prosen
@@ -685,10 +691,6 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$sFilterList = ew_Concat($sFilterList, $this->Angsuran_Bunga->AdvancedSearch->ToJSON(), ","); // Field Angsuran_Bunga
 		$sFilterList = ew_Concat($sFilterList, $this->Angsuran_Total->AdvancedSearch->ToJSON(), ","); // Field Angsuran_Total
 		$sFilterList = ew_Concat($sFilterList, $this->No_Ref->AdvancedSearch->ToJSON(), ","); // Field No_Ref
-		if ($this->BasicSearch->Keyword <> "") {
-			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
-			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
-		}
 		$sFilterList = preg_replace('/,$/', "", $sFilterList);
 
 		// Return filter list in json
@@ -761,13 +763,13 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->nasabah_id->AdvancedSearch->SearchOperator2 = @$filter["w_nasabah_id"];
 		$this->nasabah_id->AdvancedSearch->Save();
 
-		// Field jaminan
-		$this->jaminan->AdvancedSearch->SearchValue = @$filter["x_jaminan"];
-		$this->jaminan->AdvancedSearch->SearchOperator = @$filter["z_jaminan"];
-		$this->jaminan->AdvancedSearch->SearchCondition = @$filter["v_jaminan"];
-		$this->jaminan->AdvancedSearch->SearchValue2 = @$filter["y_jaminan"];
-		$this->jaminan->AdvancedSearch->SearchOperator2 = @$filter["w_jaminan"];
-		$this->jaminan->AdvancedSearch->Save();
+		// Field jaminan_id
+		$this->jaminan_id->AdvancedSearch->SearchValue = @$filter["x_jaminan_id"];
+		$this->jaminan_id->AdvancedSearch->SearchOperator = @$filter["z_jaminan_id"];
+		$this->jaminan_id->AdvancedSearch->SearchCondition = @$filter["v_jaminan_id"];
+		$this->jaminan_id->AdvancedSearch->SearchValue2 = @$filter["y_jaminan_id"];
+		$this->jaminan_id->AdvancedSearch->SearchOperator2 = @$filter["w_jaminan_id"];
+		$this->jaminan_id->AdvancedSearch->Save();
 
 		// Field Pinjaman
 		$this->Pinjaman->AdvancedSearch->SearchValue = @$filter["x_Pinjaman"];
@@ -840,140 +842,127 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->No_Ref->AdvancedSearch->SearchValue2 = @$filter["y_No_Ref"];
 		$this->No_Ref->AdvancedSearch->SearchOperator2 = @$filter["w_No_Ref"];
 		$this->No_Ref->AdvancedSearch->Save();
-		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
-		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
 
-	// Return basic search SQL
-	function BasicSearchSQL($arKeywords, $type) {
+	// Advanced search WHERE clause based on QueryString
+	function AdvancedSearchWhere($Default = FALSE) {
+		global $Security;
 		$sWhere = "";
-		$this->BuildBasicSearchSQL($sWhere, $this->Kontrak_No, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->jaminan, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->No_Ref, $arKeywords, $type);
+		$this->BuildSearchSql($sWhere, $this->id, $Default, FALSE); // id
+		$this->BuildSearchSql($sWhere, $this->Kontrak_No, $Default, FALSE); // Kontrak_No
+		$this->BuildSearchSql($sWhere, $this->Kontrak_Tgl, $Default, FALSE); // Kontrak_Tgl
+		$this->BuildSearchSql($sWhere, $this->nasabah_id, $Default, FALSE); // nasabah_id
+		$this->BuildSearchSql($sWhere, $this->jaminan_id, $Default, TRUE); // jaminan_id
+		$this->BuildSearchSql($sWhere, $this->Pinjaman, $Default, FALSE); // Pinjaman
+		$this->BuildSearchSql($sWhere, $this->Angsuran_Lama, $Default, FALSE); // Angsuran_Lama
+		$this->BuildSearchSql($sWhere, $this->Angsuran_Bunga_Prosen, $Default, FALSE); // Angsuran_Bunga_Prosen
+		$this->BuildSearchSql($sWhere, $this->Angsuran_Denda, $Default, FALSE); // Angsuran_Denda
+		$this->BuildSearchSql($sWhere, $this->Dispensasi_Denda, $Default, FALSE); // Dispensasi_Denda
+		$this->BuildSearchSql($sWhere, $this->Angsuran_Pokok, $Default, FALSE); // Angsuran_Pokok
+		$this->BuildSearchSql($sWhere, $this->Angsuran_Bunga, $Default, FALSE); // Angsuran_Bunga
+		$this->BuildSearchSql($sWhere, $this->Angsuran_Total, $Default, FALSE); // Angsuran_Total
+		$this->BuildSearchSql($sWhere, $this->No_Ref, $Default, FALSE); // No_Ref
+
+		// Set up search parm
+		if (!$Default && $sWhere <> "") {
+			$this->Command = "search";
+		}
+		if (!$Default && $this->Command == "search") {
+			$this->id->AdvancedSearch->Save(); // id
+			$this->Kontrak_No->AdvancedSearch->Save(); // Kontrak_No
+			$this->Kontrak_Tgl->AdvancedSearch->Save(); // Kontrak_Tgl
+			$this->nasabah_id->AdvancedSearch->Save(); // nasabah_id
+			$this->jaminan_id->AdvancedSearch->Save(); // jaminan_id
+			$this->Pinjaman->AdvancedSearch->Save(); // Pinjaman
+			$this->Angsuran_Lama->AdvancedSearch->Save(); // Angsuran_Lama
+			$this->Angsuran_Bunga_Prosen->AdvancedSearch->Save(); // Angsuran_Bunga_Prosen
+			$this->Angsuran_Denda->AdvancedSearch->Save(); // Angsuran_Denda
+			$this->Dispensasi_Denda->AdvancedSearch->Save(); // Dispensasi_Denda
+			$this->Angsuran_Pokok->AdvancedSearch->Save(); // Angsuran_Pokok
+			$this->Angsuran_Bunga->AdvancedSearch->Save(); // Angsuran_Bunga
+			$this->Angsuran_Total->AdvancedSearch->Save(); // Angsuran_Total
+			$this->No_Ref->AdvancedSearch->Save(); // No_Ref
+		}
 		return $sWhere;
 	}
 
-	// Build basic search SQL
-	function BuildBasicSearchSQL(&$Where, &$Fld, $arKeywords, $type) {
-		global $EW_BASIC_SEARCH_IGNORE_PATTERN;
-		$sDefCond = ($type == "OR") ? "OR" : "AND";
-		$arSQL = array(); // Array for SQL parts
-		$arCond = array(); // Array for search conditions
-		$cnt = count($arKeywords);
-		$j = 0; // Number of SQL parts
-		for ($i = 0; $i < $cnt; $i++) {
-			$Keyword = $arKeywords[$i];
-			$Keyword = trim($Keyword);
-			if ($EW_BASIC_SEARCH_IGNORE_PATTERN <> "") {
-				$Keyword = preg_replace($EW_BASIC_SEARCH_IGNORE_PATTERN, "\\", $Keyword);
-				$ar = explode("\\", $Keyword);
-			} else {
-				$ar = array($Keyword);
-			}
-			foreach ($ar as $Keyword) {
-				if ($Keyword <> "") {
-					$sWrk = "";
-					if ($Keyword == "OR" && $type == "") {
-						if ($j > 0)
-							$arCond[$j-1] = "OR";
-					} elseif ($Keyword == EW_NULL_VALUE) {
-						$sWrk = $Fld->FldExpression . " IS NULL";
-					} elseif ($Keyword == EW_NOT_NULL_VALUE) {
-						$sWrk = $Fld->FldExpression . " IS NOT NULL";
-					} elseif ($Fld->FldIsVirtual) {
-						$sWrk = $Fld->FldVirtualExpression . ew_Like(ew_QuotedValue("%" . $Keyword . "%", EW_DATATYPE_STRING, $this->DBID), $this->DBID);
-					} elseif ($Fld->FldDataType != EW_DATATYPE_NUMBER || is_numeric($Keyword)) {
-						$sWrk = $Fld->FldBasicSearchExpression . ew_Like(ew_QuotedValue("%" . $Keyword . "%", EW_DATATYPE_STRING, $this->DBID), $this->DBID);
-					}
-					if ($sWrk <> "") {
-						$arSQL[$j] = $sWrk;
-						$arCond[$j] = $sDefCond;
-						$j += 1;
-					}
-				}
-			}
+	// Build search SQL
+	function BuildSearchSql(&$Where, &$Fld, $Default, $MultiValue) {
+		$FldParm = substr($Fld->FldVar, 2);
+		$FldVal = ($Default) ? $Fld->AdvancedSearch->SearchValueDefault : $Fld->AdvancedSearch->SearchValue; // @$_GET["x_$FldParm"]
+		$FldOpr = ($Default) ? $Fld->AdvancedSearch->SearchOperatorDefault : $Fld->AdvancedSearch->SearchOperator; // @$_GET["z_$FldParm"]
+		$FldCond = ($Default) ? $Fld->AdvancedSearch->SearchConditionDefault : $Fld->AdvancedSearch->SearchCondition; // @$_GET["v_$FldParm"]
+		$FldVal2 = ($Default) ? $Fld->AdvancedSearch->SearchValue2Default : $Fld->AdvancedSearch->SearchValue2; // @$_GET["y_$FldParm"]
+		$FldOpr2 = ($Default) ? $Fld->AdvancedSearch->SearchOperator2Default : $Fld->AdvancedSearch->SearchOperator2; // @$_GET["w_$FldParm"]
+		$sWrk = "";
+
+		//$FldVal = ew_StripSlashes($FldVal);
+		if (is_array($FldVal)) $FldVal = implode(",", $FldVal);
+
+		//$FldVal2 = ew_StripSlashes($FldVal2);
+		if (is_array($FldVal2)) $FldVal2 = implode(",", $FldVal2);
+		$FldOpr = strtoupper(trim($FldOpr));
+		if ($FldOpr == "") $FldOpr = "=";
+		$FldOpr2 = strtoupper(trim($FldOpr2));
+		if ($FldOpr2 == "") $FldOpr2 = "=";
+		if (EW_SEARCH_MULTI_VALUE_OPTION == 1)
+			$MultiValue = FALSE;
+		if ($MultiValue) {
+			$sWrk1 = ($FldVal <> "") ? ew_GetMultiSearchSql($Fld, $FldOpr, $FldVal, $this->DBID) : ""; // Field value 1
+			$sWrk2 = ($FldVal2 <> "") ? ew_GetMultiSearchSql($Fld, $FldOpr2, $FldVal2, $this->DBID) : ""; // Field value 2
+			$sWrk = $sWrk1; // Build final SQL
+			if ($sWrk2 <> "")
+				$sWrk = ($sWrk <> "") ? "($sWrk) $FldCond ($sWrk2)" : $sWrk2;
+		} else {
+			$FldVal = $this->ConvertSearchValue($Fld, $FldVal);
+			$FldVal2 = $this->ConvertSearchValue($Fld, $FldVal2);
+			$sWrk = ew_GetSearchSql($Fld, $FldVal, $FldOpr, $FldCond, $FldVal2, $FldOpr2, $this->DBID);
 		}
-		$cnt = count($arSQL);
-		$bQuoted = FALSE;
-		$sSql = "";
-		if ($cnt > 0) {
-			for ($i = 0; $i < $cnt-1; $i++) {
-				if ($arCond[$i] == "OR") {
-					if (!$bQuoted) $sSql .= "(";
-					$bQuoted = TRUE;
-				}
-				$sSql .= $arSQL[$i];
-				if ($bQuoted && $arCond[$i] <> "OR") {
-					$sSql .= ")";
-					$bQuoted = FALSE;
-				}
-				$sSql .= " " . $arCond[$i] . " ";
-			}
-			$sSql .= $arSQL[$cnt-1];
-			if ($bQuoted)
-				$sSql .= ")";
-		}
-		if ($sSql <> "") {
-			if ($Where <> "") $Where .= " OR ";
-			$Where .=  "(" . $sSql . ")";
-		}
+		ew_AddFilter($Where, $sWrk);
 	}
 
-	// Return basic search WHERE clause based on search keyword and type
-	function BasicSearchWhere($Default = FALSE) {
-		global $Security;
-		$sSearchStr = "";
-		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
-		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
-		if ($sSearchKeyword <> "") {
-			$sSearch = trim($sSearchKeyword);
-			if ($sSearchType <> "=") {
-				$ar = array();
-
-				// Match quoted keywords (i.e.: "...")
-				if (preg_match_all('/"([^"]*)"/i', $sSearch, $matches, PREG_SET_ORDER)) {
-					foreach ($matches as $match) {
-						$p = strpos($sSearch, $match[0]);
-						$str = substr($sSearch, 0, $p);
-						$sSearch = substr($sSearch, $p + strlen($match[0]));
-						if (strlen(trim($str)) > 0)
-							$ar = array_merge($ar, explode(" ", trim($str)));
-						$ar[] = $match[1]; // Save quoted keyword
-					}
-				}
-
-				// Match individual keywords
-				if (strlen(trim($sSearch)) > 0)
-					$ar = array_merge($ar, explode(" ", trim($sSearch)));
-
-				// Search keyword in any fields
-				if (($sSearchType == "OR" || $sSearchType == "AND") && $this->BasicSearch->BasicSearchAnyFields) {
-					foreach ($ar as $sKeyword) {
-						if ($sKeyword <> "") {
-							if ($sSearchStr <> "") $sSearchStr .= " " . $sSearchType . " ";
-							$sSearchStr .= "(" . $this->BasicSearchSQL(array($sKeyword), $sSearchType) . ")";
-						}
-					}
-				} else {
-					$sSearchStr = $this->BasicSearchSQL($ar, $sSearchType);
-				}
-			} else {
-				$sSearchStr = $this->BasicSearchSQL(array($sSearch), $sSearchType);
-			}
-			if (!$Default) $this->Command = "search";
+	// Convert search value
+	function ConvertSearchValue(&$Fld, $FldVal) {
+		if ($FldVal == EW_NULL_VALUE || $FldVal == EW_NOT_NULL_VALUE)
+			return $FldVal;
+		$Value = $FldVal;
+		if ($Fld->FldDataType == EW_DATATYPE_BOOLEAN) {
+			if ($FldVal <> "") $Value = ($FldVal == "1" || strtolower(strval($FldVal)) == "y" || strtolower(strval($FldVal)) == "t") ? $Fld->TrueValue : $Fld->FalseValue;
+		} elseif ($Fld->FldDataType == EW_DATATYPE_DATE || $Fld->FldDataType == EW_DATATYPE_TIME) {
+			if ($FldVal <> "") $Value = ew_UnFormatDateTime($FldVal, $Fld->FldDateTimeFormat);
 		}
-		if (!$Default && $this->Command == "search") {
-			$this->BasicSearch->setKeyword($sSearchKeyword);
-			$this->BasicSearch->setType($sSearchType);
-		}
-		return $sSearchStr;
+		return $Value;
 	}
 
 	// Check if search parm exists
 	function CheckSearchParms() {
-
-		// Check basic search
-		if ($this->BasicSearch->IssetSession())
+		if ($this->id->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Kontrak_No->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Kontrak_Tgl->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->nasabah_id->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->jaminan_id->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Pinjaman->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Angsuran_Lama->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Angsuran_Bunga_Prosen->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Angsuran_Denda->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Dispensasi_Denda->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Angsuran_Pokok->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Angsuran_Bunga->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Angsuran_Total->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->No_Ref->AdvancedSearch->IssetSession())
 			return TRUE;
 		return FALSE;
 	}
@@ -985,8 +974,8 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->SearchWhere = "";
 		$this->setSearchWhere($this->SearchWhere);
 
-		// Clear basic search parameters
-		$this->ResetBasicSearchParms();
+		// Clear advanced search parameters
+		$this->ResetAdvancedSearchParms();
 	}
 
 	// Load advanced search default values
@@ -994,17 +983,43 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		return FALSE;
 	}
 
-	// Clear all basic search parameters
-	function ResetBasicSearchParms() {
-		$this->BasicSearch->UnsetSession();
+	// Clear all advanced search parameters
+	function ResetAdvancedSearchParms() {
+		$this->id->AdvancedSearch->UnsetSession();
+		$this->Kontrak_No->AdvancedSearch->UnsetSession();
+		$this->Kontrak_Tgl->AdvancedSearch->UnsetSession();
+		$this->nasabah_id->AdvancedSearch->UnsetSession();
+		$this->jaminan_id->AdvancedSearch->UnsetSession();
+		$this->Pinjaman->AdvancedSearch->UnsetSession();
+		$this->Angsuran_Lama->AdvancedSearch->UnsetSession();
+		$this->Angsuran_Bunga_Prosen->AdvancedSearch->UnsetSession();
+		$this->Angsuran_Denda->AdvancedSearch->UnsetSession();
+		$this->Dispensasi_Denda->AdvancedSearch->UnsetSession();
+		$this->Angsuran_Pokok->AdvancedSearch->UnsetSession();
+		$this->Angsuran_Bunga->AdvancedSearch->UnsetSession();
+		$this->Angsuran_Total->AdvancedSearch->UnsetSession();
+		$this->No_Ref->AdvancedSearch->UnsetSession();
 	}
 
 	// Restore all search parameters
 	function RestoreSearchParms() {
 		$this->RestoreSearch = TRUE;
 
-		// Restore basic search values
-		$this->BasicSearch->Load();
+		// Restore advanced search values
+		$this->id->AdvancedSearch->Load();
+		$this->Kontrak_No->AdvancedSearch->Load();
+		$this->Kontrak_Tgl->AdvancedSearch->Load();
+		$this->nasabah_id->AdvancedSearch->Load();
+		$this->jaminan_id->AdvancedSearch->Load();
+		$this->Pinjaman->AdvancedSearch->Load();
+		$this->Angsuran_Lama->AdvancedSearch->Load();
+		$this->Angsuran_Bunga_Prosen->AdvancedSearch->Load();
+		$this->Angsuran_Denda->AdvancedSearch->Load();
+		$this->Dispensasi_Denda->AdvancedSearch->Load();
+		$this->Angsuran_Pokok->AdvancedSearch->Load();
+		$this->Angsuran_Bunga->AdvancedSearch->Load();
+		$this->Angsuran_Total->AdvancedSearch->Load();
+		$this->No_Ref->AdvancedSearch->Load();
 	}
 
 	// Set up sort parameters
@@ -1017,7 +1032,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->UpdateSort($this->Kontrak_No); // Kontrak_No
 			$this->UpdateSort($this->Kontrak_Tgl); // Kontrak_Tgl
 			$this->UpdateSort($this->nasabah_id); // nasabah_id
-			$this->UpdateSort($this->jaminan); // jaminan
+			$this->UpdateSort($this->jaminan_id); // jaminan_id
 			$this->UpdateSort($this->Pinjaman); // Pinjaman
 			$this->UpdateSort($this->Angsuran_Lama); // Angsuran_Lama
 			$this->UpdateSort($this->Angsuran_Bunga_Prosen); // Angsuran_Bunga_Prosen
@@ -1062,7 +1077,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 				$this->Kontrak_No->setSort("");
 				$this->Kontrak_Tgl->setSort("");
 				$this->nasabah_id->setSort("");
-				$this->jaminan->setSort("");
+				$this->jaminan_id->setSort("");
 				$this->Pinjaman->setSort("");
 				$this->Angsuran_Lama->setSort("");
 				$this->Angsuran_Bunga_Prosen->setSort("");
@@ -1401,7 +1416,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		// Show all button
 		$item = &$this->SearchOptions->Add("showall");
-		$item->Body = "<a class=\"btn btn-default ewShowAll\" title=\"" . $Language->Phrase("ShowAll") . "\" data-caption=\"" . $Language->Phrase("ShowAll") . "\" href=\"" . $this->PageUrl() . "cmd=reset\">" . $Language->Phrase("ShowAllBtn") . "</a>";
+		$item->Body = "<a class=\"btn btn-default ewShowAll\" title=\"" . $Language->Phrase("ResetSearch") . "\" data-caption=\"" . $Language->Phrase("ResetSearch") . "\" href=\"" . $this->PageUrl() . "cmd=reset\">" . $Language->Phrase("ResetSearchBtn") . "</a>";
 		$item->Visible = ($this->SearchWhere <> $this->DefaultSearchWhere && $this->SearchWhere <> "0=101");
 
 		// Button group for search
@@ -1464,11 +1479,83 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		}
 	}
 
-	// Load basic search values
-	function LoadBasicSearchValues() {
-		$this->BasicSearch->Keyword = @$_GET[EW_TABLE_BASIC_SEARCH];
-		if ($this->BasicSearch->Keyword <> "") $this->Command = "search";
-		$this->BasicSearch->Type = @$_GET[EW_TABLE_BASIC_SEARCH_TYPE];
+	// Load search values for validation
+	function LoadSearchValues() {
+		global $objForm;
+
+		// Load search values
+		// id
+
+		$this->id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_id"]);
+		if ($this->id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->id->AdvancedSearch->SearchOperator = @$_GET["z_id"];
+
+		// Kontrak_No
+		$this->Kontrak_No->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Kontrak_No"]);
+		if ($this->Kontrak_No->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Kontrak_No->AdvancedSearch->SearchOperator = @$_GET["z_Kontrak_No"];
+
+		// Kontrak_Tgl
+		$this->Kontrak_Tgl->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Kontrak_Tgl"]);
+		if ($this->Kontrak_Tgl->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Kontrak_Tgl->AdvancedSearch->SearchOperator = @$_GET["z_Kontrak_Tgl"];
+
+		// nasabah_id
+		$this->nasabah_id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_nasabah_id"]);
+		if ($this->nasabah_id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->nasabah_id->AdvancedSearch->SearchOperator = @$_GET["z_nasabah_id"];
+
+		// jaminan_id
+		$this->jaminan_id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_jaminan_id"]);
+		if ($this->jaminan_id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->jaminan_id->AdvancedSearch->SearchOperator = @$_GET["z_jaminan_id"];
+		if (is_array($this->jaminan_id->AdvancedSearch->SearchValue)) $this->jaminan_id->AdvancedSearch->SearchValue = implode(",", $this->jaminan_id->AdvancedSearch->SearchValue);
+		if (is_array($this->jaminan_id->AdvancedSearch->SearchValue2)) $this->jaminan_id->AdvancedSearch->SearchValue2 = implode(",", $this->jaminan_id->AdvancedSearch->SearchValue2);
+
+		// Pinjaman
+		$this->Pinjaman->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Pinjaman"]);
+		if ($this->Pinjaman->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Pinjaman->AdvancedSearch->SearchOperator = @$_GET["z_Pinjaman"];
+
+		// Angsuran_Lama
+		$this->Angsuran_Lama->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Angsuran_Lama"]);
+		if ($this->Angsuran_Lama->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Angsuran_Lama->AdvancedSearch->SearchOperator = @$_GET["z_Angsuran_Lama"];
+
+		// Angsuran_Bunga_Prosen
+		$this->Angsuran_Bunga_Prosen->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Angsuran_Bunga_Prosen"]);
+		if ($this->Angsuran_Bunga_Prosen->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Angsuran_Bunga_Prosen->AdvancedSearch->SearchOperator = @$_GET["z_Angsuran_Bunga_Prosen"];
+
+		// Angsuran_Denda
+		$this->Angsuran_Denda->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Angsuran_Denda"]);
+		if ($this->Angsuran_Denda->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Angsuran_Denda->AdvancedSearch->SearchOperator = @$_GET["z_Angsuran_Denda"];
+
+		// Dispensasi_Denda
+		$this->Dispensasi_Denda->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Dispensasi_Denda"]);
+		if ($this->Dispensasi_Denda->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Dispensasi_Denda->AdvancedSearch->SearchOperator = @$_GET["z_Dispensasi_Denda"];
+
+		// Angsuran_Pokok
+		$this->Angsuran_Pokok->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Angsuran_Pokok"]);
+		if ($this->Angsuran_Pokok->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Angsuran_Pokok->AdvancedSearch->SearchOperator = @$_GET["z_Angsuran_Pokok"];
+
+		// Angsuran_Bunga
+		$this->Angsuran_Bunga->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Angsuran_Bunga"]);
+		if ($this->Angsuran_Bunga->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Angsuran_Bunga->AdvancedSearch->SearchOperator = @$_GET["z_Angsuran_Bunga"];
+
+		// Angsuran_Total
+		$this->Angsuran_Total->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Angsuran_Total"]);
+		if ($this->Angsuran_Total->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Angsuran_Total->AdvancedSearch->SearchOperator = @$_GET["z_Angsuran_Total"];
+
+		// No_Ref
+		$this->No_Ref->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_No_Ref"]);
+		if ($this->No_Ref->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->No_Ref->AdvancedSearch->SearchOperator = @$_GET["z_No_Ref"];
 	}
 
 	// Load recordset
@@ -1530,7 +1617,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Kontrak_No->setDbValue($rs->fields('Kontrak_No'));
 		$this->Kontrak_Tgl->setDbValue($rs->fields('Kontrak_Tgl'));
 		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->jaminan->setDbValue($rs->fields('jaminan'));
+		$this->jaminan_id->setDbValue($rs->fields('jaminan_id'));
 		$this->Pinjaman->setDbValue($rs->fields('Pinjaman'));
 		$this->Angsuran_Lama->setDbValue($rs->fields('Angsuran_Lama'));
 		$this->Angsuran_Bunga_Prosen->setDbValue($rs->fields('Angsuran_Bunga_Prosen'));
@@ -1550,7 +1637,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Kontrak_No->DbValue = $row['Kontrak_No'];
 		$this->Kontrak_Tgl->DbValue = $row['Kontrak_Tgl'];
 		$this->nasabah_id->DbValue = $row['nasabah_id'];
-		$this->jaminan->DbValue = $row['jaminan'];
+		$this->jaminan_id->DbValue = $row['jaminan_id'];
 		$this->Pinjaman->DbValue = $row['Pinjaman'];
 		$this->Angsuran_Lama->DbValue = $row['Angsuran_Lama'];
 		$this->Angsuran_Bunga_Prosen->DbValue = $row['Angsuran_Bunga_Prosen'];
@@ -1629,7 +1716,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// Kontrak_No
 		// Kontrak_Tgl
 		// nasabah_id
-		// jaminan
+		// jaminan_id
 		// Pinjaman
 		// Angsuran_Lama
 		// Angsuran_Bunga_Prosen
@@ -1678,40 +1765,40 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		}
 		$this->nasabah_id->ViewCustomAttributes = "";
 
-		// jaminan
-		if (strval($this->jaminan->CurrentValue) <> "") {
-			$arwrk = explode(",", $this->jaminan->CurrentValue);
+		// jaminan_id
+		if (strval($this->jaminan_id->CurrentValue) <> "") {
+			$arwrk = explode(",", $this->jaminan_id->CurrentValue);
 			$sFilterWrk = "";
 			foreach ($arwrk as $wrk) {
 				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
-				$sFilterWrk .= "`Merk_Type`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_STRING, "");
+				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
 			}
-		$sSqlWrk = "SELECT `Merk_Type`, `Merk_Type` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
+		$sSqlWrk = "SELECT `id`, `Merk_Type` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
 		$sWhereWrk = "";
-		$this->jaminan->LookupFilters = array();
+		$this->jaminan_id->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->jaminan, $sWhereWrk); // Call Lookup selecting
+		$this->Lookup_Selecting($this->jaminan_id, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
 			$rswrk = Conn()->Execute($sSqlWrk);
 			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$this->jaminan->ViewValue = "";
+				$this->jaminan_id->ViewValue = "";
 				$ari = 0;
 				while (!$rswrk->EOF) {
 					$arwrk = array();
 					$arwrk[1] = $rswrk->fields('DispFld');
-					$this->jaminan->ViewValue .= $this->jaminan->DisplayValue($arwrk);
+					$this->jaminan_id->ViewValue .= $this->jaminan_id->DisplayValue($arwrk);
 					$rswrk->MoveNext();
-					if (!$rswrk->EOF) $this->jaminan->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
+					if (!$rswrk->EOF) $this->jaminan_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
 					$ari++;
 				}
 				$rswrk->Close();
 			} else {
-				$this->jaminan->ViewValue = $this->jaminan->CurrentValue;
+				$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
 			}
 		} else {
-			$this->jaminan->ViewValue = NULL;
+			$this->jaminan_id->ViewValue = NULL;
 		}
-		$this->jaminan->ViewCustomAttributes = "";
+		$this->jaminan_id->ViewCustomAttributes = "";
 
 		// Pinjaman
 		$this->Pinjaman->ViewValue = $this->Pinjaman->CurrentValue;
@@ -1763,10 +1850,10 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->nasabah_id->HrefValue = "";
 			$this->nasabah_id->TooltipValue = "";
 
-			// jaminan
-			$this->jaminan->LinkCustomAttributes = "";
-			$this->jaminan->HrefValue = "";
-			$this->jaminan->TooltipValue = "";
+			// jaminan_id
+			$this->jaminan_id->LinkCustomAttributes = "";
+			$this->jaminan_id->HrefValue = "";
+			$this->jaminan_id->TooltipValue = "";
 
 			// Pinjaman
 			$this->Pinjaman->LinkCustomAttributes = "";
@@ -1812,11 +1899,129 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->No_Ref->LinkCustomAttributes = "";
 			$this->No_Ref->HrefValue = "";
 			$this->No_Ref->TooltipValue = "";
+		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
+
+			// Kontrak_No
+			$this->Kontrak_No->EditAttrs["class"] = "form-control";
+			$this->Kontrak_No->EditCustomAttributes = "";
+			$this->Kontrak_No->EditValue = ew_HtmlEncode($this->Kontrak_No->AdvancedSearch->SearchValue);
+			$this->Kontrak_No->PlaceHolder = ew_RemoveHtml($this->Kontrak_No->FldCaption());
+
+			// Kontrak_Tgl
+			$this->Kontrak_Tgl->EditAttrs["class"] = "form-control";
+			$this->Kontrak_Tgl->EditCustomAttributes = "";
+			$this->Kontrak_Tgl->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->Kontrak_Tgl->AdvancedSearch->SearchValue, 7), 7));
+			$this->Kontrak_Tgl->PlaceHolder = ew_RemoveHtml($this->Kontrak_Tgl->FldCaption());
+
+			// nasabah_id
+			$this->nasabah_id->EditAttrs["class"] = "form-control";
+			$this->nasabah_id->EditCustomAttributes = "";
+
+			// jaminan_id
+			$this->jaminan_id->EditCustomAttributes = "";
+
+			// Pinjaman
+			$this->Pinjaman->EditAttrs["class"] = "form-control";
+			$this->Pinjaman->EditCustomAttributes = "";
+			$this->Pinjaman->EditValue = ew_HtmlEncode($this->Pinjaman->AdvancedSearch->SearchValue);
+			$this->Pinjaman->PlaceHolder = ew_RemoveHtml($this->Pinjaman->FldCaption());
+
+			// Angsuran_Lama
+			$this->Angsuran_Lama->EditAttrs["class"] = "form-control";
+			$this->Angsuran_Lama->EditCustomAttributes = "";
+			$this->Angsuran_Lama->EditValue = ew_HtmlEncode($this->Angsuran_Lama->AdvancedSearch->SearchValue);
+			$this->Angsuran_Lama->PlaceHolder = ew_RemoveHtml($this->Angsuran_Lama->FldCaption());
+
+			// Angsuran_Bunga_Prosen
+			$this->Angsuran_Bunga_Prosen->EditAttrs["class"] = "form-control";
+			$this->Angsuran_Bunga_Prosen->EditCustomAttributes = "";
+			$this->Angsuran_Bunga_Prosen->EditValue = ew_HtmlEncode($this->Angsuran_Bunga_Prosen->AdvancedSearch->SearchValue);
+			$this->Angsuran_Bunga_Prosen->PlaceHolder = ew_RemoveHtml($this->Angsuran_Bunga_Prosen->FldCaption());
+
+			// Angsuran_Denda
+			$this->Angsuran_Denda->EditAttrs["class"] = "form-control";
+			$this->Angsuran_Denda->EditCustomAttributes = "";
+			$this->Angsuran_Denda->EditValue = ew_HtmlEncode($this->Angsuran_Denda->AdvancedSearch->SearchValue);
+			$this->Angsuran_Denda->PlaceHolder = ew_RemoveHtml($this->Angsuran_Denda->FldCaption());
+
+			// Dispensasi_Denda
+			$this->Dispensasi_Denda->EditAttrs["class"] = "form-control";
+			$this->Dispensasi_Denda->EditCustomAttributes = "";
+			$this->Dispensasi_Denda->EditValue = ew_HtmlEncode($this->Dispensasi_Denda->AdvancedSearch->SearchValue);
+			$this->Dispensasi_Denda->PlaceHolder = ew_RemoveHtml($this->Dispensasi_Denda->FldCaption());
+
+			// Angsuran_Pokok
+			$this->Angsuran_Pokok->EditAttrs["class"] = "form-control";
+			$this->Angsuran_Pokok->EditCustomAttributes = "";
+			$this->Angsuran_Pokok->EditValue = ew_HtmlEncode($this->Angsuran_Pokok->AdvancedSearch->SearchValue);
+			$this->Angsuran_Pokok->PlaceHolder = ew_RemoveHtml($this->Angsuran_Pokok->FldCaption());
+
+			// Angsuran_Bunga
+			$this->Angsuran_Bunga->EditAttrs["class"] = "form-control";
+			$this->Angsuran_Bunga->EditCustomAttributes = "";
+			$this->Angsuran_Bunga->EditValue = ew_HtmlEncode($this->Angsuran_Bunga->AdvancedSearch->SearchValue);
+			$this->Angsuran_Bunga->PlaceHolder = ew_RemoveHtml($this->Angsuran_Bunga->FldCaption());
+
+			// Angsuran_Total
+			$this->Angsuran_Total->EditAttrs["class"] = "form-control";
+			$this->Angsuran_Total->EditCustomAttributes = "";
+			$this->Angsuran_Total->EditValue = ew_HtmlEncode($this->Angsuran_Total->AdvancedSearch->SearchValue);
+			$this->Angsuran_Total->PlaceHolder = ew_RemoveHtml($this->Angsuran_Total->FldCaption());
+
+			// No_Ref
+			$this->No_Ref->EditAttrs["class"] = "form-control";
+			$this->No_Ref->EditCustomAttributes = "";
+		}
+		if ($this->RowType == EW_ROWTYPE_ADD ||
+			$this->RowType == EW_ROWTYPE_EDIT ||
+			$this->RowType == EW_ROWTYPE_SEARCH) { // Add / Edit / Search row
+			$this->SetupFieldTitles();
 		}
 
 		// Call Row Rendered event
 		if ($this->RowType <> EW_ROWTYPE_AGGREGATEINIT)
 			$this->Row_Rendered();
+	}
+
+	// Validate search
+	function ValidateSearch() {
+		global $gsSearchError;
+
+		// Initialize
+		$gsSearchError = "";
+
+		// Check if validation required
+		if (!EW_SERVER_VALIDATE)
+			return TRUE;
+
+		// Return validate result
+		$ValidateSearch = ($gsSearchError == "");
+
+		// Call Form_CustomValidate event
+		$sFormCustomError = "";
+		$ValidateSearch = $ValidateSearch && $this->Form_CustomValidate($sFormCustomError);
+		if ($sFormCustomError <> "") {
+			ew_AddMessage($gsSearchError, $sFormCustomError);
+		}
+		return $ValidateSearch;
+	}
+
+	// Load advanced search
+	function LoadAdvancedSearch() {
+		$this->id->AdvancedSearch->Load();
+		$this->Kontrak_No->AdvancedSearch->Load();
+		$this->Kontrak_Tgl->AdvancedSearch->Load();
+		$this->nasabah_id->AdvancedSearch->Load();
+		$this->jaminan_id->AdvancedSearch->Load();
+		$this->Pinjaman->AdvancedSearch->Load();
+		$this->Angsuran_Lama->AdvancedSearch->Load();
+		$this->Angsuran_Bunga_Prosen->AdvancedSearch->Load();
+		$this->Angsuran_Denda->AdvancedSearch->Load();
+		$this->Dispensasi_Denda->AdvancedSearch->Load();
+		$this->Angsuran_Pokok->AdvancedSearch->Load();
+		$this->Angsuran_Bunga->AdvancedSearch->Load();
+		$this->Angsuran_Total->AdvancedSearch->Load();
+		$this->No_Ref->AdvancedSearch->Load();
 	}
 
 	// Set up Breadcrumb
@@ -1832,16 +2037,26 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 	function SetupLookupFilters($fld, $pageId = null) {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
-		switch ($fld->FldVar) {
-		}
+		if ($pageId == "list") {
+			switch ($fld->FldVar) {
+			}
+		} elseif ($pageId == "extbs") {
+			switch ($fld->FldVar) {
+			}
+		} 
 	}
 
 	// Setup AutoSuggest filters of a field
 	function SetupAutoSuggestFilters($fld, $pageId = null) {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
-		switch ($fld->FldVar) {
-		}
+		if ($pageId == "list") {
+			switch ($fld->FldVar) {
+			}
+		} elseif ($pageId == "extbs") {
+			switch ($fld->FldVar) {
+			}
+		} 
 	}
 
 	// Page Load event
@@ -2006,11 +2221,41 @@ ft03_pinjamanlist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft03_pinjamanlist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
-ft03_pinjamanlist.Lists["x_jaminan[]"] = {"LinkField":"x_Merk_Type","Ajax":true,"AutoFill":false,"DisplayFields":["x_Merk_Type","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
+ft03_pinjamanlist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
+ft03_pinjamanlist.Lists["x_jaminan_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Merk_Type","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
 
 // Form object for search
 var CurrentSearchForm = ft03_pinjamanlistsrch = new ew_Form("ft03_pinjamanlistsrch");
+
+// Validate function for search
+ft03_pinjamanlistsrch.Validate = function(fobj) {
+	if (!this.ValidateRequired)
+		return true; // Ignore validation
+	fobj = fobj || this.Form;
+	var infix = "";
+
+	// Fire Form_CustomValidate event
+	if (!this.Form_CustomValidate(fobj))
+		return false;
+	return true;
+}
+
+// Form_CustomValidate event
+ft03_pinjamanlistsrch.Form_CustomValidate = 
+ function(fobj) { // DO NOT CHANGE THIS LINE!
+
+ 	// Your custom validation code here, return false if invalid. 
+ 	return true;
+ }
+
+// Use JavaScript validation or not
+<?php if (EW_CLIENT_VALIDATE) { ?>
+ft03_pinjamanlistsrch.ValidateRequired = true; // Use JavaScript validation
+<?php } else { ?>
+ft03_pinjamanlistsrch.ValidateRequired = false; // No JavaScript validation
+<?php } ?>
+
+// Dynamic selection lists
 </script>
 <script type="text/javascript">
 
@@ -2070,21 +2315,30 @@ $t03_pinjaman_list->RenderOtherOptions();
 <input type="hidden" name="cmd" value="search">
 <input type="hidden" name="t" value="t03_pinjaman">
 	<div class="ewBasicSearch">
+<?php
+if ($gsSearchError == "")
+	$t03_pinjaman_list->LoadAdvancedSearch(); // Load advanced search
+
+// Render for search
+$t03_pinjaman->RowType = EW_ROWTYPE_SEARCH;
+
+// Render row
+$t03_pinjaman->ResetAttrs();
+$t03_pinjaman_list->RenderRow();
+?>
 <div id="xsr_1" class="ewRow">
-	<div class="ewQuickSearch input-group">
-	<input type="text" name="<?php echo EW_TABLE_BASIC_SEARCH ?>" id="<?php echo EW_TABLE_BASIC_SEARCH ?>" class="form-control" value="<?php echo ew_HtmlEncode($t03_pinjaman_list->BasicSearch->getKeyword()) ?>" placeholder="<?php echo ew_HtmlEncode($Language->Phrase("Search")) ?>">
-	<input type="hidden" name="<?php echo EW_TABLE_BASIC_SEARCH_TYPE ?>" id="<?php echo EW_TABLE_BASIC_SEARCH_TYPE ?>" value="<?php echo ew_HtmlEncode($t03_pinjaman_list->BasicSearch->getType()) ?>">
-	<div class="input-group-btn">
-		<button type="button" data-toggle="dropdown" class="btn btn-default"><span id="searchtype"><?php echo $t03_pinjaman_list->BasicSearch->getTypeNameShort() ?></span><span class="caret"></span></button>
-		<ul class="dropdown-menu pull-right" role="menu">
-			<li<?php if ($t03_pinjaman_list->BasicSearch->getType() == "") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this)"><?php echo $Language->Phrase("QuickSearchAuto") ?></a></li>
-			<li<?php if ($t03_pinjaman_list->BasicSearch->getType() == "=") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'=')"><?php echo $Language->Phrase("QuickSearchExact") ?></a></li>
-			<li<?php if ($t03_pinjaman_list->BasicSearch->getType() == "AND") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'AND')"><?php echo $Language->Phrase("QuickSearchAll") ?></a></li>
-			<li<?php if ($t03_pinjaman_list->BasicSearch->getType() == "OR") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'OR')"><?php echo $Language->Phrase("QuickSearchAny") ?></a></li>
-		</ul>
+<?php if ($t03_pinjaman->Kontrak_No->Visible) { // Kontrak_No ?>
+	<div id="xsc_Kontrak_No" class="ewCell form-group">
+		<label for="x_Kontrak_No" class="ewSearchCaption ewLabel"><?php echo $t03_pinjaman->Kontrak_No->FldCaption() ?></label>
+		<span class="ewSearchOperator"><?php echo $Language->Phrase("LIKE") ?><input type="hidden" name="z_Kontrak_No" id="z_Kontrak_No" value="LIKE"></span>
+		<span class="ewSearchField">
+<input type="text" data-table="t03_pinjaman" data-field="x_Kontrak_No" name="x_Kontrak_No" id="x_Kontrak_No" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->Kontrak_No->getPlaceHolder()) ?>" value="<?php echo $t03_pinjaman->Kontrak_No->EditValue ?>"<?php echo $t03_pinjaman->Kontrak_No->EditAttributes() ?>>
+</span>
+	</div>
+<?php } ?>
+</div>
+<div id="xsr_2" class="ewRow">
 	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("QuickSearchBtn") ?></button>
-	</div>
-	</div>
 </div>
 	</div>
 </div>
@@ -2123,7 +2377,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 		<th data-name="Kontrak_No"><div id="elh_t03_pinjaman_Kontrak_No" class="t03_pinjaman_Kontrak_No"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Kontrak_No->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Kontrak_No"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Kontrak_No) ?>',1);"><div id="elh_t03_pinjaman_Kontrak_No" class="t03_pinjaman_Kontrak_No">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Kontrak_No->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Kontrak_No->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Kontrak_No->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Kontrak_No->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Kontrak_No->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Kontrak_No->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2145,12 +2399,12 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t03_pinjaman->jaminan->Visible) { // jaminan ?>
-	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->jaminan) == "") { ?>
-		<th data-name="jaminan"><div id="elh_t03_pinjaman_jaminan" class="t03_pinjaman_jaminan"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->jaminan->FldCaption() ?></div></div></th>
+<?php if ($t03_pinjaman->jaminan_id->Visible) { // jaminan_id ?>
+	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->jaminan_id) == "") { ?>
+		<th data-name="jaminan_id"><div id="elh_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->jaminan_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="jaminan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->jaminan) ?>',1);"><div id="elh_t03_pinjaman_jaminan" class="t03_pinjaman_jaminan">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->jaminan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->jaminan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->jaminan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="jaminan_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->jaminan_id) ?>',1);"><div id="elh_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->jaminan_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->jaminan_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->jaminan_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2324,11 +2578,11 @@ $t03_pinjaman_list->ListOptions->Render("body", "left", $t03_pinjaman_list->RowC
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t03_pinjaman->jaminan->Visible) { // jaminan ?>
-		<td data-name="jaminan"<?php echo $t03_pinjaman->jaminan->CellAttributes() ?>>
-<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_jaminan" class="t03_pinjaman_jaminan">
-<span<?php echo $t03_pinjaman->jaminan->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->jaminan->ListViewValue() ?></span>
+	<?php if ($t03_pinjaman->jaminan_id->Visible) { // jaminan_id ?>
+		<td data-name="jaminan_id"<?php echo $t03_pinjaman->jaminan_id->CellAttributes() ?>>
+<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id">
+<span<?php echo $t03_pinjaman->jaminan_id->ViewAttributes() ?>>
+<?php echo $t03_pinjaman->jaminan_id->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

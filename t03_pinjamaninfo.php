@@ -17,7 +17,7 @@ class ct03_pinjaman extends cTable {
 	var $Kontrak_No;
 	var $Kontrak_Tgl;
 	var $nasabah_id;
-	var $jaminan;
+	var $jaminan_id;
 	var $Pinjaman;
 	var $Angsuran_Lama;
 	var $Angsuran_Bunga_Prosen;
@@ -83,10 +83,10 @@ class ct03_pinjaman extends cTable {
 		$this->nasabah_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['nasabah_id'] = &$this->nasabah_id;
 
-		// jaminan
-		$this->jaminan = new cField('t03_pinjaman', 't03_pinjaman', 'x_jaminan', 'jaminan', '`jaminan`', '`jaminan`', 200, -1, FALSE, '`jaminan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'CHECKBOX');
-		$this->jaminan->Sortable = TRUE; // Allow sort
-		$this->fields['jaminan'] = &$this->jaminan;
+		// jaminan_id
+		$this->jaminan_id = new cField('t03_pinjaman', 't03_pinjaman', 'x_jaminan_id', 'jaminan_id', '`jaminan_id`', '`jaminan_id`', 200, -1, FALSE, '`jaminan_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'CHECKBOX');
+		$this->jaminan_id->Sortable = TRUE; // Allow sort
+		$this->fields['jaminan_id'] = &$this->jaminan_id;
 
 		// Pinjaman
 		$this->Pinjaman = new cField('t03_pinjaman', 't03_pinjaman', 'x_Pinjaman', 'Pinjaman', '`Pinjaman`', '`Pinjaman`', 4, -1, FALSE, '`Pinjaman`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
@@ -647,7 +647,7 @@ class ct03_pinjaman extends cTable {
 		$this->Kontrak_No->setDbValue($rs->fields('Kontrak_No'));
 		$this->Kontrak_Tgl->setDbValue($rs->fields('Kontrak_Tgl'));
 		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->jaminan->setDbValue($rs->fields('jaminan'));
+		$this->jaminan_id->setDbValue($rs->fields('jaminan_id'));
 		$this->Pinjaman->setDbValue($rs->fields('Pinjaman'));
 		$this->Angsuran_Lama->setDbValue($rs->fields('Angsuran_Lama'));
 		$this->Angsuran_Bunga_Prosen->setDbValue($rs->fields('Angsuran_Bunga_Prosen'));
@@ -671,7 +671,7 @@ class ct03_pinjaman extends cTable {
 		// Kontrak_No
 		// Kontrak_Tgl
 		// nasabah_id
-		// jaminan
+		// jaminan_id
 		// Pinjaman
 		// Angsuran_Lama
 		// Angsuran_Bunga_Prosen
@@ -718,40 +718,40 @@ class ct03_pinjaman extends cTable {
 		}
 		$this->nasabah_id->ViewCustomAttributes = "";
 
-		// jaminan
-		if (strval($this->jaminan->CurrentValue) <> "") {
-			$arwrk = explode(",", $this->jaminan->CurrentValue);
+		// jaminan_id
+		if (strval($this->jaminan_id->CurrentValue) <> "") {
+			$arwrk = explode(",", $this->jaminan_id->CurrentValue);
 			$sFilterWrk = "";
 			foreach ($arwrk as $wrk) {
 				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
-				$sFilterWrk .= "`Merk_Type`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_STRING, "");
+				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
 			}
-		$sSqlWrk = "SELECT `Merk_Type`, `Merk_Type` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
+		$sSqlWrk = "SELECT `id`, `Merk_Type` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
 		$sWhereWrk = "";
-		$this->jaminan->LookupFilters = array();
+		$this->jaminan_id->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->jaminan, $sWhereWrk); // Call Lookup selecting
+		$this->Lookup_Selecting($this->jaminan_id, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
 			$rswrk = Conn()->Execute($sSqlWrk);
 			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$this->jaminan->ViewValue = "";
+				$this->jaminan_id->ViewValue = "";
 				$ari = 0;
 				while (!$rswrk->EOF) {
 					$arwrk = array();
 					$arwrk[1] = $rswrk->fields('DispFld');
-					$this->jaminan->ViewValue .= $this->jaminan->DisplayValue($arwrk);
+					$this->jaminan_id->ViewValue .= $this->jaminan_id->DisplayValue($arwrk);
 					$rswrk->MoveNext();
-					if (!$rswrk->EOF) $this->jaminan->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
+					if (!$rswrk->EOF) $this->jaminan_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
 					$ari++;
 				}
 				$rswrk->Close();
 			} else {
-				$this->jaminan->ViewValue = $this->jaminan->CurrentValue;
+				$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
 			}
 		} else {
-			$this->jaminan->ViewValue = NULL;
+			$this->jaminan_id->ViewValue = NULL;
 		}
-		$this->jaminan->ViewCustomAttributes = "";
+		$this->jaminan_id->ViewCustomAttributes = "";
 
 		// Pinjaman
 		$this->Pinjaman->ViewValue = $this->Pinjaman->CurrentValue;
@@ -808,10 +808,10 @@ class ct03_pinjaman extends cTable {
 		$this->nasabah_id->HrefValue = "";
 		$this->nasabah_id->TooltipValue = "";
 
-		// jaminan
-		$this->jaminan->LinkCustomAttributes = "";
-		$this->jaminan->HrefValue = "";
-		$this->jaminan->TooltipValue = "";
+		// jaminan_id
+		$this->jaminan_id->LinkCustomAttributes = "";
+		$this->jaminan_id->HrefValue = "";
+		$this->jaminan_id->TooltipValue = "";
 
 		// Pinjaman
 		$this->Pinjaman->LinkCustomAttributes = "";
@@ -891,8 +891,8 @@ class ct03_pinjaman extends cTable {
 		$this->nasabah_id->EditAttrs["class"] = "form-control";
 		$this->nasabah_id->EditCustomAttributes = "";
 
-		// jaminan
-		$this->jaminan->EditCustomAttributes = "";
+		// jaminan_id
+		$this->jaminan_id->EditCustomAttributes = "";
 
 		// Pinjaman
 		$this->Pinjaman->EditAttrs["class"] = "form-control";
@@ -982,7 +982,7 @@ class ct03_pinjaman extends cTable {
 					if ($this->Kontrak_No->Exportable) $Doc->ExportCaption($this->Kontrak_No);
 					if ($this->Kontrak_Tgl->Exportable) $Doc->ExportCaption($this->Kontrak_Tgl);
 					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
-					if ($this->jaminan->Exportable) $Doc->ExportCaption($this->jaminan);
+					if ($this->jaminan_id->Exportable) $Doc->ExportCaption($this->jaminan_id);
 					if ($this->Pinjaman->Exportable) $Doc->ExportCaption($this->Pinjaman);
 					if ($this->Angsuran_Lama->Exportable) $Doc->ExportCaption($this->Angsuran_Lama);
 					if ($this->Angsuran_Bunga_Prosen->Exportable) $Doc->ExportCaption($this->Angsuran_Bunga_Prosen);
@@ -997,7 +997,7 @@ class ct03_pinjaman extends cTable {
 					if ($this->Kontrak_No->Exportable) $Doc->ExportCaption($this->Kontrak_No);
 					if ($this->Kontrak_Tgl->Exportable) $Doc->ExportCaption($this->Kontrak_Tgl);
 					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
-					if ($this->jaminan->Exportable) $Doc->ExportCaption($this->jaminan);
+					if ($this->jaminan_id->Exportable) $Doc->ExportCaption($this->jaminan_id);
 					if ($this->Pinjaman->Exportable) $Doc->ExportCaption($this->Pinjaman);
 					if ($this->Angsuran_Lama->Exportable) $Doc->ExportCaption($this->Angsuran_Lama);
 					if ($this->Angsuran_Bunga_Prosen->Exportable) $Doc->ExportCaption($this->Angsuran_Bunga_Prosen);
@@ -1041,7 +1041,7 @@ class ct03_pinjaman extends cTable {
 						if ($this->Kontrak_No->Exportable) $Doc->ExportField($this->Kontrak_No);
 						if ($this->Kontrak_Tgl->Exportable) $Doc->ExportField($this->Kontrak_Tgl);
 						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
-						if ($this->jaminan->Exportable) $Doc->ExportField($this->jaminan);
+						if ($this->jaminan_id->Exportable) $Doc->ExportField($this->jaminan_id);
 						if ($this->Pinjaman->Exportable) $Doc->ExportField($this->Pinjaman);
 						if ($this->Angsuran_Lama->Exportable) $Doc->ExportField($this->Angsuran_Lama);
 						if ($this->Angsuran_Bunga_Prosen->Exportable) $Doc->ExportField($this->Angsuran_Bunga_Prosen);
@@ -1056,7 +1056,7 @@ class ct03_pinjaman extends cTable {
 						if ($this->Kontrak_No->Exportable) $Doc->ExportField($this->Kontrak_No);
 						if ($this->Kontrak_Tgl->Exportable) $Doc->ExportField($this->Kontrak_Tgl);
 						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
-						if ($this->jaminan->Exportable) $Doc->ExportField($this->jaminan);
+						if ($this->jaminan_id->Exportable) $Doc->ExportField($this->jaminan_id);
 						if ($this->Pinjaman->Exportable) $Doc->ExportField($this->Pinjaman);
 						if ($this->Angsuran_Lama->Exportable) $Doc->ExportField($this->Angsuran_Lama);
 						if ($this->Angsuran_Bunga_Prosen->Exportable) $Doc->ExportField($this->Angsuran_Bunga_Prosen);

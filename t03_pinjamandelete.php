@@ -254,7 +254,7 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Kontrak_No->SetVisibility();
 		$this->Kontrak_Tgl->SetVisibility();
 		$this->nasabah_id->SetVisibility();
-		$this->jaminan->SetVisibility();
+		$this->jaminan_id->SetVisibility();
 		$this->Pinjaman->SetVisibility();
 		$this->Angsuran_Lama->SetVisibility();
 		$this->Angsuran_Bunga_Prosen->SetVisibility();
@@ -442,7 +442,7 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Kontrak_No->setDbValue($rs->fields('Kontrak_No'));
 		$this->Kontrak_Tgl->setDbValue($rs->fields('Kontrak_Tgl'));
 		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->jaminan->setDbValue($rs->fields('jaminan'));
+		$this->jaminan_id->setDbValue($rs->fields('jaminan_id'));
 		$this->Pinjaman->setDbValue($rs->fields('Pinjaman'));
 		$this->Angsuran_Lama->setDbValue($rs->fields('Angsuran_Lama'));
 		$this->Angsuran_Bunga_Prosen->setDbValue($rs->fields('Angsuran_Bunga_Prosen'));
@@ -462,7 +462,7 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Kontrak_No->DbValue = $row['Kontrak_No'];
 		$this->Kontrak_Tgl->DbValue = $row['Kontrak_Tgl'];
 		$this->nasabah_id->DbValue = $row['nasabah_id'];
-		$this->jaminan->DbValue = $row['jaminan'];
+		$this->jaminan_id->DbValue = $row['jaminan_id'];
 		$this->Pinjaman->DbValue = $row['Pinjaman'];
 		$this->Angsuran_Lama->DbValue = $row['Angsuran_Lama'];
 		$this->Angsuran_Bunga_Prosen->DbValue = $row['Angsuran_Bunga_Prosen'];
@@ -512,7 +512,7 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		// Kontrak_No
 		// Kontrak_Tgl
 		// nasabah_id
-		// jaminan
+		// jaminan_id
 		// Pinjaman
 		// Angsuran_Lama
 		// Angsuran_Bunga_Prosen
@@ -561,40 +561,40 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		}
 		$this->nasabah_id->ViewCustomAttributes = "";
 
-		// jaminan
-		if (strval($this->jaminan->CurrentValue) <> "") {
-			$arwrk = explode(",", $this->jaminan->CurrentValue);
+		// jaminan_id
+		if (strval($this->jaminan_id->CurrentValue) <> "") {
+			$arwrk = explode(",", $this->jaminan_id->CurrentValue);
 			$sFilterWrk = "";
 			foreach ($arwrk as $wrk) {
 				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
-				$sFilterWrk .= "`Merk_Type`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_STRING, "");
+				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
 			}
-		$sSqlWrk = "SELECT `Merk_Type`, `Merk_Type` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
+		$sSqlWrk = "SELECT `id`, `Merk_Type` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t02_jaminan`";
 		$sWhereWrk = "";
-		$this->jaminan->LookupFilters = array();
+		$this->jaminan_id->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->jaminan, $sWhereWrk); // Call Lookup selecting
+		$this->Lookup_Selecting($this->jaminan_id, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
 			$rswrk = Conn()->Execute($sSqlWrk);
 			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$this->jaminan->ViewValue = "";
+				$this->jaminan_id->ViewValue = "";
 				$ari = 0;
 				while (!$rswrk->EOF) {
 					$arwrk = array();
 					$arwrk[1] = $rswrk->fields('DispFld');
-					$this->jaminan->ViewValue .= $this->jaminan->DisplayValue($arwrk);
+					$this->jaminan_id->ViewValue .= $this->jaminan_id->DisplayValue($arwrk);
 					$rswrk->MoveNext();
-					if (!$rswrk->EOF) $this->jaminan->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
+					if (!$rswrk->EOF) $this->jaminan_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
 					$ari++;
 				}
 				$rswrk->Close();
 			} else {
-				$this->jaminan->ViewValue = $this->jaminan->CurrentValue;
+				$this->jaminan_id->ViewValue = $this->jaminan_id->CurrentValue;
 			}
 		} else {
-			$this->jaminan->ViewValue = NULL;
+			$this->jaminan_id->ViewValue = NULL;
 		}
-		$this->jaminan->ViewCustomAttributes = "";
+		$this->jaminan_id->ViewCustomAttributes = "";
 
 		// Pinjaman
 		$this->Pinjaman->ViewValue = $this->Pinjaman->CurrentValue;
@@ -646,10 +646,10 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 			$this->nasabah_id->HrefValue = "";
 			$this->nasabah_id->TooltipValue = "";
 
-			// jaminan
-			$this->jaminan->LinkCustomAttributes = "";
-			$this->jaminan->HrefValue = "";
-			$this->jaminan->TooltipValue = "";
+			// jaminan_id
+			$this->jaminan_id->LinkCustomAttributes = "";
+			$this->jaminan_id->HrefValue = "";
+			$this->jaminan_id->TooltipValue = "";
 
 			// Pinjaman
 			$this->Pinjaman->LinkCustomAttributes = "";
@@ -912,8 +912,8 @@ ft03_pinjamandelete.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft03_pinjamandelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
-ft03_pinjamandelete.Lists["x_jaminan[]"] = {"LinkField":"x_Merk_Type","Ajax":true,"AutoFill":false,"DisplayFields":["x_Merk_Type","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
+ft03_pinjamandelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
+ft03_pinjamandelete.Lists["x_jaminan_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Merk_Type","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
 
 // Form object for search
 </script>
@@ -955,8 +955,8 @@ $t03_pinjaman_delete->ShowMessage();
 <?php if ($t03_pinjaman->nasabah_id->Visible) { // nasabah_id ?>
 		<th><span id="elh_t03_pinjaman_nasabah_id" class="t03_pinjaman_nasabah_id"><?php echo $t03_pinjaman->nasabah_id->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t03_pinjaman->jaminan->Visible) { // jaminan ?>
-		<th><span id="elh_t03_pinjaman_jaminan" class="t03_pinjaman_jaminan"><?php echo $t03_pinjaman->jaminan->FldCaption() ?></span></th>
+<?php if ($t03_pinjaman->jaminan_id->Visible) { // jaminan_id ?>
+		<th><span id="elh_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id"><?php echo $t03_pinjaman->jaminan_id->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t03_pinjaman->Pinjaman->Visible) { // Pinjaman ?>
 		<th><span id="elh_t03_pinjaman_Pinjaman" class="t03_pinjaman_Pinjaman"><?php echo $t03_pinjaman->Pinjaman->FldCaption() ?></span></th>
@@ -1030,11 +1030,11 @@ while (!$t03_pinjaman_delete->Recordset->EOF) {
 </span>
 </td>
 <?php } ?>
-<?php if ($t03_pinjaman->jaminan->Visible) { // jaminan ?>
-		<td<?php echo $t03_pinjaman->jaminan->CellAttributes() ?>>
-<span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_jaminan" class="t03_pinjaman_jaminan">
-<span<?php echo $t03_pinjaman->jaminan->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->jaminan->ListViewValue() ?></span>
+<?php if ($t03_pinjaman->jaminan_id->Visible) { // jaminan_id ?>
+		<td<?php echo $t03_pinjaman->jaminan_id->CellAttributes() ?>>
+<span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id">
+<span<?php echo $t03_pinjaman->jaminan_id->ViewAttributes() ?>>
+<?php echo $t03_pinjaman->jaminan_id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
