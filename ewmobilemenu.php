@@ -3,9 +3,9 @@
 
 // Generate all menu items
 $RootMenu->IsRoot = TRUE;
-$RootMenu->AddMenuItem(3, "mmi_t03_pinjaman", $Language->MenuPhrase("3", "MenuText"), "t03_pinjamanlist.php", -1, "", TRUE, FALSE, FALSE);
 $RootMenu->AddMenuItem(1, "mmi_t01_nasabah", $Language->MenuPhrase("1", "MenuText"), "t01_nasabahlist.php", -1, "", TRUE, FALSE, FALSE);
-$RootMenu->AddMenuItem(2, "mmi_t02_jaminan", $Language->MenuPhrase("2", "MenuText"), "t02_jaminanlist.php", -1, "", TRUE, FALSE, FALSE);
+$RootMenu->AddMenuItem(14, "mmi_t07_marketing", $Language->MenuPhrase("14", "MenuText"), "t07_marketinglist.php", -1, "", TRUE, FALSE, FALSE);
+$RootMenu->AddMenuItem(3, "mmi_t03_pinjaman", $Language->MenuPhrase("3", "MenuText"), "t03_pinjamanlist.php", -1, "", TRUE, FALSE, FALSE);
 $RootMenu->AddMenuItem(4, "mmi_t04_pinjamanangsuran", $Language->MenuPhrase("4", "MenuText"), "t04_pinjamanangsuranlist.php", -1, "", TRUE, FALSE, FALSE);
 $RootMenu->AddMenuItem(5, "mmi_t05_pinjamanjaminan", $Language->MenuPhrase("5", "MenuText"), "t05_pinjamanjaminanlist.php", -1, "", TRUE, FALSE, FALSE);
 $RootMenu->AddMenuItem(6, "mmi_t06_pinjamantitipan", $Language->MenuPhrase("6", "MenuText"), "t06_pinjamantitipanlist.php", -1, "", TRUE, FALSE, FALSE);

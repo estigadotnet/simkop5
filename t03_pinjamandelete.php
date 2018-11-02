@@ -264,6 +264,9 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Angsuran_Bunga->SetVisibility();
 		$this->Angsuran_Total->SetVisibility();
 		$this->No_Ref->SetVisibility();
+		$this->Biaya_Administrasi->SetVisibility();
+		$this->Biaya_Materai->SetVisibility();
+		$this->marketing_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -452,6 +455,9 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Angsuran_Bunga->setDbValue($rs->fields('Angsuran_Bunga'));
 		$this->Angsuran_Total->setDbValue($rs->fields('Angsuran_Total'));
 		$this->No_Ref->setDbValue($rs->fields('No_Ref'));
+		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
+		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
+		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 	}
 
 	// Load DbValue from recordset
@@ -472,6 +478,9 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Angsuran_Bunga->DbValue = $row['Angsuran_Bunga'];
 		$this->Angsuran_Total->DbValue = $row['Angsuran_Total'];
 		$this->No_Ref->DbValue = $row['No_Ref'];
+		$this->Biaya_Administrasi->DbValue = $row['Biaya_Administrasi'];
+		$this->Biaya_Materai->DbValue = $row['Biaya_Materai'];
+		$this->marketing_id->DbValue = $row['marketing_id'];
 	}
 
 	// Render row values based on field settings
@@ -504,6 +513,14 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		if ($this->Angsuran_Total->FormValue == $this->Angsuran_Total->CurrentValue && is_numeric(ew_StrToFloat($this->Angsuran_Total->CurrentValue)))
 			$this->Angsuran_Total->CurrentValue = ew_StrToFloat($this->Angsuran_Total->CurrentValue);
 
+		// Convert decimal values if posted back
+		if ($this->Biaya_Administrasi->FormValue == $this->Biaya_Administrasi->CurrentValue && is_numeric(ew_StrToFloat($this->Biaya_Administrasi->CurrentValue)))
+			$this->Biaya_Administrasi->CurrentValue = ew_StrToFloat($this->Biaya_Administrasi->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Biaya_Materai->FormValue == $this->Biaya_Materai->CurrentValue && is_numeric(ew_StrToFloat($this->Biaya_Materai->CurrentValue)))
+			$this->Biaya_Materai->CurrentValue = ew_StrToFloat($this->Biaya_Materai->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
@@ -522,6 +539,9 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		// Angsuran_Bunga
 		// Angsuran_Total
 		// No_Ref
+		// Biaya_Administrasi
+		// Biaya_Materai
+		// marketing_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -598,38 +618,85 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 
 		// Pinjaman
 		$this->Pinjaman->ViewValue = $this->Pinjaman->CurrentValue;
+		$this->Pinjaman->ViewValue = ew_FormatNumber($this->Pinjaman->ViewValue, 2, -2, -2, -2);
+		$this->Pinjaman->CellCssStyle .= "text-align: right;";
 		$this->Pinjaman->ViewCustomAttributes = "";
 
 		// Angsuran_Lama
 		$this->Angsuran_Lama->ViewValue = $this->Angsuran_Lama->CurrentValue;
+		$this->Angsuran_Lama->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Lama->ViewCustomAttributes = "";
 
 		// Angsuran_Bunga_Prosen
 		$this->Angsuran_Bunga_Prosen->ViewValue = $this->Angsuran_Bunga_Prosen->CurrentValue;
+		$this->Angsuran_Bunga_Prosen->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Bunga_Prosen->ViewCustomAttributes = "";
 
 		// Angsuran_Denda
 		$this->Angsuran_Denda->ViewValue = $this->Angsuran_Denda->CurrentValue;
+		$this->Angsuran_Denda->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Denda->ViewCustomAttributes = "";
 
 		// Dispensasi_Denda
 		$this->Dispensasi_Denda->ViewValue = $this->Dispensasi_Denda->CurrentValue;
+		$this->Dispensasi_Denda->CellCssStyle .= "text-align: right;";
 		$this->Dispensasi_Denda->ViewCustomAttributes = "";
 
 		// Angsuran_Pokok
 		$this->Angsuran_Pokok->ViewValue = $this->Angsuran_Pokok->CurrentValue;
+		$this->Angsuran_Pokok->ViewValue = ew_FormatNumber($this->Angsuran_Pokok->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Pokok->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Pokok->ViewCustomAttributes = "";
 
 		// Angsuran_Bunga
 		$this->Angsuran_Bunga->ViewValue = $this->Angsuran_Bunga->CurrentValue;
+		$this->Angsuran_Bunga->ViewValue = ew_FormatNumber($this->Angsuran_Bunga->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Bunga->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Bunga->ViewCustomAttributes = "";
 
 		// Angsuran_Total
 		$this->Angsuran_Total->ViewValue = $this->Angsuran_Total->CurrentValue;
+		$this->Angsuran_Total->ViewValue = ew_FormatNumber($this->Angsuran_Total->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Total->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Total->ViewCustomAttributes = "";
 
 		// No_Ref
 		$this->No_Ref->ViewCustomAttributes = "";
+
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi->ViewValue = $this->Biaya_Administrasi->CurrentValue;
+		$this->Biaya_Administrasi->ViewValue = ew_FormatNumber($this->Biaya_Administrasi->ViewValue, 2, -2, -2, -2);
+		$this->Biaya_Administrasi->CellCssStyle .= "text-align: right;";
+		$this->Biaya_Administrasi->ViewCustomAttributes = "";
+
+		// Biaya_Materai
+		$this->Biaya_Materai->ViewValue = $this->Biaya_Materai->CurrentValue;
+		$this->Biaya_Materai->ViewValue = ew_FormatNumber($this->Biaya_Materai->ViewValue, 2, -2, -2, -2);
+		$this->Biaya_Materai->CellCssStyle .= "text-align: right;";
+		$this->Biaya_Materai->ViewCustomAttributes = "";
+
+		// marketing_id
+		if (strval($this->marketing_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
+		$sWhereWrk = "";
+		$this->marketing_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->marketing_id->ViewValue = $this->marketing_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
+			}
+		} else {
+			$this->marketing_id->ViewValue = NULL;
+		}
+		$this->marketing_id->ViewCustomAttributes = "";
 
 			// Kontrak_No
 			$this->Kontrak_No->LinkCustomAttributes = "";
@@ -695,6 +762,21 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 			$this->No_Ref->LinkCustomAttributes = "";
 			$this->No_Ref->HrefValue = "";
 			$this->No_Ref->TooltipValue = "";
+
+			// Biaya_Administrasi
+			$this->Biaya_Administrasi->LinkCustomAttributes = "";
+			$this->Biaya_Administrasi->HrefValue = "";
+			$this->Biaya_Administrasi->TooltipValue = "";
+
+			// Biaya_Materai
+			$this->Biaya_Materai->LinkCustomAttributes = "";
+			$this->Biaya_Materai->HrefValue = "";
+			$this->Biaya_Materai->TooltipValue = "";
+
+			// marketing_id
+			$this->marketing_id->LinkCustomAttributes = "";
+			$this->marketing_id->HrefValue = "";
+			$this->marketing_id->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -914,6 +996,7 @@ ft03_pinjamandelete.ValidateRequired = false;
 // Dynamic selection lists
 ft03_pinjamandelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
 ft03_pinjamandelete.Lists["x_jaminan_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Merk_Type","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
+ft03_pinjamandelete.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
 
 // Form object for search
 </script>
@@ -984,6 +1067,15 @@ $t03_pinjaman_delete->ShowMessage();
 <?php } ?>
 <?php if ($t03_pinjaman->No_Ref->Visible) { // No_Ref ?>
 		<th><span id="elh_t03_pinjaman_No_Ref" class="t03_pinjaman_No_Ref"><?php echo $t03_pinjaman->No_Ref->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t03_pinjaman->Biaya_Administrasi->Visible) { // Biaya_Administrasi ?>
+		<th><span id="elh_t03_pinjaman_Biaya_Administrasi" class="t03_pinjaman_Biaya_Administrasi"><?php echo $t03_pinjaman->Biaya_Administrasi->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t03_pinjaman->Biaya_Materai->Visible) { // Biaya_Materai ?>
+		<th><span id="elh_t03_pinjaman_Biaya_Materai" class="t03_pinjaman_Biaya_Materai"><?php echo $t03_pinjaman->Biaya_Materai->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t03_pinjaman->marketing_id->Visible) { // marketing_id ?>
+		<th><span id="elh_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id"><?php echo $t03_pinjaman->marketing_id->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
@@ -1107,6 +1199,30 @@ while (!$t03_pinjaman_delete->Recordset->EOF) {
 <span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_No_Ref" class="t03_pinjaman_No_Ref">
 <span<?php echo $t03_pinjaman->No_Ref->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->No_Ref->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t03_pinjaman->Biaya_Administrasi->Visible) { // Biaya_Administrasi ?>
+		<td<?php echo $t03_pinjaman->Biaya_Administrasi->CellAttributes() ?>>
+<span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_Biaya_Administrasi" class="t03_pinjaman_Biaya_Administrasi">
+<span<?php echo $t03_pinjaman->Biaya_Administrasi->ViewAttributes() ?>>
+<?php echo $t03_pinjaman->Biaya_Administrasi->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t03_pinjaman->Biaya_Materai->Visible) { // Biaya_Materai ?>
+		<td<?php echo $t03_pinjaman->Biaya_Materai->CellAttributes() ?>>
+<span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_Biaya_Materai" class="t03_pinjaman_Biaya_Materai">
+<span<?php echo $t03_pinjaman->Biaya_Materai->ViewAttributes() ?>>
+<?php echo $t03_pinjaman->Biaya_Materai->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t03_pinjaman->marketing_id->Visible) { // marketing_id ?>
+		<td<?php echo $t03_pinjaman->marketing_id->CellAttributes() ?>>
+<span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id">
+<span<?php echo $t03_pinjaman->marketing_id->ViewAttributes() ?>>
+<?php echo $t03_pinjaman->marketing_id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

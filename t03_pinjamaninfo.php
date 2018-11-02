@@ -27,6 +27,9 @@ class ct03_pinjaman extends cTable {
 	var $Angsuran_Bunga;
 	var $Angsuran_Total;
 	var $No_Ref;
+	var $Biaya_Administrasi;
+	var $Biaya_Materai;
+	var $marketing_id;
 
 	//
 	// Table class constructor
@@ -142,6 +145,26 @@ class ct03_pinjaman extends cTable {
 		$this->No_Ref->UsePleaseSelect = TRUE; // Use PleaseSelect by default
 		$this->No_Ref->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->fields['No_Ref'] = &$this->No_Ref;
+
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi = new cField('t03_pinjaman', 't03_pinjaman', 'x_Biaya_Administrasi', 'Biaya_Administrasi', '`Biaya_Administrasi`', '`Biaya_Administrasi`', 4, -1, FALSE, '`Biaya_Administrasi`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Biaya_Administrasi->Sortable = TRUE; // Allow sort
+		$this->Biaya_Administrasi->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Biaya_Administrasi'] = &$this->Biaya_Administrasi;
+
+		// Biaya_Materai
+		$this->Biaya_Materai = new cField('t03_pinjaman', 't03_pinjaman', 'x_Biaya_Materai', 'Biaya_Materai', '`Biaya_Materai`', '`Biaya_Materai`', 4, -1, FALSE, '`Biaya_Materai`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Biaya_Materai->Sortable = TRUE; // Allow sort
+		$this->Biaya_Materai->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Biaya_Materai'] = &$this->Biaya_Materai;
+
+		// marketing_id
+		$this->marketing_id = new cField('t03_pinjaman', 't03_pinjaman', 'x_marketing_id', 'marketing_id', '`marketing_id`', '`marketing_id`', 3, -1, FALSE, '`marketing_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->marketing_id->Sortable = TRUE; // Allow sort
+		$this->marketing_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->marketing_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
+		$this->marketing_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['marketing_id'] = &$this->marketing_id;
 	}
 
 	// Set Field Visibility
@@ -657,6 +680,9 @@ class ct03_pinjaman extends cTable {
 		$this->Angsuran_Bunga->setDbValue($rs->fields('Angsuran_Bunga'));
 		$this->Angsuran_Total->setDbValue($rs->fields('Angsuran_Total'));
 		$this->No_Ref->setDbValue($rs->fields('No_Ref'));
+		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
+		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
+		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 	}
 
 	// Render list row values
@@ -681,6 +707,9 @@ class ct03_pinjaman extends cTable {
 		// Angsuran_Bunga
 		// Angsuran_Total
 		// No_Ref
+		// Biaya_Administrasi
+		// Biaya_Materai
+		// marketing_id
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -755,38 +784,85 @@ class ct03_pinjaman extends cTable {
 
 		// Pinjaman
 		$this->Pinjaman->ViewValue = $this->Pinjaman->CurrentValue;
+		$this->Pinjaman->ViewValue = ew_FormatNumber($this->Pinjaman->ViewValue, 2, -2, -2, -2);
+		$this->Pinjaman->CellCssStyle .= "text-align: right;";
 		$this->Pinjaman->ViewCustomAttributes = "";
 
 		// Angsuran_Lama
 		$this->Angsuran_Lama->ViewValue = $this->Angsuran_Lama->CurrentValue;
+		$this->Angsuran_Lama->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Lama->ViewCustomAttributes = "";
 
 		// Angsuran_Bunga_Prosen
 		$this->Angsuran_Bunga_Prosen->ViewValue = $this->Angsuran_Bunga_Prosen->CurrentValue;
+		$this->Angsuran_Bunga_Prosen->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Bunga_Prosen->ViewCustomAttributes = "";
 
 		// Angsuran_Denda
 		$this->Angsuran_Denda->ViewValue = $this->Angsuran_Denda->CurrentValue;
+		$this->Angsuran_Denda->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Denda->ViewCustomAttributes = "";
 
 		// Dispensasi_Denda
 		$this->Dispensasi_Denda->ViewValue = $this->Dispensasi_Denda->CurrentValue;
+		$this->Dispensasi_Denda->CellCssStyle .= "text-align: right;";
 		$this->Dispensasi_Denda->ViewCustomAttributes = "";
 
 		// Angsuran_Pokok
 		$this->Angsuran_Pokok->ViewValue = $this->Angsuran_Pokok->CurrentValue;
+		$this->Angsuran_Pokok->ViewValue = ew_FormatNumber($this->Angsuran_Pokok->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Pokok->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Pokok->ViewCustomAttributes = "";
 
 		// Angsuran_Bunga
 		$this->Angsuran_Bunga->ViewValue = $this->Angsuran_Bunga->CurrentValue;
+		$this->Angsuran_Bunga->ViewValue = ew_FormatNumber($this->Angsuran_Bunga->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Bunga->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Bunga->ViewCustomAttributes = "";
 
 		// Angsuran_Total
 		$this->Angsuran_Total->ViewValue = $this->Angsuran_Total->CurrentValue;
+		$this->Angsuran_Total->ViewValue = ew_FormatNumber($this->Angsuran_Total->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Total->CellCssStyle .= "text-align: right;";
 		$this->Angsuran_Total->ViewCustomAttributes = "";
 
 		// No_Ref
 		$this->No_Ref->ViewCustomAttributes = "";
+
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi->ViewValue = $this->Biaya_Administrasi->CurrentValue;
+		$this->Biaya_Administrasi->ViewValue = ew_FormatNumber($this->Biaya_Administrasi->ViewValue, 2, -2, -2, -2);
+		$this->Biaya_Administrasi->CellCssStyle .= "text-align: right;";
+		$this->Biaya_Administrasi->ViewCustomAttributes = "";
+
+		// Biaya_Materai
+		$this->Biaya_Materai->ViewValue = $this->Biaya_Materai->CurrentValue;
+		$this->Biaya_Materai->ViewValue = ew_FormatNumber($this->Biaya_Materai->ViewValue, 2, -2, -2, -2);
+		$this->Biaya_Materai->CellCssStyle .= "text-align: right;";
+		$this->Biaya_Materai->ViewCustomAttributes = "";
+
+		// marketing_id
+		if (strval($this->marketing_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
+		$sWhereWrk = "";
+		$this->marketing_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->marketing_id->ViewValue = $this->marketing_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
+			}
+		} else {
+			$this->marketing_id->ViewValue = NULL;
+		}
+		$this->marketing_id->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -858,6 +934,21 @@ class ct03_pinjaman extends cTable {
 		$this->No_Ref->HrefValue = "";
 		$this->No_Ref->TooltipValue = "";
 
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi->LinkCustomAttributes = "";
+		$this->Biaya_Administrasi->HrefValue = "";
+		$this->Biaya_Administrasi->TooltipValue = "";
+
+		// Biaya_Materai
+		$this->Biaya_Materai->LinkCustomAttributes = "";
+		$this->Biaya_Materai->HrefValue = "";
+		$this->Biaya_Materai->TooltipValue = "";
+
+		// marketing_id
+		$this->marketing_id->LinkCustomAttributes = "";
+		$this->marketing_id->HrefValue = "";
+		$this->marketing_id->TooltipValue = "";
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -883,7 +974,7 @@ class ct03_pinjaman extends cTable {
 
 		// Kontrak_Tgl
 		$this->Kontrak_Tgl->EditAttrs["class"] = "form-control";
-		$this->Kontrak_Tgl->EditCustomAttributes = "";
+		$this->Kontrak_Tgl->EditCustomAttributes = "style='width: 115px;'";
 		$this->Kontrak_Tgl->EditValue = ew_FormatDateTime($this->Kontrak_Tgl->CurrentValue, 7);
 		$this->Kontrak_Tgl->PlaceHolder = ew_RemoveHtml($this->Kontrak_Tgl->FldCaption());
 
@@ -899,7 +990,7 @@ class ct03_pinjaman extends cTable {
 		$this->Pinjaman->EditCustomAttributes = "";
 		$this->Pinjaman->EditValue = $this->Pinjaman->CurrentValue;
 		$this->Pinjaman->PlaceHolder = ew_RemoveHtml($this->Pinjaman->FldCaption());
-		if (strval($this->Pinjaman->EditValue) <> "" && is_numeric($this->Pinjaman->EditValue)) $this->Pinjaman->EditValue = ew_FormatNumber($this->Pinjaman->EditValue, -2, -1, -2, 0);
+		if (strval($this->Pinjaman->EditValue) <> "" && is_numeric($this->Pinjaman->EditValue)) $this->Pinjaman->EditValue = ew_FormatNumber($this->Pinjaman->EditValue, -2, -2, -2, -2);
 
 		// Angsuran_Lama
 		$this->Angsuran_Lama->EditAttrs["class"] = "form-control";
@@ -932,25 +1023,43 @@ class ct03_pinjaman extends cTable {
 		$this->Angsuran_Pokok->EditCustomAttributes = "";
 		$this->Angsuran_Pokok->EditValue = $this->Angsuran_Pokok->CurrentValue;
 		$this->Angsuran_Pokok->PlaceHolder = ew_RemoveHtml($this->Angsuran_Pokok->FldCaption());
-		if (strval($this->Angsuran_Pokok->EditValue) <> "" && is_numeric($this->Angsuran_Pokok->EditValue)) $this->Angsuran_Pokok->EditValue = ew_FormatNumber($this->Angsuran_Pokok->EditValue, -2, -1, -2, 0);
+		if (strval($this->Angsuran_Pokok->EditValue) <> "" && is_numeric($this->Angsuran_Pokok->EditValue)) $this->Angsuran_Pokok->EditValue = ew_FormatNumber($this->Angsuran_Pokok->EditValue, -2, -2, -2, -2);
 
 		// Angsuran_Bunga
 		$this->Angsuran_Bunga->EditAttrs["class"] = "form-control";
 		$this->Angsuran_Bunga->EditCustomAttributes = "";
 		$this->Angsuran_Bunga->EditValue = $this->Angsuran_Bunga->CurrentValue;
 		$this->Angsuran_Bunga->PlaceHolder = ew_RemoveHtml($this->Angsuran_Bunga->FldCaption());
-		if (strval($this->Angsuran_Bunga->EditValue) <> "" && is_numeric($this->Angsuran_Bunga->EditValue)) $this->Angsuran_Bunga->EditValue = ew_FormatNumber($this->Angsuran_Bunga->EditValue, -2, -1, -2, 0);
+		if (strval($this->Angsuran_Bunga->EditValue) <> "" && is_numeric($this->Angsuran_Bunga->EditValue)) $this->Angsuran_Bunga->EditValue = ew_FormatNumber($this->Angsuran_Bunga->EditValue, -2, -2, -2, -2);
 
 		// Angsuran_Total
 		$this->Angsuran_Total->EditAttrs["class"] = "form-control";
 		$this->Angsuran_Total->EditCustomAttributes = "";
 		$this->Angsuran_Total->EditValue = $this->Angsuran_Total->CurrentValue;
 		$this->Angsuran_Total->PlaceHolder = ew_RemoveHtml($this->Angsuran_Total->FldCaption());
-		if (strval($this->Angsuran_Total->EditValue) <> "" && is_numeric($this->Angsuran_Total->EditValue)) $this->Angsuran_Total->EditValue = ew_FormatNumber($this->Angsuran_Total->EditValue, -2, -1, -2, 0);
+		if (strval($this->Angsuran_Total->EditValue) <> "" && is_numeric($this->Angsuran_Total->EditValue)) $this->Angsuran_Total->EditValue = ew_FormatNumber($this->Angsuran_Total->EditValue, -2, -2, -2, -2);
 
 		// No_Ref
 		$this->No_Ref->EditAttrs["class"] = "form-control";
 		$this->No_Ref->EditCustomAttributes = "";
+
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi->EditAttrs["class"] = "form-control";
+		$this->Biaya_Administrasi->EditCustomAttributes = "";
+		$this->Biaya_Administrasi->EditValue = $this->Biaya_Administrasi->CurrentValue;
+		$this->Biaya_Administrasi->PlaceHolder = ew_RemoveHtml($this->Biaya_Administrasi->FldCaption());
+		if (strval($this->Biaya_Administrasi->EditValue) <> "" && is_numeric($this->Biaya_Administrasi->EditValue)) $this->Biaya_Administrasi->EditValue = ew_FormatNumber($this->Biaya_Administrasi->EditValue, -2, -2, -2, -2);
+
+		// Biaya_Materai
+		$this->Biaya_Materai->EditAttrs["class"] = "form-control";
+		$this->Biaya_Materai->EditCustomAttributes = "";
+		$this->Biaya_Materai->EditValue = $this->Biaya_Materai->CurrentValue;
+		$this->Biaya_Materai->PlaceHolder = ew_RemoveHtml($this->Biaya_Materai->FldCaption());
+		if (strval($this->Biaya_Materai->EditValue) <> "" && is_numeric($this->Biaya_Materai->EditValue)) $this->Biaya_Materai->EditValue = ew_FormatNumber($this->Biaya_Materai->EditValue, -2, -2, -2, -2);
+
+		// marketing_id
+		$this->marketing_id->EditAttrs["class"] = "form-control";
+		$this->marketing_id->EditCustomAttributes = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -992,6 +1101,9 @@ class ct03_pinjaman extends cTable {
 					if ($this->Angsuran_Bunga->Exportable) $Doc->ExportCaption($this->Angsuran_Bunga);
 					if ($this->Angsuran_Total->Exportable) $Doc->ExportCaption($this->Angsuran_Total);
 					if ($this->No_Ref->Exportable) $Doc->ExportCaption($this->No_Ref);
+					if ($this->Biaya_Administrasi->Exportable) $Doc->ExportCaption($this->Biaya_Administrasi);
+					if ($this->Biaya_Materai->Exportable) $Doc->ExportCaption($this->Biaya_Materai);
+					if ($this->marketing_id->Exportable) $Doc->ExportCaption($this->marketing_id);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Kontrak_No->Exportable) $Doc->ExportCaption($this->Kontrak_No);
@@ -1007,6 +1119,9 @@ class ct03_pinjaman extends cTable {
 					if ($this->Angsuran_Bunga->Exportable) $Doc->ExportCaption($this->Angsuran_Bunga);
 					if ($this->Angsuran_Total->Exportable) $Doc->ExportCaption($this->Angsuran_Total);
 					if ($this->No_Ref->Exportable) $Doc->ExportCaption($this->No_Ref);
+					if ($this->Biaya_Administrasi->Exportable) $Doc->ExportCaption($this->Biaya_Administrasi);
+					if ($this->Biaya_Materai->Exportable) $Doc->ExportCaption($this->Biaya_Materai);
+					if ($this->marketing_id->Exportable) $Doc->ExportCaption($this->marketing_id);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1051,6 +1166,9 @@ class ct03_pinjaman extends cTable {
 						if ($this->Angsuran_Bunga->Exportable) $Doc->ExportField($this->Angsuran_Bunga);
 						if ($this->Angsuran_Total->Exportable) $Doc->ExportField($this->Angsuran_Total);
 						if ($this->No_Ref->Exportable) $Doc->ExportField($this->No_Ref);
+						if ($this->Biaya_Administrasi->Exportable) $Doc->ExportField($this->Biaya_Administrasi);
+						if ($this->Biaya_Materai->Exportable) $Doc->ExportField($this->Biaya_Materai);
+						if ($this->marketing_id->Exportable) $Doc->ExportField($this->marketing_id);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Kontrak_No->Exportable) $Doc->ExportField($this->Kontrak_No);
@@ -1066,6 +1184,9 @@ class ct03_pinjaman extends cTable {
 						if ($this->Angsuran_Bunga->Exportable) $Doc->ExportField($this->Angsuran_Bunga);
 						if ($this->Angsuran_Total->Exportable) $Doc->ExportField($this->Angsuran_Total);
 						if ($this->No_Ref->Exportable) $Doc->ExportField($this->No_Ref);
+						if ($this->Biaya_Administrasi->Exportable) $Doc->ExportField($this->Biaya_Administrasi);
+						if ($this->Biaya_Materai->Exportable) $Doc->ExportField($this->Biaya_Materai);
+						if ($this->marketing_id->Exportable) $Doc->ExportField($this->marketing_id);
 					}
 					$Doc->EndExportRow();
 				}

@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t01_nasabahinfo.php" ?>
+<?php include_once "t07_marketinginfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -13,9 +13,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t01_nasabah_delete = NULL; // Initialize page object first
+$t07_marketing_delete = NULL; // Initialize page object first
 
-class ct01_nasabah_delete extends ct01_nasabah {
+class ct07_marketing_delete extends ct07_marketing {
 
 	// Page ID
 	var $PageID = 'delete';
@@ -24,10 +24,10 @@ class ct01_nasabah_delete extends ct01_nasabah {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't01_nasabah';
+	var $TableName = 't07_marketing';
 
 	// Page object name
-	var $PageObjName = 't01_nasabah_delete';
+	var $PageObjName = 't07_marketing_delete';
 
 	// Page name
 	function PageName() {
@@ -224,10 +224,10 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t01_nasabah)
-		if (!isset($GLOBALS["t01_nasabah"]) || get_class($GLOBALS["t01_nasabah"]) == "ct01_nasabah") {
-			$GLOBALS["t01_nasabah"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t01_nasabah"];
+		// Table object (t07_marketing)
+		if (!isset($GLOBALS["t07_marketing"]) || get_class($GLOBALS["t07_marketing"]) == "ct07_marketing") {
+			$GLOBALS["t07_marketing"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t07_marketing"];
 		}
 
 		// Page ID
@@ -236,7 +236,7 @@ class ct01_nasabah_delete extends ct01_nasabah {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't01_nasabah', TRUE);
+			define("EW_TABLE_NAME", 't07_marketing', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -252,11 +252,6 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 		$this->Nama->SetVisibility();
-		$this->Alamat->SetVisibility();
-		$this->No_Telp_Hp->SetVisibility();
-		$this->Pekerjaan->SetVisibility();
-		$this->Pekerjaan_Alamat->SetVisibility();
-		$this->Pekerjaan_No_Telp_Hp->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -288,13 +283,13 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t01_nasabah;
+		global $EW_EXPORT, $t07_marketing;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t01_nasabah);
+				$doc = new $class($t07_marketing);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -340,10 +335,10 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
 		$sFilter = $this->GetKeyFilter();
 		if ($sFilter == "")
-			$this->Page_Terminate("t01_nasabahlist.php"); // Prevent SQL injection, return to list
+			$this->Page_Terminate("t07_marketinglist.php"); // Prevent SQL injection, return to list
 
 		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in t01_nasabah class, t01_nasabahinfo.php
+		// SQL constructor in t07_marketing class, t07_marketinginfo.php
 
 		$this->CurrentFilter = $sFilter;
 
@@ -371,7 +366,7 @@ class ct01_nasabah_delete extends ct01_nasabah {
 			if ($this->TotalRecs <= 0) { // No record found, exit
 				if ($this->Recordset)
 					$this->Recordset->Close();
-				$this->Page_Terminate("t01_nasabahlist.php"); // Return to list
+				$this->Page_Terminate("t07_marketinglist.php"); // Return to list
 			}
 		}
 	}
@@ -433,11 +428,6 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Nama->setDbValue($rs->fields('Nama'));
-		$this->Alamat->setDbValue($rs->fields('Alamat'));
-		$this->No_Telp_Hp->setDbValue($rs->fields('No_Telp_Hp'));
-		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
-		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
-		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
 	}
 
 	// Load DbValue from recordset
@@ -446,11 +436,6 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
 		$this->Nama->DbValue = $row['Nama'];
-		$this->Alamat->DbValue = $row['Alamat'];
-		$this->No_Telp_Hp->DbValue = $row['No_Telp_Hp'];
-		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
-		$this->Pekerjaan_Alamat->DbValue = $row['Pekerjaan_Alamat'];
-		$this->Pekerjaan_No_Telp_Hp->DbValue = $row['Pekerjaan_No_Telp_Hp'];
 	}
 
 	// Render row values based on field settings
@@ -465,11 +450,6 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		// Common render codes for all row types
 		// id
 		// Nama
-		// Alamat
-		// No_Telp_Hp
-		// Pekerjaan
-		// Pekerjaan_Alamat
-		// Pekerjaan_No_Telp_Hp
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -481,55 +461,10 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
 
-		// Alamat
-		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
-		$this->Alamat->ViewCustomAttributes = "";
-
-		// No_Telp_Hp
-		$this->No_Telp_Hp->ViewValue = $this->No_Telp_Hp->CurrentValue;
-		$this->No_Telp_Hp->ViewCustomAttributes = "";
-
-		// Pekerjaan
-		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
-		$this->Pekerjaan->ViewCustomAttributes = "";
-
-		// Pekerjaan_Alamat
-		$this->Pekerjaan_Alamat->ViewValue = $this->Pekerjaan_Alamat->CurrentValue;
-		$this->Pekerjaan_Alamat->ViewCustomAttributes = "";
-
-		// Pekerjaan_No_Telp_Hp
-		$this->Pekerjaan_No_Telp_Hp->ViewValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
-		$this->Pekerjaan_No_Telp_Hp->ViewCustomAttributes = "";
-
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
 			$this->Nama->TooltipValue = "";
-
-			// Alamat
-			$this->Alamat->LinkCustomAttributes = "";
-			$this->Alamat->HrefValue = "";
-			$this->Alamat->TooltipValue = "";
-
-			// No_Telp_Hp
-			$this->No_Telp_Hp->LinkCustomAttributes = "";
-			$this->No_Telp_Hp->HrefValue = "";
-			$this->No_Telp_Hp->TooltipValue = "";
-
-			// Pekerjaan
-			$this->Pekerjaan->LinkCustomAttributes = "";
-			$this->Pekerjaan->HrefValue = "";
-			$this->Pekerjaan->TooltipValue = "";
-
-			// Pekerjaan_Alamat
-			$this->Pekerjaan_Alamat->LinkCustomAttributes = "";
-			$this->Pekerjaan_Alamat->HrefValue = "";
-			$this->Pekerjaan_Alamat->TooltipValue = "";
-
-			// Pekerjaan_No_Telp_Hp
-			$this->Pekerjaan_No_Telp_Hp->LinkCustomAttributes = "";
-			$this->Pekerjaan_No_Telp_Hp->HrefValue = "";
-			$this->Pekerjaan_No_Telp_Hp->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -624,7 +559,7 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t01_nasabahlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t07_marketinglist.php"), "", $this->TableVar, TRUE);
 		$PageId = "delete";
 		$Breadcrumb->Add("delete", $PageId, $url);
 	}
@@ -710,29 +645,29 @@ class ct01_nasabah_delete extends ct01_nasabah {
 <?php
 
 // Create page object
-if (!isset($t01_nasabah_delete)) $t01_nasabah_delete = new ct01_nasabah_delete();
+if (!isset($t07_marketing_delete)) $t07_marketing_delete = new ct07_marketing_delete();
 
 // Page init
-$t01_nasabah_delete->Page_Init();
+$t07_marketing_delete->Page_Init();
 
 // Page main
-$t01_nasabah_delete->Page_Main();
+$t07_marketing_delete->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t01_nasabah_delete->Page_Render();
+$t07_marketing_delete->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = ft01_nasabahdelete = new ew_Form("ft01_nasabahdelete", "delete");
+var CurrentForm = ft07_marketingdelete = new ew_Form("ft07_marketingdelete", "delete");
 
 // Form_CustomValidate event
-ft01_nasabahdelete.Form_CustomValidate = 
+ft07_marketingdelete.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -741,9 +676,9 @@ ft01_nasabahdelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft01_nasabahdelete.ValidateRequired = true;
+ft07_marketingdelete.ValidateRequired = true;
 <?php } else { ?>
-ft01_nasabahdelete.ValidateRequired = false; 
+ft07_marketingdelete.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -759,118 +694,63 @@ ft01_nasabahdelete.ValidateRequired = false;
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $t01_nasabah_delete->ShowPageHeader(); ?>
+<?php $t07_marketing_delete->ShowPageHeader(); ?>
 <?php
-$t01_nasabah_delete->ShowMessage();
+$t07_marketing_delete->ShowMessage();
 ?>
-<form name="ft01_nasabahdelete" id="ft01_nasabahdelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t01_nasabah_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t01_nasabah_delete->Token ?>">
+<form name="ft07_marketingdelete" id="ft07_marketingdelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t07_marketing_delete->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t07_marketing_delete->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t01_nasabah">
+<input type="hidden" name="t" value="t07_marketing">
 <input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($t01_nasabah_delete->RecKeys as $key) { ?>
+<?php foreach ($t07_marketing_delete->RecKeys as $key) { ?>
 <?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
 <input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
 <?php } ?>
 <div class="ewGrid">
 <div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <table class="table ewTable">
-<?php echo $t01_nasabah->TableCustomInnerHtml ?>
+<?php echo $t07_marketing->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t01_nasabah->Nama->Visible) { // Nama ?>
-		<th><span id="elh_t01_nasabah_Nama" class="t01_nasabah_Nama"><?php echo $t01_nasabah->Nama->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t01_nasabah->Alamat->Visible) { // Alamat ?>
-		<th><span id="elh_t01_nasabah_Alamat" class="t01_nasabah_Alamat"><?php echo $t01_nasabah->Alamat->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t01_nasabah->No_Telp_Hp->Visible) { // No_Telp_Hp ?>
-		<th><span id="elh_t01_nasabah_No_Telp_Hp" class="t01_nasabah_No_Telp_Hp"><?php echo $t01_nasabah->No_Telp_Hp->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
-		<th><span id="elh_t01_nasabah_Pekerjaan" class="t01_nasabah_Pekerjaan"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t01_nasabah->Pekerjaan_Alamat->Visible) { // Pekerjaan_Alamat ?>
-		<th><span id="elh_t01_nasabah_Pekerjaan_Alamat" class="t01_nasabah_Pekerjaan_Alamat"><?php echo $t01_nasabah->Pekerjaan_Alamat->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t01_nasabah->Pekerjaan_No_Telp_Hp->Visible) { // Pekerjaan_No_Telp_Hp ?>
-		<th><span id="elh_t01_nasabah_Pekerjaan_No_Telp_Hp" class="t01_nasabah_Pekerjaan_No_Telp_Hp"><?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->FldCaption() ?></span></th>
+<?php if ($t07_marketing->Nama->Visible) { // Nama ?>
+		<th><span id="elh_t07_marketing_Nama" class="t07_marketing_Nama"><?php echo $t07_marketing->Nama->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
 	<tbody>
 <?php
-$t01_nasabah_delete->RecCnt = 0;
+$t07_marketing_delete->RecCnt = 0;
 $i = 0;
-while (!$t01_nasabah_delete->Recordset->EOF) {
-	$t01_nasabah_delete->RecCnt++;
-	$t01_nasabah_delete->RowCnt++;
+while (!$t07_marketing_delete->Recordset->EOF) {
+	$t07_marketing_delete->RecCnt++;
+	$t07_marketing_delete->RowCnt++;
 
 	// Set row properties
-	$t01_nasabah->ResetAttrs();
-	$t01_nasabah->RowType = EW_ROWTYPE_VIEW; // View
+	$t07_marketing->ResetAttrs();
+	$t07_marketing->RowType = EW_ROWTYPE_VIEW; // View
 
 	// Get the field contents
-	$t01_nasabah_delete->LoadRowValues($t01_nasabah_delete->Recordset);
+	$t07_marketing_delete->LoadRowValues($t07_marketing_delete->Recordset);
 
 	// Render row
-	$t01_nasabah_delete->RenderRow();
+	$t07_marketing_delete->RenderRow();
 ?>
-	<tr<?php echo $t01_nasabah->RowAttributes() ?>>
-<?php if ($t01_nasabah->Nama->Visible) { // Nama ?>
-		<td<?php echo $t01_nasabah->Nama->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Nama" class="t01_nasabah_Nama">
-<span<?php echo $t01_nasabah->Nama->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Nama->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t01_nasabah->Alamat->Visible) { // Alamat ?>
-		<td<?php echo $t01_nasabah->Alamat->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Alamat" class="t01_nasabah_Alamat">
-<span<?php echo $t01_nasabah->Alamat->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Alamat->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t01_nasabah->No_Telp_Hp->Visible) { // No_Telp_Hp ?>
-		<td<?php echo $t01_nasabah->No_Telp_Hp->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_No_Telp_Hp" class="t01_nasabah_No_Telp_Hp">
-<span<?php echo $t01_nasabah->No_Telp_Hp->ViewAttributes() ?>>
-<?php echo $t01_nasabah->No_Telp_Hp->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
-		<td<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Pekerjaan" class="t01_nasabah_Pekerjaan">
-<span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t01_nasabah->Pekerjaan_Alamat->Visible) { // Pekerjaan_Alamat ?>
-		<td<?php echo $t01_nasabah->Pekerjaan_Alamat->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Pekerjaan_Alamat" class="t01_nasabah_Pekerjaan_Alamat">
-<span<?php echo $t01_nasabah->Pekerjaan_Alamat->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan_Alamat->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t01_nasabah->Pekerjaan_No_Telp_Hp->Visible) { // Pekerjaan_No_Telp_Hp ?>
-		<td<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->CellAttributes() ?>>
-<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Pekerjaan_No_Telp_Hp" class="t01_nasabah_Pekerjaan_No_Telp_Hp">
-<span<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ListViewValue() ?></span>
+	<tr<?php echo $t07_marketing->RowAttributes() ?>>
+<?php if ($t07_marketing->Nama->Visible) { // Nama ?>
+		<td<?php echo $t07_marketing->Nama->CellAttributes() ?>>
+<span id="el<?php echo $t07_marketing_delete->RowCnt ?>_t07_marketing_Nama" class="t07_marketing_Nama">
+<span<?php echo $t07_marketing->Nama->ViewAttributes() ?>>
+<?php echo $t07_marketing->Nama->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
 	</tr>
 <?php
-	$t01_nasabah_delete->Recordset->MoveNext();
+	$t07_marketing_delete->Recordset->MoveNext();
 }
-$t01_nasabah_delete->Recordset->Close();
+$t07_marketing_delete->Recordset->Close();
 ?>
 </tbody>
 </table>
@@ -878,14 +758,14 @@ $t01_nasabah_delete->Recordset->Close();
 </div>
 <div>
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t01_nasabah_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t07_marketing_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 </div>
 </form>
 <script type="text/javascript">
-ft01_nasabahdelete.Init();
+ft07_marketingdelete.Init();
 </script>
 <?php
-$t01_nasabah_delete->ShowPageFooter();
+$t07_marketing_delete->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -897,5 +777,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t01_nasabah_delete->Page_Terminate();
+$t07_marketing_delete->Page_Terminate();
 ?>

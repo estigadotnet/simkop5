@@ -1,12 +1,12 @@
 <?php
 
 // Global variable for table object
-$t01_nasabah = NULL;
+$t07_marketing = NULL;
 
 //
-// Table class for t01_nasabah
+// Table class for t07_marketing
 //
-class ct01_nasabah extends cTable {
+class ct07_marketing extends cTable {
 	var $AuditTrailOnAdd = TRUE;
 	var $AuditTrailOnEdit = TRUE;
 	var $AuditTrailOnDelete = TRUE;
@@ -15,11 +15,6 @@ class ct01_nasabah extends cTable {
 	var $AuditTrailOnSearch = FALSE;
 	var $id;
 	var $Nama;
-	var $Alamat;
-	var $No_Telp_Hp;
-	var $Pekerjaan;
-	var $Pekerjaan_Alamat;
-	var $Pekerjaan_No_Telp_Hp;
 
 	//
 	// Table class constructor
@@ -29,12 +24,12 @@ class ct01_nasabah extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 't01_nasabah';
-		$this->TableName = 't01_nasabah';
+		$this->TableVar = 't07_marketing';
+		$this->TableName = 't07_marketing';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t01_nasabah`";
+		$this->UpdateTable = "`t07_marketing`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -52,40 +47,15 @@ class ct01_nasabah extends cTable {
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
 		// id
-		$this->id = new cField('t01_nasabah', 't01_nasabah', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id = new cField('t07_marketing', 't07_marketing', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
 
 		// Nama
-		$this->Nama = new cField('t01_nasabah', 't01_nasabah', 'x_Nama', 'Nama', '`Nama`', '`Nama`', 200, -1, FALSE, '`Nama`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Nama = new cField('t07_marketing', 't07_marketing', 'x_Nama', 'Nama', '`Nama`', '`Nama`', 200, -1, FALSE, '`Nama`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Nama->Sortable = TRUE; // Allow sort
 		$this->fields['Nama'] = &$this->Nama;
-
-		// Alamat
-		$this->Alamat = new cField('t01_nasabah', 't01_nasabah', 'x_Alamat', 'Alamat', '`Alamat`', '`Alamat`', 201, -1, FALSE, '`Alamat`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->Alamat->Sortable = TRUE; // Allow sort
-		$this->fields['Alamat'] = &$this->Alamat;
-
-		// No_Telp_Hp
-		$this->No_Telp_Hp = new cField('t01_nasabah', 't01_nasabah', 'x_No_Telp_Hp', 'No_Telp_Hp', '`No_Telp_Hp`', '`No_Telp_Hp`', 200, -1, FALSE, '`No_Telp_Hp`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->No_Telp_Hp->Sortable = TRUE; // Allow sort
-		$this->fields['No_Telp_Hp'] = &$this->No_Telp_Hp;
-
-		// Pekerjaan
-		$this->Pekerjaan = new cField('t01_nasabah', 't01_nasabah', 'x_Pekerjaan', 'Pekerjaan', '`Pekerjaan`', '`Pekerjaan`', 200, -1, FALSE, '`Pekerjaan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Pekerjaan->Sortable = TRUE; // Allow sort
-		$this->fields['Pekerjaan'] = &$this->Pekerjaan;
-
-		// Pekerjaan_Alamat
-		$this->Pekerjaan_Alamat = new cField('t01_nasabah', 't01_nasabah', 'x_Pekerjaan_Alamat', 'Pekerjaan_Alamat', '`Pekerjaan_Alamat`', '`Pekerjaan_Alamat`', 201, -1, FALSE, '`Pekerjaan_Alamat`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->Pekerjaan_Alamat->Sortable = TRUE; // Allow sort
-		$this->fields['Pekerjaan_Alamat'] = &$this->Pekerjaan_Alamat;
-
-		// Pekerjaan_No_Telp_Hp
-		$this->Pekerjaan_No_Telp_Hp = new cField('t01_nasabah', 't01_nasabah', 'x_Pekerjaan_No_Telp_Hp', 'Pekerjaan_No_Telp_Hp', '`Pekerjaan_No_Telp_Hp`', '`Pekerjaan_No_Telp_Hp`', 200, -1, FALSE, '`Pekerjaan_No_Telp_Hp`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Pekerjaan_No_Telp_Hp->Sortable = TRUE; // Allow sort
-		$this->fields['Pekerjaan_No_Telp_Hp'] = &$this->Pekerjaan_No_Telp_Hp;
 	}
 
 	// Set Field Visibility
@@ -111,35 +81,11 @@ class ct01_nasabah extends cTable {
 		}
 	}
 
-	// Current detail table name
-	function getCurrentDetailTable() {
-		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE];
-	}
-
-	function setCurrentDetailTable($v) {
-		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE] = $v;
-	}
-
-	// Get detail url
-	function GetDetailUrl() {
-
-		// Detail url
-		$sDetailUrl = "";
-		if ($this->getCurrentDetailTable() == "t02_jaminan") {
-			$sDetailUrl = $GLOBALS["t02_jaminan"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
-			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
-		}
-		if ($sDetailUrl == "") {
-			$sDetailUrl = "t01_nasabahlist.php";
-		}
-		return $sDetailUrl;
-	}
-
 	// Table level SQL
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t01_nasabah`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t07_marketing`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -392,26 +338,6 @@ class ct01_nasabah extends cTable {
 	// Update
 	function Update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE) {
 		$conn = &$this->Connection();
-
-		// Cascade Update detail table 't02_jaminan'
-		$bCascadeUpdate = FALSE;
-		$rscascade = array();
-		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'nasabah_id'
-			$bCascadeUpdate = TRUE;
-			$rscascade['nasabah_id'] = $rs['id']; 
-		}
-		if ($bCascadeUpdate) {
-			if (!isset($GLOBALS["t02_jaminan"])) $GLOBALS["t02_jaminan"] = new ct02_jaminan();
-			$rswrk = $GLOBALS["t02_jaminan"]->LoadRs("`nasabah_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
-			while ($rswrk && !$rswrk->EOF) {
-				$rskey = array();
-				$fldname = 'id';
-				$rskey[$fldname] = $rswrk->fields[$fldname];
-				$bUpdate = $GLOBALS["t02_jaminan"]->Update($rscascade, $rskey, $rswrk->fields);
-				if (!$bUpdate) return FALSE;
-				$rswrk->MoveNext();
-			}
-		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
@@ -443,14 +369,6 @@ class ct01_nasabah extends cTable {
 	// Delete
 	function Delete(&$rs, $where = "", $curfilter = TRUE) {
 		$conn = &$this->Connection();
-
-		// Cascade delete detail table 't02_jaminan'
-		if (!isset($GLOBALS["t02_jaminan"])) $GLOBALS["t02_jaminan"] = new ct02_jaminan();
-		$rscascade = $GLOBALS["t02_jaminan"]->LoadRs("`nasabah_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
-		while ($rscascade && !$rscascade->EOF) {
-			$GLOBALS["t02_jaminan"]->Delete($rscascade->fields);
-			$rscascade->MoveNext();
-		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
 		if ($bDelete && $this->AuditTrailOnDelete)
 			$this->WriteAuditTrailOnDelete($rs);
@@ -481,7 +399,7 @@ class ct01_nasabah extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "t01_nasabahlist.php";
+			return "t07_marketinglist.php";
 		}
 	}
 
@@ -491,33 +409,30 @@ class ct01_nasabah extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "t01_nasabahlist.php";
+		return "t07_marketinglist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("t01_nasabahview.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("t07_marketingview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("t01_nasabahview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("t07_marketingview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "t01_nasabahadd.php?" . $this->UrlParm($parm);
+			$url = "t07_marketingadd.php?" . $this->UrlParm($parm);
 		else
-			$url = "t01_nasabahadd.php";
+			$url = "t07_marketingadd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		if ($parm <> "")
-			$url = $this->KeyUrl("t01_nasabahedit.php", $this->UrlParm($parm));
-		else
-			$url = $this->KeyUrl("t01_nasabahedit.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+		$url = $this->KeyUrl("t07_marketingedit.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -529,10 +444,7 @@ class ct01_nasabah extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		if ($parm <> "")
-			$url = $this->KeyUrl("t01_nasabahadd.php", $this->UrlParm($parm));
-		else
-			$url = $this->KeyUrl("t01_nasabahadd.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+		$url = $this->KeyUrl("t07_marketingadd.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -544,7 +456,7 @@ class ct01_nasabah extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("t01_nasabahdelete.php", $this->UrlParm());
+		return $this->KeyUrl("t07_marketingdelete.php", $this->UrlParm());
 	}
 
 	// Add master url
@@ -647,11 +559,6 @@ class ct01_nasabah extends cTable {
 	function LoadListRowValues(&$rs) {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Nama->setDbValue($rs->fields('Nama'));
-		$this->Alamat->setDbValue($rs->fields('Alamat'));
-		$this->No_Telp_Hp->setDbValue($rs->fields('No_Telp_Hp'));
-		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
-		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
-		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
 	}
 
 	// Render list row values
@@ -664,11 +571,6 @@ class ct01_nasabah extends cTable {
    // Common render codes
 		// id
 		// Nama
-		// Alamat
-		// No_Telp_Hp
-		// Pekerjaan
-		// Pekerjaan_Alamat
-		// Pekerjaan_No_Telp_Hp
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -677,26 +579,6 @@ class ct01_nasabah extends cTable {
 		// Nama
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
-
-		// Alamat
-		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
-		$this->Alamat->ViewCustomAttributes = "";
-
-		// No_Telp_Hp
-		$this->No_Telp_Hp->ViewValue = $this->No_Telp_Hp->CurrentValue;
-		$this->No_Telp_Hp->ViewCustomAttributes = "";
-
-		// Pekerjaan
-		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
-		$this->Pekerjaan->ViewCustomAttributes = "";
-
-		// Pekerjaan_Alamat
-		$this->Pekerjaan_Alamat->ViewValue = $this->Pekerjaan_Alamat->CurrentValue;
-		$this->Pekerjaan_Alamat->ViewCustomAttributes = "";
-
-		// Pekerjaan_No_Telp_Hp
-		$this->Pekerjaan_No_Telp_Hp->ViewValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
-		$this->Pekerjaan_No_Telp_Hp->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -707,31 +589,6 @@ class ct01_nasabah extends cTable {
 		$this->Nama->LinkCustomAttributes = "";
 		$this->Nama->HrefValue = "";
 		$this->Nama->TooltipValue = "";
-
-		// Alamat
-		$this->Alamat->LinkCustomAttributes = "";
-		$this->Alamat->HrefValue = "";
-		$this->Alamat->TooltipValue = "";
-
-		// No_Telp_Hp
-		$this->No_Telp_Hp->LinkCustomAttributes = "";
-		$this->No_Telp_Hp->HrefValue = "";
-		$this->No_Telp_Hp->TooltipValue = "";
-
-		// Pekerjaan
-		$this->Pekerjaan->LinkCustomAttributes = "";
-		$this->Pekerjaan->HrefValue = "";
-		$this->Pekerjaan->TooltipValue = "";
-
-		// Pekerjaan_Alamat
-		$this->Pekerjaan_Alamat->LinkCustomAttributes = "";
-		$this->Pekerjaan_Alamat->HrefValue = "";
-		$this->Pekerjaan_Alamat->TooltipValue = "";
-
-		// Pekerjaan_No_Telp_Hp
-		$this->Pekerjaan_No_Telp_Hp->LinkCustomAttributes = "";
-		$this->Pekerjaan_No_Telp_Hp->HrefValue = "";
-		$this->Pekerjaan_No_Telp_Hp->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -755,36 +612,6 @@ class ct01_nasabah extends cTable {
 		$this->Nama->EditCustomAttributes = "";
 		$this->Nama->EditValue = $this->Nama->CurrentValue;
 		$this->Nama->PlaceHolder = ew_RemoveHtml($this->Nama->FldCaption());
-
-		// Alamat
-		$this->Alamat->EditAttrs["class"] = "form-control";
-		$this->Alamat->EditCustomAttributes = "";
-		$this->Alamat->EditValue = $this->Alamat->CurrentValue;
-		$this->Alamat->PlaceHolder = ew_RemoveHtml($this->Alamat->FldCaption());
-
-		// No_Telp_Hp
-		$this->No_Telp_Hp->EditAttrs["class"] = "form-control";
-		$this->No_Telp_Hp->EditCustomAttributes = "";
-		$this->No_Telp_Hp->EditValue = $this->No_Telp_Hp->CurrentValue;
-		$this->No_Telp_Hp->PlaceHolder = ew_RemoveHtml($this->No_Telp_Hp->FldCaption());
-
-		// Pekerjaan
-		$this->Pekerjaan->EditAttrs["class"] = "form-control";
-		$this->Pekerjaan->EditCustomAttributes = "";
-		$this->Pekerjaan->EditValue = $this->Pekerjaan->CurrentValue;
-		$this->Pekerjaan->PlaceHolder = ew_RemoveHtml($this->Pekerjaan->FldCaption());
-
-		// Pekerjaan_Alamat
-		$this->Pekerjaan_Alamat->EditAttrs["class"] = "form-control";
-		$this->Pekerjaan_Alamat->EditCustomAttributes = "";
-		$this->Pekerjaan_Alamat->EditValue = $this->Pekerjaan_Alamat->CurrentValue;
-		$this->Pekerjaan_Alamat->PlaceHolder = ew_RemoveHtml($this->Pekerjaan_Alamat->FldCaption());
-
-		// Pekerjaan_No_Telp_Hp
-		$this->Pekerjaan_No_Telp_Hp->EditAttrs["class"] = "form-control";
-		$this->Pekerjaan_No_Telp_Hp->EditCustomAttributes = "";
-		$this->Pekerjaan_No_Telp_Hp->EditValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
-		$this->Pekerjaan_No_Telp_Hp->PlaceHolder = ew_RemoveHtml($this->Pekerjaan_No_Telp_Hp->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -814,19 +641,9 @@ class ct01_nasabah extends cTable {
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
-					if ($this->Alamat->Exportable) $Doc->ExportCaption($this->Alamat);
-					if ($this->No_Telp_Hp->Exportable) $Doc->ExportCaption($this->No_Telp_Hp);
-					if ($this->Pekerjaan->Exportable) $Doc->ExportCaption($this->Pekerjaan);
-					if ($this->Pekerjaan_Alamat->Exportable) $Doc->ExportCaption($this->Pekerjaan_Alamat);
-					if ($this->Pekerjaan_No_Telp_Hp->Exportable) $Doc->ExportCaption($this->Pekerjaan_No_Telp_Hp);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
-					if ($this->Alamat->Exportable) $Doc->ExportCaption($this->Alamat);
-					if ($this->No_Telp_Hp->Exportable) $Doc->ExportCaption($this->No_Telp_Hp);
-					if ($this->Pekerjaan->Exportable) $Doc->ExportCaption($this->Pekerjaan);
-					if ($this->Pekerjaan_Alamat->Exportable) $Doc->ExportCaption($this->Pekerjaan_Alamat);
-					if ($this->Pekerjaan_No_Telp_Hp->Exportable) $Doc->ExportCaption($this->Pekerjaan_No_Telp_Hp);
 				}
 				$Doc->EndExportRow();
 			}
@@ -859,19 +676,9 @@ class ct01_nasabah extends cTable {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
-						if ($this->Alamat->Exportable) $Doc->ExportField($this->Alamat);
-						if ($this->No_Telp_Hp->Exportable) $Doc->ExportField($this->No_Telp_Hp);
-						if ($this->Pekerjaan->Exportable) $Doc->ExportField($this->Pekerjaan);
-						if ($this->Pekerjaan_Alamat->Exportable) $Doc->ExportField($this->Pekerjaan_Alamat);
-						if ($this->Pekerjaan_No_Telp_Hp->Exportable) $Doc->ExportField($this->Pekerjaan_No_Telp_Hp);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
-						if ($this->Alamat->Exportable) $Doc->ExportField($this->Alamat);
-						if ($this->No_Telp_Hp->Exportable) $Doc->ExportField($this->No_Telp_Hp);
-						if ($this->Pekerjaan->Exportable) $Doc->ExportField($this->Pekerjaan);
-						if ($this->Pekerjaan_Alamat->Exportable) $Doc->ExportField($this->Pekerjaan_Alamat);
-						if ($this->Pekerjaan_No_Telp_Hp->Exportable) $Doc->ExportField($this->Pekerjaan_No_Telp_Hp);
 					}
 					$Doc->EndExportRow();
 				}
@@ -915,7 +722,7 @@ class ct01_nasabah extends cTable {
 
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
-		$table = 't01_nasabah';
+		$table = 't07_marketing';
 		$usr = CurrentUserName();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -924,7 +731,7 @@ class ct01_nasabah extends cTable {
 	function WriteAuditTrailOnAdd(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnAdd) return;
-		$table = 't01_nasabah';
+		$table = 't07_marketing';
 
 		// Get key value
 		$key = "";
@@ -958,7 +765,7 @@ class ct01_nasabah extends cTable {
 	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
 		global $Language;
 		if (!$this->AuditTrailOnEdit) return;
-		$table = 't01_nasabah';
+		$table = 't07_marketing';
 
 		// Get key value
 		$key = "";
@@ -1005,7 +812,7 @@ class ct01_nasabah extends cTable {
 	function WriteAuditTrailOnDelete(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnDelete) return;
-		$table = 't01_nasabah';
+		$table = 't07_marketing';
 
 		// Get key value
 		$key = "";

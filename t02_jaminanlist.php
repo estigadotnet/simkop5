@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t02_jaminaninfo.php" ?>
+<?php include_once "t01_nasabahinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -285,6 +286,9 @@ class ct02_jaminan_list extends ct02_jaminan {
 		$this->MultiDeleteUrl = "t02_jaminandelete.php";
 		$this->MultiUpdateUrl = "t02_jaminanupdate.php";
 
+		// Table object (t01_nasabah)
+		if (!isset($GLOBALS['t01_nasabah'])) $GLOBALS['t01_nasabah'] = new ct01_nasabah();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -342,14 +346,13 @@ class ct02_jaminan_list extends ct02_jaminan {
 
 		// Set up list options
 		$this->SetupListOptions();
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->nasabah_id->SetVisibility();
 		$this->Merk_Type->SetVisibility();
 		$this->No_Rangka->SetVisibility();
 		$this->No_Mesin->SetVisibility();
 		$this->Warna->SetVisibility();
 		$this->No_Pol->SetVisibility();
+		$this->Keterangan->SetVisibility();
 		$this->Atas_Nama->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -381,6 +384,9 @@ class ct02_jaminan_list extends ct02_jaminan {
 
 		// Create Token
 		$this->CreateToken();
+
+		// Set up master detail parameters
+		$this->SetUpMasterParms();
 
 		// Setup other options
 		$this->SetupOtherOptions();
@@ -594,8 +600,28 @@ class ct02_jaminan_list extends ct02_jaminan {
 
 		// Build filter
 		$sFilter = "";
+
+		// Restore master/detail filter
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Restore master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Restore detail filter
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
+
+		// Load master record
+		if ($this->CurrentMode <> "add" && $this->GetMasterFilter() <> "" && $this->getCurrentMasterTable() == "t01_nasabah") {
+			global $t01_nasabah;
+			$rsmaster = $t01_nasabah->LoadRs($this->DbMasterFilter);
+			$this->MasterRecordExists = ($rsmaster && !$rsmaster->EOF);
+			if (!$this->MasterRecordExists) {
+				$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record found
+				$this->Page_Terminate("t01_nasabahlist.php"); // Return to master page
+			} else {
+				$t01_nasabah->LoadListRowValues($rsmaster);
+				$t01_nasabah->RowType = EW_ROWTYPE_MASTER; // Master row
+				$t01_nasabah->RenderListRow();
+				$rsmaster->Close();
+			}
+		}
 
 		// Set up filter in session
 		$this->setSessionWhere($sFilter);
@@ -969,13 +995,13 @@ class ct02_jaminan_list extends ct02_jaminan {
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
 			$this->UpdateSort($this->nasabah_id); // nasabah_id
 			$this->UpdateSort($this->Merk_Type); // Merk_Type
 			$this->UpdateSort($this->No_Rangka); // No_Rangka
 			$this->UpdateSort($this->No_Mesin); // No_Mesin
 			$this->UpdateSort($this->Warna); // Warna
 			$this->UpdateSort($this->No_Pol); // No_Pol
+			$this->UpdateSort($this->Keterangan); // Keterangan
 			$this->UpdateSort($this->Atas_Nama); // Atas_Nama
 			$this->setStartRecordNumber(1); // Reset start position
 		}
@@ -1005,17 +1031,25 @@ class ct02_jaminan_list extends ct02_jaminan {
 			if ($this->Command == "reset" || $this->Command == "resetall")
 				$this->ResetSearchParms();
 
+			// Reset master/detail keys
+			if ($this->Command == "resetall") {
+				$this->setCurrentMasterTable(""); // Clear master table
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+				$this->nasabah_id->setSessionValue("");
+			}
+
 			// Reset sorting order
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->id->setSort("");
 				$this->nasabah_id->setSort("");
 				$this->Merk_Type->setSort("");
 				$this->No_Rangka->setSort("");
 				$this->No_Mesin->setSort("");
 				$this->Warna->setSort("");
 				$this->No_Pol->setSort("");
+				$this->Keterangan->setSort("");
 				$this->Atas_Nama->setSort("");
 			}
 
@@ -1032,37 +1066,37 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// Add group option item
 		$item = &$this->ListOptions->Add($this->ListOptions->GroupOptionName);
 		$item->Body = "";
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
 		$item->Visible = TRUE;
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
 		$item->Visible = TRUE;
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
 		$item->Visible = TRUE;
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
 		$item->Visible = TRUE;
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 		$item->ShowInDropDown = FALSE;
@@ -1070,8 +1104,17 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// "checkbox"
 		$item = &$this->ListOptions->Add("checkbox");
 		$item->Visible = FALSE;
-		$item->OnLeft = FALSE;
+		$item->OnLeft = TRUE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
+		$item->MoveTo(0);
+		$item->ShowInDropDown = FALSE;
+		$item->ShowInButtonGroup = FALSE;
+
+		// "sequence"
+		$item = &$this->ListOptions->Add("sequence");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = TRUE;
+		$item->OnLeft = TRUE; // Always on left
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
@@ -1095,6 +1138,10 @@ class ct02_jaminan_list extends ct02_jaminan {
 	function RenderListOptions() {
 		global $Security, $Language, $objForm;
 		$this->ListOptions->LoadDefault();
+
+		// "sequence"
+		$oListOpt = &$this->ListOptions->Items["sequence"];
+		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
 
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
@@ -1541,6 +1588,26 @@ class ct02_jaminan_list extends ct02_jaminan {
 
 		// nasabah_id
 		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+		if (strval($this->nasabah_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+		$sWhereWrk = "";
+		$this->nasabah_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			}
+		} else {
+			$this->nasabah_id->ViewValue = NULL;
+		}
 		$this->nasabah_id->ViewCustomAttributes = "";
 
 		// Merk_Type
@@ -1563,14 +1630,13 @@ class ct02_jaminan_list extends ct02_jaminan {
 		$this->No_Pol->ViewValue = $this->No_Pol->CurrentValue;
 		$this->No_Pol->ViewCustomAttributes = "";
 
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
+
 		// Atas_Nama
 		$this->Atas_Nama->ViewValue = $this->Atas_Nama->CurrentValue;
 		$this->Atas_Nama->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// nasabah_id
 			$this->nasabah_id->LinkCustomAttributes = "";
@@ -1602,6 +1668,11 @@ class ct02_jaminan_list extends ct02_jaminan {
 			$this->No_Pol->HrefValue = "";
 			$this->No_Pol->TooltipValue = "";
 
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
+			$this->Keterangan->TooltipValue = "";
+
 			// Atas_Nama
 			$this->Atas_Nama->LinkCustomAttributes = "";
 			$this->Atas_Nama->HrefValue = "";
@@ -1611,6 +1682,72 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// Call Row Rendered event
 		if ($this->RowType <> EW_ROWTYPE_AGGREGATEINIT)
 			$this->Row_Rendered();
+	}
+
+	// Set up master/detail based on QueryString
+	function SetUpMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t01_nasabah") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t01_nasabah"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->nasabah_id->setQueryStringValue($GLOBALS["t01_nasabah"]->id->QueryStringValue);
+					$this->nasabah_id->setSessionValue($this->nasabah_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t01_nasabah"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t01_nasabah") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t01_nasabah"]->id->setFormValue($_POST["fk_id"]);
+					$this->nasabah_id->setFormValue($GLOBALS["t01_nasabah"]->id->FormValue);
+					$this->nasabah_id->setSessionValue($this->nasabah_id->FormValue);
+					if (!is_numeric($GLOBALS["t01_nasabah"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Update URL
+			$this->AddUrl = $this->AddMasterUrl($this->AddUrl);
+			$this->InlineAddUrl = $this->AddMasterUrl($this->InlineAddUrl);
+			$this->GridAddUrl = $this->AddMasterUrl($this->GridAddUrl);
+			$this->GridEditUrl = $this->AddMasterUrl($this->GridEditUrl);
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+
+			// Reset start record counter (new master key)
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t01_nasabah") {
+				if ($this->nasabah_id->CurrentValue == "") $this->nasabah_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
 	}
 
 	// Set up Breadcrumb
@@ -1642,6 +1779,9 @@ class ct02_jaminan_list extends ct02_jaminan {
 	function Page_Load() {
 
 		//echo "Page Load";
+		if (isset($_GET[EW_TABLE_SHOW_MASTER]) == "t01_nasabah") {
+			$this->nasabah_id->Visible = false;
+		}
 	}
 
 	// Page Unload event
@@ -1800,8 +1940,9 @@ ft02_jaminanlist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft02_jaminanlist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
 
+// Form object for search
 var CurrentSearchForm = ft02_jaminanlistsrch = new ew_Form("ft02_jaminanlistsrch");
 </script>
 <script type="text/javascript">
@@ -1822,6 +1963,17 @@ var CurrentSearchForm = ft02_jaminanlistsrch = new ew_Form("ft02_jaminanlistsrch
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
+<?php if (($t02_jaminan->Export == "") || (EW_EXPORT_MASTER_RECORD && $t02_jaminan->Export == "print")) { ?>
+<?php
+if ($t02_jaminan_list->DbMasterFilter <> "" && $t02_jaminan->getCurrentMasterTable() == "t01_nasabah") {
+	if ($t02_jaminan_list->MasterRecordExists) {
+?>
+<?php include_once "t01_nasabahmaster.php" ?>
+<?php
+	}
+}
+?>
+<?php } ?>
 <?php
 	$bSelectLimit = $t02_jaminan_list->UseSelectLimit;
 	if ($bSelectLimit) {
@@ -1845,6 +1997,13 @@ var CurrentSearchForm = ft02_jaminanlistsrch = new ew_Form("ft02_jaminanlistsrch
 			$t02_jaminan_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
 			$t02_jaminan_list->setWarningMessage($Language->Phrase("NoRecord"));
+	}
+
+	// Audit trail on search
+	if ($t02_jaminan_list->AuditTrailOnSearch && $t02_jaminan_list->Command == "search" && !$t02_jaminan_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t02_jaminan_list->getSessionWhere();
+		$t02_jaminan_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
 	}
 $t02_jaminan_list->RenderOtherOptions();
 ?>
@@ -1886,6 +2045,10 @@ $t02_jaminan_list->ShowMessage();
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t02_jaminan_list->Token ?>">
 <?php } ?>
 <input type="hidden" name="t" value="t02_jaminan">
+<?php if ($t02_jaminan->getCurrentMasterTable() == "t01_nasabah" && $t02_jaminan->CurrentAction <> "") { ?>
+<input type="hidden" name="<?php echo EW_TABLE_SHOW_MASTER ?>" value="t01_nasabah">
+<input type="hidden" name="fk_id" value="<?php echo $t02_jaminan->nasabah_id->getSessionValue() ?>">
+<?php } ?>
 <div id="gmp_t02_jaminan" class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <?php if ($t02_jaminan_list->TotalRecs > 0 || $t02_jaminan->CurrentAction == "gridedit") { ?>
 <table id="tbl_t02_jaminanlist" class="table ewTable">
@@ -1903,15 +2066,6 @@ $t02_jaminan_list->RenderListOptions();
 // Render list options (header, left)
 $t02_jaminan_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t02_jaminan->id->Visible) { // id ?>
-	<?php if ($t02_jaminan->SortUrl($t02_jaminan->id) == "") { ?>
-		<th data-name="id"><div id="elh_t02_jaminan_id" class="t02_jaminan_id"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->id) ?>',1);"><div id="elh_t02_jaminan_id" class="t02_jaminan_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t02_jaminan->nasabah_id->Visible) { // nasabah_id ?>
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->nasabah_id) == "") { ?>
 		<th data-name="nasabah_id"><div id="elh_t02_jaminan_nasabah_id" class="t02_jaminan_nasabah_id"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->nasabah_id->FldCaption() ?></div></div></th>
@@ -1963,6 +2117,15 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="No_Pol"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->No_Pol) ?>',1);"><div id="elh_t02_jaminan_No_Pol" class="t02_jaminan_No_Pol">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->No_Pol->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->No_Pol->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->No_Pol->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t02_jaminan->Keterangan->Visible) { // Keterangan ?>
+	<?php if ($t02_jaminan->SortUrl($t02_jaminan->Keterangan) == "") { ?>
+		<th data-name="Keterangan"><div id="elh_t02_jaminan_Keterangan" class="t02_jaminan_Keterangan"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->Keterangan->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Keterangan) ?>',1);"><div id="elh_t02_jaminan_Keterangan" class="t02_jaminan_Keterangan">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->Keterangan->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2040,21 +2203,13 @@ while ($t02_jaminan_list->RecCnt < $t02_jaminan_list->StopRec) {
 // Render list options (body, left)
 $t02_jaminan_list->ListOptions->Render("body", "left", $t02_jaminan_list->RowCnt);
 ?>
-	<?php if ($t02_jaminan->id->Visible) { // id ?>
-		<td data-name="id"<?php echo $t02_jaminan->id->CellAttributes() ?>>
-<span id="el<?php echo $t02_jaminan_list->RowCnt ?>_t02_jaminan_id" class="t02_jaminan_id">
-<span<?php echo $t02_jaminan->id->ViewAttributes() ?>>
-<?php echo $t02_jaminan->id->ListViewValue() ?></span>
-</span>
-<a id="<?php echo $t02_jaminan_list->PageObjName . "_row_" . $t02_jaminan_list->RowCnt ?>"></a></td>
-	<?php } ?>
 	<?php if ($t02_jaminan->nasabah_id->Visible) { // nasabah_id ?>
 		<td data-name="nasabah_id"<?php echo $t02_jaminan->nasabah_id->CellAttributes() ?>>
 <span id="el<?php echo $t02_jaminan_list->RowCnt ?>_t02_jaminan_nasabah_id" class="t02_jaminan_nasabah_id">
 <span<?php echo $t02_jaminan->nasabah_id->ViewAttributes() ?>>
 <?php echo $t02_jaminan->nasabah_id->ListViewValue() ?></span>
 </span>
-</td>
+<a id="<?php echo $t02_jaminan_list->PageObjName . "_row_" . $t02_jaminan_list->RowCnt ?>"></a></td>
 	<?php } ?>
 	<?php if ($t02_jaminan->Merk_Type->Visible) { // Merk_Type ?>
 		<td data-name="Merk_Type"<?php echo $t02_jaminan->Merk_Type->CellAttributes() ?>>
@@ -2093,6 +2248,14 @@ $t02_jaminan_list->ListOptions->Render("body", "left", $t02_jaminan_list->RowCnt
 <span id="el<?php echo $t02_jaminan_list->RowCnt ?>_t02_jaminan_No_Pol" class="t02_jaminan_No_Pol">
 <span<?php echo $t02_jaminan->No_Pol->ViewAttributes() ?>>
 <?php echo $t02_jaminan->No_Pol->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t02_jaminan->Keterangan->Visible) { // Keterangan ?>
+		<td data-name="Keterangan"<?php echo $t02_jaminan->Keterangan->CellAttributes() ?>>
+<span id="el<?php echo $t02_jaminan_list->RowCnt ?>_t02_jaminan_Keterangan" class="t02_jaminan_Keterangan">
+<span<?php echo $t02_jaminan->Keterangan->ViewAttributes() ?>>
+<?php echo $t02_jaminan->Keterangan->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
