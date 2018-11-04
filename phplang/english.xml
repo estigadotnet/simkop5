@@ -593,7 +593,7 @@
       <phrase id="menutext" value="Pinjaman" />
     </menu>
     <menu id="15">
-      <phrase id="menutext" value="Angsuran" />
+      <phrase id="menutext" value="Rincian Angsuran" />
     </menu>
     <menu id="2">
       <phrase id="menutext" value="Jaminan" />
@@ -785,7 +785,7 @@
       </field>
     </table>
     <table id="t04_pinjamanangsurantemp">
-      <phrase id="tblcaption" value="Angsuran" />
+      <phrase id="tblcaption" value="Rincian Angsuran" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>

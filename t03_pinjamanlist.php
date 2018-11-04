@@ -2383,7 +2383,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		//$this->ListOptions->Items["new"]->Body = "xxx";
 		//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
 
-		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"yourpage.php\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsuranadd.php\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
 
 		//"<a class=\"ewAddEdit ewAdd\" title=\"Your Title\" data-caption=\"Your Caption\" href=\"yourpage.php\">My New Button</a>"; // definisikan link, style, dan caption tombol
 		$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"yourpage.php\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
