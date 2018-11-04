@@ -357,7 +357,6 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		$this->Bayar_Titipan->SetVisibility();
 		$this->Bayar_Non_Titipan->SetVisibility();
 		$this->Bayar_Total->SetVisibility();
-		$this->Flag_Edit->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -637,7 +636,6 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 			$this->UpdateSort($this->Bayar_Titipan); // Bayar_Titipan
 			$this->UpdateSort($this->Bayar_Non_Titipan); // Bayar_Non_Titipan
 			$this->UpdateSort($this->Bayar_Total); // Bayar_Total
-			$this->UpdateSort($this->Flag_Edit); // Flag_Edit
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -680,7 +678,6 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 				$this->Bayar_Titipan->setSort("");
 				$this->Bayar_Non_Titipan->setSort("");
 				$this->Bayar_Total->setSort("");
-				$this->Flag_Edit->setSort("");
 			}
 
 			// Reset start position
@@ -1120,7 +1117,6 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
-		$this->Flag_Edit->setDbValue($rs->fields('Flag_Edit'));
 	}
 
 	// Load DbValue from recordset
@@ -1142,7 +1138,6 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
 		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
-		$this->Flag_Edit->DbValue = $row['Flag_Edit'];
 	}
 
 	// Load old record
@@ -1231,7 +1226,6 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
-		// Flag_Edit
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1292,10 +1286,6 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		// Bayar_Total
 		$this->Bayar_Total->ViewValue = $this->Bayar_Total->CurrentValue;
 		$this->Bayar_Total->ViewCustomAttributes = "";
-
-		// Flag_Edit
-		$this->Flag_Edit->ViewValue = $this->Flag_Edit->CurrentValue;
-		$this->Flag_Edit->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -1366,11 +1356,6 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 			$this->Bayar_Total->LinkCustomAttributes = "";
 			$this->Bayar_Total->HrefValue = "";
 			$this->Bayar_Total->TooltipValue = "";
-
-			// Flag_Edit
-			$this->Flag_Edit->LinkCustomAttributes = "";
-			$this->Flag_Edit->HrefValue = "";
-			$this->Flag_Edit->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1760,15 +1745,6 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t04_pinjamanangsuran->Flag_Edit->Visible) { // Flag_Edit ?>
-	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Flag_Edit) == "") { ?>
-		<th data-name="Flag_Edit"><div id="elh_t04_pinjamanangsuran_Flag_Edit" class="t04_pinjamanangsuran_Flag_Edit"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Flag_Edit->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Flag_Edit"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Flag_Edit) ?>',1);"><div id="elh_t04_pinjamanangsuran_Flag_Edit" class="t04_pinjamanangsuran_Flag_Edit">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Flag_Edit->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Flag_Edit->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Flag_Edit->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php
 
 // Render list options (header, right)
@@ -1943,14 +1919,6 @@ $t04_pinjamanangsuran_list->ListOptions->Render("body", "left", $t04_pinjamanang
 <span id="el<?php echo $t04_pinjamanangsuran_list->RowCnt ?>_t04_pinjamanangsuran_Bayar_Total" class="t04_pinjamanangsuran_Bayar_Total">
 <span<?php echo $t04_pinjamanangsuran->Bayar_Total->ViewAttributes() ?>>
 <?php echo $t04_pinjamanangsuran->Bayar_Total->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t04_pinjamanangsuran->Flag_Edit->Visible) { // Flag_Edit ?>
-		<td data-name="Flag_Edit"<?php echo $t04_pinjamanangsuran->Flag_Edit->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_list->RowCnt ?>_t04_pinjamanangsuran_Flag_Edit" class="t04_pinjamanangsuran_Flag_Edit">
-<span<?php echo $t04_pinjamanangsuran->Flag_Edit->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Flag_Edit->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

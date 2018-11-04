@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration date="2018/11/02" author="e.World Technology Ltd.">
-  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2018/11/02 15:35:54" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;">
+<configuration date="2018/11/04" author="e.World Technology Ltd.">
+  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2018/11/04 14:19:26" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;">
     <table id="t01_nasabah" name="t01_nasabah" caption="Nasabah" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1" />
     <table id="t02_jaminan" name="t02_jaminan" caption="Jaminan" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1" />
     <table id="t03_pinjaman" name="t03_pinjaman" caption="Pinjaman" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1" />
     <table id="t04_pinjamanangsuran" name="t04_pinjamanangsuran" caption="t 04 pinjamanangsuran" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1" />
+    <table id="t04_pinjamanangsurantemp" name="t04_pinjamanangsurantemp" caption="Angsuran" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1" />
     <table id="t05_pinjamanjaminan" name="t05_pinjamanjaminan" caption="t 05 pinjamanjaminan" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1" />
     <table id="t06_pinjamantitipan" name="t06_pinjamantitipan" caption="t 06 pinjamantitipan" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1" />
     <table id="t07_marketing" name="t07_marketing" caption="Marketing" userlevel="-2,&quot;Anonymous&quot;,0;" priv="1" />

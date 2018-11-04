@@ -268,7 +268,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->SetVisibility();
 		$this->Bayar_Total->SetVisibility();
 		$this->Keterangan->SetVisibility();
-		$this->Flag_Edit->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -483,8 +482,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		$this->Bayar_Total->OldValue = $this->Bayar_Total->CurrentValue;
 		$this->Keterangan->CurrentValue = NULL;
 		$this->Keterangan->OldValue = $this->Keterangan->CurrentValue;
-		$this->Flag_Edit->CurrentValue = NULL;
-		$this->Flag_Edit->OldValue = $this->Flag_Edit->CurrentValue;
 	}
 
 	// Load form values
@@ -536,9 +533,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		if (!$this->Keterangan->FldIsDetailKey) {
 			$this->Keterangan->setFormValue($objForm->GetValue("x_Keterangan"));
 		}
-		if (!$this->Flag_Edit->FldIsDetailKey) {
-			$this->Flag_Edit->setFormValue($objForm->GetValue("x_Flag_Edit"));
-		}
 	}
 
 	// Restore form values
@@ -561,7 +555,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->CurrentValue = $this->Bayar_Non_Titipan->FormValue;
 		$this->Bayar_Total->CurrentValue = $this->Bayar_Total->FormValue;
 		$this->Keterangan->CurrentValue = $this->Keterangan->FormValue;
-		$this->Flag_Edit->CurrentValue = $this->Flag_Edit->FormValue;
 	}
 
 	// Load row based on key values
@@ -608,7 +601,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
-		$this->Flag_Edit->setDbValue($rs->fields('Flag_Edit'));
 	}
 
 	// Load DbValue from recordset
@@ -630,7 +622,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
 		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
-		$this->Flag_Edit->DbValue = $row['Flag_Edit'];
 	}
 
 	// Load old record
@@ -713,7 +704,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
-		// Flag_Edit
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -778,10 +768,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
-
-		// Flag_Edit
-		$this->Flag_Edit->ViewValue = $this->Flag_Edit->CurrentValue;
-		$this->Flag_Edit->ViewCustomAttributes = "";
 
 			// pinjaman_id
 			$this->pinjaman_id->LinkCustomAttributes = "";
@@ -852,11 +838,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
-
-			// Flag_Edit
-			$this->Flag_Edit->LinkCustomAttributes = "";
-			$this->Flag_Edit->HrefValue = "";
-			$this->Flag_Edit->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// pinjaman_id
@@ -951,12 +932,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->CurrentValue);
 			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
 
-			// Flag_Edit
-			$this->Flag_Edit->EditAttrs["class"] = "form-control";
-			$this->Flag_Edit->EditCustomAttributes = "";
-			$this->Flag_Edit->EditValue = ew_HtmlEncode($this->Flag_Edit->CurrentValue);
-			$this->Flag_Edit->PlaceHolder = ew_RemoveHtml($this->Flag_Edit->FldCaption());
-
 			// Add refer script
 			// pinjaman_id
 
@@ -1014,10 +989,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 			// Keterangan
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
-
-			// Flag_Edit
-			$this->Flag_Edit->LinkCustomAttributes = "";
-			$this->Flag_Edit->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -1100,12 +1071,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 		if (!ew_CheckNumber($this->Bayar_Total->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Bayar_Total->FldErrMsg());
 		}
-		if (!$this->Flag_Edit->FldIsDetailKey && !is_null($this->Flag_Edit->FormValue) && $this->Flag_Edit->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Flag_Edit->FldCaption(), $this->Flag_Edit->ReqErrMsg));
-		}
-		if (!ew_CheckInteger($this->Flag_Edit->FormValue)) {
-			ew_AddMessage($gsFormError, $this->Flag_Edit->FldErrMsg());
-		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -1171,9 +1136,6 @@ class ct04_pinjamanangsuran_add extends ct04_pinjamanangsuran {
 
 		// Keterangan
 		$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, NULL, FALSE);
-
-		// Flag_Edit
-		$this->Flag_Edit->SetDbValueDef($rsnew, $this->Flag_Edit->CurrentValue, 0, FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -1399,12 +1361,6 @@ ft04_pinjamanangsuranadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Bayar_Total");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsuran->Bayar_Total->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Flag_Edit");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsuran->Flag_Edit->FldCaption(), $t04_pinjamanangsuran->Flag_Edit->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Flag_Edit");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsuran->Flag_Edit->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1604,16 +1560,6 @@ $t04_pinjamanangsuran_add->ShowMessage();
 <textarea data-table="t04_pinjamanangsuran" data-field="x_Keterangan" name="x_Keterangan" id="x_Keterangan" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsuran->Keterangan->getPlaceHolder()) ?>"<?php echo $t04_pinjamanangsuran->Keterangan->EditAttributes() ?>><?php echo $t04_pinjamanangsuran->Keterangan->EditValue ?></textarea>
 </span>
 <?php echo $t04_pinjamanangsuran->Keterangan->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t04_pinjamanangsuran->Flag_Edit->Visible) { // Flag_Edit ?>
-	<div id="r_Flag_Edit" class="form-group">
-		<label id="elh_t04_pinjamanangsuran_Flag_Edit" for="x_Flag_Edit" class="col-sm-2 control-label ewLabel"><?php echo $t04_pinjamanangsuran->Flag_Edit->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t04_pinjamanangsuran->Flag_Edit->CellAttributes() ?>>
-<span id="el_t04_pinjamanangsuran_Flag_Edit">
-<input type="text" data-table="t04_pinjamanangsuran" data-field="x_Flag_Edit" name="x_Flag_Edit" id="x_Flag_Edit" size="30" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsuran->Flag_Edit->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsuran->Flag_Edit->EditValue ?>"<?php echo $t04_pinjamanangsuran->Flag_Edit->EditAttributes() ?>>
-</span>
-<?php echo $t04_pinjamanangsuran->Flag_Edit->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

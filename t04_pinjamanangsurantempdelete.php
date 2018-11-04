@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t04_pinjamanangsuraninfo.php" ?>
+<?php include_once "t04_pinjamanangsurantempinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -13,9 +13,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t04_pinjamanangsuran_delete = NULL; // Initialize page object first
+$t04_pinjamanangsurantemp_delete = NULL; // Initialize page object first
 
-class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
+class ct04_pinjamanangsurantemp_delete extends ct04_pinjamanangsurantemp {
 
 	// Page ID
 	var $PageID = 'delete';
@@ -24,10 +24,10 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't04_pinjamanangsuran';
+	var $TableName = 't04_pinjamanangsurantemp';
 
 	// Page object name
-	var $PageObjName = 't04_pinjamanangsuran_delete';
+	var $PageObjName = 't04_pinjamanangsurantemp_delete';
 
 	// Page name
 	function PageName() {
@@ -224,10 +224,10 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t04_pinjamanangsuran)
-		if (!isset($GLOBALS["t04_pinjamanangsuran"]) || get_class($GLOBALS["t04_pinjamanangsuran"]) == "ct04_pinjamanangsuran") {
-			$GLOBALS["t04_pinjamanangsuran"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t04_pinjamanangsuran"];
+		// Table object (t04_pinjamanangsurantemp)
+		if (!isset($GLOBALS["t04_pinjamanangsurantemp"]) || get_class($GLOBALS["t04_pinjamanangsurantemp"]) == "ct04_pinjamanangsurantemp") {
+			$GLOBALS["t04_pinjamanangsurantemp"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t04_pinjamanangsurantemp"];
 		}
 
 		// Page ID
@@ -236,7 +236,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't04_pinjamanangsuran', TRUE);
+			define("EW_TABLE_NAME", 't04_pinjamanangsurantemp', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -266,6 +266,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->Bayar_Titipan->SetVisibility();
 		$this->Bayar_Non_Titipan->SetVisibility();
 		$this->Bayar_Total->SetVisibility();
+		$this->Flag_Edit->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -297,13 +298,13 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t04_pinjamanangsuran;
+		global $EW_EXPORT, $t04_pinjamanangsurantemp;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t04_pinjamanangsuran);
+				$doc = new $class($t04_pinjamanangsurantemp);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -349,10 +350,10 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
 		$sFilter = $this->GetKeyFilter();
 		if ($sFilter == "")
-			$this->Page_Terminate("t04_pinjamanangsuranlist.php"); // Prevent SQL injection, return to list
+			$this->Page_Terminate("t04_pinjamanangsurantemplist.php"); // Prevent SQL injection, return to list
 
 		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in t04_pinjamanangsuran class, t04_pinjamanangsuraninfo.php
+		// SQL constructor in t04_pinjamanangsurantemp class, t04_pinjamanangsurantempinfo.php
 
 		$this->CurrentFilter = $sFilter;
 
@@ -380,7 +381,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 			if ($this->TotalRecs <= 0) { // No record found, exit
 				if ($this->Recordset)
 					$this->Recordset->Close();
-				$this->Page_Terminate("t04_pinjamanangsuranlist.php"); // Return to list
+				$this->Page_Terminate("t04_pinjamanangsurantemplist.php"); // Return to list
 			}
 		}
 	}
@@ -455,6 +456,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->Flag_Edit->setDbValue($rs->fields('Flag_Edit'));
 	}
 
 	// Load DbValue from recordset
@@ -476,6 +478,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
 		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->Flag_Edit->DbValue = $row['Flag_Edit'];
 	}
 
 	// Render row values based on field settings
@@ -535,6 +538,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
+		// Flag_Edit
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -595,6 +599,10 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		// Bayar_Total
 		$this->Bayar_Total->ViewValue = $this->Bayar_Total->CurrentValue;
 		$this->Bayar_Total->ViewCustomAttributes = "";
+
+		// Flag_Edit
+		$this->Flag_Edit->ViewValue = $this->Flag_Edit->CurrentValue;
+		$this->Flag_Edit->ViewCustomAttributes = "";
 
 			// id
 			$this->id->LinkCustomAttributes = "";
@@ -665,6 +673,11 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 			$this->Bayar_Total->LinkCustomAttributes = "";
 			$this->Bayar_Total->HrefValue = "";
 			$this->Bayar_Total->TooltipValue = "";
+
+			// Flag_Edit
+			$this->Flag_Edit->LinkCustomAttributes = "";
+			$this->Flag_Edit->HrefValue = "";
+			$this->Flag_Edit->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -696,7 +709,6 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		}
 		$rows = ($rs) ? $rs->GetRows() : array();
 		$conn->BeginTrans();
-		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
 
 		// Clone old rows
 		$rsold = $rows;
@@ -739,10 +751,8 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		}
 		if ($DeleteRows) {
 			$conn->CommitTrans(); // Commit the changes
-			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
 		} else {
 			$conn->RollbackTrans(); // Rollback changes
-			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
 		}
 
 		// Call Row Deleted event
@@ -759,7 +769,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t04_pinjamanangsuranlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t04_pinjamanangsurantemplist.php"), "", $this->TableVar, TRUE);
 		$PageId = "delete";
 		$Breadcrumb->Add("delete", $PageId, $url);
 	}
@@ -845,29 +855,29 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 <?php
 
 // Create page object
-if (!isset($t04_pinjamanangsuran_delete)) $t04_pinjamanangsuran_delete = new ct04_pinjamanangsuran_delete();
+if (!isset($t04_pinjamanangsurantemp_delete)) $t04_pinjamanangsurantemp_delete = new ct04_pinjamanangsurantemp_delete();
 
 // Page init
-$t04_pinjamanangsuran_delete->Page_Init();
+$t04_pinjamanangsurantemp_delete->Page_Init();
 
 // Page main
-$t04_pinjamanangsuran_delete->Page_Main();
+$t04_pinjamanangsurantemp_delete->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t04_pinjamanangsuran_delete->Page_Render();
+$t04_pinjamanangsurantemp_delete->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = ft04_pinjamanangsurandelete = new ew_Form("ft04_pinjamanangsurandelete", "delete");
+var CurrentForm = ft04_pinjamanangsurantempdelete = new ew_Form("ft04_pinjamanangsurantempdelete", "delete");
 
 // Form_CustomValidate event
-ft04_pinjamanangsurandelete.Form_CustomValidate = 
+ft04_pinjamanangsurantempdelete.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -876,9 +886,9 @@ ft04_pinjamanangsurandelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft04_pinjamanangsurandelete.ValidateRequired = true;
+ft04_pinjamanangsurantempdelete.ValidateRequired = true;
 <?php } else { ?>
-ft04_pinjamanangsurandelete.ValidateRequired = false; 
+ft04_pinjamanangsurantempdelete.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -894,206 +904,217 @@ ft04_pinjamanangsurandelete.ValidateRequired = false;
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $t04_pinjamanangsuran_delete->ShowPageHeader(); ?>
+<?php $t04_pinjamanangsurantemp_delete->ShowPageHeader(); ?>
 <?php
-$t04_pinjamanangsuran_delete->ShowMessage();
+$t04_pinjamanangsurantemp_delete->ShowMessage();
 ?>
-<form name="ft04_pinjamanangsurandelete" id="ft04_pinjamanangsurandelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t04_pinjamanangsuran_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t04_pinjamanangsuran_delete->Token ?>">
+<form name="ft04_pinjamanangsurantempdelete" id="ft04_pinjamanangsurantempdelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t04_pinjamanangsurantemp_delete->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t04_pinjamanangsurantemp_delete->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t04_pinjamanangsuran">
+<input type="hidden" name="t" value="t04_pinjamanangsurantemp">
 <input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($t04_pinjamanangsuran_delete->RecKeys as $key) { ?>
+<?php foreach ($t04_pinjamanangsurantemp_delete->RecKeys as $key) { ?>
 <?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
 <input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
 <?php } ?>
 <div class="ewGrid">
 <div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <table class="table ewTable">
-<?php echo $t04_pinjamanangsuran->TableCustomInnerHtml ?>
+<?php echo $t04_pinjamanangsurantemp->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t04_pinjamanangsuran->id->Visible) { // id ?>
-		<th><span id="elh_t04_pinjamanangsuran_id" class="t04_pinjamanangsuran_id"><?php echo $t04_pinjamanangsuran->id->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->id->Visible) { // id ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_id" class="t04_pinjamanangsurantemp_id"><?php echo $t04_pinjamanangsurantemp->id->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->pinjaman_id->Visible) { // pinjaman_id ?>
-		<th><span id="elh_t04_pinjamanangsuran_pinjaman_id" class="t04_pinjamanangsuran_pinjaman_id"><?php echo $t04_pinjamanangsuran->pinjaman_id->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->pinjaman_id->Visible) { // pinjaman_id ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_pinjaman_id" class="t04_pinjamanangsurantemp_pinjaman_id"><?php echo $t04_pinjamanangsurantemp->pinjaman_id->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
-		<th><span id="elh_t04_pinjamanangsuran_Angsuran_Ke" class="t04_pinjamanangsuran_Angsuran_Ke"><?php echo $t04_pinjamanangsuran->Angsuran_Ke->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Angsuran_Ke" class="t04_pinjamanangsurantemp_Angsuran_Ke"><?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Tanggal->Visible) { // Angsuran_Tanggal ?>
-		<th><span id="elh_t04_pinjamanangsuran_Angsuran_Tanggal" class="t04_pinjamanangsuran_Angsuran_Tanggal"><?php echo $t04_pinjamanangsuran->Angsuran_Tanggal->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Tanggal->Visible) { // Angsuran_Tanggal ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Angsuran_Tanggal" class="t04_pinjamanangsurantemp_Angsuran_Tanggal"><?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Pokok->Visible) { // Angsuran_Pokok ?>
-		<th><span id="elh_t04_pinjamanangsuran_Angsuran_Pokok" class="t04_pinjamanangsuran_Angsuran_Pokok"><?php echo $t04_pinjamanangsuran->Angsuran_Pokok->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Pokok->Visible) { // Angsuran_Pokok ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Angsuran_Pokok" class="t04_pinjamanangsurantemp_Angsuran_Pokok"><?php echo $t04_pinjamanangsurantemp->Angsuran_Pokok->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Bunga->Visible) { // Angsuran_Bunga ?>
-		<th><span id="elh_t04_pinjamanangsuran_Angsuran_Bunga" class="t04_pinjamanangsuran_Angsuran_Bunga"><?php echo $t04_pinjamanangsuran->Angsuran_Bunga->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Bunga->Visible) { // Angsuran_Bunga ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Angsuran_Bunga" class="t04_pinjamanangsurantemp_Angsuran_Bunga"><?php echo $t04_pinjamanangsurantemp->Angsuran_Bunga->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Total->Visible) { // Angsuran_Total ?>
-		<th><span id="elh_t04_pinjamanangsuran_Angsuran_Total" class="t04_pinjamanangsuran_Angsuran_Total"><?php echo $t04_pinjamanangsuran->Angsuran_Total->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Total->Visible) { // Angsuran_Total ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Angsuran_Total" class="t04_pinjamanangsurantemp_Angsuran_Total"><?php echo $t04_pinjamanangsurantemp->Angsuran_Total->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Sisa_Hutang->Visible) { // Sisa_Hutang ?>
-		<th><span id="elh_t04_pinjamanangsuran_Sisa_Hutang" class="t04_pinjamanangsuran_Sisa_Hutang"><?php echo $t04_pinjamanangsuran->Sisa_Hutang->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Sisa_Hutang->Visible) { // Sisa_Hutang ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Sisa_Hutang" class="t04_pinjamanangsurantemp_Sisa_Hutang"><?php echo $t04_pinjamanangsurantemp->Sisa_Hutang->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Tanggal_Bayar->Visible) { // Tanggal_Bayar ?>
-		<th><span id="elh_t04_pinjamanangsuran_Tanggal_Bayar" class="t04_pinjamanangsuran_Tanggal_Bayar"><?php echo $t04_pinjamanangsuran->Tanggal_Bayar->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Tanggal_Bayar->Visible) { // Tanggal_Bayar ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Tanggal_Bayar" class="t04_pinjamanangsurantemp_Tanggal_Bayar"><?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Terlambat->Visible) { // Terlambat ?>
-		<th><span id="elh_t04_pinjamanangsuran_Terlambat" class="t04_pinjamanangsuran_Terlambat"><?php echo $t04_pinjamanangsuran->Terlambat->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Terlambat->Visible) { // Terlambat ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Terlambat" class="t04_pinjamanangsurantemp_Terlambat"><?php echo $t04_pinjamanangsurantemp->Terlambat->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Total_Denda->Visible) { // Total_Denda ?>
-		<th><span id="elh_t04_pinjamanangsuran_Total_Denda" class="t04_pinjamanangsuran_Total_Denda"><?php echo $t04_pinjamanangsuran->Total_Denda->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Total_Denda->Visible) { // Total_Denda ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Total_Denda" class="t04_pinjamanangsurantemp_Total_Denda"><?php echo $t04_pinjamanangsurantemp->Total_Denda->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Bayar_Titipan->Visible) { // Bayar_Titipan ?>
-		<th><span id="elh_t04_pinjamanangsuran_Bayar_Titipan" class="t04_pinjamanangsuran_Bayar_Titipan"><?php echo $t04_pinjamanangsuran->Bayar_Titipan->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Bayar_Titipan->Visible) { // Bayar_Titipan ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Bayar_Titipan" class="t04_pinjamanangsurantemp_Bayar_Titipan"><?php echo $t04_pinjamanangsurantemp->Bayar_Titipan->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Bayar_Non_Titipan->Visible) { // Bayar_Non_Titipan ?>
-		<th><span id="elh_t04_pinjamanangsuran_Bayar_Non_Titipan" class="t04_pinjamanangsuran_Bayar_Non_Titipan"><?php echo $t04_pinjamanangsuran->Bayar_Non_Titipan->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Bayar_Non_Titipan->Visible) { // Bayar_Non_Titipan ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Bayar_Non_Titipan" class="t04_pinjamanangsurantemp_Bayar_Non_Titipan"><?php echo $t04_pinjamanangsurantemp->Bayar_Non_Titipan->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Bayar_Total->Visible) { // Bayar_Total ?>
-		<th><span id="elh_t04_pinjamanangsuran_Bayar_Total" class="t04_pinjamanangsuran_Bayar_Total"><?php echo $t04_pinjamanangsuran->Bayar_Total->FldCaption() ?></span></th>
+<?php if ($t04_pinjamanangsurantemp->Bayar_Total->Visible) { // Bayar_Total ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Bayar_Total" class="t04_pinjamanangsurantemp_Bayar_Total"><?php echo $t04_pinjamanangsurantemp->Bayar_Total->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t04_pinjamanangsurantemp->Flag_Edit->Visible) { // Flag_Edit ?>
+		<th><span id="elh_t04_pinjamanangsurantemp_Flag_Edit" class="t04_pinjamanangsurantemp_Flag_Edit"><?php echo $t04_pinjamanangsurantemp->Flag_Edit->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
 	<tbody>
 <?php
-$t04_pinjamanangsuran_delete->RecCnt = 0;
+$t04_pinjamanangsurantemp_delete->RecCnt = 0;
 $i = 0;
-while (!$t04_pinjamanangsuran_delete->Recordset->EOF) {
-	$t04_pinjamanangsuran_delete->RecCnt++;
-	$t04_pinjamanangsuran_delete->RowCnt++;
+while (!$t04_pinjamanangsurantemp_delete->Recordset->EOF) {
+	$t04_pinjamanangsurantemp_delete->RecCnt++;
+	$t04_pinjamanangsurantemp_delete->RowCnt++;
 
 	// Set row properties
-	$t04_pinjamanangsuran->ResetAttrs();
-	$t04_pinjamanangsuran->RowType = EW_ROWTYPE_VIEW; // View
+	$t04_pinjamanangsurantemp->ResetAttrs();
+	$t04_pinjamanangsurantemp->RowType = EW_ROWTYPE_VIEW; // View
 
 	// Get the field contents
-	$t04_pinjamanangsuran_delete->LoadRowValues($t04_pinjamanangsuran_delete->Recordset);
+	$t04_pinjamanangsurantemp_delete->LoadRowValues($t04_pinjamanangsurantemp_delete->Recordset);
 
 	// Render row
-	$t04_pinjamanangsuran_delete->RenderRow();
+	$t04_pinjamanangsurantemp_delete->RenderRow();
 ?>
-	<tr<?php echo $t04_pinjamanangsuran->RowAttributes() ?>>
-<?php if ($t04_pinjamanangsuran->id->Visible) { // id ?>
-		<td<?php echo $t04_pinjamanangsuran->id->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_id" class="t04_pinjamanangsuran_id">
-<span<?php echo $t04_pinjamanangsuran->id->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->id->ListViewValue() ?></span>
+	<tr<?php echo $t04_pinjamanangsurantemp->RowAttributes() ?>>
+<?php if ($t04_pinjamanangsurantemp->id->Visible) { // id ?>
+		<td<?php echo $t04_pinjamanangsurantemp->id->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_id" class="t04_pinjamanangsurantemp_id">
+<span<?php echo $t04_pinjamanangsurantemp->id->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->pinjaman_id->Visible) { // pinjaman_id ?>
-		<td<?php echo $t04_pinjamanangsuran->pinjaman_id->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_pinjaman_id" class="t04_pinjamanangsuran_pinjaman_id">
-<span<?php echo $t04_pinjamanangsuran->pinjaman_id->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->pinjaman_id->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->pinjaman_id->Visible) { // pinjaman_id ?>
+		<td<?php echo $t04_pinjamanangsurantemp->pinjaman_id->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_pinjaman_id" class="t04_pinjamanangsurantemp_pinjaman_id">
+<span<?php echo $t04_pinjamanangsurantemp->pinjaman_id->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->pinjaman_id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
-		<td<?php echo $t04_pinjamanangsuran->Angsuran_Ke->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Angsuran_Ke" class="t04_pinjamanangsuran_Angsuran_Ke">
-<span<?php echo $t04_pinjamanangsuran->Angsuran_Ke->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Angsuran_Ke->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Ke" class="t04_pinjamanangsurantemp_Angsuran_Ke">
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Tanggal->Visible) { // Angsuran_Tanggal ?>
-		<td<?php echo $t04_pinjamanangsuran->Angsuran_Tanggal->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Angsuran_Tanggal" class="t04_pinjamanangsuran_Angsuran_Tanggal">
-<span<?php echo $t04_pinjamanangsuran->Angsuran_Tanggal->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Angsuran_Tanggal->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Tanggal->Visible) { // Angsuran_Tanggal ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Tanggal" class="t04_pinjamanangsurantemp_Angsuran_Tanggal">
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Pokok->Visible) { // Angsuran_Pokok ?>
-		<td<?php echo $t04_pinjamanangsuran->Angsuran_Pokok->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Angsuran_Pokok" class="t04_pinjamanangsuran_Angsuran_Pokok">
-<span<?php echo $t04_pinjamanangsuran->Angsuran_Pokok->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Angsuran_Pokok->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Pokok->Visible) { // Angsuran_Pokok ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Angsuran_Pokok->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Pokok" class="t04_pinjamanangsurantemp_Angsuran_Pokok">
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Pokok->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Angsuran_Pokok->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Bunga->Visible) { // Angsuran_Bunga ?>
-		<td<?php echo $t04_pinjamanangsuran->Angsuran_Bunga->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Angsuran_Bunga" class="t04_pinjamanangsuran_Angsuran_Bunga">
-<span<?php echo $t04_pinjamanangsuran->Angsuran_Bunga->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Angsuran_Bunga->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Bunga->Visible) { // Angsuran_Bunga ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Angsuran_Bunga->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Bunga" class="t04_pinjamanangsurantemp_Angsuran_Bunga">
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Bunga->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Angsuran_Bunga->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Angsuran_Total->Visible) { // Angsuran_Total ?>
-		<td<?php echo $t04_pinjamanangsuran->Angsuran_Total->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Angsuran_Total" class="t04_pinjamanangsuran_Angsuran_Total">
-<span<?php echo $t04_pinjamanangsuran->Angsuran_Total->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Angsuran_Total->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Angsuran_Total->Visible) { // Angsuran_Total ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Angsuran_Total->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Total" class="t04_pinjamanangsurantemp_Angsuran_Total">
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Total->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Angsuran_Total->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Sisa_Hutang->Visible) { // Sisa_Hutang ?>
-		<td<?php echo $t04_pinjamanangsuran->Sisa_Hutang->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Sisa_Hutang" class="t04_pinjamanangsuran_Sisa_Hutang">
-<span<?php echo $t04_pinjamanangsuran->Sisa_Hutang->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Sisa_Hutang->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Sisa_Hutang->Visible) { // Sisa_Hutang ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Sisa_Hutang->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Sisa_Hutang" class="t04_pinjamanangsurantemp_Sisa_Hutang">
+<span<?php echo $t04_pinjamanangsurantemp->Sisa_Hutang->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Sisa_Hutang->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Tanggal_Bayar->Visible) { // Tanggal_Bayar ?>
-		<td<?php echo $t04_pinjamanangsuran->Tanggal_Bayar->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Tanggal_Bayar" class="t04_pinjamanangsuran_Tanggal_Bayar">
-<span<?php echo $t04_pinjamanangsuran->Tanggal_Bayar->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Tanggal_Bayar->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Tanggal_Bayar->Visible) { // Tanggal_Bayar ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Tanggal_Bayar" class="t04_pinjamanangsurantemp_Tanggal_Bayar">
+<span<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Terlambat->Visible) { // Terlambat ?>
-		<td<?php echo $t04_pinjamanangsuran->Terlambat->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Terlambat" class="t04_pinjamanangsuran_Terlambat">
-<span<?php echo $t04_pinjamanangsuran->Terlambat->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Terlambat->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Terlambat->Visible) { // Terlambat ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Terlambat->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Terlambat" class="t04_pinjamanangsurantemp_Terlambat">
+<span<?php echo $t04_pinjamanangsurantemp->Terlambat->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Terlambat->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Total_Denda->Visible) { // Total_Denda ?>
-		<td<?php echo $t04_pinjamanangsuran->Total_Denda->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Total_Denda" class="t04_pinjamanangsuran_Total_Denda">
-<span<?php echo $t04_pinjamanangsuran->Total_Denda->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Total_Denda->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Total_Denda->Visible) { // Total_Denda ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Total_Denda->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Total_Denda" class="t04_pinjamanangsurantemp_Total_Denda">
+<span<?php echo $t04_pinjamanangsurantemp->Total_Denda->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Total_Denda->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Bayar_Titipan->Visible) { // Bayar_Titipan ?>
-		<td<?php echo $t04_pinjamanangsuran->Bayar_Titipan->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Bayar_Titipan" class="t04_pinjamanangsuran_Bayar_Titipan">
-<span<?php echo $t04_pinjamanangsuran->Bayar_Titipan->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Bayar_Titipan->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Bayar_Titipan->Visible) { // Bayar_Titipan ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Bayar_Titipan->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Bayar_Titipan" class="t04_pinjamanangsurantemp_Bayar_Titipan">
+<span<?php echo $t04_pinjamanangsurantemp->Bayar_Titipan->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Bayar_Titipan->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Bayar_Non_Titipan->Visible) { // Bayar_Non_Titipan ?>
-		<td<?php echo $t04_pinjamanangsuran->Bayar_Non_Titipan->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Bayar_Non_Titipan" class="t04_pinjamanangsuran_Bayar_Non_Titipan">
-<span<?php echo $t04_pinjamanangsuran->Bayar_Non_Titipan->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Bayar_Non_Titipan->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Bayar_Non_Titipan->Visible) { // Bayar_Non_Titipan ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Bayar_Non_Titipan->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Bayar_Non_Titipan" class="t04_pinjamanangsurantemp_Bayar_Non_Titipan">
+<span<?php echo $t04_pinjamanangsurantemp->Bayar_Non_Titipan->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Bayar_Non_Titipan->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t04_pinjamanangsuran->Bayar_Total->Visible) { // Bayar_Total ?>
-		<td<?php echo $t04_pinjamanangsuran->Bayar_Total->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Bayar_Total" class="t04_pinjamanangsuran_Bayar_Total">
-<span<?php echo $t04_pinjamanangsuran->Bayar_Total->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->Bayar_Total->ListViewValue() ?></span>
+<?php if ($t04_pinjamanangsurantemp->Bayar_Total->Visible) { // Bayar_Total ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Bayar_Total->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Bayar_Total" class="t04_pinjamanangsurantemp_Bayar_Total">
+<span<?php echo $t04_pinjamanangsurantemp->Bayar_Total->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Bayar_Total->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t04_pinjamanangsurantemp->Flag_Edit->Visible) { // Flag_Edit ?>
+		<td<?php echo $t04_pinjamanangsurantemp->Flag_Edit->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsurantemp_delete->RowCnt ?>_t04_pinjamanangsurantemp_Flag_Edit" class="t04_pinjamanangsurantemp_Flag_Edit">
+<span<?php echo $t04_pinjamanangsurantemp->Flag_Edit->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsurantemp->Flag_Edit->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
 	</tr>
 <?php
-	$t04_pinjamanangsuran_delete->Recordset->MoveNext();
+	$t04_pinjamanangsurantemp_delete->Recordset->MoveNext();
 }
-$t04_pinjamanangsuran_delete->Recordset->Close();
+$t04_pinjamanangsurantemp_delete->Recordset->Close();
 ?>
 </tbody>
 </table>
@@ -1101,14 +1122,14 @@ $t04_pinjamanangsuran_delete->Recordset->Close();
 </div>
 <div>
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t04_pinjamanangsuran_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t04_pinjamanangsurantemp_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 </div>
 </form>
 <script type="text/javascript">
-ft04_pinjamanangsurandelete.Init();
+ft04_pinjamanangsurantempdelete.Init();
 </script>
 <?php
-$t04_pinjamanangsuran_delete->ShowPageFooter();
+$t04_pinjamanangsurantemp_delete->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1120,5 +1141,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t04_pinjamanangsuran_delete->Page_Terminate();
+$t04_pinjamanangsurantemp_delete->Page_Terminate();
 ?>

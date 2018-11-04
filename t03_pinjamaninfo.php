@@ -190,6 +190,30 @@ class ct03_pinjaman extends cTable {
 		}
 	}
 
+	// Current detail table name
+	function getCurrentDetailTable() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE];
+	}
+
+	function setCurrentDetailTable($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE] = $v;
+	}
+
+	// Get detail url
+	function GetDetailUrl() {
+
+		// Detail url
+		$sDetailUrl = "";
+		if ($this->getCurrentDetailTable() == "t04_pinjamanangsurantemp") {
+			$sDetailUrl = $GLOBALS["t04_pinjamanangsurantemp"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
+			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
+		}
+		if ($sDetailUrl == "") {
+			$sDetailUrl = "t03_pinjamanlist.php";
+		}
+		return $sDetailUrl;
+	}
+
 	// Table level SQL
 	var $_SqlFrom = "";
 
@@ -447,6 +471,26 @@ class ct03_pinjaman extends cTable {
 	// Update
 	function Update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE) {
 		$conn = &$this->Connection();
+
+		// Cascade Update detail table 't04_pinjamanangsurantemp'
+		$bCascadeUpdate = FALSE;
+		$rscascade = array();
+		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'pinjaman_id'
+			$bCascadeUpdate = TRUE;
+			$rscascade['pinjaman_id'] = $rs['id']; 
+		}
+		if ($bCascadeUpdate) {
+			if (!isset($GLOBALS["t04_pinjamanangsurantemp"])) $GLOBALS["t04_pinjamanangsurantemp"] = new ct04_pinjamanangsurantemp();
+			$rswrk = $GLOBALS["t04_pinjamanangsurantemp"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
+			while ($rswrk && !$rswrk->EOF) {
+				$rskey = array();
+				$fldname = 'id';
+				$rskey[$fldname] = $rswrk->fields[$fldname];
+				$bUpdate = $GLOBALS["t04_pinjamanangsurantemp"]->Update($rscascade, $rskey, $rswrk->fields);
+				if (!$bUpdate) return FALSE;
+				$rswrk->MoveNext();
+			}
+		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
@@ -478,6 +522,14 @@ class ct03_pinjaman extends cTable {
 	// Delete
 	function Delete(&$rs, $where = "", $curfilter = TRUE) {
 		$conn = &$this->Connection();
+
+		// Cascade delete detail table 't04_pinjamanangsurantemp'
+		if (!isset($GLOBALS["t04_pinjamanangsurantemp"])) $GLOBALS["t04_pinjamanangsurantemp"] = new ct04_pinjamanangsurantemp();
+		$rscascade = $GLOBALS["t04_pinjamanangsurantemp"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
+		while ($rscascade && !$rscascade->EOF) {
+			$GLOBALS["t04_pinjamanangsurantemp"]->Delete($rscascade->fields);
+			$rscascade->MoveNext();
+		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
 		if ($bDelete && $this->AuditTrailOnDelete)
 			$this->WriteAuditTrailOnDelete($rs);
@@ -541,7 +593,10 @@ class ct03_pinjaman extends cTable {
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		$url = $this->KeyUrl("t03_pinjamanedit.php", $this->UrlParm($parm));
+		if ($parm <> "")
+			$url = $this->KeyUrl("t03_pinjamanedit.php", $this->UrlParm($parm));
+		else
+			$url = $this->KeyUrl("t03_pinjamanedit.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -553,7 +608,10 @@ class ct03_pinjaman extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		$url = $this->KeyUrl("t03_pinjamanadd.php", $this->UrlParm($parm));
+		if ($parm <> "")
+			$url = $this->KeyUrl("t03_pinjamanadd.php", $this->UrlParm($parm));
+		else
+			$url = $this->KeyUrl("t03_pinjamanadd.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -1403,6 +1461,7 @@ class ct03_pinjaman extends cTable {
 	function Row_Inserted($rsold, &$rsnew) {
 
 		//echo "Row Inserted"
+		f_create_rincian_angsuran($rsnew);
 	}
 
 	// Row Updating event
@@ -1410,7 +1469,28 @@ class ct03_pinjaman extends cTable {
 
 		// Enter your code here
 		// To cancel, set return value to FALSE
+		// check perubahan data master pinjaman
+		// jika ada perubahan pada data master tapi sudah ada data pembayaran
+		// maka perubahan harus tidak diperbolehkan
 
+		$q = "select count(id) from t04_pinjamanangsuran where
+			pinjaman_id = ".$rsold["id"].""; //echo $q; exit;
+		$t04_reccount = ew_ExecuteScalar($q);
+		if ($t04_reccount > 0) {
+			if (
+				$rsold["Angsuran_Lama"] == $rsnew["Angsuran_Lama"] and
+				$rsold["Angsuran_Pokok"] == $rsnew["Angsuran_Pokok"] and
+				$rsold["Angsuran_Bunga"] == $rsnew["Angsuran_Bunga"] and
+				$rsold["Angsuran_Total"] == $rsnew["Angsuran_Total"]
+			) {
+			}
+			else {
+
+				//$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, data tidak bisa diubah !");
+				$this->setWarningMessage("Sudah ada Transaksi Pembayaran Angsuran, data Pinjaman tidak bisa diubah !");
+				return FALSE;
+			}
+		}
 		return TRUE;
 	}
 
@@ -1418,6 +1498,25 @@ class ct03_pinjaman extends cTable {
 	function Row_Updated($rsold, &$rsnew) {
 
 		//echo "Row Updated";
+		//echo $rsold["id"]." - ".$rsnew["id"]; exit;
+		// hapus data rincian angsuran yang lama
+
+		$q = "delete from t04_pinjamanangsurantemp where pinjaman_id = ".$rsold["id"]."";
+		ew_Execute($q);
+
+		//$rsupdate = array();
+		$rsupdate["id"] = $rsold["id"];
+		$rsupdate["Kontrak_Tgl"] = ($rsold["Kontrak_Tgl"] <> $rsnew["Kontrak_Tgl"]) ? $rsnew["Kontrak_Tgl"] : $rsold["Kontrak_Tgl"];
+		$rsupdate["Angsuran_Pokok"] = ($rsold["Angsuran_Pokok"] <> $rsnew["Angsuran_Pokok"]) ? $rsnew["Angsuran_Pokok"] : $rsold["Angsuran_Pokok"];
+		$rsupdate["Angsuran_Bunga"] = ($rsold["Angsuran_Bunga"] <> $rsnew["Angsuran_Bunga"]) ? $rsnew["Angsuran_Bunga"] : $rsold["Angsuran_Bunga"];
+		$rsupdate["Pinjaman"] = ($rsold["Pinjaman"] <> $rsnew["Pinjaman"]) ? $rsnew["Pinjaman"] : $rsold["Pinjaman"];
+		$rsupdate["Angsuran_Lama"] = ($rsold["Angsuran_Lama"] <> $rsnew["Angsuran_Lama"]) ? $rsnew["Angsuran_Lama"] : $rsold["Angsuran_Lama"];
+		$rsupdate["Angsuran_Lama"] = ($rsold["Angsuran_Lama"] <> $rsnew["Angsuran_Lama"]) ? $rsnew["Angsuran_Lama"] : $rsold["Angsuran_Lama"];
+
+		//$rsnew["Alamat"] = ($rsold["Alamat"] <> $rsnew["Alamat"]) ? $rsnew["Alamat"] : $rsold["Alamat"];
+		//f_create_rincian_angsuran($rsnew);
+
+		f_create_rincian_angsuran($rsupdate);
 	}
 
 	// Row Update Conflict event
