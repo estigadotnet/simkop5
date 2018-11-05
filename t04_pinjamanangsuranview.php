@@ -308,9 +308,6 @@ class ct04_pinjamanangsuran_view extends ct04_pinjamanangsuran {
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->pinjaman_id->SetVisibility();
 		$this->Angsuran_Ke->SetVisibility();
 		$this->Angsuran_Tanggal->SetVisibility();
 		$this->Angsuran_Pokok->SetVisibility();
@@ -799,16 +796,6 @@ class ct04_pinjamanangsuran_view extends ct04_pinjamanangsuran {
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
-			// pinjaman_id
-			$this->pinjaman_id->LinkCustomAttributes = "";
-			$this->pinjaman_id->HrefValue = "";
-			$this->pinjaman_id->TooltipValue = "";
-
 			// Angsuran_Ke
 			$this->Angsuran_Ke->LinkCustomAttributes = "";
 			$this->Angsuran_Ke->HrefValue = "";
@@ -1068,28 +1055,6 @@ $t04_pinjamanangsuran_view->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t04_pinjamanangsuran->id->Visible) { // id ?>
-	<tr id="r_id">
-		<td><span id="elh_t04_pinjamanangsuran_id"><?php echo $t04_pinjamanangsuran->id->FldCaption() ?></span></td>
-		<td data-name="id"<?php echo $t04_pinjamanangsuran->id->CellAttributes() ?>>
-<span id="el_t04_pinjamanangsuran_id">
-<span<?php echo $t04_pinjamanangsuran->id->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t04_pinjamanangsuran->pinjaman_id->Visible) { // pinjaman_id ?>
-	<tr id="r_pinjaman_id">
-		<td><span id="elh_t04_pinjamanangsuran_pinjaman_id"><?php echo $t04_pinjamanangsuran->pinjaman_id->FldCaption() ?></span></td>
-		<td data-name="pinjaman_id"<?php echo $t04_pinjamanangsuran->pinjaman_id->CellAttributes() ?>>
-<span id="el_t04_pinjamanangsuran_pinjaman_id">
-<span<?php echo $t04_pinjamanangsuran->pinjaman_id->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->pinjaman_id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 <?php if ($t04_pinjamanangsuran->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
 	<tr id="r_Angsuran_Ke">
 		<td><span id="elh_t04_pinjamanangsuran_Angsuran_Ke"><?php echo $t04_pinjamanangsuran->Angsuran_Ke->FldCaption() ?></span></td>

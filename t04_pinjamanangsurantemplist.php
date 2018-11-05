@@ -727,6 +727,12 @@ class ct04_pinjamanangsurantemp_list extends ct04_pinjamanangsurantemp {
 		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
+		// "edit"
+		$item = &$this->ListOptions->Add("edit");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = TRUE;
+		$item->OnLeft = TRUE;
+
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssStyle = "white-space: nowrap;";
@@ -764,6 +770,15 @@ class ct04_pinjamanangsurantemp_list extends ct04_pinjamanangsurantemp {
 	function RenderListOptions() {
 		global $Security, $Language, $objForm;
 		$this->ListOptions->LoadDefault();
+
+		// "edit"
+		$oListOpt = &$this->ListOptions->Items["edit"];
+		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
+		if (TRUE) {
+			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
+		} else {
+			$oListOpt->Body = "";
+		}
 
 		// Set up list action buttons
 		$oListOpt = &$this->ListOptions->GetItem("listactions");
@@ -1083,6 +1098,7 @@ class ct04_pinjamanangsurantemp_list extends ct04_pinjamanangsurantemp {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -1104,6 +1120,7 @@ class ct04_pinjamanangsurantemp_list extends ct04_pinjamanangsurantemp {
 		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
 		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Load old record
@@ -1192,6 +1209,7 @@ class ct04_pinjamanangsurantemp_list extends ct04_pinjamanangsurantemp {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1215,25 +1233,25 @@ class ct04_pinjamanangsurantemp_list extends ct04_pinjamanangsurantemp {
 		// Angsuran_Pokok
 		$this->Angsuran_Pokok->ViewValue = $this->Angsuran_Pokok->CurrentValue;
 		$this->Angsuran_Pokok->ViewValue = ew_FormatNumber($this->Angsuran_Pokok->ViewValue, 2, -2, -2, -2);
-		$this->Angsuran_Pokok->CellCssStyle .= "text-align: right;";
+		$this->Angsuran_Pokok->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Pokok->ViewCustomAttributes = "";
 
 		// Angsuran_Bunga
 		$this->Angsuran_Bunga->ViewValue = $this->Angsuran_Bunga->CurrentValue;
 		$this->Angsuran_Bunga->ViewValue = ew_FormatNumber($this->Angsuran_Bunga->ViewValue, 2, -2, -2, -2);
-		$this->Angsuran_Bunga->CellCssStyle .= "text-align: right;";
+		$this->Angsuran_Bunga->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Bunga->ViewCustomAttributes = "";
 
 		// Angsuran_Total
 		$this->Angsuran_Total->ViewValue = $this->Angsuran_Total->CurrentValue;
 		$this->Angsuran_Total->ViewValue = ew_FormatNumber($this->Angsuran_Total->ViewValue, 2, -2, -2, -2);
-		$this->Angsuran_Total->CellCssStyle .= "text-align: right;";
+		$this->Angsuran_Total->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Total->ViewCustomAttributes = "";
 
 		// Sisa_Hutang
 		$this->Sisa_Hutang->ViewValue = $this->Sisa_Hutang->CurrentValue;
 		$this->Sisa_Hutang->ViewValue = ew_FormatNumber($this->Sisa_Hutang->ViewValue, 2, -2, -2, -2);
-		$this->Sisa_Hutang->CellCssStyle .= "text-align: right;";
+		$this->Sisa_Hutang->CellCssStyle .= "text-align: left;";
 		$this->Sisa_Hutang->ViewCustomAttributes = "";
 
 		// Tanggal_Bayar
@@ -1274,6 +1292,10 @@ class ct04_pinjamanangsurantemp_list extends ct04_pinjamanangsurantemp {
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
 			// Angsuran_Ke
 			$this->Angsuran_Ke->LinkCustomAttributes = "";

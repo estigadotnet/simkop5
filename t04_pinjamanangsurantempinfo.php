@@ -28,6 +28,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 	var $Bayar_Non_Titipan;
 	var $Bayar_Total;
 	var $Keterangan;
+	var $Periode;
 
 	//
 	// Table class constructor
@@ -52,7 +53,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		$this->ExportExcelPageSize = ""; // Page size (PHPExcel only)
 		$this->DetailAdd = FALSE; // Allow detail add
 		$this->DetailEdit = FALSE; // Allow detail edit
-		$this->DetailView = TRUE; // Allow detail view
+		$this->DetailView = FALSE; // Allow detail view
 		$this->ShowMultipleDetails = FALSE; // Show multiple details
 		$this->GridAddRowCount = 5;
 		$this->AllowAddDeleteRow = ew_AllowAddDeleteRow(); // Allow add/delete row
@@ -147,6 +148,11 @@ class ct04_pinjamanangsurantemp extends cTable {
 		$this->Keterangan = new cField('t04_pinjamanangsurantemp', 't04_pinjamanangsurantemp', 'x_Keterangan', 'Keterangan', '`Keterangan`', '`Keterangan`', 201, -1, FALSE, '`Keterangan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->Keterangan->Sortable = TRUE; // Allow sort
 		$this->fields['Keterangan'] = &$this->Keterangan;
+
+		// Periode
+		$this->Periode = new cField('t04_pinjamanangsurantemp', 't04_pinjamanangsurantemp', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Periode->Sortable = TRUE; // Allow sort
+		$this->fields['Periode'] = &$this->Periode;
 	}
 
 	// Set Field Visibility
@@ -714,6 +720,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Render list row values
@@ -739,6 +746,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
+		// Periode
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -760,25 +768,25 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// Angsuran_Pokok
 		$this->Angsuran_Pokok->ViewValue = $this->Angsuran_Pokok->CurrentValue;
 		$this->Angsuran_Pokok->ViewValue = ew_FormatNumber($this->Angsuran_Pokok->ViewValue, 2, -2, -2, -2);
-		$this->Angsuran_Pokok->CellCssStyle .= "text-align: right;";
+		$this->Angsuran_Pokok->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Pokok->ViewCustomAttributes = "";
 
 		// Angsuran_Bunga
 		$this->Angsuran_Bunga->ViewValue = $this->Angsuran_Bunga->CurrentValue;
 		$this->Angsuran_Bunga->ViewValue = ew_FormatNumber($this->Angsuran_Bunga->ViewValue, 2, -2, -2, -2);
-		$this->Angsuran_Bunga->CellCssStyle .= "text-align: right;";
+		$this->Angsuran_Bunga->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Bunga->ViewCustomAttributes = "";
 
 		// Angsuran_Total
 		$this->Angsuran_Total->ViewValue = $this->Angsuran_Total->CurrentValue;
 		$this->Angsuran_Total->ViewValue = ew_FormatNumber($this->Angsuran_Total->ViewValue, 2, -2, -2, -2);
-		$this->Angsuran_Total->CellCssStyle .= "text-align: right;";
+		$this->Angsuran_Total->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Total->ViewCustomAttributes = "";
 
 		// Sisa_Hutang
 		$this->Sisa_Hutang->ViewValue = $this->Sisa_Hutang->CurrentValue;
 		$this->Sisa_Hutang->ViewValue = ew_FormatNumber($this->Sisa_Hutang->ViewValue, 2, -2, -2, -2);
-		$this->Sisa_Hutang->CellCssStyle .= "text-align: right;";
+		$this->Sisa_Hutang->CellCssStyle .= "text-align: left;";
 		$this->Sisa_Hutang->ViewCustomAttributes = "";
 
 		// Tanggal_Bayar
@@ -819,6 +827,10 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -895,6 +907,11 @@ class ct04_pinjamanangsurantemp extends cTable {
 		$this->Keterangan->HrefValue = "";
 		$this->Keterangan->TooltipValue = "";
 
+		// Periode
+		$this->Periode->LinkCustomAttributes = "";
+		$this->Periode->HrefValue = "";
+		$this->Periode->TooltipValue = "";
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -928,45 +945,50 @@ class ct04_pinjamanangsurantemp extends cTable {
 		$this->Angsuran_Ke->EditAttrs["class"] = "form-control";
 		$this->Angsuran_Ke->EditCustomAttributes = "";
 		$this->Angsuran_Ke->EditValue = $this->Angsuran_Ke->CurrentValue;
-		$this->Angsuran_Ke->PlaceHolder = ew_RemoveHtml($this->Angsuran_Ke->FldCaption());
+		$this->Angsuran_Ke->ViewCustomAttributes = "";
 
 		// Angsuran_Tanggal
 		$this->Angsuran_Tanggal->EditAttrs["class"] = "form-control";
-		$this->Angsuran_Tanggal->EditCustomAttributes = "";
-		$this->Angsuran_Tanggal->EditValue = ew_FormatDateTime($this->Angsuran_Tanggal->CurrentValue, 7);
-		$this->Angsuran_Tanggal->PlaceHolder = ew_RemoveHtml($this->Angsuran_Tanggal->FldCaption());
+		$this->Angsuran_Tanggal->EditCustomAttributes = "style='width: 115px;'";
+		$this->Angsuran_Tanggal->EditValue = $this->Angsuran_Tanggal->CurrentValue;
+		$this->Angsuran_Tanggal->EditValue = ew_FormatDateTime($this->Angsuran_Tanggal->EditValue, 7);
+		$this->Angsuran_Tanggal->ViewCustomAttributes = "";
 
 		// Angsuran_Pokok
 		$this->Angsuran_Pokok->EditAttrs["class"] = "form-control";
 		$this->Angsuran_Pokok->EditCustomAttributes = "";
 		$this->Angsuran_Pokok->EditValue = $this->Angsuran_Pokok->CurrentValue;
-		$this->Angsuran_Pokok->PlaceHolder = ew_RemoveHtml($this->Angsuran_Pokok->FldCaption());
-		if (strval($this->Angsuran_Pokok->EditValue) <> "" && is_numeric($this->Angsuran_Pokok->EditValue)) $this->Angsuran_Pokok->EditValue = ew_FormatNumber($this->Angsuran_Pokok->EditValue, -2, -2, -2, -2);
+		$this->Angsuran_Pokok->EditValue = ew_FormatNumber($this->Angsuran_Pokok->EditValue, 2, -2, -2, -2);
+		$this->Angsuran_Pokok->CellCssStyle .= "text-align: left;";
+		$this->Angsuran_Pokok->ViewCustomAttributes = "";
 
 		// Angsuran_Bunga
 		$this->Angsuran_Bunga->EditAttrs["class"] = "form-control";
 		$this->Angsuran_Bunga->EditCustomAttributes = "";
 		$this->Angsuran_Bunga->EditValue = $this->Angsuran_Bunga->CurrentValue;
-		$this->Angsuran_Bunga->PlaceHolder = ew_RemoveHtml($this->Angsuran_Bunga->FldCaption());
-		if (strval($this->Angsuran_Bunga->EditValue) <> "" && is_numeric($this->Angsuran_Bunga->EditValue)) $this->Angsuran_Bunga->EditValue = ew_FormatNumber($this->Angsuran_Bunga->EditValue, -2, -2, -2, -2);
+		$this->Angsuran_Bunga->EditValue = ew_FormatNumber($this->Angsuran_Bunga->EditValue, 2, -2, -2, -2);
+		$this->Angsuran_Bunga->CellCssStyle .= "text-align: left;";
+		$this->Angsuran_Bunga->ViewCustomAttributes = "";
 
 		// Angsuran_Total
 		$this->Angsuran_Total->EditAttrs["class"] = "form-control";
 		$this->Angsuran_Total->EditCustomAttributes = "";
 		$this->Angsuran_Total->EditValue = $this->Angsuran_Total->CurrentValue;
-		$this->Angsuran_Total->PlaceHolder = ew_RemoveHtml($this->Angsuran_Total->FldCaption());
-		if (strval($this->Angsuran_Total->EditValue) <> "" && is_numeric($this->Angsuran_Total->EditValue)) $this->Angsuran_Total->EditValue = ew_FormatNumber($this->Angsuran_Total->EditValue, -2, -2, -2, -2);
+		$this->Angsuran_Total->EditValue = ew_FormatNumber($this->Angsuran_Total->EditValue, 2, -2, -2, -2);
+		$this->Angsuran_Total->CellCssStyle .= "text-align: left;";
+		$this->Angsuran_Total->ViewCustomAttributes = "";
 
 		// Sisa_Hutang
 		$this->Sisa_Hutang->EditAttrs["class"] = "form-control";
 		$this->Sisa_Hutang->EditCustomAttributes = "";
 		$this->Sisa_Hutang->EditValue = $this->Sisa_Hutang->CurrentValue;
-		$this->Sisa_Hutang->PlaceHolder = ew_RemoveHtml($this->Sisa_Hutang->FldCaption());
-		if (strval($this->Sisa_Hutang->EditValue) <> "" && is_numeric($this->Sisa_Hutang->EditValue)) $this->Sisa_Hutang->EditValue = ew_FormatNumber($this->Sisa_Hutang->EditValue, -2, -2, -2, -2);
+		$this->Sisa_Hutang->EditValue = ew_FormatNumber($this->Sisa_Hutang->EditValue, 2, -2, -2, -2);
+		$this->Sisa_Hutang->CellCssStyle .= "text-align: left;";
+		$this->Sisa_Hutang->ViewCustomAttributes = "";
 
 		// Tanggal_Bayar
 		$this->Tanggal_Bayar->EditAttrs["class"] = "form-control";
-		$this->Tanggal_Bayar->EditCustomAttributes = "";
+		$this->Tanggal_Bayar->EditCustomAttributes = "style='width: 115px;'";
 		$this->Tanggal_Bayar->EditValue = ew_FormatDateTime($this->Tanggal_Bayar->CurrentValue, 7);
 		$this->Tanggal_Bayar->PlaceHolder = ew_RemoveHtml($this->Tanggal_Bayar->FldCaption());
 
@@ -1009,6 +1031,12 @@ class ct04_pinjamanangsurantemp extends cTable {
 		$this->Keterangan->EditCustomAttributes = "";
 		$this->Keterangan->EditValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
+
+		// Periode
+		$this->Periode->EditAttrs["class"] = "form-control";
+		$this->Periode->EditCustomAttributes = "";
+		$this->Periode->EditValue = $this->Periode->CurrentValue;
+		$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -1066,6 +1094,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 					if ($this->Bayar_Non_Titipan->Exportable) $Doc->ExportCaption($this->Bayar_Non_Titipan);
 					if ($this->Bayar_Total->Exportable) $Doc->ExportCaption($this->Bayar_Total);
 					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1126,6 +1155,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 						if ($this->Bayar_Non_Titipan->Exportable) $Doc->ExportField($this->Bayar_Non_Titipan);
 						if ($this->Bayar_Total->Exportable) $Doc->ExportField($this->Bayar_Total);
 						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
 					}
 					$Doc->EndExportRow();
 				}

@@ -251,9 +251,6 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->pinjaman_id->SetVisibility();
 		$this->Angsuran_Ke->SetVisibility();
 		$this->Angsuran_Tanggal->SetVisibility();
 		$this->Angsuran_Pokok->SetVisibility();
@@ -596,16 +593,6 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->Bayar_Total->ViewValue = $this->Bayar_Total->CurrentValue;
 		$this->Bayar_Total->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
-			// pinjaman_id
-			$this->pinjaman_id->LinkCustomAttributes = "";
-			$this->pinjaman_id->HrefValue = "";
-			$this->pinjaman_id->TooltipValue = "";
-
 			// Angsuran_Ke
 			$this->Angsuran_Ke->LinkCustomAttributes = "";
 			$this->Angsuran_Ke->HrefValue = "";
@@ -914,12 +901,6 @@ $t04_pinjamanangsuran_delete->ShowMessage();
 <?php echo $t04_pinjamanangsuran->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t04_pinjamanangsuran->id->Visible) { // id ?>
-		<th><span id="elh_t04_pinjamanangsuran_id" class="t04_pinjamanangsuran_id"><?php echo $t04_pinjamanangsuran->id->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t04_pinjamanangsuran->pinjaman_id->Visible) { // pinjaman_id ?>
-		<th><span id="elh_t04_pinjamanangsuran_pinjaman_id" class="t04_pinjamanangsuran_pinjaman_id"><?php echo $t04_pinjamanangsuran->pinjaman_id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t04_pinjamanangsuran->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
 		<th><span id="elh_t04_pinjamanangsuran_Angsuran_Ke" class="t04_pinjamanangsuran_Angsuran_Ke"><?php echo $t04_pinjamanangsuran->Angsuran_Ke->FldCaption() ?></span></th>
 <?php } ?>
@@ -977,22 +958,6 @@ while (!$t04_pinjamanangsuran_delete->Recordset->EOF) {
 	$t04_pinjamanangsuran_delete->RenderRow();
 ?>
 	<tr<?php echo $t04_pinjamanangsuran->RowAttributes() ?>>
-<?php if ($t04_pinjamanangsuran->id->Visible) { // id ?>
-		<td<?php echo $t04_pinjamanangsuran->id->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_id" class="t04_pinjamanangsuran_id">
-<span<?php echo $t04_pinjamanangsuran->id->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t04_pinjamanangsuran->pinjaman_id->Visible) { // pinjaman_id ?>
-		<td<?php echo $t04_pinjamanangsuran->pinjaman_id->CellAttributes() ?>>
-<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_pinjaman_id" class="t04_pinjamanangsuran_pinjaman_id">
-<span<?php echo $t04_pinjamanangsuran->pinjaman_id->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsuran->pinjaman_id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t04_pinjamanangsuran->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
 		<td<?php echo $t04_pinjamanangsuran->Angsuran_Ke->CellAttributes() ?>>
 <span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Angsuran_Ke" class="t04_pinjamanangsuran_Angsuran_Ke">

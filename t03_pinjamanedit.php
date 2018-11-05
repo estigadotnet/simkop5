@@ -691,6 +691,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
 		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -714,6 +715,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		$this->Biaya_Administrasi->DbValue = $row['Biaya_Administrasi'];
 		$this->Biaya_Materai->DbValue = $row['Biaya_Materai'];
 		$this->marketing_id->DbValue = $row['marketing_id'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Render row values based on field settings
@@ -775,6 +777,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		// Biaya_Administrasi
 		// Biaya_Materai
 		// marketing_id
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -930,6 +933,10 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			$this->marketing_id->ViewValue = NULL;
 		}
 		$this->marketing_id->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
 			// Kontrak_No
 			$this->Kontrak_No->LinkCustomAttributes = "";

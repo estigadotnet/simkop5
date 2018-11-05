@@ -706,6 +706,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$sFilterList = ew_Concat($sFilterList, $this->Biaya_Administrasi->AdvancedSearch->ToJSON(), ","); // Field Biaya_Administrasi
 		$sFilterList = ew_Concat($sFilterList, $this->Biaya_Materai->AdvancedSearch->ToJSON(), ","); // Field Biaya_Materai
 		$sFilterList = ew_Concat($sFilterList, $this->marketing_id->AdvancedSearch->ToJSON(), ","); // Field marketing_id
+		$sFilterList = ew_Concat($sFilterList, $this->Periode->AdvancedSearch->ToJSON(), ","); // Field Periode
 		$sFilterList = preg_replace('/,$/', "", $sFilterList);
 
 		// Return filter list in json
@@ -881,6 +882,14 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->marketing_id->AdvancedSearch->SearchValue2 = @$filter["y_marketing_id"];
 		$this->marketing_id->AdvancedSearch->SearchOperator2 = @$filter["w_marketing_id"];
 		$this->marketing_id->AdvancedSearch->Save();
+
+		// Field Periode
+		$this->Periode->AdvancedSearch->SearchValue = @$filter["x_Periode"];
+		$this->Periode->AdvancedSearch->SearchOperator = @$filter["z_Periode"];
+		$this->Periode->AdvancedSearch->SearchCondition = @$filter["v_Periode"];
+		$this->Periode->AdvancedSearch->SearchValue2 = @$filter["y_Periode"];
+		$this->Periode->AdvancedSearch->SearchOperator2 = @$filter["w_Periode"];
+		$this->Periode->AdvancedSearch->Save();
 	}
 
 	// Advanced search WHERE clause based on QueryString
@@ -904,6 +913,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->BuildSearchSql($sWhere, $this->Biaya_Administrasi, $Default, FALSE); // Biaya_Administrasi
 		$this->BuildSearchSql($sWhere, $this->Biaya_Materai, $Default, FALSE); // Biaya_Materai
 		$this->BuildSearchSql($sWhere, $this->marketing_id, $Default, FALSE); // marketing_id
+		$this->BuildSearchSql($sWhere, $this->Periode, $Default, FALSE); // Periode
 
 		// Set up search parm
 		if (!$Default && $sWhere <> "") {
@@ -927,6 +937,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->Biaya_Administrasi->AdvancedSearch->Save(); // Biaya_Administrasi
 			$this->Biaya_Materai->AdvancedSearch->Save(); // Biaya_Materai
 			$this->marketing_id->AdvancedSearch->Save(); // marketing_id
+			$this->Periode->AdvancedSearch->Save(); // Periode
 		}
 		return $sWhere;
 	}
@@ -1015,6 +1026,8 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			return TRUE;
 		if ($this->marketing_id->AdvancedSearch->IssetSession())
 			return TRUE;
+		if ($this->Periode->AdvancedSearch->IssetSession())
+			return TRUE;
 		return FALSE;
 	}
 
@@ -1053,6 +1066,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Administrasi->AdvancedSearch->UnsetSession();
 		$this->Biaya_Materai->AdvancedSearch->UnsetSession();
 		$this->marketing_id->AdvancedSearch->UnsetSession();
+		$this->Periode->AdvancedSearch->UnsetSession();
 	}
 
 	// Restore all search parameters
@@ -1077,6 +1091,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Administrasi->AdvancedSearch->Load();
 		$this->Biaya_Materai->AdvancedSearch->Load();
 		$this->marketing_id->AdvancedSearch->Load();
+		$this->Periode->AdvancedSearch->Load();
 	}
 
 	// Set up sort parameters
@@ -1687,6 +1702,11 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->marketing_id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_marketing_id"]);
 		if ($this->marketing_id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->marketing_id->AdvancedSearch->SearchOperator = @$_GET["z_marketing_id"];
+
+		// Periode
+		$this->Periode->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Periode"]);
+		if ($this->Periode->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Periode->AdvancedSearch->SearchOperator = @$_GET["z_Periode"];
 	}
 
 	// Load recordset
@@ -1761,6 +1781,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
 		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -1784,6 +1805,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Administrasi->DbValue = $row['Biaya_Administrasi'];
 		$this->Biaya_Materai->DbValue = $row['Biaya_Materai'];
 		$this->marketing_id->DbValue = $row['marketing_id'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Load old record
@@ -1874,6 +1896,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// Biaya_Administrasi
 		// Biaya_Materai
 		// marketing_id
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -2029,6 +2052,10 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->marketing_id->ViewValue = NULL;
 		}
 		$this->marketing_id->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
 			// Kontrak_No
 			$this->Kontrak_No->LinkCustomAttributes = "";
@@ -2251,6 +2278,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Administrasi->AdvancedSearch->Load();
 		$this->Biaya_Materai->AdvancedSearch->Load();
 		$this->marketing_id->AdvancedSearch->Load();
+		$this->Periode->AdvancedSearch->Load();
 	}
 
 	// Set up Breadcrumb
@@ -2383,7 +2411,12 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		//$this->ListOptions->Items["new"]->Body = "xxx";
 		//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
 
-		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsuranadd.php\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$pinjaman_id = $this->id->CurrentValue;
+		$Angsuran_Ke = 0;
+		if ($pinjaman_id <> "") {
+			$Angsuran_Ke = f_cari_detail_angsuran($pinjaman_id);
+		}
+		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?pinjaman_id=".$pinjaman_id."&Angsuran_Ke=".$Angsuran_Ke."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
 
 		//"<a class=\"ewAddEdit ewAdd\" title=\"Your Title\" data-caption=\"Your Caption\" href=\"yourpage.php\">My New Button</a>"; // definisikan link, style, dan caption tombol
 		$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"yourpage.php\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";

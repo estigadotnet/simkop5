@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/11/4" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/11/5" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -735,6 +735,9 @@
       <field id="marketing_id">
         <phrase id="fldcaption" value="Marketing" />
       </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
     </table>
     <table id="t04_pinjamanangsuran">
       <phrase id="tblcaption" value="t 04 pinjamanangsuran" />
@@ -783,6 +786,9 @@
       <field id="keterangan">
         <phrase id="fldcaption" value="Keterangan" />
       </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
     </table>
     <table id="t04_pinjamanangsurantemp">
       <phrase id="tblcaption" value="Rincian Angsuran" />
@@ -830,6 +836,9 @@
       </field>
       <field id="keterangan">
         <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
       </field>
     </table>
     <table id="t05_pinjamanjaminan">
@@ -887,6 +896,9 @@
       </field>
       <field id="tahun">
         <phrase id="fldcaption" value="Tahun" />
+      </field>
+      <field id="tahun_bulan">
+        <phrase id="fldcaption" value="Tahun Bulan" />
       </field>
     </table>
     <table id="t94_log">

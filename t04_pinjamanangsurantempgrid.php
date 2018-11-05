@@ -43,39 +43,24 @@ ft04_pinjamanangsurantempgrid.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Angsuran_Ke");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Angsuran_Ke->FldCaption(), $t04_pinjamanangsurantemp->Angsuran_Ke->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Angsuran_Ke");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Angsuran_Ke->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Angsuran_Tanggal");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Angsuran_Tanggal->FldCaption(), $t04_pinjamanangsurantemp->Angsuran_Tanggal->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Angsuran_Tanggal");
-			if (elm && !ew_CheckEuroDate(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Angsuran_Tanggal->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Angsuran_Pokok");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Angsuran_Pokok->FldCaption(), $t04_pinjamanangsurantemp->Angsuran_Pokok->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Angsuran_Pokok");
-			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Angsuran_Pokok->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Angsuran_Bunga");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Angsuran_Bunga->FldCaption(), $t04_pinjamanangsurantemp->Angsuran_Bunga->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Angsuran_Bunga");
-			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Angsuran_Bunga->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Angsuran_Total");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Angsuran_Total->FldCaption(), $t04_pinjamanangsurantemp->Angsuran_Total->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Angsuran_Total");
-			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Angsuran_Total->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Sisa_Hutang");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Sisa_Hutang->FldCaption(), $t04_pinjamanangsurantemp->Sisa_Hutang->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Sisa_Hutang");
-			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Sisa_Hutang->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Tanggal_Bayar");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Tanggal_Bayar->FldCaption(), $t04_pinjamanangsurantemp->Tanggal_Bayar->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Tanggal_Bayar");
 			if (elm && !ew_CheckEuroDate(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Tanggal_Bayar->FldErrMsg()) ?>");
@@ -445,8 +430,10 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Ke" class="form-group t04_pinjamanangsurantemp_Angsuran_Ke">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Ke" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Ke" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Ke" size="5" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Ke->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->EditAttributes() ?>>
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Ke" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Ke" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Ke" value="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Ke->CurrentValue) ?>">
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Ke" class="t04_pinjamanangsurantemp_Angsuran_Ke">
@@ -474,14 +461,16 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 		<td data-name="Angsuran_Tanggal"<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->CellAttributes() ?>>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Tanggal" class="form-group t04_pinjamanangsurantemp_Angsuran_Tanggal">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Tanggal" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Tanggal->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Tanggal" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Tanggal->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditAttributes() ?>>
 </span>
 <input type="hidden" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Tanggal" name="o<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" id="o<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" value="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Tanggal->OldValue) ?>">
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Tanggal" class="form-group t04_pinjamanangsurantemp_Angsuran_Tanggal">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Tanggal" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Tanggal->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditAttributes() ?>>
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Tanggal" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" value="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Tanggal->CurrentValue) ?>">
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Tanggal" class="t04_pinjamanangsurantemp_Angsuran_Tanggal">
@@ -508,8 +497,10 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Pokok" class="form-group t04_pinjamanangsurantemp_Angsuran_Pokok">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Pokok" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Pokok" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Pokok" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Pokok->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Pokok->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Pokok->EditAttributes() ?>>
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Pokok->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t04_pinjamanangsurantemp->Angsuran_Pokok->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Pokok" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Pokok" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Pokok" value="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Pokok->CurrentValue) ?>">
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Pokok" class="t04_pinjamanangsurantemp_Angsuran_Pokok">
@@ -536,8 +527,10 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Bunga" class="form-group t04_pinjamanangsurantemp_Angsuran_Bunga">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Bunga" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Bunga" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Bunga" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Bunga->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Bunga->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Bunga->EditAttributes() ?>>
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Bunga->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t04_pinjamanangsurantemp->Angsuran_Bunga->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Bunga" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Bunga" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Bunga" value="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Bunga->CurrentValue) ?>">
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Bunga" class="t04_pinjamanangsurantemp_Angsuran_Bunga">
@@ -564,8 +557,10 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Total" class="form-group t04_pinjamanangsurantemp_Angsuran_Total">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Total" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Total" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Total" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Total->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Total->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Total->EditAttributes() ?>>
+<span<?php echo $t04_pinjamanangsurantemp->Angsuran_Total->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t04_pinjamanangsurantemp->Angsuran_Total->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Total" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Total" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Total" value="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Total->CurrentValue) ?>">
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Angsuran_Total" class="t04_pinjamanangsurantemp_Angsuran_Total">
@@ -592,8 +587,10 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Sisa_Hutang" class="form-group t04_pinjamanangsurantemp_Sisa_Hutang">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Sisa_Hutang" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Sisa_Hutang" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Sisa_Hutang" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Sisa_Hutang->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Sisa_Hutang->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Sisa_Hutang->EditAttributes() ?>>
+<span<?php echo $t04_pinjamanangsurantemp->Sisa_Hutang->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t04_pinjamanangsurantemp->Sisa_Hutang->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t04_pinjamanangsurantemp" data-field="x_Sisa_Hutang" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Sisa_Hutang" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Sisa_Hutang" value="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Sisa_Hutang->CurrentValue) ?>">
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Sisa_Hutang" class="t04_pinjamanangsurantemp_Sisa_Hutang">
@@ -614,13 +611,23 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 		<td data-name="Tanggal_Bayar"<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->CellAttributes() ?>>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Tanggal_Bayar" class="form-group t04_pinjamanangsurantemp_Tanggal_Bayar">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Tanggal_Bayar" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Tanggal_Bayar->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttributes() ?>>
+<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Tanggal_Bayar" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Tanggal_Bayar->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttributes() ?>>
+<?php if (!$t04_pinjamanangsurantemp->Tanggal_Bayar->ReadOnly && !$t04_pinjamanangsurantemp->Tanggal_Bayar->Disabled && !isset($t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttrs["readonly"]) && !isset($t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft04_pinjamanangsurantempgrid", "x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar", 7);
+</script>
+<?php } ?>
 </span>
 <input type="hidden" data-table="t04_pinjamanangsurantemp" data-field="x_Tanggal_Bayar" name="o<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" id="o<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" value="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Tanggal_Bayar->OldValue) ?>">
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t04_pinjamanangsurantemp_grid->RowCnt ?>_t04_pinjamanangsurantemp_Tanggal_Bayar" class="form-group t04_pinjamanangsurantemp_Tanggal_Bayar">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Tanggal_Bayar" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Tanggal_Bayar->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttributes() ?>>
+<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Tanggal_Bayar" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Tanggal_Bayar->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttributes() ?>>
+<?php if (!$t04_pinjamanangsurantemp->Tanggal_Bayar->ReadOnly && !$t04_pinjamanangsurantemp->Tanggal_Bayar->Disabled && !isset($t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttrs["readonly"]) && !isset($t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft04_pinjamanangsurantempgrid", "x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar", 7);
+</script>
+<?php } ?>
 </span>
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -868,7 +875,7 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 		<td data-name="Angsuran_Tanggal">
 <?php if ($t04_pinjamanangsurantemp->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t04_pinjamanangsurantemp_Angsuran_Tanggal" class="form-group t04_pinjamanangsurantemp_Angsuran_Tanggal">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Tanggal" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Tanggal->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Angsuran_Tanggal" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Angsuran_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Angsuran_Tanggal->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Angsuran_Tanggal->EditAttributes() ?>>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t04_pinjamanangsurantemp_Angsuran_Tanggal" class="form-group t04_pinjamanangsurantemp_Angsuran_Tanggal">
@@ -948,7 +955,12 @@ $t04_pinjamanangsurantemp_grid->ListOptions->Render("body", "left", $t04_pinjama
 		<td data-name="Tanggal_Bayar">
 <?php if ($t04_pinjamanangsurantemp->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t04_pinjamanangsurantemp_Tanggal_Bayar" class="form-group t04_pinjamanangsurantemp_Tanggal_Bayar">
-<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Tanggal_Bayar" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Tanggal_Bayar->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttributes() ?>>
+<input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Tanggal_Bayar" data-format="7" name="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" id="x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Tanggal_Bayar->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttributes() ?>>
+<?php if (!$t04_pinjamanangsurantemp->Tanggal_Bayar->ReadOnly && !$t04_pinjamanangsurantemp->Tanggal_Bayar->Disabled && !isset($t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttrs["readonly"]) && !isset($t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft04_pinjamanangsurantempgrid", "x<?php echo $t04_pinjamanangsurantemp_grid->RowIndex ?>_Tanggal_Bayar", 7);
+</script>
+<?php } ?>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t04_pinjamanangsurantemp_Tanggal_Bayar" class="form-group t04_pinjamanangsurantemp_Tanggal_Bayar">

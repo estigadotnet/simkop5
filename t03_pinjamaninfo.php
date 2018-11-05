@@ -30,6 +30,7 @@ class ct03_pinjaman extends cTable {
 	var $Biaya_Administrasi;
 	var $Biaya_Materai;
 	var $marketing_id;
+	var $Periode;
 
 	//
 	// Table class constructor
@@ -165,6 +166,11 @@ class ct03_pinjaman extends cTable {
 		$this->marketing_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->marketing_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['marketing_id'] = &$this->marketing_id;
+
+		// Periode
+		$this->Periode = new cField('t03_pinjaman', 't03_pinjaman', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Periode->Sortable = TRUE; // Allow sort
+		$this->fields['Periode'] = &$this->Periode;
 	}
 
 	// Set Field Visibility
@@ -741,6 +747,7 @@ class ct03_pinjaman extends cTable {
 		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
 		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Render list row values
@@ -768,6 +775,7 @@ class ct03_pinjaman extends cTable {
 		// Biaya_Administrasi
 		// Biaya_Materai
 		// marketing_id
+		// Periode
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -922,6 +930,10 @@ class ct03_pinjaman extends cTable {
 		}
 		$this->marketing_id->ViewCustomAttributes = "";
 
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
@@ -1006,6 +1018,11 @@ class ct03_pinjaman extends cTable {
 		$this->marketing_id->LinkCustomAttributes = "";
 		$this->marketing_id->HrefValue = "";
 		$this->marketing_id->TooltipValue = "";
+
+		// Periode
+		$this->Periode->LinkCustomAttributes = "";
+		$this->Periode->HrefValue = "";
+		$this->Periode->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -1119,6 +1136,12 @@ class ct03_pinjaman extends cTable {
 		$this->marketing_id->EditAttrs["class"] = "form-control";
 		$this->marketing_id->EditCustomAttributes = "";
 
+		// Periode
+		$this->Periode->EditAttrs["class"] = "form-control";
+		$this->Periode->EditCustomAttributes = "";
+		$this->Periode->EditValue = $this->Periode->CurrentValue;
+		$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -1180,6 +1203,7 @@ class ct03_pinjaman extends cTable {
 					if ($this->Biaya_Administrasi->Exportable) $Doc->ExportCaption($this->Biaya_Administrasi);
 					if ($this->Biaya_Materai->Exportable) $Doc->ExportCaption($this->Biaya_Materai);
 					if ($this->marketing_id->Exportable) $Doc->ExportCaption($this->marketing_id);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1245,6 +1269,7 @@ class ct03_pinjaman extends cTable {
 						if ($this->Biaya_Administrasi->Exportable) $Doc->ExportField($this->Biaya_Administrasi);
 						if ($this->Biaya_Materai->Exportable) $Doc->ExportField($this->Biaya_Materai);
 						if ($this->marketing_id->Exportable) $Doc->ExportField($this->marketing_id);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
 					}
 					$Doc->EndExportRow();
 				}
@@ -1454,6 +1479,7 @@ class ct03_pinjaman extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		$rsnew["Periode"] = $GLOBALS["Periode"];
 		return TRUE;
 	}
 

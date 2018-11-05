@@ -5,6 +5,9 @@
 function Page_Loading() {
 
 	//echo "Page Loading";
+	$GLOBALS["Periode"] = ew_ExecuteScalar("select Tahun_Bulan from t93_Periode");
+
+	//echo "0".$GLOBALS["Periode"]; //exit;
 }
 
 // Page Rendering event
@@ -18,6 +21,91 @@ function Page_Unloaded() {
 
 	//echo "Page Unloaded";
 }
+
+function f_cari_detail_angsuran($pinjaman_id) { // -----------------------------------------
+
+	//echo "1".$GLOBALS["Periode"]; //exit;
+	//var_dump($GLOBALS["Periode"]);
+
+	$q = "
+		select
+			*
+		from
+			t04_pinjamanangsurantemp
+		where
+			pinjaman_id = ".$pinjaman_id."
+			and (Periode is not null or Periode = '')
+		order by
+			id desc
+		"; echo $q; exit; return;
+	/*$r = Conn()->Execute($q);
+	if ($r->EOF) { // belum ada data ber-Periode
+		return 1;
+	}
+
+	// sudah ada data ber-Periode
+	// $Periode = $r->fields["Periode"];
+	// bandingkan data Periode yang ada di database dengan data Periode berjalan
+	//echo "r ".$r->fields["Periode"]." <-> g ".$GLOBALS["Periode"]; exit;
+
+	if ($r->fields["Periode"] == $GLOBALS["Periode"]) {
+
+		// data Periode di database masih pada Periode berjalan
+		return $r->fields["Angsuran_Ke"];
+	}
+	else {
+
+		// data Periode di database sudah tidak sama dengan Periode berjalan
+		return ++$r->fields["Angsuran_Ke"];
+	}*/
+} // end of function f_cari_detail_angsuran ------------------------------------------------
+
+function f_create_rincian_angsuran($rsnew) { // --------------------------------------------
+
+	// create data rincian angsuran
+	$pinjaman_id      = $rsnew["id"];
+	$Angsuran_Tanggal = $rsnew["Kontrak_Tgl"];
+	$Angsuran_Tgl     = substr($Angsuran_Tanggal, -2);
+	$Angsuran_Pokok   = $rsnew["Angsuran_Pokok"];
+	$Angsuran_Bunga   = $rsnew["Angsuran_Bunga"];
+	$Angsuran_Total   = $Angsuran_Pokok + $Angsuran_Bunga;
+	$Sisa_Hutang      = $rsnew["Pinjaman"];
+	$Angsuran_Pokok_Total = 0;
+	$Angsuran_Bunga_Total = 0;
+	$Angsuran_Total_Grand = 0;
+
+	//for ($i; $i <= 12; $i++) {
+	for ($Angsuran_Ke = 1; $Angsuran_Ke <= $rsnew["Angsuran_Lama"]; $Angsuran_Ke++) {
+		$Angsuran_Tanggal      = f_create_tanggal_angsuran($Angsuran_Tanggal, $Angsuran_Tgl);
+		$Angsuran_Pokok_Total += $Angsuran_Pokok;
+		if ($Angsuran_Pokok_Total >= $rsnew["Pinjaman"]) {
+			$Angsuran_Pokok       = $Angsuran_Pokok - ($Angsuran_Pokok_Total - $rsnew["Pinjaman"]);
+			$Angsuran_Pokok_Total = $Angsuran_Pokok_Total - ($Angsuran_Pokok_Total - $rsnew["Pinjaman"]);
+		}
+		$Sisa_Hutang          -= $Angsuran_Pokok;
+		$Angsuran_Bunga        = $Angsuran_Total - $Angsuran_Pokok;
+		$Angsuran_Bunga_Total += $Angsuran_Bunga;
+		$Angsuran_Total_Grand += $Angsuran_Total;
+		$q = "insert into t04_pinjamanangsurantemp (
+			pinjaman_id,
+			Angsuran_Ke,
+			Angsuran_Tanggal,
+			Angsuran_Pokok,
+			Angsuran_Bunga,
+			Angsuran_Total,
+			Sisa_Hutang
+			) values (
+			'".$pinjaman_id."',
+			'".$Angsuran_Ke."',
+			'".$Angsuran_Tanggal."',
+			".$Angsuran_Pokok.",
+			".$Angsuran_Bunga.",
+			".$Angsuran_Total.",
+			".$Sisa_Hutang."
+			)";
+		ew_Execute($q);
+	}
+} // end of function f_create_rincian_angsuran ---------------------------------------------
 
 function f_create_tanggal_angsuran($sTanggal, $sTgl) { // ----------------------------------
 	$akhir_bulan = 0;
@@ -73,52 +161,5 @@ function f_create_tanggal_angsuran($sTanggal, $sTgl) { // ----------------------
 
 	//echo $akhir_bulan;
 	return $sTanggalAngsuran;
-} // end function f_create_tanggal_angsuran ------------------------------------------------
-
-function f_create_rincian_angsuran($rsnew) { // --------------------------------------------
-
-	// create data rincian angsuran
-	$pinjaman_id      = $rsnew["id"];
-	$Angsuran_Tanggal = $rsnew["Kontrak_Tgl"];
-	$Angsuran_Tgl     = substr($Angsuran_Tanggal, -2);
-	$Angsuran_Pokok   = $rsnew["Angsuran_Pokok"];
-	$Angsuran_Bunga   = $rsnew["Angsuran_Bunga"];
-	$Angsuran_Total   = $Angsuran_Pokok + $Angsuran_Bunga;
-	$Sisa_Hutang      = $rsnew["Pinjaman"];
-	$Angsuran_Pokok_Total = 0;
-	$Angsuran_Bunga_Total = 0;
-	$Angsuran_Total_Grand = 0;
-
-	//for ($i; $i <= 12; $i++) {
-	for ($Angsuran_Ke = 1; $Angsuran_Ke <= $rsnew["Angsuran_Lama"]; $Angsuran_Ke++) {
-		$Angsuran_Tanggal      = f_create_tanggal_angsuran($Angsuran_Tanggal, $Angsuran_Tgl);
-		$Angsuran_Pokok_Total += $Angsuran_Pokok;
-		if ($Angsuran_Pokok_Total >= $rsnew["Pinjaman"]) {
-			$Angsuran_Pokok       = $Angsuran_Pokok - ($Angsuran_Pokok_Total - $rsnew["Pinjaman"]);
-			$Angsuran_Pokok_Total = $Angsuran_Pokok_Total - ($Angsuran_Pokok_Total - $rsnew["Pinjaman"]);
-		}
-		$Sisa_Hutang          -= $Angsuran_Pokok;
-		$Angsuran_Bunga        = $Angsuran_Total - $Angsuran_Pokok;
-		$Angsuran_Bunga_Total += $Angsuran_Bunga;
-		$Angsuran_Total_Grand += $Angsuran_Total;
-		$q = "insert into t04_pinjamanangsurantemp (
-			pinjaman_id,
-			Angsuran_Ke,
-			Angsuran_Tanggal,
-			Angsuran_Pokok,
-			Angsuran_Bunga,
-			Angsuran_Total,
-			Sisa_Hutang
-			) values (
-			'".$pinjaman_id."',
-			'".$Angsuran_Ke."',
-			'".$Angsuran_Tanggal."',
-			".$Angsuran_Pokok.",
-			".$Angsuran_Bunga.",
-			".$Angsuran_Total.",
-			".$Sisa_Hutang."
-			)";
-		ew_Execute($q);
-	}
-} // end function f_create_rincian_angsuran ------------------------------------------------
+} // end of function f_create_tanggal_angsuran ---------------------------------------------
 ?>

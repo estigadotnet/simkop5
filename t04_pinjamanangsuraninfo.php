@@ -962,8 +962,6 @@ class ct04_pinjamanangsuran extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->pinjaman_id->Exportable) $Doc->ExportCaption($this->pinjaman_id);
 					if ($this->Angsuran_Ke->Exportable) $Doc->ExportCaption($this->Angsuran_Ke);
 					if ($this->Angsuran_Tanggal->Exportable) $Doc->ExportCaption($this->Angsuran_Tanggal);
 					if ($this->Angsuran_Pokok->Exportable) $Doc->ExportCaption($this->Angsuran_Pokok);
@@ -1023,8 +1021,6 @@ class ct04_pinjamanangsuran extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->pinjaman_id->Exportable) $Doc->ExportField($this->pinjaman_id);
 						if ($this->Angsuran_Ke->Exportable) $Doc->ExportField($this->Angsuran_Ke);
 						if ($this->Angsuran_Tanggal->Exportable) $Doc->ExportField($this->Angsuran_Tanggal);
 						if ($this->Angsuran_Pokok->Exportable) $Doc->ExportField($this->Angsuran_Pokok);
