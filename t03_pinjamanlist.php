@@ -2411,10 +2411,12 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		//$this->ListOptions->Items["new"]->Body = "xxx";
 		//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
 
-		$pinjaman_id = $this->id->CurrentValue;
+		$pinjaman_id = $this->id->CurrentValue; //echo $pinjaman_id;
 		$Angsuran_Ke = 0;
 		if ($pinjaman_id <> "") {
 			$Angsuran_Ke = f_cari_detail_angsuran($pinjaman_id);
+
+			//echo $pinjaman_id;
 		}
 		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?pinjaman_id=".$pinjaman_id."&Angsuran_Ke=".$Angsuran_Ke."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
 

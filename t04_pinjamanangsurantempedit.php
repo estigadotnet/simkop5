@@ -1293,6 +1293,9 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 	function Page_Load() {
 
 		//echo "Page Load";
+		if (isset($_GET["pinjaman_id"])) {
+			$_SESSION["pinjaman_id"] = ew_RemoveHtml($_GET["pinjaman_id"]);
+		}
 	}
 
 	// Page Unload event
@@ -1346,8 +1349,15 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 			";*/
 
 		//$db =& DbHelper();
-		$q = "select a.*, b.Nama from t03_pinjaman a
-			join t01_nasabah b on a.nasabah_id = b.id where a.id = ".$this->pinjaman_id->CurrentValue."";
+		$q = "
+			select
+				a.*,
+				b.Nama
+			from
+				t03_pinjaman a
+				join t01_nasabah b on a.nasabah_id = b.id
+			where
+				a.id = ".$_SESSION["pinjaman_id"]."";
 		$r = Conn()->Execute($q);
 		$ajaminans = explode(",", $r->fields["jaminan_id"]);
 		$jaminan = "";

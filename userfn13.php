@@ -23,10 +23,6 @@ function Page_Unloaded() {
 }
 
 function f_cari_detail_angsuran($pinjaman_id) { // -----------------------------------------
-
-	//echo "1".$GLOBALS["Periode"]; //exit;
-	//var_dump($GLOBALS["Periode"]);
-
 	$q = "
 		select
 			*
@@ -34,30 +30,35 @@ function f_cari_detail_angsuran($pinjaman_id) { // -----------------------------
 			t04_pinjamanangsurantemp
 		where
 			pinjaman_id = ".$pinjaman_id."
-			and (Periode is not null or Periode = '')
+			and Periode is not null
 		order by
 			id desc
-		"; echo $q; exit; return;
-	/*$r = Conn()->Execute($q);
+		";
+	$r = Conn()->Execute($q);
+	$Angsuran_Ke = 0;
 	if ($r->EOF) { // belum ada data ber-Periode
-		return 1;
+		$Angsuran_Ke = 1;
+		return $Angsuran_Ke;
 	}
 
 	// sudah ada data ber-Periode
-	// $Periode = $r->fields["Periode"];
+	$Periode = $r->fields["Periode"];
+
 	// bandingkan data Periode yang ada di database dengan data Periode berjalan
 	//echo "r ".$r->fields["Periode"]." <-> g ".$GLOBALS["Periode"]; exit;
 
 	if ($r->fields["Periode"] == $GLOBALS["Periode"]) {
 
 		// data Periode di database masih pada Periode berjalan
-		return $r->fields["Angsuran_Ke"];
+		$Angsuran_Ke = $r->fields["Angsuran_Ke"];
+		return $Angsuran_Ke; //$r->fields["Angsuran_Ke"];
 	}
 	else {
 
 		// data Periode di database sudah tidak sama dengan Periode berjalan
-		return ++$r->fields["Angsuran_Ke"];
-	}*/
+		$Angsuran_Ke = ++$r->fields["Angsuran_Ke"];
+		return $Angsuran_Ke;
+	}
 } // end of function f_cari_detail_angsuran ------------------------------------------------
 
 function f_create_rincian_angsuran($rsnew) { // --------------------------------------------
