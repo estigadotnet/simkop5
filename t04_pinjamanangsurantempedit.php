@@ -1000,9 +1000,6 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->Tanggal_Bayar->FldIsDetailKey && !is_null($this->Tanggal_Bayar->FormValue) && $this->Tanggal_Bayar->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Tanggal_Bayar->FldCaption(), $this->Tanggal_Bayar->ReqErrMsg));
-		}
 		if (!ew_CheckEuroDate($this->Tanggal_Bayar->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Tanggal_Bayar->FldErrMsg());
 		}
@@ -1400,9 +1397,6 @@ ft04_pinjamanangsurantempedit.Validate = function() {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
 			elm = this.GetElements("x" + infix + "_Tanggal_Bayar");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Tanggal_Bayar->FldCaption(), $t04_pinjamanangsurantemp->Tanggal_Bayar->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Tanggal_Bayar");
 			if (elm && !ew_CheckEuroDate(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Tanggal_Bayar->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Terlambat");
@@ -1441,7 +1435,8 @@ ft04_pinjamanangsurantempedit.Validate = function() {
 ft04_pinjamanangsurantempedit.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
- 	// Your custom validation code here, return false if invalid. 
+ 	// Your custom validation code here, return false if invalid.
+ 	$('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').val($('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').autoNumeric('get'));
  	return true;
  }
 
@@ -1559,7 +1554,7 @@ $t04_pinjamanangsurantemp_edit->ShowMessage();
 <?php } ?>
 <?php if ($t04_pinjamanangsurantemp->Tanggal_Bayar->Visible) { // Tanggal_Bayar ?>
 	<div id="r_Tanggal_Bayar" class="form-group">
-		<label id="elh_t04_pinjamanangsurantemp_Tanggal_Bayar" for="x_Tanggal_Bayar" class="col-sm-2 control-label ewLabel"><?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t04_pinjamanangsurantemp_Tanggal_Bayar" for="x_Tanggal_Bayar" class="col-sm-2 control-label ewLabel"><?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->CellAttributes() ?>>
 <span id="el_t04_pinjamanangsurantemp_Tanggal_Bayar">
 <input type="text" data-table="t04_pinjamanangsurantemp" data-field="x_Tanggal_Bayar" data-format="7" name="x_Tanggal_Bayar" id="x_Tanggal_Bayar" size="10" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsurantemp->Tanggal_Bayar->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditValue ?>"<?php echo $t04_pinjamanangsurantemp->Tanggal_Bayar->EditAttributes() ?>>
@@ -1656,8 +1651,11 @@ if (EW_DEBUG_ENABLED)
 // Write your table-specific startup script here
 // document.write("page loaded");
 // tampilkan TANGGAL HARI INI di field TANGGAL BAYAR
+//$("#x_Tanggal_Bayar").val("<?php echo date('d-m-Y');?>");
 
-$("#x_Tanggal_Bayar").val("<?php echo date('d-m-Y');?>");
+$(document).ready(function() {
+	$('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').autoNumeric('init', {aSign:'<?php echo $DEFAULT_CURRENCY_SYMBOL; ?>'});
+});
 </script>
 <?php include_once "footer.php" ?>
 <?php

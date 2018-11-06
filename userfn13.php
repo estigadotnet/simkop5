@@ -22,6 +22,17 @@ function Page_Unloaded() {
 	//echo "Page Unloaded";
 }
 
+function f_cari_saldo_titipan($pinjaman_id) { // -------------------------------------------
+	$saldo_titipan = 0;
+	$q = "select Sisa from t06_pinjamantitipan where pinjaman_id = ".$pinjaman_id."
+		order by id desc";
+	$r = Conn()->Execute($q);
+	if (!$r->EOF) {
+		$saldo_titipan = $r->fields["Sisa"];
+	}
+	return $saldo_titipan;
+} // end of function f_cari_saldo_titipan --------------------------------------------------
+
 function f_cari_detail_angsuran($pinjaman_id) { // -----------------------------------------
 	$q = "
 		select

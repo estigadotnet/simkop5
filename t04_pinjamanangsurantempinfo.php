@@ -1468,8 +1468,58 @@ class ct04_pinjamanangsurantemp extends cTable {
 	function Row_Rendered() {
 
 		// To view properties of field class, use:
-		//var_dump($this-><FieldName>); 
+		//var_dump($this-><FieldName>);
+		// tanggal bayar
 
+		$this->Tanggal_Bayar->EditValue = (is_null($this->Tanggal_Bayar->CurrentValue) ? date("d-m-Y") : date_format(date_create($this->Tanggal_Bayar->CurrentValue), "d-m-Y"));
+
+		// terlambat
+		$angsuran_tanggal = date_create($this->Angsuran_Tanggal->CurrentValue);
+		$tanggal_bayar = (is_null($this->Tanggal_Bayar->CurrentValue) ? date_create(date("Y-m-d")) : date_create($this->Tanggal_Bayar->CurrentValue));
+		$terlambat = date_diff($angsuran_tanggal, $tanggal_bayar);
+		$this->Terlambat->EditValue = (is_null($this->Terlambat->CurrentValue) ? $terlambat->format("%r%a") : $this->Terlambat->CurrentValue);
+
+		// total denda
+		$int_terlambat = $terlambat->format("%r%a"); //echo $int_terlambat; exit;
+		$total_denda = 0;
+		$dispensasi_denda = ew_ExecuteScalar("select Dispensasi_Denda from t03_pinjaman where
+		id = ".$_SESSION["pinjaman_id"].""); //echo $dispensasi_denda; exit;
+
+		//echo "1".$GLOBALS["t03_pinjaman"]->Dispensasi_Denda->CurrentValue;
+		//echo "0".$GLOBALS["t03_pinjaman"]->Angsuran_Denda->CurrentValue; exit;
+		//if ($int_terlambat > $GLOBALS["t03_pinjaman"]->Dispensasi_Denda->CurrentValue) {
+
+		if ($int_terlambat > $dispensasi_denda) {
+			$angsuran_denda = ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where
+			id = ".$_SESSION["pinjaman_id"].""); //echo $angsuran_denda; exit;
+			$angsuran_total = ew_ExecuteScalar("select Angsuran_Total from t03_pinjaman where
+			id = ".$_SESSION["pinjaman_id"]."");
+			$total_denda = ($angsuran_denda * $angsuran_total * $int_terlambat) / 100;
+		}
+		$this->Total_Denda->EditValue = (is_null($this->Total_Denda->CurrentValue) ? $total_denda : $this->Total_Denda->CurrentValue);
+
+		// bayar titipan
+		$bayar_titipan = 0;
+		if (is_null($this->Bayar_Titipan->CurrentValue) or $this->Bayar_Titipan->CurrentValue == 0) {
+			$bayar_titipan = f_cari_saldo_titipan($this->pinjaman_id->CurrentValue);
+		}
+		else {
+			$bayar_titipan = $this->Bayar_Titipan->CurrentValue;
+		}
+		$this->Bayar_Titipan->EditValue = $bayar_titipan;
+
+		// bayar non-titipan
+		$bayar_total = $this->Angsuran_Total->CurrentValue;
+		$bayar_non_titipan = $bayar_total - $bayar_titipan;
+
+		//$this->Bayar_Non_Titipan->EditValue = (is_null($this->Bayar_Non_Titipan->CurrentValue) ? $bayar_non_titipan : $this->Bayar_Non_Titipan->CurrentValue);
+		$this->Bayar_Non_Titipan->EditValue = $bayar_non_titipan;
+
+		// bayar total
+		$bayar_total = $total_denda + $bayar_titipan + $bayar_non_titipan;
+
+		//$this->Bayar_Total->EditValue = (is_null($this->Bayar_Total->CurrentValue) ? $bayar_total : $this->Bayar_Total->CurrentValue);
+		$this->Bayar_Total->EditValue = $bayar_total;
 	}
 
 	// User ID Filtering event

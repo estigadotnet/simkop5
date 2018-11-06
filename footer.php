@@ -130,6 +130,74 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 			}
 		}
 	);
+
+	// Table 't04_pinjamanangsurantemp' Field 'Tanggal_Bayar'
+	$('[data-table=t04_pinjamanangsurantemp][data-field=x_Tanggal_Bayar]').on(
+		{
+			'change': function (e) {
+				var $row = $(this).fields();
+				if ( ($row["Angsuran_Tanggal"].val() != "") && ($row["Tanggal_Bayar"].val() != "")) {
+					var angsuran_tanggal = $row["Angsuran_Tanggal"].val();
+					var angsuran_tanggal2 = angsuran_tanggal.split("-");
+					var angsuran_tanggal3 = angsuran_tanggal2[1]+"/"+angsuran_tanggal2[2]+"/"+angsuran_tanggal2[0];
+					var tanggal_bayar = $row["Tanggal_Bayar"].val();
+					var tanggal_bayar2 = tanggal_bayar.split("-");
+					var tanggal_bayar3 = tanggal_bayar2[1]+"/"+tanggal_bayar2[0]+"/"+tanggal_bayar2[2];
+
+					//alert(angsuran_tanggal3); alert(tanggal_bayar3);
+					var date_diff_indays = function(date1, date2) {
+					dt1 = new Date(date1);
+					dt2 = new Date(date2);
+					return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
+					}
+					$row["Terlambat"].val(date_diff_indays(angsuran_tanggal3, tanggal_bayar3));
+					var int_terlambat = parseInt($row["Terlambat"].val());
+
+					//alert("int_terlambat: "+int_terlambat);
+					// var dispensasi_denda = parseInt("<?php echo $GLOBALS['t03_pinjaman']->Dispensasi_Denda->CurrentValue?>");
+
+					var dispensasi_denda = parseInt('<?php echo ew_ExecuteScalar("select Dispensasi_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
+
+					//alert("dispensasi_denda: "+dispensasi_denda);
+					//var angsuran_denda = parseFloat('<?php echo $GLOBALS["t03_pinjaman"]->Angsuran_Denda->CurrentValue?>');
+
+					var angsuran_denda = parseFloat('<?php echo $angsuran_denda = ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
+
+					//alert("angsuran_denda: "+angsuran_denda);
+					var angsuran_total = $row["Angsuran_Total"].val();
+					var angsuran_total2 = angsuran_total.replace(/,/g, '');
+					var angsuran_total3 = parseFloat(angsuran_total2);
+
+					//alert("angsuran_total: "+angsuran_total3);
+					var total_denda = 0;
+					if (int_terlambat > dispensasi_denda) {
+						total_denda =
+							(angsuran_denda *
+							angsuran_total3 *
+							int_terlambat) / 100;
+					}
+					$row["Total_Denda"].val(total_denda);
+					var bayar_titipan = parseFloat($row["Bayar_Titipan"].val());
+
+					//$bayar_titipan = f_carisaldotitipan($this->pinjaman_id->CurrentValue);
+					//$this->Bayar_Titipan->EditValue = (is_null($this->Bayar_Titipan->CurrentValue) ? $bayar_titipan : $this->Bayar_Titipan->CurrentValue);
+
+					var bayar_non_titipan = parseFloat($row["Bayar_Non_Titipan"].val());
+
+					//$bayar_non_titipan = $bayar_total - $bayar_titipan;
+					//$this->Bayar_Non_Titipan->EditValue = (is_null($this->Bayar_Non_Titipan->CurrentValue) ? $bayar_non_titipan : $this->Bayar_Non_Titipan->CurrentValue);
+
+					var bayar_total = total_denda + bayar_titipan + bayar_non_titipan;
+
+					//$bayar_total = $this->Angsuran_Total->CurrentValue;
+					//$bayar_total = $total_denda + $bayar_titipan + $bayar_non_titipan;
+					//$this->Bayar_Total->EditValue = (is_null($this->Bayar_Total->CurrentValue) ? $bayar_total : $this->Bayar_Total->CurrentValue);
+
+					$row["Bayar_Total"].val(bayar_total);
+				}
+			}
+		}
+	);
 </script>
 </body>
 </html>
