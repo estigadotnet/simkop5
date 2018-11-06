@@ -1436,7 +1436,9 @@ ft04_pinjamanangsurantempedit.Form_CustomValidate =
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid.
- 	$('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').val($('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').autoNumeric('get'));
+ 	//$('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').val($('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').autoNumeric('get'));
+
+ 	$('#x_Total_Denda').val($('#x_Total_Denda').autoNumeric('get'));
  	return true;
  }
 
@@ -1654,7 +1656,9 @@ if (EW_DEBUG_ENABLED)
 //$("#x_Tanggal_Bayar").val("<?php echo date('d-m-Y');?>");
 
 $(document).ready(function() {
-	$('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').autoNumeric('init', {aSign:'<?php echo $DEFAULT_CURRENCY_SYMBOL; ?>'});
+
+	//$('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').autoNumeric('init', {aSign:'<?php echo $DEFAULT_CURRENCY_SYMBOL; ?>'});
+	$('#x_Total_Denda').autoNumeric('init');
 });
 </script>
 <?php include_once "footer.php" ?>
