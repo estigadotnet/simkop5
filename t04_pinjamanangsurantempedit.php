@@ -1293,9 +1293,6 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 	function Page_Load() {
 
 		//echo "Page Load";
-		if (isset($_GET["pinjaman_id"])) {
-			$_SESSION["pinjaman_id"] = ew_RemoveHtml($_GET["pinjaman_id"]);
-		}
 	}
 
 	// Page Unload event
@@ -1342,13 +1339,6 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 		// Example:
 		//$header = "your header";
 
-		/*echo "
-			<div class=\"col-sm-12\">
-				<div class=\"panel panel-default\">
-					<div class=\"panel-heading\">Pinjaman</div>			
-			";*/
-
-		//$db =& DbHelper();
 		$q = "
 			select
 				a.*,
@@ -1359,6 +1349,8 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 			where
 				a.id = ".$_SESSION["pinjaman_id"]."";
 		$r = Conn()->Execute($q);
+
+		// detail jaminan
 		$ajaminans = explode(",", $r->fields["jaminan_id"]);
 		$jaminan = "";
 		foreach ($ajaminans as $ajaminan) {
@@ -1378,17 +1370,14 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 					<td>Nasabah</td><td>".$r->fields["Nama"]."</td>
 				</tr>
 				<tr>
-					<td>Jaminan</td><td>".$jaminan."</td>
+					<td>Jaminan0</td><td>".$jaminan."</td>
+				</tr>
+				<tr>
+					<td>Pinjaman</td><td>".$r->fields["Pinjaman"]."</td>
 				</tr>
 				</tbody>
 			</table>
 		";
-
-		//echo $db->ExecuteHtml($q, array("fieldcaption" => TRUE, "tablename" => array("t03_pinjaman"))); // Execute a SQL and show as HTML table
-		/*echo "
-				</div>
-			</div>
-			";*/
 	}
 
 	// Page Data Rendered event
