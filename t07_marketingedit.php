@@ -341,15 +341,6 @@ class ct07_marketing_edit extends ct07_marketing {
 	var $IsModal = FALSE;
 	var $DbMasterFilter;
 	var $DbDetailFilter;
-	var $DisplayRecs = 1;
-	var $StartRec;
-	var $StopRec;
-	var $TotalRecs = 0;
-	var $RecRange = 10;
-	var $Pager;
-	var $RecCnt;
-	var $RecKey = array();
-	var $Recordset;
 
 	// 
 	// Page main
@@ -363,46 +354,9 @@ class ct07_marketing_edit extends ct07_marketing {
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
 
-		// Load current record
-		$bLoadCurrentRecord = FALSE;
-		$sReturnUrl = "";
-		$bMatchRecord = FALSE;
-
 		// Load key from QueryString
 		if (@$_GET["id"] <> "") {
 			$this->id->setQueryStringValue($_GET["id"]);
-			$this->RecKey["id"] = $this->id->QueryStringValue;
-		} else {
-			$bLoadCurrentRecord = TRUE;
-		}
-
-		// Load recordset
-		$this->StartRec = 1; // Initialize start position
-		if ($this->Recordset = $this->LoadRecordset()) // Load records
-			$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
-		if ($this->TotalRecs <= 0) { // No record found
-			if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-				$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-			$this->Page_Terminate("t07_marketinglist.php"); // Return to list page
-		} elseif ($bLoadCurrentRecord) { // Load current record position
-			$this->SetUpStartRec(); // Set up start record position
-
-			// Point to current record
-			if (intval($this->StartRec) <= intval($this->TotalRecs)) {
-				$bMatchRecord = TRUE;
-				$this->Recordset->Move($this->StartRec-1);
-			}
-		} else { // Match key values
-			while (!$this->Recordset->EOF) {
-				if (strval($this->id->CurrentValue) == strval($this->Recordset->fields('id'))) {
-					$this->setStartRecordNumber($this->StartRec); // Save record position
-					$bMatchRecord = TRUE;
-					break;
-				} else {
-					$this->StartRec++;
-					$this->Recordset->MoveNext();
-				}
-			}
 		}
 
 		// Process form if post back
@@ -411,6 +365,11 @@ class ct07_marketing_edit extends ct07_marketing {
 			$this->LoadFormValues(); // Get form values
 		} else {
 			$this->CurrentAction = "I"; // Default action is display
+		}
+
+		// Check if valid key
+		if ($this->id->CurrentValue == "") {
+			$this->Page_Terminate("t07_marketinglist.php"); // Invalid key, return to list
 		}
 
 		// Validate form if post back
@@ -424,12 +383,9 @@ class ct07_marketing_edit extends ct07_marketing {
 		}
 		switch ($this->CurrentAction) {
 			case "I": // Get a record to display
-				if (!$bMatchRecord) {
-					if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-						$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-					$this->Page_Terminate("t07_marketinglist.php"); // Return to list page
-				} else {
-					$this->LoadRowValues($this->Recordset); // Load row values
+				if (!$this->LoadRow()) { // Load record based on key
+					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
+					$this->Page_Terminate("t07_marketinglist.php"); // No matching record, return to list
 				}
 				break;
 			Case "U": // Update
@@ -519,32 +475,6 @@ class ct07_marketing_edit extends ct07_marketing {
 		$this->LoadRow();
 		$this->id->CurrentValue = $this->id->FormValue;
 		$this->Nama->CurrentValue = $this->Nama->FormValue;
-	}
-
-	// Load recordset
-	function LoadRecordset($offset = -1, $rowcnt = -1) {
-
-		// Load List page SQL
-		$sSql = $this->SelectSQL();
-		$conn = &$this->Connection();
-
-		// Load recordset
-		$dbtype = ew_GetConnectionType($this->DBID);
-		if ($this->UseSelectLimit) {
-			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
-			} else {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
-			}
-			$conn->raiseErrorFn = '';
-		} else {
-			$rs = ew_LoadRecordset($sSql, $conn);
-		}
-
-		// Call Recordset Selected event
-		$this->Recordset_Selected($rs);
-		return $rs;
 	}
 
 	// Load row based on key values
@@ -941,47 +871,6 @@ $t07_marketing_edit->ShowMessage();
 <button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t07_marketing_edit->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div>
 </div>
-<?php if (!isset($t07_marketing_edit->Pager)) $t07_marketing_edit->Pager = new cPrevNextPager($t07_marketing_edit->StartRec, $t07_marketing_edit->DisplayRecs, $t07_marketing_edit->TotalRecs) ?>
-<?php if ($t07_marketing_edit->Pager->RecordCount > 0 && $t07_marketing_edit->Pager->Visible) { ?>
-<div class="ewPager">
-<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
-<div class="ewPrevNext"><div class="input-group">
-<div class="input-group-btn">
-<!--first page button-->
-	<?php if ($t07_marketing_edit->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t07_marketing_edit->PageUrl() ?>start=<?php echo $t07_marketing_edit->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } ?>
-<!--previous page button-->
-	<?php if ($t07_marketing_edit->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t07_marketing_edit->PageUrl() ?>start=<?php echo $t07_marketing_edit->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } ?>
-</div>
-<!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t07_marketing_edit->Pager->CurrentPage ?>">
-<div class="input-group-btn">
-<!--next page button-->
-	<?php if ($t07_marketing_edit->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t07_marketing_edit->PageUrl() ?>start=<?php echo $t07_marketing_edit->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } ?>
-<!--last page button-->
-	<?php if ($t07_marketing_edit->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t07_marketing_edit->PageUrl() ?>start=<?php echo $t07_marketing_edit->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } ?>
-</div>
-</div>
-</div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t07_marketing_edit->Pager->PageCount ?></span>
-</div>
-<?php } ?>
-<div class="clearfix"></div>
 <?php } ?>
 </form>
 <script type="text/javascript">

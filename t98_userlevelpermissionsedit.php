@@ -343,15 +343,6 @@ class ct98_userlevelpermissions_edit extends ct98_userlevelpermissions {
 	var $IsModal = FALSE;
 	var $DbMasterFilter;
 	var $DbDetailFilter;
-	var $DisplayRecs = 1;
-	var $StartRec;
-	var $StopRec;
-	var $TotalRecs = 0;
-	var $RecRange = 10;
-	var $Pager;
-	var $RecCnt;
-	var $RecKey = array();
-	var $Recordset;
 
 	// 
 	// Page main
@@ -365,52 +356,12 @@ class ct98_userlevelpermissions_edit extends ct98_userlevelpermissions {
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
 
-		// Load current record
-		$bLoadCurrentRecord = FALSE;
-		$sReturnUrl = "";
-		$bMatchRecord = FALSE;
-
 		// Load key from QueryString
 		if (@$_GET["userlevelid"] <> "") {
 			$this->userlevelid->setQueryStringValue($_GET["userlevelid"]);
-			$this->RecKey["userlevelid"] = $this->userlevelid->QueryStringValue;
-		} else {
-			$bLoadCurrentRecord = TRUE;
 		}
 		if (@$_GET["_tablename"] <> "") {
 			$this->_tablename->setQueryStringValue($_GET["_tablename"]);
-			$this->RecKey["_tablename"] = $this->_tablename->QueryStringValue;
-		} else {
-			$bLoadCurrentRecord = TRUE;
-		}
-
-		// Load recordset
-		$this->StartRec = 1; // Initialize start position
-		if ($this->Recordset = $this->LoadRecordset()) // Load records
-			$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
-		if ($this->TotalRecs <= 0) { // No record found
-			if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-				$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-			$this->Page_Terminate("t98_userlevelpermissionslist.php"); // Return to list page
-		} elseif ($bLoadCurrentRecord) { // Load current record position
-			$this->SetUpStartRec(); // Set up start record position
-
-			// Point to current record
-			if (intval($this->StartRec) <= intval($this->TotalRecs)) {
-				$bMatchRecord = TRUE;
-				$this->Recordset->Move($this->StartRec-1);
-			}
-		} else { // Match key values
-			while (!$this->Recordset->EOF) {
-				if (strval($this->userlevelid->CurrentValue) == strval($this->Recordset->fields('userlevelid')) && strval($this->_tablename->CurrentValue) == strval($this->Recordset->fields('tablename'))) {
-					$this->setStartRecordNumber($this->StartRec); // Save record position
-					$bMatchRecord = TRUE;
-					break;
-				} else {
-					$this->StartRec++;
-					$this->Recordset->MoveNext();
-				}
-			}
 		}
 
 		// Process form if post back
@@ -419,6 +370,14 @@ class ct98_userlevelpermissions_edit extends ct98_userlevelpermissions {
 			$this->LoadFormValues(); // Get form values
 		} else {
 			$this->CurrentAction = "I"; // Default action is display
+		}
+
+		// Check if valid key
+		if ($this->userlevelid->CurrentValue == "") {
+			$this->Page_Terminate("t98_userlevelpermissionslist.php"); // Invalid key, return to list
+		}
+		if ($this->_tablename->CurrentValue == "") {
+			$this->Page_Terminate("t98_userlevelpermissionslist.php"); // Invalid key, return to list
 		}
 
 		// Validate form if post back
@@ -432,12 +391,9 @@ class ct98_userlevelpermissions_edit extends ct98_userlevelpermissions {
 		}
 		switch ($this->CurrentAction) {
 			case "I": // Get a record to display
-				if (!$bMatchRecord) {
-					if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-						$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-					$this->Page_Terminate("t98_userlevelpermissionslist.php"); // Return to list page
-				} else {
-					$this->LoadRowValues($this->Recordset); // Load row values
+				if (!$this->LoadRow()) { // Load record based on key
+					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
+					$this->Page_Terminate("t98_userlevelpermissionslist.php"); // No matching record, return to list
 				}
 				break;
 			Case "U": // Update
@@ -532,32 +488,6 @@ class ct98_userlevelpermissions_edit extends ct98_userlevelpermissions {
 		$this->userlevelid->CurrentValue = $this->userlevelid->FormValue;
 		$this->_tablename->CurrentValue = $this->_tablename->FormValue;
 		$this->permission->CurrentValue = $this->permission->FormValue;
-	}
-
-	// Load recordset
-	function LoadRecordset($offset = -1, $rowcnt = -1) {
-
-		// Load List page SQL
-		$sSql = $this->SelectSQL();
-		$conn = &$this->Connection();
-
-		// Load recordset
-		$dbtype = ew_GetConnectionType($this->DBID);
-		if ($this->UseSelectLimit) {
-			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
-			} else {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
-			}
-			$conn->raiseErrorFn = '';
-		} else {
-			$rs = ew_LoadRecordset($sSql, $conn);
-		}
-
-		// Call Recordset Selected event
-		$this->Recordset_Selected($rs);
-		return $rs;
 	}
 
 	// Load row based on key values
@@ -1041,47 +971,6 @@ $t98_userlevelpermissions_edit->ShowMessage();
 <button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t98_userlevelpermissions_edit->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div>
 </div>
-<?php if (!isset($t98_userlevelpermissions_edit->Pager)) $t98_userlevelpermissions_edit->Pager = new cPrevNextPager($t98_userlevelpermissions_edit->StartRec, $t98_userlevelpermissions_edit->DisplayRecs, $t98_userlevelpermissions_edit->TotalRecs) ?>
-<?php if ($t98_userlevelpermissions_edit->Pager->RecordCount > 0 && $t98_userlevelpermissions_edit->Pager->Visible) { ?>
-<div class="ewPager">
-<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
-<div class="ewPrevNext"><div class="input-group">
-<div class="input-group-btn">
-<!--first page button-->
-	<?php if ($t98_userlevelpermissions_edit->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t98_userlevelpermissions_edit->PageUrl() ?>start=<?php echo $t98_userlevelpermissions_edit->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } ?>
-<!--previous page button-->
-	<?php if ($t98_userlevelpermissions_edit->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t98_userlevelpermissions_edit->PageUrl() ?>start=<?php echo $t98_userlevelpermissions_edit->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } ?>
-</div>
-<!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t98_userlevelpermissions_edit->Pager->CurrentPage ?>">
-<div class="input-group-btn">
-<!--next page button-->
-	<?php if ($t98_userlevelpermissions_edit->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t98_userlevelpermissions_edit->PageUrl() ?>start=<?php echo $t98_userlevelpermissions_edit->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } ?>
-<!--last page button-->
-	<?php if ($t98_userlevelpermissions_edit->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t98_userlevelpermissions_edit->PageUrl() ?>start=<?php echo $t98_userlevelpermissions_edit->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } ?>
-</div>
-</div>
-</div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t98_userlevelpermissions_edit->Pager->PageCount ?></span>
-</div>
-<?php } ?>
-<div class="clearfix"></div>
 <?php } ?>
 </form>
 <script type="text/javascript">

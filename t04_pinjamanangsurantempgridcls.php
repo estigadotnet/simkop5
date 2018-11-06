@@ -931,12 +931,6 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
-		// "edit"
-		$item = &$this->ListOptions->Add("edit");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
-		$item->OnLeft = TRUE;
-
 		// Drop down button for ListOptions
 		$this->ListOptions->UseImageAndText = TRUE;
 		$this->ListOptions->UseDropDownButton = FALSE;
@@ -990,15 +984,6 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 			}
 		}
 		if ($this->CurrentMode == "view") { // View mode
-
-		// "edit"
-		$oListOpt = &$this->ListOptions->Items["edit"];
-		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
-			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
-		} else {
-			$oListOpt->Body = "";
-		}
 		} // End View mode
 		if ($this->CurrentMode == "edit" && is_numeric($this->RowIndex)) {
 			$this->MultiSelectKey .= "<input type=\"hidden\" name=\"" . $KeyName . "\" id=\"" . $KeyName . "\" value=\"" . $this->id->CurrentValue . "\">";
@@ -1913,9 +1898,6 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 		}
 		if (!$this->Sisa_Hutang->FldIsDetailKey && !is_null($this->Sisa_Hutang->FormValue) && $this->Sisa_Hutang->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Sisa_Hutang->FldCaption(), $this->Sisa_Hutang->ReqErrMsg));
-		}
-		if (!$this->Tanggal_Bayar->FldIsDetailKey && !is_null($this->Tanggal_Bayar->FormValue) && $this->Tanggal_Bayar->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Tanggal_Bayar->FldCaption(), $this->Tanggal_Bayar->ReqErrMsg));
 		}
 		if (!ew_CheckEuroDate($this->Tanggal_Bayar->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Tanggal_Bayar->FldErrMsg());

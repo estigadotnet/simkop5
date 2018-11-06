@@ -59,9 +59,6 @@ ft04_pinjamanangsurantempgrid.Validate = function() {
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Sisa_Hutang->FldCaption(), $t04_pinjamanangsurantemp->Sisa_Hutang->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Tanggal_Bayar");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsurantemp->Tanggal_Bayar->FldCaption(), $t04_pinjamanangsurantemp->Tanggal_Bayar->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Tanggal_Bayar");
 			if (elm && !ew_CheckEuroDate(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsurantemp->Tanggal_Bayar->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Terlambat");

@@ -357,15 +357,6 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 	var $IsModal = FALSE;
 	var $DbMasterFilter;
 	var $DbDetailFilter;
-	var $DisplayRecs = 1;
-	var $StartRec;
-	var $StopRec;
-	var $TotalRecs = 0;
-	var $RecRange = 10;
-	var $Pager;
-	var $RecCnt;
-	var $RecKey = array();
-	var $Recordset;
 
 	// 
 	// Page main
@@ -379,50 +370,13 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
 
-		// Load current record
-		$bLoadCurrentRecord = FALSE;
-		$sReturnUrl = "";
-		$bMatchRecord = FALSE;
-
 		// Load key from QueryString
 		if (@$_GET["id"] <> "") {
 			$this->id->setQueryStringValue($_GET["id"]);
-			$this->RecKey["id"] = $this->id->QueryStringValue;
-		} else {
-			$bLoadCurrentRecord = TRUE;
 		}
 
 		// Set up master detail parameters
 		$this->SetUpMasterParms();
-
-		// Load recordset
-		$this->StartRec = 1; // Initialize start position
-		if ($this->Recordset = $this->LoadRecordset()) // Load records
-			$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
-		if ($this->TotalRecs <= 0) { // No record found
-			if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-				$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-			$this->Page_Terminate("t04_pinjamanangsurantemplist.php"); // Return to list page
-		} elseif ($bLoadCurrentRecord) { // Load current record position
-			$this->SetUpStartRec(); // Set up start record position
-
-			// Point to current record
-			if (intval($this->StartRec) <= intval($this->TotalRecs)) {
-				$bMatchRecord = TRUE;
-				$this->Recordset->Move($this->StartRec-1);
-			}
-		} else { // Match key values
-			while (!$this->Recordset->EOF) {
-				if (strval($this->id->CurrentValue) == strval($this->Recordset->fields('id'))) {
-					$this->setStartRecordNumber($this->StartRec); // Save record position
-					$bMatchRecord = TRUE;
-					break;
-				} else {
-					$this->StartRec++;
-					$this->Recordset->MoveNext();
-				}
-			}
-		}
 
 		// Process form if post back
 		if (@$_POST["a_edit"] <> "") {
@@ -430,6 +384,11 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 			$this->LoadFormValues(); // Get form values
 		} else {
 			$this->CurrentAction = "I"; // Default action is display
+		}
+
+		// Check if valid key
+		if ($this->id->CurrentValue == "") {
+			$this->Page_Terminate("t04_pinjamanangsurantemplist.php"); // Invalid key, return to list
 		}
 
 		// Validate form if post back
@@ -443,12 +402,9 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 		}
 		switch ($this->CurrentAction) {
 			case "I": // Get a record to display
-				if (!$bMatchRecord) {
-					if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-						$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-					$this->Page_Terminate("t04_pinjamanangsurantemplist.php"); // Return to list page
-				} else {
-					$this->LoadRowValues($this->Recordset); // Load row values
+				if (!$this->LoadRow()) { // Load record based on key
+					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
+					$this->Page_Terminate("t04_pinjamanangsurantemplist.php"); // No matching record, return to list
 				}
 				break;
 			Case "U": // Update
@@ -590,32 +546,6 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 		$this->Bayar_Non_Titipan->CurrentValue = $this->Bayar_Non_Titipan->FormValue;
 		$this->Bayar_Total->CurrentValue = $this->Bayar_Total->FormValue;
 		$this->Keterangan->CurrentValue = $this->Keterangan->FormValue;
-	}
-
-	// Load recordset
-	function LoadRecordset($offset = -1, $rowcnt = -1) {
-
-		// Load List page SQL
-		$sSql = $this->SelectSQL();
-		$conn = &$this->Connection();
-
-		// Load recordset
-		$dbtype = ew_GetConnectionType($this->DBID);
-		if ($this->UseSelectLimit) {
-			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
-			} else {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
-			}
-			$conn->raiseErrorFn = '';
-		} else {
-			$rs = ew_LoadRecordset($sSql, $conn);
-		}
-
-		// Call Recordset Selected event
-		$this->Recordset_Selected($rs);
-		return $rs;
 	}
 
 	// Load row based on key values
@@ -1370,10 +1300,43 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 					<td>Nasabah</td><td>".$r->fields["Nama"]."</td>
 				</tr>
 				<tr>
-					<td>Jaminan0</td><td>".$jaminan."</td>
+					<td>Jaminan</td><td>".$jaminan."</td>
 				</tr>
 				<tr>
-					<td>Pinjaman</td><td>".number_format($r->fields["Pinjaman"])."</td>
+					<td>Pinjaman</td><td>".number_format($r->fields["Pinjaman"], 2, ".", ",")."</td>
+				</tr>
+				<tr>
+					<td>Angsuran (Bln)</td><td>".$r->fields["Angsuran_Lama"]."</td>
+				</tr>
+				<tr>
+					<td>Bunga (%)</td><td>".$r->fields["Angsuran_Bunga_Prosen"]."</td>
+				</tr>
+				<tr>
+					<td>Denda (%)</td><td>".$r->fields["Angsuran_Denda"]."</td>
+				</tr>
+				<tr>
+					<td>Dispensasi (Hari)</td><td>".$r->fields["Dispensasi_Denda"]."</td>
+				</tr>
+				<tr>
+					<td>Angsuran Pokok</td><td>".number_format($r->fields["Angsuran_Pokok"], 2, ".", ",")."</td>
+				</tr>
+				<tr>
+					<td>Angsuran Bunga</td><td>".number_format($r->fields["Angsuran_Bunga"], 2, ".", ",")."</td>
+				</tr>
+				<tr>
+					<td>Angsuran Total</td><td>".number_format($r->fields["Angsuran_Total"], 2, ".", ",")."</td>
+				</tr>
+				<tr>
+					<td>No. Ref.</td><td>".$r->fields["No_Ref"]."</td>
+				</tr>
+				<tr>
+					<td>Biaya Administrasi</td><td>".number_format($r->fields["Biaya_Administrasi"], 2, ".", ",")."</td>
+				</tr>
+				<tr>
+					<td>Biaya Materai</td><td>".number_format($r->fields["Biaya_Materai"], 2, ".", ",")."</td>
+				</tr>
+				<tr>
+					<td>Marketing</td><td>".ew_ExecuteScalar("select Nama from t07_marketing where id = ".$r->fields["marketing_id"])."</td>
 				</tr>
 				</tbody>
 			</table>
@@ -1678,47 +1641,6 @@ ew_CreateCalendar("ft04_pinjamanangsurantempedit", "x_Tanggal_Bayar", 7);
 <button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t04_pinjamanangsurantemp_edit->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div>
 </div>
-<?php if (!isset($t04_pinjamanangsurantemp_edit->Pager)) $t04_pinjamanangsurantemp_edit->Pager = new cPrevNextPager($t04_pinjamanangsurantemp_edit->StartRec, $t04_pinjamanangsurantemp_edit->DisplayRecs, $t04_pinjamanangsurantemp_edit->TotalRecs) ?>
-<?php if ($t04_pinjamanangsurantemp_edit->Pager->RecordCount > 0 && $t04_pinjamanangsurantemp_edit->Pager->Visible) { ?>
-<div class="ewPager">
-<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
-<div class="ewPrevNext"><div class="input-group">
-<div class="input-group-btn">
-<!--first page button-->
-	<?php if ($t04_pinjamanangsurantemp_edit->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t04_pinjamanangsurantemp_edit->PageUrl() ?>start=<?php echo $t04_pinjamanangsurantemp_edit->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } ?>
-<!--previous page button-->
-	<?php if ($t04_pinjamanangsurantemp_edit->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t04_pinjamanangsurantemp_edit->PageUrl() ?>start=<?php echo $t04_pinjamanangsurantemp_edit->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } ?>
-</div>
-<!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t04_pinjamanangsurantemp_edit->Pager->CurrentPage ?>">
-<div class="input-group-btn">
-<!--next page button-->
-	<?php if ($t04_pinjamanangsurantemp_edit->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t04_pinjamanangsurantemp_edit->PageUrl() ?>start=<?php echo $t04_pinjamanangsurantemp_edit->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } ?>
-<!--last page button-->
-	<?php if ($t04_pinjamanangsurantemp_edit->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t04_pinjamanangsurantemp_edit->PageUrl() ?>start=<?php echo $t04_pinjamanangsurantemp_edit->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } ?>
-</div>
-</div>
-</div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t04_pinjamanangsurantemp_edit->Pager->PageCount ?></span>
-</div>
-<?php } ?>
-<div class="clearfix"></div>
 <?php } ?>
 </form>
 <script type="text/javascript">

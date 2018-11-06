@@ -2417,7 +2417,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		if ($pinjaman_id <> "") {
 			$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
 		}
-		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
 
 		//"<a class=\"ewAddEdit ewAdd\" title=\"Your Title\" data-caption=\"Your Caption\" href=\"yourpage.php\">My New Button</a>"; // definisikan link, style, dan caption tombol
 		$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"yourpage.php\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";

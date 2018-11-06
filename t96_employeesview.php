@@ -409,7 +409,6 @@ class ct96_employees_view extends ct96_employees {
 	var $StopRec;
 	var $TotalRecs = 0;
 	var $RecRange = 10;
-	var $Pager;
 	var $RecCnt;
 	var $RecKey = array();
 	var $IsModal = FALSE;
@@ -426,9 +425,6 @@ class ct96_employees_view extends ct96_employees {
 		$this->IsModal = (@$_GET["modal"] == "1" || @$_POST["modal"] == "1");
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
-
-		// Load current record
-		$bLoadCurrentRecord = FALSE;
 		$sReturnUrl = "";
 		$bMatchRecord = FALSE;
 		if ($this->IsPageRequest()) { // Validate request
@@ -439,46 +435,17 @@ class ct96_employees_view extends ct96_employees {
 				$this->EmployeeID->setFormValue($_POST["EmployeeID"]);
 				$this->RecKey["EmployeeID"] = $this->EmployeeID->FormValue;
 			} else {
-				$bLoadCurrentRecord = TRUE;
+				$sReturnUrl = "t96_employeeslist.php"; // Return to list
 			}
 
 			// Get action
 			$this->CurrentAction = "I"; // Display form
 			switch ($this->CurrentAction) {
 				case "I": // Get a record to display
-					$this->StartRec = 1; // Initialize start position
-					if ($this->Recordset = $this->LoadRecordset()) // Load records
-						$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
-					if ($this->TotalRecs <= 0) { // No record found
-						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$this->Page_Terminate("t96_employeeslist.php"); // Return to list page
-					} elseif ($bLoadCurrentRecord) { // Load current record position
-						$this->SetUpStartRec(); // Set up start record position
-
-						// Point to current record
-						if (intval($this->StartRec) <= intval($this->TotalRecs)) {
-							$bMatchRecord = TRUE;
-							$this->Recordset->Move($this->StartRec-1);
-						}
-					} else { // Match key values
-						while (!$this->Recordset->EOF) {
-							if (strval($this->EmployeeID->CurrentValue) == strval($this->Recordset->fields('EmployeeID'))) {
-								$this->setStartRecordNumber($this->StartRec); // Save record position
-								$bMatchRecord = TRUE;
-								break;
-							} else {
-								$this->StartRec++;
-								$this->Recordset->MoveNext();
-							}
-						}
-					}
-					if (!$bMatchRecord) {
+					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
 						$sReturnUrl = "t96_employeeslist.php"; // No matching record, return to list
-					} else {
-						$this->LoadRowValues($this->Recordset); // Load row values
 					}
 			}
 		} else {
@@ -583,32 +550,6 @@ class ct96_employees_view extends ct96_employees {
 			$this->StartRec = intval(($this->StartRec-1)/$this->DisplayRecs)*$this->DisplayRecs+1; // Point to page boundary
 			$this->setStartRecordNumber($this->StartRec);
 		}
-	}
-
-	// Load recordset
-	function LoadRecordset($offset = -1, $rowcnt = -1) {
-
-		// Load List page SQL
-		$sSql = $this->SelectSQL();
-		$conn = &$this->Connection();
-
-		// Load recordset
-		$dbtype = ew_GetConnectionType($this->DBID);
-		if ($this->UseSelectLimit) {
-			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
-			} else {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
-			}
-			$conn->raiseErrorFn = '';
-		} else {
-			$rs = ew_LoadRecordset($sSql, $conn);
-		}
-
-		// Call Recordset Selected event
-		$this->Recordset_Selected($rs);
-		return $rs;
 	}
 
 	// Load row based on key values
@@ -1399,49 +1340,6 @@ $t96_employees_view->ShowMessage();
 	</tr>
 <?php } ?>
 </table>
-<?php if (!$t96_employees_view->IsModal) { ?>
-<?php if (!isset($t96_employees_view->Pager)) $t96_employees_view->Pager = new cPrevNextPager($t96_employees_view->StartRec, $t96_employees_view->DisplayRecs, $t96_employees_view->TotalRecs) ?>
-<?php if ($t96_employees_view->Pager->RecordCount > 0 && $t96_employees_view->Pager->Visible) { ?>
-<div class="ewPager">
-<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
-<div class="ewPrevNext"><div class="input-group">
-<div class="input-group-btn">
-<!--first page button-->
-	<?php if ($t96_employees_view->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t96_employees_view->PageUrl() ?>start=<?php echo $t96_employees_view->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } ?>
-<!--previous page button-->
-	<?php if ($t96_employees_view->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t96_employees_view->PageUrl() ?>start=<?php echo $t96_employees_view->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } ?>
-</div>
-<!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t96_employees_view->Pager->CurrentPage ?>">
-<div class="input-group-btn">
-<!--next page button-->
-	<?php if ($t96_employees_view->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t96_employees_view->PageUrl() ?>start=<?php echo $t96_employees_view->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } ?>
-<!--last page button-->
-	<?php if ($t96_employees_view->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t96_employees_view->PageUrl() ?>start=<?php echo $t96_employees_view->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } ?>
-</div>
-</div>
-</div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t96_employees_view->Pager->PageCount ?></span>
-</div>
-<?php } ?>
-<div class="clearfix"></div>
-<?php } ?>
 </form>
 <script type="text/javascript">
 ft96_employeesview.Init();
