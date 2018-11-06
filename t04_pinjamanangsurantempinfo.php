@@ -1380,6 +1380,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		$rsnew["Periode"] = $GLOBALS["Periode"];
 		return TRUE;
 	}
 

@@ -1315,15 +1315,6 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 					<td>Dispensasi (Hari)</td><td>".$r->fields["Dispensasi_Denda"]."</td>
 				</tr>
 				<tr>
-					<td>Angsuran Pokok</td><td>".number_format($r->fields["Angsuran_Pokok"], 2, ".", ",")."</td>
-				</tr>
-				<tr>
-					<td>Angsuran Bunga</td><td>".number_format($r->fields["Angsuran_Bunga"], 2, ".", ",")."</td>
-				</tr>
-				<tr>
-					<td>Angsuran Total</td><td>".number_format($r->fields["Angsuran_Total"], 2, ".", ",")."</td>
-				</tr>
-				<tr>
 					<td>No. Ref.</td><td>".$r->fields["No_Ref"]."</td>
 				</tr>
 				<tr>
@@ -1436,9 +1427,10 @@ ft04_pinjamanangsurantempedit.Form_CustomValidate =
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid.
- 	//$('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').val($('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').autoNumeric('get'));
-
  	$('#x_Total_Denda').val($('#x_Total_Denda').autoNumeric('get'));
+ 	$('#x_Bayar_Titipan').val($('#x_Bayar_Titipan').autoNumeric('get'));
+ 	$('#x_Bayar_Non_Titipan').val($('#x_Bayar_Non_Titipan').autoNumeric('get'));
+ 	$('#x_Bayar_Total').val($('#x_Bayar_Total').autoNumeric('get'));
  	return true;
  }
 
@@ -1656,9 +1648,10 @@ if (EW_DEBUG_ENABLED)
 //$("#x_Tanggal_Bayar").val("<?php echo date('d-m-Y');?>");
 
 $(document).ready(function() {
-
-	//$('#x_Total_Denda #x_Bayar_Titipan #x_Bayar_Non_Titipan #x_Bayar_Total').autoNumeric('init', {aSign:'<?php echo $DEFAULT_CURRENCY_SYMBOL; ?>'});
 	$('#x_Total_Denda').autoNumeric('init');
+	$('#x_Bayar_Titipan').autoNumeric('init');
+	$('#x_Bayar_Non_Titipan').autoNumeric('init');
+	$('#x_Bayar_Total').autoNumeric('init');
 });
 </script>
 <?php include_once "footer.php" ?>
