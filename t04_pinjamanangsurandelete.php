@@ -263,6 +263,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->Bayar_Titipan->SetVisibility();
 		$this->Bayar_Non_Titipan->SetVisibility();
 		$this->Bayar_Total->SetVisibility();
+		$this->Periode->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -452,6 +453,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -473,6 +475,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
 		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Render row values based on field settings
@@ -532,6 +535,7 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -593,6 +597,10 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 		$this->Bayar_Total->ViewValue = $this->Bayar_Total->CurrentValue;
 		$this->Bayar_Total->ViewCustomAttributes = "";
 
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 			// Angsuran_Ke
 			$this->Angsuran_Ke->LinkCustomAttributes = "";
 			$this->Angsuran_Ke->HrefValue = "";
@@ -652,6 +660,11 @@ class ct04_pinjamanangsuran_delete extends ct04_pinjamanangsuran {
 			$this->Bayar_Total->LinkCustomAttributes = "";
 			$this->Bayar_Total->HrefValue = "";
 			$this->Bayar_Total->TooltipValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -937,6 +950,9 @@ $t04_pinjamanangsuran_delete->ShowMessage();
 <?php if ($t04_pinjamanangsuran->Bayar_Total->Visible) { // Bayar_Total ?>
 		<th><span id="elh_t04_pinjamanangsuran_Bayar_Total" class="t04_pinjamanangsuran_Bayar_Total"><?php echo $t04_pinjamanangsuran->Bayar_Total->FldCaption() ?></span></th>
 <?php } ?>
+<?php if ($t04_pinjamanangsuran->Periode->Visible) { // Periode ?>
+		<th><span id="elh_t04_pinjamanangsuran_Periode" class="t04_pinjamanangsuran_Periode"><?php echo $t04_pinjamanangsuran->Periode->FldCaption() ?></span></th>
+<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -1051,6 +1067,14 @@ while (!$t04_pinjamanangsuran_delete->Recordset->EOF) {
 <span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Bayar_Total" class="t04_pinjamanangsuran_Bayar_Total">
 <span<?php echo $t04_pinjamanangsuran->Bayar_Total->ViewAttributes() ?>>
 <?php echo $t04_pinjamanangsuran->Bayar_Total->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t04_pinjamanangsuran->Periode->Visible) { // Periode ?>
+		<td<?php echo $t04_pinjamanangsuran->Periode->CellAttributes() ?>>
+<span id="el<?php echo $t04_pinjamanangsuran_delete->RowCnt ?>_t04_pinjamanangsuran_Periode" class="t04_pinjamanangsuran_Periode">
+<span<?php echo $t04_pinjamanangsuran->Periode->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsuran->Periode->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

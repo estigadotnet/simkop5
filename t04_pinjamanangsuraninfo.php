@@ -28,6 +28,7 @@ class ct04_pinjamanangsuran extends cTable {
 	var $Bayar_Non_Titipan;
 	var $Bayar_Total;
 	var $Keterangan;
+	var $Periode;
 
 	//
 	// Table class constructor
@@ -147,6 +148,11 @@ class ct04_pinjamanangsuran extends cTable {
 		$this->Keterangan = new cField('t04_pinjamanangsuran', 't04_pinjamanangsuran', 'x_Keterangan', 'Keterangan', '`Keterangan`', '`Keterangan`', 201, -1, FALSE, '`Keterangan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->Keterangan->Sortable = TRUE; // Allow sort
 		$this->fields['Keterangan'] = &$this->Keterangan;
+
+		// Periode
+		$this->Periode = new cField('t04_pinjamanangsuran', 't04_pinjamanangsuran', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Periode->Sortable = TRUE; // Allow sort
+		$this->fields['Periode'] = &$this->Periode;
 	}
 
 	// Set Field Visibility
@@ -663,6 +669,7 @@ class ct04_pinjamanangsuran extends cTable {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Render list row values
@@ -688,6 +695,7 @@ class ct04_pinjamanangsuran extends cTable {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
+		// Periode
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -750,6 +758,10 @@ class ct04_pinjamanangsuran extends cTable {
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -825,6 +837,11 @@ class ct04_pinjamanangsuran extends cTable {
 		$this->Keterangan->LinkCustomAttributes = "";
 		$this->Keterangan->HrefValue = "";
 		$this->Keterangan->TooltipValue = "";
+
+		// Periode
+		$this->Periode->LinkCustomAttributes = "";
+		$this->Periode->HrefValue = "";
+		$this->Periode->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -935,6 +952,12 @@ class ct04_pinjamanangsuran extends cTable {
 		$this->Keterangan->EditValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
 
+		// Periode
+		$this->Periode->EditAttrs["class"] = "form-control";
+		$this->Periode->EditCustomAttributes = "";
+		$this->Periode->EditValue = $this->Periode->CurrentValue;
+		$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -975,6 +998,7 @@ class ct04_pinjamanangsuran extends cTable {
 					if ($this->Bayar_Non_Titipan->Exportable) $Doc->ExportCaption($this->Bayar_Non_Titipan);
 					if ($this->Bayar_Total->Exportable) $Doc->ExportCaption($this->Bayar_Total);
 					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->pinjaman_id->Exportable) $Doc->ExportCaption($this->pinjaman_id);
@@ -990,6 +1014,7 @@ class ct04_pinjamanangsuran extends cTable {
 					if ($this->Bayar_Titipan->Exportable) $Doc->ExportCaption($this->Bayar_Titipan);
 					if ($this->Bayar_Non_Titipan->Exportable) $Doc->ExportCaption($this->Bayar_Non_Titipan);
 					if ($this->Bayar_Total->Exportable) $Doc->ExportCaption($this->Bayar_Total);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1034,6 +1059,7 @@ class ct04_pinjamanangsuran extends cTable {
 						if ($this->Bayar_Non_Titipan->Exportable) $Doc->ExportField($this->Bayar_Non_Titipan);
 						if ($this->Bayar_Total->Exportable) $Doc->ExportField($this->Bayar_Total);
 						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->pinjaman_id->Exportable) $Doc->ExportField($this->pinjaman_id);
@@ -1049,6 +1075,7 @@ class ct04_pinjamanangsuran extends cTable {
 						if ($this->Bayar_Titipan->Exportable) $Doc->ExportField($this->Bayar_Titipan);
 						if ($this->Bayar_Non_Titipan->Exportable) $Doc->ExportField($this->Bayar_Non_Titipan);
 						if ($this->Bayar_Total->Exportable) $Doc->ExportField($this->Bayar_Total);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
 					}
 					$Doc->EndExportRow();
 				}

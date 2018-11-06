@@ -267,6 +267,7 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->SetVisibility();
 		$this->Bayar_Total->SetVisibility();
 		$this->Keterangan->SetVisibility();
+		$this->Periode->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -559,6 +560,9 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 		if (!$this->Keterangan->FldIsDetailKey) {
 			$this->Keterangan->setFormValue($objForm->GetValue("x_Keterangan"));
 		}
+		if (!$this->Periode->FldIsDetailKey) {
+			$this->Periode->setFormValue($objForm->GetValue("x_Periode"));
+		}
 		if (!$this->id->FldIsDetailKey)
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -583,6 +587,7 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->CurrentValue = $this->Bayar_Non_Titipan->FormValue;
 		$this->Bayar_Total->CurrentValue = $this->Bayar_Total->FormValue;
 		$this->Keterangan->CurrentValue = $this->Keterangan->FormValue;
+		$this->Periode->CurrentValue = $this->Periode->FormValue;
 	}
 
 	// Load recordset
@@ -655,6 +660,7 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -676,6 +682,7 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
 		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Render row values based on field settings
@@ -735,6 +742,7 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -800,6 +808,10 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
 
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 			// Angsuran_Ke
 			$this->Angsuran_Ke->LinkCustomAttributes = "";
 			$this->Angsuran_Ke->HrefValue = "";
@@ -864,6 +876,11 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// Angsuran_Ke
@@ -952,6 +969,12 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->CurrentValue);
 			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
 
+			// Periode
+			$this->Periode->EditAttrs["class"] = "form-control";
+			$this->Periode->EditCustomAttributes = "";
+			$this->Periode->EditValue = ew_HtmlEncode($this->Periode->CurrentValue);
+			$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
+
 			// Edit refer script
 			// Angsuran_Ke
 
@@ -1005,6 +1028,10 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 			// Keterangan
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -1081,6 +1108,9 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 		if (!ew_CheckNumber($this->Bayar_Total->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Bayar_Total->FldErrMsg());
 		}
+		if (!$this->Periode->FldIsDetailKey && !is_null($this->Periode->FormValue) && $this->Periode->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Periode->FldCaption(), $this->Periode->ReqErrMsg));
+		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -1155,6 +1185,9 @@ class ct04_pinjamanangsuran_edit extends ct04_pinjamanangsuran {
 
 			// Keterangan
 			$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, NULL, $this->Keterangan->ReadOnly);
+
+			// Periode
+			$this->Periode->SetDbValueDef($rsnew, $this->Periode->CurrentValue, NULL, $this->Periode->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -1376,6 +1409,9 @@ ft04_pinjamanangsuranedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Bayar_Total");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t04_pinjamanangsuran->Bayar_Total->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Periode");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t04_pinjamanangsuran->Periode->FldCaption(), $t04_pinjamanangsuran->Periode->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1565,6 +1601,16 @@ $t04_pinjamanangsuran_edit->ShowMessage();
 <textarea data-table="t04_pinjamanangsuran" data-field="x_Keterangan" name="x_Keterangan" id="x_Keterangan" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsuran->Keterangan->getPlaceHolder()) ?>"<?php echo $t04_pinjamanangsuran->Keterangan->EditAttributes() ?>><?php echo $t04_pinjamanangsuran->Keterangan->EditValue ?></textarea>
 </span>
 <?php echo $t04_pinjamanangsuran->Keterangan->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t04_pinjamanangsuran->Periode->Visible) { // Periode ?>
+	<div id="r_Periode" class="form-group">
+		<label id="elh_t04_pinjamanangsuran_Periode" for="x_Periode" class="col-sm-2 control-label ewLabel"><?php echo $t04_pinjamanangsuran->Periode->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t04_pinjamanangsuran->Periode->CellAttributes() ?>>
+<span id="el_t04_pinjamanangsuran_Periode">
+<input type="text" data-table="t04_pinjamanangsuran" data-field="x_Periode" name="x_Periode" id="x_Periode" size="30" maxlength="6" placeholder="<?php echo ew_HtmlEncode($t04_pinjamanangsuran->Periode->getPlaceHolder()) ?>" value="<?php echo $t04_pinjamanangsuran->Periode->EditValue ?>"<?php echo $t04_pinjamanangsuran->Periode->EditAttributes() ?>>
+</span>
+<?php echo $t04_pinjamanangsuran->Periode->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

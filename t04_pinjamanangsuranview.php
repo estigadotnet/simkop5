@@ -321,6 +321,7 @@ class ct04_pinjamanangsuran_view extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->SetVisibility();
 		$this->Bayar_Total->SetVisibility();
 		$this->Keterangan->SetVisibility();
+		$this->Periode->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -645,6 +646,7 @@ class ct04_pinjamanangsuran_view extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -666,6 +668,7 @@ class ct04_pinjamanangsuran_view extends ct04_pinjamanangsuran {
 		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
 		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Render row values based on field settings
@@ -731,6 +734,7 @@ class ct04_pinjamanangsuran_view extends ct04_pinjamanangsuran {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -796,6 +800,10 @@ class ct04_pinjamanangsuran_view extends ct04_pinjamanangsuran {
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
 
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 			// Angsuran_Ke
 			$this->Angsuran_Ke->LinkCustomAttributes = "";
 			$this->Angsuran_Ke->HrefValue = "";
@@ -860,6 +868,11 @@ class ct04_pinjamanangsuran_view extends ct04_pinjamanangsuran {
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1194,6 +1207,17 @@ $t04_pinjamanangsuran_view->ShowMessage();
 <span id="el_t04_pinjamanangsuran_Keterangan">
 <span<?php echo $t04_pinjamanangsuran->Keterangan->ViewAttributes() ?>>
 <?php echo $t04_pinjamanangsuran->Keterangan->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t04_pinjamanangsuran->Periode->Visible) { // Periode ?>
+	<tr id="r_Periode">
+		<td><span id="elh_t04_pinjamanangsuran_Periode"><?php echo $t04_pinjamanangsuran->Periode->FldCaption() ?></span></td>
+		<td data-name="Periode"<?php echo $t04_pinjamanangsuran->Periode->CellAttributes() ?>>
+<span id="el_t04_pinjamanangsuran_Periode">
+<span<?php echo $t04_pinjamanangsuran->Periode->ViewAttributes() ?>>
+<?php echo $t04_pinjamanangsuran->Periode->ViewValue ?></span>
 </span>
 </td>
 	</tr>

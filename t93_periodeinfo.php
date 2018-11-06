@@ -10,6 +10,7 @@ class ct93_periode extends cTable {
 	var $id;
 	var $Bulan;
 	var $Tahun;
+	var $Tahun_Bulan;
 
 	//
 	// Table class constructor
@@ -58,6 +59,11 @@ class ct93_periode extends cTable {
 		$this->Tahun->Sortable = TRUE; // Allow sort
 		$this->Tahun->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['Tahun'] = &$this->Tahun;
+
+		// Tahun_Bulan
+		$this->Tahun_Bulan = new cField('t93_periode', 't93_periode', 'x_Tahun_Bulan', 'Tahun_Bulan', '`Tahun_Bulan`', '`Tahun_Bulan`', 200, -1, FALSE, '`Tahun_Bulan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Tahun_Bulan->Sortable = TRUE; // Allow sort
+		$this->fields['Tahun_Bulan'] = &$this->Tahun_Bulan;
 	}
 
 	// Set Field Visibility
@@ -552,6 +558,7 @@ class ct93_periode extends cTable {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Bulan->setDbValue($rs->fields('Bulan'));
 		$this->Tahun->setDbValue($rs->fields('Tahun'));
+		$this->Tahun_Bulan->setDbValue($rs->fields('Tahun_Bulan'));
 	}
 
 	// Render list row values
@@ -565,6 +572,7 @@ class ct93_periode extends cTable {
 		// id
 		// Bulan
 		// Tahun
+		// Tahun_Bulan
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -577,6 +585,10 @@ class ct93_periode extends cTable {
 		// Tahun
 		$this->Tahun->ViewValue = $this->Tahun->CurrentValue;
 		$this->Tahun->ViewCustomAttributes = "";
+
+		// Tahun_Bulan
+		$this->Tahun_Bulan->ViewValue = $this->Tahun_Bulan->CurrentValue;
+		$this->Tahun_Bulan->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -592,6 +604,11 @@ class ct93_periode extends cTable {
 		$this->Tahun->LinkCustomAttributes = "";
 		$this->Tahun->HrefValue = "";
 		$this->Tahun->TooltipValue = "";
+
+		// Tahun_Bulan
+		$this->Tahun_Bulan->LinkCustomAttributes = "";
+		$this->Tahun_Bulan->HrefValue = "";
+		$this->Tahun_Bulan->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -621,6 +638,12 @@ class ct93_periode extends cTable {
 		$this->Tahun->EditCustomAttributes = "";
 		$this->Tahun->EditValue = $this->Tahun->CurrentValue;
 		$this->Tahun->PlaceHolder = ew_RemoveHtml($this->Tahun->FldCaption());
+
+		// Tahun_Bulan
+		$this->Tahun_Bulan->EditAttrs["class"] = "form-control";
+		$this->Tahun_Bulan->EditCustomAttributes = "";
+		$this->Tahun_Bulan->EditValue = $this->Tahun_Bulan->CurrentValue;
+		$this->Tahun_Bulan->PlaceHolder = ew_RemoveHtml($this->Tahun_Bulan->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -652,10 +675,12 @@ class ct93_periode extends cTable {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Bulan->Exportable) $Doc->ExportCaption($this->Bulan);
 					if ($this->Tahun->Exportable) $Doc->ExportCaption($this->Tahun);
+					if ($this->Tahun_Bulan->Exportable) $Doc->ExportCaption($this->Tahun_Bulan);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Bulan->Exportable) $Doc->ExportCaption($this->Bulan);
 					if ($this->Tahun->Exportable) $Doc->ExportCaption($this->Tahun);
+					if ($this->Tahun_Bulan->Exportable) $Doc->ExportCaption($this->Tahun_Bulan);
 				}
 				$Doc->EndExportRow();
 			}
@@ -690,10 +715,12 @@ class ct93_periode extends cTable {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Bulan->Exportable) $Doc->ExportField($this->Bulan);
 						if ($this->Tahun->Exportable) $Doc->ExportField($this->Tahun);
+						if ($this->Tahun_Bulan->Exportable) $Doc->ExportField($this->Tahun_Bulan);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Bulan->Exportable) $Doc->ExportField($this->Bulan);
 						if ($this->Tahun->Exportable) $Doc->ExportField($this->Tahun);
+						if ($this->Tahun_Bulan->Exportable) $Doc->ExportField($this->Tahun_Bulan);
 					}
 					$Doc->EndExportRow();
 				}

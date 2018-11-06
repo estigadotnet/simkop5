@@ -734,6 +734,8 @@ function Page_DataRendering(&$header) {
 		where
 			a.id = ".$_SESSION["pinjaman_id"]."";
 	$r = Conn()->Execute($q);
+
+	// detail jaminan
 	$ajaminans = explode(",", $r->fields["jaminan_id"]);
 	$jaminan = "";
 	foreach ($ajaminans as $ajaminan) {
@@ -741,7 +743,7 @@ function Page_DataRendering(&$header) {
 	}
 	$jaminan = substr($jaminan, 0, -2);
 
-	echo "
+	$header = "
 		<table class=\"table table-bordered table-striped ewViewTable\">
 			<tbody>
 			<tr>
@@ -753,15 +755,15 @@ function Page_DataRendering(&$header) {
 			<tr>
 				<td>Nasabah</td><td>".$r->fields["Nama"]."</td>
 			</tr>
-			<tr>
-				<td>Jaminan</td><td>".$jaminan."</td>
+			";/*<tr>
+				<td>Jaminan0</td><td>".$jaminan."</td>
 			</tr>
 			<tr>
-				<td>Pinjaman</td><td>".$jaminan."</td>
-			</tr>
+				<td>Pinjaman</td><td>-0-".$r->fields["Pinjaman"]."-0-</td>
+			</tr>			
 			</tbody>
 		</table>
-	";
+	";*/
 	//echo $db->ExecuteHtml($q, array("fieldcaption" => TRUE, "tablename" => array("t03_pinjaman"))); // Execute a SQL and show as HTML table
 	/*echo "
 			</div>

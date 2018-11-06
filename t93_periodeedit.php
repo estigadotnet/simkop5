@@ -258,6 +258,7 @@ class ct93_periode_edit extends ct93_periode {
 		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->Bulan->SetVisibility();
 		$this->Tahun->SetVisibility();
+		$this->Tahun_Bulan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -517,6 +518,9 @@ class ct93_periode_edit extends ct93_periode {
 		if (!$this->Tahun->FldIsDetailKey) {
 			$this->Tahun->setFormValue($objForm->GetValue("x_Tahun"));
 		}
+		if (!$this->Tahun_Bulan->FldIsDetailKey) {
+			$this->Tahun_Bulan->setFormValue($objForm->GetValue("x_Tahun_Bulan"));
+		}
 	}
 
 	// Restore form values
@@ -526,6 +530,7 @@ class ct93_periode_edit extends ct93_periode {
 		$this->id->CurrentValue = $this->id->FormValue;
 		$this->Bulan->CurrentValue = $this->Bulan->FormValue;
 		$this->Tahun->CurrentValue = $this->Tahun->FormValue;
+		$this->Tahun_Bulan->CurrentValue = $this->Tahun_Bulan->FormValue;
 	}
 
 	// Load recordset
@@ -586,6 +591,7 @@ class ct93_periode_edit extends ct93_periode {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Bulan->setDbValue($rs->fields('Bulan'));
 		$this->Tahun->setDbValue($rs->fields('Tahun'));
+		$this->Tahun_Bulan->setDbValue($rs->fields('Tahun_Bulan'));
 	}
 
 	// Load DbValue from recordset
@@ -595,6 +601,7 @@ class ct93_periode_edit extends ct93_periode {
 		$this->id->DbValue = $row['id'];
 		$this->Bulan->DbValue = $row['Bulan'];
 		$this->Tahun->DbValue = $row['Tahun'];
+		$this->Tahun_Bulan->DbValue = $row['Tahun_Bulan'];
 	}
 
 	// Render row values based on field settings
@@ -610,6 +617,7 @@ class ct93_periode_edit extends ct93_periode {
 		// id
 		// Bulan
 		// Tahun
+		// Tahun_Bulan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -625,6 +633,10 @@ class ct93_periode_edit extends ct93_periode {
 		$this->Tahun->ViewValue = $this->Tahun->CurrentValue;
 		$this->Tahun->ViewCustomAttributes = "";
 
+		// Tahun_Bulan
+		$this->Tahun_Bulan->ViewValue = $this->Tahun_Bulan->CurrentValue;
+		$this->Tahun_Bulan->ViewCustomAttributes = "";
+
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -639,6 +651,11 @@ class ct93_periode_edit extends ct93_periode {
 			$this->Tahun->LinkCustomAttributes = "";
 			$this->Tahun->HrefValue = "";
 			$this->Tahun->TooltipValue = "";
+
+			// Tahun_Bulan
+			$this->Tahun_Bulan->LinkCustomAttributes = "";
+			$this->Tahun_Bulan->HrefValue = "";
+			$this->Tahun_Bulan->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// id
@@ -659,6 +676,12 @@ class ct93_periode_edit extends ct93_periode {
 			$this->Tahun->EditValue = ew_HtmlEncode($this->Tahun->CurrentValue);
 			$this->Tahun->PlaceHolder = ew_RemoveHtml($this->Tahun->FldCaption());
 
+			// Tahun_Bulan
+			$this->Tahun_Bulan->EditAttrs["class"] = "form-control";
+			$this->Tahun_Bulan->EditCustomAttributes = "";
+			$this->Tahun_Bulan->EditValue = ew_HtmlEncode($this->Tahun_Bulan->CurrentValue);
+			$this->Tahun_Bulan->PlaceHolder = ew_RemoveHtml($this->Tahun_Bulan->FldCaption());
+
 			// Edit refer script
 			// id
 
@@ -672,6 +695,10 @@ class ct93_periode_edit extends ct93_periode {
 			// Tahun
 			$this->Tahun->LinkCustomAttributes = "";
 			$this->Tahun->HrefValue = "";
+
+			// Tahun_Bulan
+			$this->Tahun_Bulan->LinkCustomAttributes = "";
+			$this->Tahun_Bulan->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -705,6 +732,9 @@ class ct93_periode_edit extends ct93_periode {
 		}
 		if (!ew_CheckInteger($this->Tahun->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Tahun->FldErrMsg());
+		}
+		if (!$this->Tahun_Bulan->FldIsDetailKey && !is_null($this->Tahun_Bulan->FormValue) && $this->Tahun_Bulan->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Tahun_Bulan->FldCaption(), $this->Tahun_Bulan->ReqErrMsg));
 		}
 
 		// Return validate result
@@ -747,6 +777,9 @@ class ct93_periode_edit extends ct93_periode {
 
 			// Tahun
 			$this->Tahun->SetDbValueDef($rsnew, $this->Tahun->CurrentValue, 0, $this->Tahun->ReadOnly);
+
+			// Tahun_Bulan
+			$this->Tahun_Bulan->SetDbValueDef($rsnew, $this->Tahun_Bulan->CurrentValue, "", $this->Tahun_Bulan->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -926,6 +959,9 @@ ft93_periodeedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Tahun");
 			if (elm && !ew_CheckInteger(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t93_periode->Tahun->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Tahun_Bulan");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t93_periode->Tahun_Bulan->FldCaption(), $t93_periode->Tahun_Bulan->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1017,6 +1053,16 @@ $t93_periode_edit->ShowMessage();
 <input type="text" data-table="t93_periode" data-field="x_Tahun" name="x_Tahun" id="x_Tahun" size="30" placeholder="<?php echo ew_HtmlEncode($t93_periode->Tahun->getPlaceHolder()) ?>" value="<?php echo $t93_periode->Tahun->EditValue ?>"<?php echo $t93_periode->Tahun->EditAttributes() ?>>
 </span>
 <?php echo $t93_periode->Tahun->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t93_periode->Tahun_Bulan->Visible) { // Tahun_Bulan ?>
+	<div id="r_Tahun_Bulan" class="form-group">
+		<label id="elh_t93_periode_Tahun_Bulan" for="x_Tahun_Bulan" class="col-sm-2 control-label ewLabel"><?php echo $t93_periode->Tahun_Bulan->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t93_periode->Tahun_Bulan->CellAttributes() ?>>
+<span id="el_t93_periode_Tahun_Bulan">
+<input type="text" data-table="t93_periode" data-field="x_Tahun_Bulan" name="x_Tahun_Bulan" id="x_Tahun_Bulan" size="30" maxlength="6" placeholder="<?php echo ew_HtmlEncode($t93_periode->Tahun_Bulan->getPlaceHolder()) ?>" value="<?php echo $t93_periode->Tahun_Bulan->EditValue ?>"<?php echo $t93_periode->Tahun_Bulan->EditAttributes() ?>>
+</span>
+<?php echo $t93_periode->Tahun_Bulan->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

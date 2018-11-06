@@ -255,6 +255,7 @@ class ct93_periode_delete extends ct93_periode {
 		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->Bulan->SetVisibility();
 		$this->Tahun->SetVisibility();
+		$this->Tahun_Bulan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -432,6 +433,7 @@ class ct93_periode_delete extends ct93_periode {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Bulan->setDbValue($rs->fields('Bulan'));
 		$this->Tahun->setDbValue($rs->fields('Tahun'));
+		$this->Tahun_Bulan->setDbValue($rs->fields('Tahun_Bulan'));
 	}
 
 	// Load DbValue from recordset
@@ -441,6 +443,7 @@ class ct93_periode_delete extends ct93_periode {
 		$this->id->DbValue = $row['id'];
 		$this->Bulan->DbValue = $row['Bulan'];
 		$this->Tahun->DbValue = $row['Tahun'];
+		$this->Tahun_Bulan->DbValue = $row['Tahun_Bulan'];
 	}
 
 	// Render row values based on field settings
@@ -456,6 +459,7 @@ class ct93_periode_delete extends ct93_periode {
 		// id
 		// Bulan
 		// Tahun
+		// Tahun_Bulan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -471,6 +475,10 @@ class ct93_periode_delete extends ct93_periode {
 		$this->Tahun->ViewValue = $this->Tahun->CurrentValue;
 		$this->Tahun->ViewCustomAttributes = "";
 
+		// Tahun_Bulan
+		$this->Tahun_Bulan->ViewValue = $this->Tahun_Bulan->CurrentValue;
+		$this->Tahun_Bulan->ViewCustomAttributes = "";
+
 			// id
 			$this->id->LinkCustomAttributes = "";
 			$this->id->HrefValue = "";
@@ -485,6 +493,11 @@ class ct93_periode_delete extends ct93_periode {
 			$this->Tahun->LinkCustomAttributes = "";
 			$this->Tahun->HrefValue = "";
 			$this->Tahun->TooltipValue = "";
+
+			// Tahun_Bulan
+			$this->Tahun_Bulan->LinkCustomAttributes = "";
+			$this->Tahun_Bulan->HrefValue = "";
+			$this->Tahun_Bulan->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -740,6 +753,9 @@ $t93_periode_delete->ShowMessage();
 <?php if ($t93_periode->Tahun->Visible) { // Tahun ?>
 		<th><span id="elh_t93_periode_Tahun" class="t93_periode_Tahun"><?php echo $t93_periode->Tahun->FldCaption() ?></span></th>
 <?php } ?>
+<?php if ($t93_periode->Tahun_Bulan->Visible) { // Tahun_Bulan ?>
+		<th><span id="elh_t93_periode_Tahun_Bulan" class="t93_periode_Tahun_Bulan"><?php echo $t93_periode->Tahun_Bulan->FldCaption() ?></span></th>
+<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -782,6 +798,14 @@ while (!$t93_periode_delete->Recordset->EOF) {
 <span id="el<?php echo $t93_periode_delete->RowCnt ?>_t93_periode_Tahun" class="t93_periode_Tahun">
 <span<?php echo $t93_periode->Tahun->ViewAttributes() ?>>
 <?php echo $t93_periode->Tahun->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t93_periode->Tahun_Bulan->Visible) { // Tahun_Bulan ?>
+		<td<?php echo $t93_periode->Tahun_Bulan->CellAttributes() ?>>
+<span id="el<?php echo $t93_periode_delete->RowCnt ?>_t93_periode_Tahun_Bulan" class="t93_periode_Tahun_Bulan">
+<span<?php echo $t93_periode->Tahun_Bulan->ViewAttributes() ?>>
+<?php echo $t93_periode->Tahun_Bulan->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
