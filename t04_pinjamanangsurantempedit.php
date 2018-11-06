@@ -1373,7 +1373,7 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 					<td>Jaminan0</td><td>".$jaminan."</td>
 				</tr>
 				<tr>
-					<td>Pinjaman</td><td>".$r->fields["Pinjaman"]."</td>
+					<td>Pinjaman</td><td>".number_format($r->fields["Pinjaman"])."</td>
 				</tr>
 				</tbody>
 			</table>

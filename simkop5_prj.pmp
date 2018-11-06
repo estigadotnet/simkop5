@@ -753,7 +753,7 @@ function Page_DataRendering(&$header) {
 				<td>Jaminan0</td><td>".$jaminan."</td>
 			</tr>
 			<tr>
-				<td>Pinjaman</td><td>".$r->fields["Pinjaman"]."</td>
+				<td>Pinjaman</td><td>".number_format($r->fields["Pinjaman"])."</td>
 			</tr>
 			</tbody>
 		</table>
