@@ -1532,22 +1532,23 @@ class ct03_pinjaman extends cTable {
 		// maka perubahan harus tidak diperbolehkan
 
 		$q = "select count(id) from t04_pinjamanangsurantemp where
-			pinjaman_id = ".$rsold["id"].""; //echo $q; exit;
+			pinjaman_id = ".$rsold["id"]." and Tanggal_Bayar is not null"; //echo $q; exit;
 		$t04_reccount = ew_ExecuteScalar($q);
 		if ($t04_reccount > 0) {
-			if (
+			/*if (
 				$rsold["Angsuran_Lama"] == $rsnew["Angsuran_Lama"] and
 				$rsold["Angsuran_Pokok"] == $rsnew["Angsuran_Pokok"] and
 				$rsold["Angsuran_Bunga"] == $rsnew["Angsuran_Bunga"] and
 				$rsold["Angsuran_Total"] == $rsnew["Angsuran_Total"]
 			) {
 			}
-			else {
+			else {*/
 
 				//$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, data tidak bisa diubah !");
 				$this->setWarningMessage("Sudah ada Transaksi Pembayaran Angsuran, data Pinjaman tidak bisa diubah !");
 				return FALSE;
-			}
+
+			//}
 		}
 		return TRUE;
 	}
