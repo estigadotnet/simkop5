@@ -26,6 +26,19 @@ function Page_Unloaded() {
 	//echo "Page Unloaded";
 }
 
+function f_update_saldo_titipan($pinjaman_id) { // -----------------------------------------
+	$q = "select * from t06_pinjamantitipan where pinjaman_id = ".$pinjaman_id."
+		order by id";
+	$r = Conn()->Execute($q);
+	$saldo = 0;
+	while (!$r->EOF) {
+		$saldo = $saldo + $r->fields["Masuk"] - $r->fields["Keluar"];
+		$q = "update t06_pinjamantitipan set Sisa = ".$saldo." where id = ".$r->fields["id"]."";
+		Conn()->Execute($q);
+		$r->MoveNext();
+	}
+} // end of function f_update_saldo_titipan ------------------------------------------------
+
 function f_cari_saldo_titipan($pinjaman_id) { // -------------------------------------------
 	$saldo_titipan = 0;
 	$q = "select Sisa from t06_pinjamantitipan where pinjaman_id = ".$pinjaman_id."

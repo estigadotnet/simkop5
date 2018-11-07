@@ -1100,6 +1100,7 @@ class ct06_pinjamantitipan extends cTable {
 	function Row_Inserted($rsold, &$rsnew) {
 
 		//echo "Row Inserted"
+		f_update_saldo_titipan($_SESSION["pinjaman_id"]);
 	}
 
 	// Row Updating event
@@ -1115,6 +1116,7 @@ class ct06_pinjamantitipan extends cTable {
 	function Row_Updated($rsold, &$rsnew) {
 
 		//echo "Row Updated";
+		f_update_saldo_titipan($_SESSION["pinjaman_id"]);
 	}
 
 	// Row Update Conflict event
