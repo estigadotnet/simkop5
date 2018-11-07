@@ -56,7 +56,7 @@ class ct03_pinjaman extends cTable {
 		$this->DetailAdd = FALSE; // Allow detail add
 		$this->DetailEdit = FALSE; // Allow detail edit
 		$this->DetailView = FALSE; // Allow detail view
-		$this->ShowMultipleDetails = FALSE; // Show multiple details
+		$this->ShowMultipleDetails = TRUE; // Show multiple details
 		$this->GridAddRowCount = 5;
 		$this->AllowAddDeleteRow = ew_AllowAddDeleteRow(); // Allow add/delete row
 		$this->UserIDAllowSecurity = 0; // User ID Allow
@@ -212,6 +212,10 @@ class ct03_pinjaman extends cTable {
 		$sDetailUrl = "";
 		if ($this->getCurrentDetailTable() == "t04_pinjamanangsurantemp") {
 			$sDetailUrl = $GLOBALS["t04_pinjamanangsurantemp"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
+			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
+		}
+		if ($this->getCurrentDetailTable() == "t06_pinjamantitipan") {
+			$sDetailUrl = $GLOBALS["t06_pinjamantitipan"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
 			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
 		}
 		if ($sDetailUrl == "") {
@@ -497,6 +501,26 @@ class ct03_pinjaman extends cTable {
 				$rswrk->MoveNext();
 			}
 		}
+
+		// Cascade Update detail table 't06_pinjamantitipan'
+		$bCascadeUpdate = FALSE;
+		$rscascade = array();
+		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'pinjaman_id'
+			$bCascadeUpdate = TRUE;
+			$rscascade['pinjaman_id'] = $rs['id']; 
+		}
+		if ($bCascadeUpdate) {
+			if (!isset($GLOBALS["t06_pinjamantitipan"])) $GLOBALS["t06_pinjamantitipan"] = new ct06_pinjamantitipan();
+			$rswrk = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
+			while ($rswrk && !$rswrk->EOF) {
+				$rskey = array();
+				$fldname = 'id';
+				$rskey[$fldname] = $rswrk->fields[$fldname];
+				$bUpdate = $GLOBALS["t06_pinjamantitipan"]->Update($rscascade, $rskey, $rswrk->fields);
+				if (!$bUpdate) return FALSE;
+				$rswrk->MoveNext();
+			}
+		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
@@ -534,6 +558,14 @@ class ct03_pinjaman extends cTable {
 		$rscascade = $GLOBALS["t04_pinjamanangsurantemp"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
 		while ($rscascade && !$rscascade->EOF) {
 			$GLOBALS["t04_pinjamanangsurantemp"]->Delete($rscascade->fields);
+			$rscascade->MoveNext();
+		}
+
+		// Cascade delete detail table 't06_pinjamantitipan'
+		if (!isset($GLOBALS["t06_pinjamantitipan"])) $GLOBALS["t06_pinjamantitipan"] = new ct06_pinjamantitipan();
+		$rscascade = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
+		while ($rscascade && !$rscascade->EOF) {
+			$GLOBALS["t06_pinjamantitipan"]->Delete($rscascade->fields);
 			$rscascade->MoveNext();
 		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
@@ -1499,7 +1531,7 @@ class ct03_pinjaman extends cTable {
 		// jika ada perubahan pada data master tapi sudah ada data pembayaran
 		// maka perubahan harus tidak diperbolehkan
 
-		$q = "select count(id) from t04_pinjamanangsuran where
+		$q = "select count(id) from t04_pinjamanangsurantemp where
 			pinjaman_id = ".$rsold["id"].""; //echo $q; exit;
 		$t04_reccount = ew_ExecuteScalar($q);
 		if ($t04_reccount > 0) {

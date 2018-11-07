@@ -183,6 +183,15 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 		}
 	);
 
+	// Table 't04_pinjamanangsurantemp' Field 'Terlambat'
+	$('[data-table=t04_pinjamanangsurantemp][data-field=x_Terlambat]').on(
+		{
+			'change': function (e) {
+				f_hitung("Terlambat");
+			}
+		}
+	);
+
 	// Table 't04_pinjamanangsurantemp' Field 'Total_Denda'
 	$('[data-table=t04_pinjamanangsurantemp][data-field=x_Total_Denda], [data-table=t04_pinjamanangsurantemp][data-field=x_Bayar_Non_Titipan]').on(
 		{

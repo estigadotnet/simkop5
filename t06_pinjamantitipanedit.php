@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t06_pinjamantitipaninfo.php" ?>
+<?php include_once "t03_pinjamaninfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -230,6 +231,9 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 			$GLOBALS["Table"] = &$GLOBALS["t06_pinjamantitipan"];
 		}
 
+		// Table object (t03_pinjaman)
+		if (!isset($GLOBALS['t03_pinjaman'])) $GLOBALS['t03_pinjaman'] = new ct03_pinjaman();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'edit', TRUE);
@@ -365,6 +369,9 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 		if (@$_GET["id"] <> "") {
 			$this->id->setQueryStringValue($_GET["id"]);
 		}
+
+		// Set up master detail parameters
+		$this->SetUpMasterParms();
 
 		// Process form if post back
 		if (@$_POST["a_edit"] <> "") {
@@ -663,8 +670,14 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 			// pinjaman_id
 			$this->pinjaman_id->EditAttrs["class"] = "form-control";
 			$this->pinjaman_id->EditCustomAttributes = "";
+			if ($this->pinjaman_id->getSessionValue() <> "") {
+				$this->pinjaman_id->CurrentValue = $this->pinjaman_id->getSessionValue();
+			$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
+			$this->pinjaman_id->ViewCustomAttributes = "";
+			} else {
 			$this->pinjaman_id->EditValue = ew_HtmlEncode($this->pinjaman_id->CurrentValue);
 			$this->pinjaman_id->PlaceHolder = ew_RemoveHtml($this->pinjaman_id->FldCaption());
+			}
 
 			// Tanggal
 			$this->Tanggal->EditAttrs["class"] = "form-control";
@@ -834,6 +847,28 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->SetDbValueDef($rsnew, $this->Sisa->CurrentValue, 0, $this->Sisa->ReadOnly);
 
+			// Check referential integrity for master table 't03_pinjaman'
+			$bValidMasterRecord = TRUE;
+			$sMasterFilter = $this->SqlMasterFilter_t03_pinjaman();
+			$KeyValue = isset($rsnew['pinjaman_id']) ? $rsnew['pinjaman_id'] : $rsold['pinjaman_id'];
+			if (strval($KeyValue) <> "") {
+				$sMasterFilter = str_replace("@id@", ew_AdjustSql($KeyValue), $sMasterFilter);
+			} else {
+				$bValidMasterRecord = FALSE;
+			}
+			if ($bValidMasterRecord) {
+				if (!isset($GLOBALS["t03_pinjaman"])) $GLOBALS["t03_pinjaman"] = new ct03_pinjaman();
+				$rsmaster = $GLOBALS["t03_pinjaman"]->LoadRs($sMasterFilter);
+				$bValidMasterRecord = ($rsmaster && !$rsmaster->EOF);
+				$rsmaster->Close();
+			}
+			if (!$bValidMasterRecord) {
+				$sRelatedRecordMsg = str_replace("%t", "t03_pinjaman", $Language->Phrase("RelatedRecordRequired"));
+				$this->setFailureMessage($sRelatedRecordMsg);
+				$rs->Close();
+				return FALSE;
+			}
+
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
 			if ($bUpdateRow) {
@@ -864,6 +899,67 @@ class ct06_pinjamantitipan_edit extends ct06_pinjamantitipan {
 			$this->Row_Updated($rsold, $rsnew);
 		$rs->Close();
 		return $EditRow;
+	}
+
+	// Set up master/detail based on QueryString
+	function SetUpMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t03_pinjaman") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t03_pinjaman"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->pinjaman_id->setQueryStringValue($GLOBALS["t03_pinjaman"]->id->QueryStringValue);
+					$this->pinjaman_id->setSessionValue($this->pinjaman_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t03_pinjaman"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t03_pinjaman") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t03_pinjaman"]->id->setFormValue($_POST["fk_id"]);
+					$this->pinjaman_id->setFormValue($GLOBALS["t03_pinjaman"]->id->FormValue);
+					$this->pinjaman_id->setSessionValue($this->pinjaman_id->FormValue);
+					if (!is_numeric($GLOBALS["t03_pinjaman"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+			$this->setSessionWhere($this->GetDetailFilter());
+
+			// Reset start record counter (new master key)
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t03_pinjaman") {
+				if ($this->pinjaman_id->CurrentValue == "") $this->pinjaman_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
 	}
 
 	// Set up Breadcrumb
@@ -1090,6 +1186,10 @@ $t06_pinjamantitipan_edit->ShowMessage();
 <?php if ($t06_pinjamantitipan_edit->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
+<?php if ($t06_pinjamantitipan->getCurrentMasterTable() == "t03_pinjaman") { ?>
+<input type="hidden" name="<?php echo EW_TABLE_SHOW_MASTER ?>" value="t03_pinjaman">
+<input type="hidden" name="fk_id" value="<?php echo $t06_pinjamantitipan->pinjaman_id->getSessionValue() ?>">
+<?php } ?>
 <div>
 <?php if ($t06_pinjamantitipan->id->Visible) { // id ?>
 	<div id="r_id" class="form-group">
@@ -1107,9 +1207,17 @@ $t06_pinjamantitipan_edit->ShowMessage();
 	<div id="r_pinjaman_id" class="form-group">
 		<label id="elh_t06_pinjamantitipan_pinjaman_id" for="x_pinjaman_id" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->pinjaman_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t06_pinjamantitipan->pinjaman_id->CellAttributes() ?>>
+<?php if ($t06_pinjamantitipan->pinjaman_id->getSessionValue() <> "") { ?>
+<span id="el_t06_pinjamantitipan_pinjaman_id">
+<span<?php echo $t06_pinjamantitipan->pinjaman_id->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t06_pinjamantitipan->pinjaman_id->ViewValue ?></p></span>
+</span>
+<input type="hidden" id="x_pinjaman_id" name="x_pinjaman_id" value="<?php echo ew_HtmlEncode($t06_pinjamantitipan->pinjaman_id->CurrentValue) ?>">
+<?php } else { ?>
 <span id="el_t06_pinjamantitipan_pinjaman_id">
 <input type="text" data-table="t06_pinjamantitipan" data-field="x_pinjaman_id" name="x_pinjaman_id" id="x_pinjaman_id" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->pinjaman_id->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->pinjaman_id->EditValue ?>"<?php echo $t06_pinjamantitipan->pinjaman_id->EditAttributes() ?>>
 </span>
+<?php } ?>
 <?php echo $t06_pinjamantitipan->pinjaman_id->CustomMsg ?></div></div>
 	</div>
 <?php } ?>

@@ -605,7 +605,7 @@
       <phrase id="menutext" value="t 05 pinjamanjaminan" />
     </menu>
     <menu id="6">
-      <phrase id="menutext" value="t 06 pinjamantitipan" />
+      <phrase id="menutext" value="Rincian Titipan" />
     </menu>
     <menu id="7">
       <phrase id="menutext" value="t 93 periode" />
@@ -854,7 +854,7 @@
       </field>
     </table>
     <table id="t06_pinjamantitipan">
-      <phrase id="tblcaption" value="t 06 pinjamantitipan" />
+      <phrase id="tblcaption" value="Rincian Titipan" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>

@@ -1431,6 +1431,16 @@ ft04_pinjamanangsurantempedit.Form_CustomValidate =
  	$('#x_Bayar_Titipan').val($('#x_Bayar_Titipan').autoNumeric('get'));
  	$('#x_Bayar_Non_Titipan').val($('#x_Bayar_Non_Titipan').autoNumeric('get'));
  	$('#x_Bayar_Total').val($('#x_Bayar_Total').autoNumeric('get'));
+ 	eval('var '+$('#x_Bayar_Total').autoNumeric('getString'));
+ 	eval('var '+$('#x_Angsuran_Total').autoNumeric('getString'));
+ 	if (x_Bayar_Total < x_Angsuran_Total) {
+ 		alert("Jumlah Pembayaran Total tidak boleh kurang dari Jumlah Angsuran");
+ 		$('#x_Total_Denda').val($('#x_Total_Denda').autoNumeric('get'));
+ 		$('#x_Bayar_Titipan').val($('#x_Bayar_Titipan').autoNumeric('get'));
+ 		$('#x_Bayar_Non_Titipan').val($('#x_Bayar_Non_Titipan').autoNumeric('get'));
+ 		$('#x_Bayar_Total').val($('#x_Bayar_Total').autoNumeric('get'));
+ 		return false;
+ 	}
  	return true;
  }
 
