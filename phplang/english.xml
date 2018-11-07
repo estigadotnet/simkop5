@@ -862,7 +862,7 @@
         <phrase id="fldcaption" value="pinjaman id" />
       </field>
       <field id="tanggal">
-        <phrase id="fldcaption" value="Tanggal" />
+        <phrase id="fldcaption" value="Tgl. Setor" />
       </field>
       <field id="keterangan">
         <phrase id="fldcaption" value="Keterangan" />

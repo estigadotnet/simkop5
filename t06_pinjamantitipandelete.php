@@ -255,10 +255,8 @@ class ct06_pinjamantitipan_delete extends ct06_pinjamantitipan {
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->pinjaman_id->SetVisibility();
 		$this->Tanggal->SetVisibility();
+		$this->Keterangan->SetVisibility();
 		$this->Masuk->SetVisibility();
 		$this->Keluar->SetVisibility();
 		$this->Sisa->SetVisibility();
@@ -503,35 +501,40 @@ class ct06_pinjamantitipan_delete extends ct06_pinjamantitipan {
 
 		// Tanggal
 		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 0);
+		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
 		$this->Tanggal->ViewCustomAttributes = "";
+
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
 
 		// Masuk
 		$this->Masuk->ViewValue = $this->Masuk->CurrentValue;
+		$this->Masuk->ViewValue = ew_FormatNumber($this->Masuk->ViewValue, 2, -2, -2, -2);
+		$this->Masuk->CellCssStyle .= "text-align: right;";
 		$this->Masuk->ViewCustomAttributes = "";
 
 		// Keluar
 		$this->Keluar->ViewValue = $this->Keluar->CurrentValue;
+		$this->Keluar->ViewValue = ew_FormatNumber($this->Keluar->ViewValue, 2, -2, -2, -2);
+		$this->Keluar->CellCssStyle .= "text-align: right;";
 		$this->Keluar->ViewCustomAttributes = "";
 
 		// Sisa
 		$this->Sisa->ViewValue = $this->Sisa->CurrentValue;
+		$this->Sisa->ViewValue = ew_FormatNumber($this->Sisa->ViewValue, 2, -2, -2, -2);
+		$this->Sisa->CellCssStyle .= "text-align: justify;";
 		$this->Sisa->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
-			// pinjaman_id
-			$this->pinjaman_id->LinkCustomAttributes = "";
-			$this->pinjaman_id->HrefValue = "";
-			$this->pinjaman_id->TooltipValue = "";
 
 			// Tanggal
 			$this->Tanggal->LinkCustomAttributes = "";
 			$this->Tanggal->HrefValue = "";
 			$this->Tanggal->TooltipValue = "";
+
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
+			$this->Keterangan->TooltipValue = "";
 
 			// Masuk
 			$this->Masuk->LinkCustomAttributes = "";
@@ -856,14 +859,11 @@ $t06_pinjamantitipan_delete->ShowMessage();
 <?php echo $t06_pinjamantitipan->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t06_pinjamantitipan->id->Visible) { // id ?>
-		<th><span id="elh_t06_pinjamantitipan_id" class="t06_pinjamantitipan_id"><?php echo $t06_pinjamantitipan->id->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t06_pinjamantitipan->pinjaman_id->Visible) { // pinjaman_id ?>
-		<th><span id="elh_t06_pinjamantitipan_pinjaman_id" class="t06_pinjamantitipan_pinjaman_id"><?php echo $t06_pinjamantitipan->pinjaman_id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t06_pinjamantitipan->Tanggal->Visible) { // Tanggal ?>
 		<th><span id="elh_t06_pinjamantitipan_Tanggal" class="t06_pinjamantitipan_Tanggal"><?php echo $t06_pinjamantitipan->Tanggal->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t06_pinjamantitipan->Keterangan->Visible) { // Keterangan ?>
+		<th><span id="elh_t06_pinjamantitipan_Keterangan" class="t06_pinjamantitipan_Keterangan"><?php echo $t06_pinjamantitipan->Keterangan->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t06_pinjamantitipan->Masuk->Visible) { // Masuk ?>
 		<th><span id="elh_t06_pinjamantitipan_Masuk" class="t06_pinjamantitipan_Masuk"><?php echo $t06_pinjamantitipan->Masuk->FldCaption() ?></span></th>
@@ -895,27 +895,19 @@ while (!$t06_pinjamantitipan_delete->Recordset->EOF) {
 	$t06_pinjamantitipan_delete->RenderRow();
 ?>
 	<tr<?php echo $t06_pinjamantitipan->RowAttributes() ?>>
-<?php if ($t06_pinjamantitipan->id->Visible) { // id ?>
-		<td<?php echo $t06_pinjamantitipan->id->CellAttributes() ?>>
-<span id="el<?php echo $t06_pinjamantitipan_delete->RowCnt ?>_t06_pinjamantitipan_id" class="t06_pinjamantitipan_id">
-<span<?php echo $t06_pinjamantitipan->id->ViewAttributes() ?>>
-<?php echo $t06_pinjamantitipan->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t06_pinjamantitipan->pinjaman_id->Visible) { // pinjaman_id ?>
-		<td<?php echo $t06_pinjamantitipan->pinjaman_id->CellAttributes() ?>>
-<span id="el<?php echo $t06_pinjamantitipan_delete->RowCnt ?>_t06_pinjamantitipan_pinjaman_id" class="t06_pinjamantitipan_pinjaman_id">
-<span<?php echo $t06_pinjamantitipan->pinjaman_id->ViewAttributes() ?>>
-<?php echo $t06_pinjamantitipan->pinjaman_id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t06_pinjamantitipan->Tanggal->Visible) { // Tanggal ?>
 		<td<?php echo $t06_pinjamantitipan->Tanggal->CellAttributes() ?>>
 <span id="el<?php echo $t06_pinjamantitipan_delete->RowCnt ?>_t06_pinjamantitipan_Tanggal" class="t06_pinjamantitipan_Tanggal">
 <span<?php echo $t06_pinjamantitipan->Tanggal->ViewAttributes() ?>>
 <?php echo $t06_pinjamantitipan->Tanggal->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t06_pinjamantitipan->Keterangan->Visible) { // Keterangan ?>
+		<td<?php echo $t06_pinjamantitipan->Keterangan->CellAttributes() ?>>
+<span id="el<?php echo $t06_pinjamantitipan_delete->RowCnt ?>_t06_pinjamantitipan_Keterangan" class="t06_pinjamantitipan_Keterangan">
+<span<?php echo $t06_pinjamantitipan->Keterangan->ViewAttributes() ?>>
+<?php echo $t06_pinjamantitipan->Keterangan->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
