@@ -2456,10 +2456,38 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		// Example: 
 		//$this->ListOptions->Items["new"]->Body = "xxx";
-		//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
 
 		$pinjaman_id = $this->id->CurrentValue; //echo $pinjaman_id;
 		$_SESSION["pinjaman_id"] = $pinjaman_id;
+
+		//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
+		// check perubahan data master pinjaman
+		// jika ada perubahan pada data master tapi sudah ada data pembayaran
+		// maka perubahan harus tidak diperbolehkan
+
+		$q = "select count(id) as rec_cnt from t04_pinjamanangsurantemp where
+			pinjaman_id = ".$pinjaman_id." and Tanggal_Bayar is not null"; //echo $q; //exit;
+
+		//$t04_reccount = ew_ExecuteScalar($q);
+		$r = Conn()->Execute($q);
+		$t04_reccount = $r->fields["rec_cnt"];
+		if ($t04_reccount > 0) {
+			/*if (
+				$rsold["Angsuran_Lama"] == $rsnew["Angsuran_Lama"] and
+				$rsold["Angsuran_Pokok"] == $rsnew["Angsuran_Pokok"] and
+				$rsold["Angsuran_Bunga"] == $rsnew["Angsuran_Bunga"] and
+				$rsold["Angsuran_Total"] == $rsnew["Angsuran_Total"]
+			) {
+			}
+			else {*/
+
+				//$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, data tidak bisa diubah !");
+				//$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, data Pinjaman tidak bisa diubah !");
+				//return FALSE;
+			//}
+
+			$this->ListOptions->Items["edit"]->Body = "";
+		}
 		$t04_pinjamanangsurantemp_id = 0;
 		if ($pinjaman_id <> "") {
 			$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
