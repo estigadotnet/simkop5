@@ -1545,7 +1545,7 @@ class ct03_pinjaman extends cTable {
 			else {*/
 
 				//$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, data tidak bisa diubah !");
-				$this->setWarningMessage("Sudah ada Transaksi Pembayaran Angsuran, data Pinjaman tidak bisa diubah !");
+				$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, data Pinjaman tidak bisa diubah !");
 				return FALSE;
 
 			//}
