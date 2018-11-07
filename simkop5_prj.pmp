@@ -249,6 +249,8 @@
 
 // tampilkan TANGGAL HARI INI di field KONTRAK_TGL
 $("#x_Kontrak_Tgl").val("<?php echo date('d-m-Y');?>");
+
+
 ]]></CustomScript>
   <CustomScript ScriptType="Client" ScriptCodeType="Global" ScriptName="Startup Script" ScriptCtrlID="" ScriptL1Key="" ScriptL2Key=""><![CDATA[// Write your global startup script here
 // document.write("page loaded");
@@ -263,7 +265,8 @@ $("#x_Kontrak_Tgl").val("<?php echo date('d-m-Y');?>");
 		if (xparam == "Terlambat") {
 			var int_terlambat = parseInt($('#x_Terlambat').val());
 			var dispensasi_denda = parseInt('<?php echo ew_ExecuteScalar("select Dispensasi_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
-			var angsuran_denda = parseFloat('<?php echo $angsuran_denda = ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
+			//var angsuran_denda = parseFloat('<?php echo $angsuran_denda = ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
+			var angsuran_denda = parseFloat('<?php echo ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
 
 			x_Total_Denda = 0;
 			if (int_terlambat > dispensasi_denda) {
@@ -488,67 +491,6 @@ function Page_Load() {
 	if (isset($_GET[EW_TABLE_SHOW_MASTER]) == "t01_nasabah") {
 		$this->nasabah_id->Visible = false;
 	}
-}
-]]></CustomScript>
-  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="ListOptions_Load" ScriptCtrlID="list" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// ListOptions Load event
-function ListOptions_Load() {
-	// Example:
-	//$opt = &$this->ListOptions->Add("new");
-	//$opt->Header = "xxx";
-	//$opt->OnLeft = TRUE; // Link on left
-	//$opt->MoveTo(0); // Move to first column
-
-	/*$this->ListOptions->Add("print_x"); // Replace abclink with your name of the link
-	$this->ListOptions->Items["print_x"]->Header = "<b>Print X</b>";*/
-
-	$opt = &$this->ListOptions->Add("angsuran");
-	$opt->Header = "";
-	$opt->OnLeft = TRUE; // Link on left
-	$opt->MoveTo(0); // Move to first column
-
-	$opt = &$this->ListOptions->Add("titipan");
-	$opt->Header = "";
-	$opt->OnLeft = TRUE; // Link on left
-	$opt->MoveTo(1); // Move to first column
-}
-]]></CustomScript>
-  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="ListOptions_Rendered" ScriptCtrlID="list" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// ListOptions Rendered event
-function ListOptions_Rendered() {
-	// Example: 
-	//$this->ListOptions->Items["new"]->Body = "xxx";
-
-	$pinjaman_id = $this->id->CurrentValue; //echo $pinjaman_id;
-	$_SESSION["pinjaman_id"] = $pinjaman_id;
-
-	//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
-
-	// check perubahan data master pinjaman
-	// jika ada perubahan pada data master tapi sudah ada data pembayaran
-	// maka perubahan harus tidak diperbolehkan
-	if ($pinjaman_id <> "") {
-		$q = "select * from t04_pinjamanangsurantemp where
-		pinjaman_id = ".$pinjaman_id." and Tanggal_Bayar is not null"; //echo $q; //exit;
-		$r = Conn()->Execute($q);
-		if ($r->EOF) {
-		}
-		else {
-			$this->ListOptions->Items["edit"]->Body = "";
-			//$this->ListOptions->Items["delete"]->Body = "";
-		}
-		if ($this->Periode->CurrentValue <> $GLOBALS["Periode"]) {
-			$this->ListOptions->Items["delete"]->Body = "";
-		}
-	}
-
-	$t04_pinjamanangsurantemp_id = 0;
-	if ($pinjaman_id <> "") {
-		$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
-	}
-	$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-	//"<a class=\"ewAddEdit ewAdd\" title=\"Your Title\" data-caption=\"Your Caption\" href=\"yourpage.php\">My New Button</a>"; // definisikan link, style, dan caption tombol
-
-	
-	$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
 }
 ]]></CustomScript>
   <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Row_Updating" ScriptCtrlID="" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// Row Updating event
@@ -1018,6 +960,110 @@ function Row_Updating($rsold, &$rsnew) {
 	$rsnew["Periode"] = $GLOBALS["Periode"];
 
 	return TRUE;
+}
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Page_Render" ScriptCtrlID="add" ScriptL1Key="t04_pinjamanangsurantemp" ScriptL2Key=""><![CDATA[// Page Render event
+function Page_Render() {
+	//echo "Page Render";
+
+	$pinjaman_id = $this->id->CurrentValue; //echo $pinjaman_id;
+	$_SESSION["pinjaman_id"] = $pinjaman_id;
+
+	// check perubahan data master pinjaman
+	// jika ada perubahan pada data master tapi sudah ada data pembayaran
+	// maka perubahan harus tidak diperbolehkan
+	if ($pinjaman_id <> "") {
+		echo "1"; exit;
+		$q = "select * from t04_pinjamanangsurantemp where
+		pinjaman_id = ".$pinjaman_id." and Tanggal_Bayar is not null"; //echo $q; //exit;
+		$r = Conn()->Execute($q);
+		if ($r->EOF) {
+		}
+		else {
+			$this->ListOptions->Items["edit"]->Body = "";
+		}
+		if ($this->Periode->CurrentValue <> $GLOBALS["Periode"]) {
+			$this->ListOptions->Items["delete"]->Body = "";
+		}
+	}
+
+	$t04_pinjamanangsurantemp_id = 0;
+	if ($pinjaman_id <> "") {
+		$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
+	}
+	//$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+
+	//$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+	
+	//$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
+
+	$this->OtherOptions["addedit"]->UseDropDownButton = FALSE; // jangan gunakan style DropDownButton
+	$my_options = &$this->OtherOptions; // pastikan menggunakan area OtherOptions
+	$my_option = $my_options["addedit"]; // dekat tombol addedit
+
+	$my_item = &$my_option->Add("mynewbutton"); // tambahkan tombol baru
+	$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol
+
+	$my_item = &$my_option->Add("mynewbutton2"); // tambahkan tombol baru
+	$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol
+
+	$my_item = &$my_option->Add("mynewbutton3"); // tambahkan tombol baru
+	$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol
+}
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Page_Render" ScriptCtrlID="list" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// Page Render event
+function Page_Render() {
+	//echo "Page Render";
+
+	$pinjaman_id = $this->id->CurrentValue; //echo "-".$pinjaman_id; exit;
+	//$_SESSION["pinjaman_id"] = $pinjaman_id; //var_dump($pinjaman_id);
+
+	if (is_null($pinjaman_id)) {
+		$pinjaman_id = 0;
+	}
+	$_SESSION["pinjaman_id"] = $pinjaman_id; //var_dump($pinjaman_id);
+
+	// check perubahan data master pinjaman
+	// jika ada perubahan pada data master tapi sudah ada data pembayaran
+	// maka perubahan harus tidak diperbolehkan
+	if ($pinjaman_id <> "") {
+		echo "1"; exit;
+		$q = "select * from t04_pinjamanangsurantemp where
+		pinjaman_id = ".$pinjaman_id." and Tanggal_Bayar is not null"; //echo $q; //exit;
+		$r = Conn()->Execute($q);
+		if ($r->EOF) {
+		}
+		else {
+			$this->ListOptions->Items["edit"]->Body = "";
+		}
+		if ($this->Periode->CurrentValue <> $GLOBALS["Periode"]) {
+			$this->ListOptions->Items["delete"]->Body = "";
+		}
+	}
+
+	$t04_pinjamanangsurantemp_id = 0;
+	if ($pinjaman_id <> "") {
+		$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
+	}
+	//$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+
+	//$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+	
+	//$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
+
+	$this->OtherOptions["addedit"]->UseDropDownButton = FALSE; // jangan gunakan style DropDownButton
+	$my_options = &$this->OtherOptions; // pastikan menggunakan area OtherOptions
+	$my_option = $my_options["addedit"]; // dekat tombol addedit
+
+	$my_item = &$my_option->Add("mynewbutton"); // tambahkan tombol baru
+	$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol
+
+	$my_item = &$my_option->Add("mynewbutton2"); // tambahkan tombol baru
+	$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol
+
+	$my_item = &$my_option->Add("mynewbutton3"); // tambahkan tombol baru
+	$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol
+
 }
 ]]></CustomScript>
   <Menu MenuID="1" MenuText="Nasabah" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="t01_nasabah" MenuCustomUrl="0" MenuLevel="0" MenuShow="1" MenuDisplayOrder="100" />

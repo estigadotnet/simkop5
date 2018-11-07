@@ -38,7 +38,9 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 		if (xparam == "Terlambat") {
 			var int_terlambat = parseInt($('#x_Terlambat').val());
 			var dispensasi_denda = parseInt('<?php echo ew_ExecuteScalar("select Dispensasi_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
-			var angsuran_denda = parseFloat('<?php echo $angsuran_denda = ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
+
+			//var angsuran_denda = parseFloat('<?php echo $angsuran_denda = ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
+			var angsuran_denda = parseFloat('<?php echo ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');
 			x_Total_Denda = 0;
 			if (int_terlambat > dispensasi_denda) {
 				x_Total_Denda =
