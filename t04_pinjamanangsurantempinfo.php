@@ -1502,7 +1502,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// bayar titipan
 		$bayar_titipan = 0;
 		if (is_null($this->Bayar_Titipan->CurrentValue) or $this->Bayar_Titipan->CurrentValue == 0) {
-			$bayar_titipan = f_cari_saldo_titipan($this->pinjaman_id->CurrentValue);
+			$bayar_titipan = f_cari_saldo_titipan($_SESSION["pinjaman_id"]);
 		}
 		else {
 			$bayar_titipan = $this->Bayar_Titipan->CurrentValue;

@@ -5,9 +5,13 @@
 function Page_Loading() {
 
 	//echo "Page Loading";
+	// simpan data periode berjalan
+
 	$GLOBALS["Periode"] = ew_ExecuteScalar("select Tahun_Bulan from t93_Periode");
 
 	//echo "0".$GLOBALS["Periode"]; //exit;
+	//$GLOBALS["t03_pinjaman"]->Angsuran_Denda->CurrentValue;
+
 }
 
 // Page Rendering event

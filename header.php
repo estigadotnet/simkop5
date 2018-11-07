@@ -103,7 +103,9 @@ var ewVar = <?php echo json_encode($EW_CLIENT_VAR); ?>;
 <?php echo $Language->ToJSON() ?>
 </script>
 <?php
-ew_AddClientScript("phpjs/autoNumeric.js"); // Add JavaScript
+
+	// tambah script autonumeric saat ketik nilai
+	ew_AddClientScript("phpjs/autoNumeric.js"); // Add JavaScript
 ?>
 <script type="text/javascript" src="<?php echo $EW_RELATIVE_PATH ?>phpjs/userfn13.js"></script>
 <script type="text/javascript">

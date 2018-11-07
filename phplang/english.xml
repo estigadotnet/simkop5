@@ -586,6 +586,9 @@
     <menu id="1">
       <phrase id="menutext" value="Nasabah" />
     </menu>
+    <menu id="2">
+      <phrase id="menutext" value="Jaminan" />
+    </menu>
     <menu id="14">
       <phrase id="menutext" value="Marketing" />
     </menu>
@@ -595,17 +598,14 @@
     <menu id="15">
       <phrase id="menutext" value="Rincian Angsuran" />
     </menu>
-    <menu id="2">
-      <phrase id="menutext" value="Jaminan" />
+    <menu id="6">
+      <phrase id="menutext" value="Rincian Titipan" />
     </menu>
     <menu id="4">
       <phrase id="menutext" value="t 04 pinjamanangsuran" />
     </menu>
     <menu id="5">
       <phrase id="menutext" value="t 05 pinjamanjaminan" />
-    </menu>
-    <menu id="6">
-      <phrase id="menutext" value="Rincian Titipan" />
     </menu>
     <menu id="7">
       <phrase id="menutext" value="t 93 periode" />

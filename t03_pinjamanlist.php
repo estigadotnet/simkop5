@@ -2405,50 +2405,6 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 	function Page_Render() {
 
 		//echo "Page Render";
-		$pinjaman_id = $this->id->CurrentValue; //echo "-".$pinjaman_id; exit;
-
-		//$_SESSION["pinjaman_id"] = $pinjaman_id; //var_dump($pinjaman_id);
-		if (is_null($pinjaman_id)) {
-			$pinjaman_id = 0;
-		}
-		$_SESSION["pinjaman_id"] = $pinjaman_id; //var_dump($pinjaman_id);
-
-		// check perubahan data master pinjaman
-		// jika ada perubahan pada data master tapi sudah ada data pembayaran
-		// maka perubahan harus tidak diperbolehkan
-
-		if ($pinjaman_id <> "") {
-			echo "1"; exit;
-			$q = "select * from t04_pinjamanangsurantemp where
-			pinjaman_id = ".$pinjaman_id." and Tanggal_Bayar is not null"; //echo $q; //exit;
-			$r = Conn()->Execute($q);
-			if ($r->EOF) {
-			}
-			else {
-				$this->ListOptions->Items["edit"]->Body = "";
-			}
-			if ($this->Periode->CurrentValue <> $GLOBALS["Periode"]) {
-				$this->ListOptions->Items["delete"]->Body = "";
-			}
-		}
-		$t04_pinjamanangsurantemp_id = 0;
-		if ($pinjaman_id <> "") {
-			$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
-		}
-
-		//$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-		//$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-		//$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
-
-		$this->OtherOptions["addedit"]->UseDropDownButton = FALSE; // jangan gunakan style DropDownButton
-		$my_options = &$this->OtherOptions; // pastikan menggunakan area OtherOptions
-		$my_option = $my_options["addedit"]; // dekat tombol addedit
-		$my_item = &$my_option->Add("mynewbutton"); // tambahkan tombol baru
-		$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol
-		$my_item = &$my_option->Add("mynewbutton2"); // tambahkan tombol baru
-		$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol
-		$my_item = &$my_option->Add("mynewbutton3"); // tambahkan tombol baru
-		$my_item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol
 	}
 
 	// Page Data Rendering event
@@ -2483,6 +2439,20 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		//$opt->OnLeft = TRUE; // Link on left
 		//$opt->MoveTo(0); // Move to first column
 
+		/*$this->ListOptions->Add("print_x"); // Replace abclink with your name of the link
+		$this->ListOptions->Items["print_x"]->Header = "<b>Print X</b>";*/
+		$opt = &$this->ListOptions->Add("angsuran");
+		$opt->Header = "";
+		$opt->OnLeft = TRUE; // Link on left
+		$opt->MoveTo(0); // Move to first column
+		$opt = &$this->ListOptions->Add("rincian_angsuran");
+		$opt->Header = "";
+		$opt->OnLeft = TRUE; // Link on left
+		$opt->MoveTo(1); // Move to first column
+		$opt = &$this->ListOptions->Add("titipan");
+		$opt->Header = "";
+		$opt->OnLeft = TRUE; // Link on left
+		$opt->MoveTo(2); // Move to first column
 	}
 
 	// ListOptions Rendered event
@@ -2491,6 +2461,36 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// Example: 
 		//$this->ListOptions->Items["new"]->Body = "xxx";
 
+		$pinjaman_id = $this->id->CurrentValue; //echo $pinjaman_id;
+		$_SESSION["pinjaman_id"] = $pinjaman_id;
+
+		//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
+		// check perubahan data master pinjaman
+		// jika ada perubahan pada data master tapi sudah ada data pembayaran
+		// maka perubahan harus tidak diperbolehkan
+
+		if ($pinjaman_id <> "") {
+			$q = "select * from t04_pinjamanangsurantemp where
+			pinjaman_id = ".$pinjaman_id." and Tanggal_Bayar is not null"; //echo $q; //exit;
+			$r = Conn()->Execute($q);
+			if ($r->EOF) {
+			}
+			else {
+				$this->ListOptions->Items["edit"]->Body = "";
+
+				//$this->ListOptions->Items["delete"]->Body = "";
+			}
+			if ($this->Periode->CurrentValue <> $GLOBALS["Periode"]) {
+				$this->ListOptions->Items["delete"]->Body = "";
+			}
+		}
+		$t04_pinjamanangsurantemp_id = 0;
+		if ($pinjaman_id <> "") {
+			$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
+		}
+		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
 	}
 
 	// Row Custom Action event
