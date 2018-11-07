@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t04_pinjamanangsurantempinfo.php" ?>
+<?php include_once "t03_pinjamaninfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -274,6 +275,9 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		$this->ExportCsvUrl = $this->PageUrl() . "export=csv" . $KeyUrl;
 		$this->ExportPdfUrl = $this->PageUrl() . "export=pdf" . $KeyUrl;
 
+		// Table object (t03_pinjaman)
+		if (!isset($GLOBALS['t03_pinjaman'])) $GLOBALS['t03_pinjaman'] = new ct03_pinjaman();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'view', TRUE);
@@ -308,9 +312,6 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->pinjaman_id->SetVisibility();
 		$this->Angsuran_Ke->SetVisibility();
 		$this->Angsuran_Tanggal->SetVisibility();
 		$this->Angsuran_Pokok->SetVisibility();
@@ -324,7 +325,6 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		$this->Bayar_Non_Titipan->SetVisibility();
 		$this->Bayar_Total->SetVisibility();
 		$this->Keterangan->SetVisibility();
-		$this->Flag_Edit->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -402,7 +402,6 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 	var $StopRec;
 	var $TotalRecs = 0;
 	var $RecRange = 10;
-	var $Pager;
 	var $RecCnt;
 	var $RecKey = array();
 	var $IsModal = FALSE;
@@ -419,11 +418,11 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		$this->IsModal = (@$_GET["modal"] == "1" || @$_POST["modal"] == "1");
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
-
-		// Load current record
-		$bLoadCurrentRecord = FALSE;
 		$sReturnUrl = "";
 		$bMatchRecord = FALSE;
+
+		// Set up master/detail parameters
+		$this->SetUpMasterParms();
 		if ($this->IsPageRequest()) { // Validate request
 			if (@$_GET["id"] <> "") {
 				$this->id->setQueryStringValue($_GET["id"]);
@@ -432,46 +431,17 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$bLoadCurrentRecord = TRUE;
+				$sReturnUrl = "t04_pinjamanangsurantemplist.php"; // Return to list
 			}
 
 			// Get action
 			$this->CurrentAction = "I"; // Display form
 			switch ($this->CurrentAction) {
 				case "I": // Get a record to display
-					$this->StartRec = 1; // Initialize start position
-					if ($this->Recordset = $this->LoadRecordset()) // Load records
-						$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
-					if ($this->TotalRecs <= 0) { // No record found
-						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$this->Page_Terminate("t04_pinjamanangsurantemplist.php"); // Return to list page
-					} elseif ($bLoadCurrentRecord) { // Load current record position
-						$this->SetUpStartRec(); // Set up start record position
-
-						// Point to current record
-						if (intval($this->StartRec) <= intval($this->TotalRecs)) {
-							$bMatchRecord = TRUE;
-							$this->Recordset->Move($this->StartRec-1);
-						}
-					} else { // Match key values
-						while (!$this->Recordset->EOF) {
-							if (strval($this->id->CurrentValue) == strval($this->Recordset->fields('id'))) {
-								$this->setStartRecordNumber($this->StartRec); // Save record position
-								$bMatchRecord = TRUE;
-								break;
-							} else {
-								$this->StartRec++;
-								$this->Recordset->MoveNext();
-							}
-						}
-					}
-					if (!$bMatchRecord) {
+					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
 						$sReturnUrl = "t04_pinjamanangsurantemplist.php"; // No matching record, return to list
-					} else {
-						$this->LoadRowValues($this->Recordset); // Load row values
 					}
 			}
 		} else {
@@ -496,15 +466,6 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		$options = &$this->OtherOptions;
 		$option = &$options["action"];
 
-		// Add
-		$item = &$option->Add("add");
-		$addcaption = ew_HtmlTitle($Language->Phrase("ViewPageAddLink"));
-		if ($this->IsModal) // Modal
-			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->AddUrl) . "',caption:'" . $addcaption . "'});\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
-
 		// Edit
 		$item = &$option->Add("edit");
 		$editcaption = ew_HtmlTitle($Language->Phrase("ViewPageEditLink"));
@@ -513,23 +474,6 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		else
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
 		$item->Visible = ($this->EditUrl <> "");
-
-		// Copy
-		$item = &$option->Add("copy");
-		$copycaption = ew_HtmlTitle($Language->Phrase("ViewPageCopyLink"));
-		if ($this->IsModal) // Modal
-			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->CopyUrl) . "',caption:'" . $copycaption . "'});\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		$item->Visible = ($this->CopyUrl <> "");
-
-		// Delete
-		$item = &$option->Add("delete");
-		if ($this->IsModal) // Handle as inline delete
-			$item->Body = "<a onclick=\"return ew_ConfirmDelete(this);\" class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode(ew_AddQueryStringToUrl($this->DeleteUrl, "a_delete=1")) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
-		$item->Visible = ($this->DeleteUrl <> "");
 
 		// Set up action default
 		$option = &$options["action"];
@@ -578,32 +522,6 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		}
 	}
 
-	// Load recordset
-	function LoadRecordset($offset = -1, $rowcnt = -1) {
-
-		// Load List page SQL
-		$sSql = $this->SelectSQL();
-		$conn = &$this->Connection();
-
-		// Load recordset
-		$dbtype = ew_GetConnectionType($this->DBID);
-		if ($this->UseSelectLimit) {
-			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
-			} else {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
-			}
-			$conn->raiseErrorFn = '';
-		} else {
-			$rs = ew_LoadRecordset($sSql, $conn);
-		}
-
-		// Call Recordset Selected event
-		$this->Recordset_Selected($rs);
-		return $rs;
-	}
-
 	// Load row based on key values
 	function LoadRow() {
 		global $Security, $Language;
@@ -633,6 +551,7 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->pinjaman_id->setDbValue($rs->fields('pinjaman_id'));
 		$this->Angsuran_Ke->setDbValue($rs->fields('Angsuran_Ke'));
@@ -648,7 +567,7 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		$this->Bayar_Non_Titipan->setDbValue($rs->fields('Bayar_Non_Titipan'));
 		$this->Bayar_Total->setDbValue($rs->fields('Bayar_Total'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
-		$this->Flag_Edit->setDbValue($rs->fields('Flag_Edit'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -670,7 +589,7 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		$this->Bayar_Non_Titipan->DbValue = $row['Bayar_Non_Titipan'];
 		$this->Bayar_Total->DbValue = $row['Bayar_Total'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
-		$this->Flag_Edit->DbValue = $row['Flag_Edit'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Render row values based on field settings
@@ -736,7 +655,7 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 		// Bayar_Non_Titipan
 		// Bayar_Total
 		// Keterangan
-		// Flag_Edit
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -754,67 +673,75 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 
 		// Angsuran_Tanggal
 		$this->Angsuran_Tanggal->ViewValue = $this->Angsuran_Tanggal->CurrentValue;
-		$this->Angsuran_Tanggal->ViewValue = ew_FormatDateTime($this->Angsuran_Tanggal->ViewValue, 0);
+		$this->Angsuran_Tanggal->ViewValue = ew_FormatDateTime($this->Angsuran_Tanggal->ViewValue, 7);
 		$this->Angsuran_Tanggal->ViewCustomAttributes = "";
 
 		// Angsuran_Pokok
 		$this->Angsuran_Pokok->ViewValue = $this->Angsuran_Pokok->CurrentValue;
+		$this->Angsuran_Pokok->ViewValue = ew_FormatNumber($this->Angsuran_Pokok->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Pokok->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Pokok->ViewCustomAttributes = "";
 
 		// Angsuran_Bunga
 		$this->Angsuran_Bunga->ViewValue = $this->Angsuran_Bunga->CurrentValue;
+		$this->Angsuran_Bunga->ViewValue = ew_FormatNumber($this->Angsuran_Bunga->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Bunga->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Bunga->ViewCustomAttributes = "";
 
 		// Angsuran_Total
 		$this->Angsuran_Total->ViewValue = $this->Angsuran_Total->CurrentValue;
+		$this->Angsuran_Total->ViewValue = ew_FormatNumber($this->Angsuran_Total->ViewValue, 2, -2, -2, -2);
+		$this->Angsuran_Total->CellCssStyle .= "text-align: left;";
 		$this->Angsuran_Total->ViewCustomAttributes = "";
 
 		// Sisa_Hutang
 		$this->Sisa_Hutang->ViewValue = $this->Sisa_Hutang->CurrentValue;
+		$this->Sisa_Hutang->ViewValue = ew_FormatNumber($this->Sisa_Hutang->ViewValue, 2, -2, -2, -2);
+		$this->Sisa_Hutang->CellCssStyle .= "text-align: left;";
 		$this->Sisa_Hutang->ViewCustomAttributes = "";
 
 		// Tanggal_Bayar
 		$this->Tanggal_Bayar->ViewValue = $this->Tanggal_Bayar->CurrentValue;
-		$this->Tanggal_Bayar->ViewValue = ew_FormatDateTime($this->Tanggal_Bayar->ViewValue, 0);
+		$this->Tanggal_Bayar->ViewValue = ew_FormatDateTime($this->Tanggal_Bayar->ViewValue, 7);
 		$this->Tanggal_Bayar->ViewCustomAttributes = "";
 
 		// Terlambat
 		$this->Terlambat->ViewValue = $this->Terlambat->CurrentValue;
+		$this->Terlambat->ViewValue = ew_FormatNumber($this->Terlambat->ViewValue, 0, -2, -2, -2);
+		$this->Terlambat->CellCssStyle .= "text-align: right;";
 		$this->Terlambat->ViewCustomAttributes = "";
 
 		// Total_Denda
 		$this->Total_Denda->ViewValue = $this->Total_Denda->CurrentValue;
+		$this->Total_Denda->ViewValue = ew_FormatNumber($this->Total_Denda->ViewValue, 2, -2, -2, -2);
+		$this->Total_Denda->CellCssStyle .= "text-align: right;";
 		$this->Total_Denda->ViewCustomAttributes = "";
 
 		// Bayar_Titipan
 		$this->Bayar_Titipan->ViewValue = $this->Bayar_Titipan->CurrentValue;
+		$this->Bayar_Titipan->ViewValue = ew_FormatNumber($this->Bayar_Titipan->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Titipan->CellCssStyle .= "text-align: right;";
 		$this->Bayar_Titipan->ViewCustomAttributes = "";
 
 		// Bayar_Non_Titipan
 		$this->Bayar_Non_Titipan->ViewValue = $this->Bayar_Non_Titipan->CurrentValue;
+		$this->Bayar_Non_Titipan->ViewValue = ew_FormatNumber($this->Bayar_Non_Titipan->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Non_Titipan->CellCssStyle .= "text-align: right;";
 		$this->Bayar_Non_Titipan->ViewCustomAttributes = "";
 
 		// Bayar_Total
 		$this->Bayar_Total->ViewValue = $this->Bayar_Total->CurrentValue;
+		$this->Bayar_Total->ViewValue = ew_FormatNumber($this->Bayar_Total->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Total->CellCssStyle .= "text-align: right;";
 		$this->Bayar_Total->ViewCustomAttributes = "";
 
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
 
-		// Flag_Edit
-		$this->Flag_Edit->ViewValue = $this->Flag_Edit->CurrentValue;
-		$this->Flag_Edit->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
-			// pinjaman_id
-			$this->pinjaman_id->LinkCustomAttributes = "";
-			$this->pinjaman_id->HrefValue = "";
-			$this->pinjaman_id->TooltipValue = "";
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
 			// Angsuran_Ke
 			$this->Angsuran_Ke->LinkCustomAttributes = "";
@@ -880,16 +807,72 @@ class ct04_pinjamanangsurantemp_view extends ct04_pinjamanangsurantemp {
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
-
-			// Flag_Edit
-			$this->Flag_Edit->LinkCustomAttributes = "";
-			$this->Flag_Edit->HrefValue = "";
-			$this->Flag_Edit->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
 		if ($this->RowType <> EW_ROWTYPE_AGGREGATEINIT)
 			$this->Row_Rendered();
+	}
+
+	// Set up master/detail based on QueryString
+	function SetUpMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t03_pinjaman") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t03_pinjaman"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->pinjaman_id->setQueryStringValue($GLOBALS["t03_pinjaman"]->id->QueryStringValue);
+					$this->pinjaman_id->setSessionValue($this->pinjaman_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t03_pinjaman"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t03_pinjaman") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t03_pinjaman"]->id->setFormValue($_POST["fk_id"]);
+					$this->pinjaman_id->setFormValue($GLOBALS["t03_pinjaman"]->id->FormValue);
+					$this->pinjaman_id->setSessionValue($this->pinjaman_id->FormValue);
+					if (!is_numeric($GLOBALS["t03_pinjaman"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+			$this->setSessionWhere($this->GetDetailFilter());
+
+			// Reset start record counter (new master key)
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t03_pinjaman") {
+				if ($this->pinjaman_id->CurrentValue == "") $this->pinjaman_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
 	}
 
 	// Set up Breadcrumb
@@ -1080,28 +1063,6 @@ $t04_pinjamanangsurantemp_view->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t04_pinjamanangsurantemp->id->Visible) { // id ?>
-	<tr id="r_id">
-		<td><span id="elh_t04_pinjamanangsurantemp_id"><?php echo $t04_pinjamanangsurantemp->id->FldCaption() ?></span></td>
-		<td data-name="id"<?php echo $t04_pinjamanangsurantemp->id->CellAttributes() ?>>
-<span id="el_t04_pinjamanangsurantemp_id">
-<span<?php echo $t04_pinjamanangsurantemp->id->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsurantemp->id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t04_pinjamanangsurantemp->pinjaman_id->Visible) { // pinjaman_id ?>
-	<tr id="r_pinjaman_id">
-		<td><span id="elh_t04_pinjamanangsurantemp_pinjaman_id"><?php echo $t04_pinjamanangsurantemp->pinjaman_id->FldCaption() ?></span></td>
-		<td data-name="pinjaman_id"<?php echo $t04_pinjamanangsurantemp->pinjaman_id->CellAttributes() ?>>
-<span id="el_t04_pinjamanangsurantemp_pinjaman_id">
-<span<?php echo $t04_pinjamanangsurantemp->pinjaman_id->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsurantemp->pinjaman_id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 <?php if ($t04_pinjamanangsurantemp->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
 	<tr id="r_Angsuran_Ke">
 		<td><span id="elh_t04_pinjamanangsurantemp_Angsuran_Ke"><?php echo $t04_pinjamanangsurantemp->Angsuran_Ke->FldCaption() ?></span></td>
@@ -1245,61 +1206,7 @@ $t04_pinjamanangsurantemp_view->ShowMessage();
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t04_pinjamanangsurantemp->Flag_Edit->Visible) { // Flag_Edit ?>
-	<tr id="r_Flag_Edit">
-		<td><span id="elh_t04_pinjamanangsurantemp_Flag_Edit"><?php echo $t04_pinjamanangsurantemp->Flag_Edit->FldCaption() ?></span></td>
-		<td data-name="Flag_Edit"<?php echo $t04_pinjamanangsurantemp->Flag_Edit->CellAttributes() ?>>
-<span id="el_t04_pinjamanangsurantemp_Flag_Edit">
-<span<?php echo $t04_pinjamanangsurantemp->Flag_Edit->ViewAttributes() ?>>
-<?php echo $t04_pinjamanangsurantemp->Flag_Edit->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 </table>
-<?php if (!$t04_pinjamanangsurantemp_view->IsModal) { ?>
-<?php if (!isset($t04_pinjamanangsurantemp_view->Pager)) $t04_pinjamanangsurantemp_view->Pager = new cPrevNextPager($t04_pinjamanangsurantemp_view->StartRec, $t04_pinjamanangsurantemp_view->DisplayRecs, $t04_pinjamanangsurantemp_view->TotalRecs) ?>
-<?php if ($t04_pinjamanangsurantemp_view->Pager->RecordCount > 0 && $t04_pinjamanangsurantemp_view->Pager->Visible) { ?>
-<div class="ewPager">
-<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
-<div class="ewPrevNext"><div class="input-group">
-<div class="input-group-btn">
-<!--first page button-->
-	<?php if ($t04_pinjamanangsurantemp_view->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t04_pinjamanangsurantemp_view->PageUrl() ?>start=<?php echo $t04_pinjamanangsurantemp_view->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } ?>
-<!--previous page button-->
-	<?php if ($t04_pinjamanangsurantemp_view->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t04_pinjamanangsurantemp_view->PageUrl() ?>start=<?php echo $t04_pinjamanangsurantemp_view->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } ?>
-</div>
-<!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t04_pinjamanangsurantemp_view->Pager->CurrentPage ?>">
-<div class="input-group-btn">
-<!--next page button-->
-	<?php if ($t04_pinjamanangsurantemp_view->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t04_pinjamanangsurantemp_view->PageUrl() ?>start=<?php echo $t04_pinjamanangsurantemp_view->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } ?>
-<!--last page button-->
-	<?php if ($t04_pinjamanangsurantemp_view->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t04_pinjamanangsurantemp_view->PageUrl() ?>start=<?php echo $t04_pinjamanangsurantemp_view->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } ?>
-</div>
-</div>
-</div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t04_pinjamanangsurantemp_view->Pager->PageCount ?></span>
-</div>
-<?php } ?>
-<div class="clearfix"></div>
-<?php } ?>
 </form>
 <script type="text/javascript">
 ft04_pinjamanangsurantempview.Init();

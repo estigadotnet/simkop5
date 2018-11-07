@@ -6,6 +6,8 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t03_pinjamaninfo.php" ?>
+<?php include_once "t04_pinjamanangsurantempgridcls.php" ?>
+<?php include_once "t06_pinjamantitipangridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -325,6 +327,9 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		$this->Biaya_Materai->SetVisibility();
 		$this->marketing_id->SetVisibility();
 
+		// Set up detail page object
+		$this->SetupDetailPages();
+
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
 
@@ -401,11 +406,11 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 	var $StopRec;
 	var $TotalRecs = 0;
 	var $RecRange = 10;
-	var $Pager;
 	var $RecCnt;
 	var $RecKey = array();
 	var $IsModal = FALSE;
 	var $Recordset;
+	var $DetailPages; // Detail pages object
 
 	//
 	// Page main
@@ -418,9 +423,6 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		$this->IsModal = (@$_GET["modal"] == "1" || @$_POST["modal"] == "1");
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
-
-		// Load current record
-		$bLoadCurrentRecord = FALSE;
 		$sReturnUrl = "";
 		$bMatchRecord = FALSE;
 		if ($this->IsPageRequest()) { // Validate request
@@ -431,46 +433,17 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$bLoadCurrentRecord = TRUE;
+				$sReturnUrl = "t03_pinjamanlist.php"; // Return to list
 			}
 
 			// Get action
 			$this->CurrentAction = "I"; // Display form
 			switch ($this->CurrentAction) {
 				case "I": // Get a record to display
-					$this->StartRec = 1; // Initialize start position
-					if ($this->Recordset = $this->LoadRecordset()) // Load records
-						$this->TotalRecs = $this->Recordset->RecordCount(); // Get record count
-					if ($this->TotalRecs <= 0) { // No record found
-						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
-							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$this->Page_Terminate("t03_pinjamanlist.php"); // Return to list page
-					} elseif ($bLoadCurrentRecord) { // Load current record position
-						$this->SetUpStartRec(); // Set up start record position
-
-						// Point to current record
-						if (intval($this->StartRec) <= intval($this->TotalRecs)) {
-							$bMatchRecord = TRUE;
-							$this->Recordset->Move($this->StartRec-1);
-						}
-					} else { // Match key values
-						while (!$this->Recordset->EOF) {
-							if (strval($this->id->CurrentValue) == strval($this->Recordset->fields('id'))) {
-								$this->setStartRecordNumber($this->StartRec); // Save record position
-								$bMatchRecord = TRUE;
-								break;
-							} else {
-								$this->StartRec++;
-								$this->Recordset->MoveNext();
-							}
-						}
-					}
-					if (!$bMatchRecord) {
+					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
 						$sReturnUrl = "t03_pinjamanlist.php"; // No matching record, return to list
-					} else {
-						$this->LoadRowValues($this->Recordset); // Load row values
 					}
 			}
 		} else {
@@ -487,6 +460,9 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		$this->RowType = EW_ROWTYPE_VIEW;
 		$this->ResetAttrs();
 		$this->RenderRow();
+
+		// Set up detail parameters
+		$this->SetUpDetailParms();
 	}
 
 	// Set up other options
@@ -513,15 +489,6 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
 		$item->Visible = ($this->EditUrl <> "");
 
-		// Copy
-		$item = &$option->Add("copy");
-		$copycaption = ew_HtmlTitle($Language->Phrase("ViewPageCopyLink"));
-		if ($this->IsModal) // Modal
-			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->CopyUrl) . "',caption:'" . $copycaption . "'});\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		$item->Visible = ($this->CopyUrl <> "");
-
 		// Delete
 		$item = &$option->Add("delete");
 		if ($this->IsModal) // Handle as inline delete
@@ -529,6 +496,104 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		else
 			$item->Body = "<a class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
 		$item->Visible = ($this->DeleteUrl <> "");
+		$option = &$options["detail"];
+		$DetailTableLink = "";
+		$DetailViewTblVar = "";
+		$DetailCopyTblVar = "";
+		$DetailEditTblVar = "";
+
+		// "detail_t04_pinjamanangsurantemp"
+		$item = &$option->Add("detail_t04_pinjamanangsurantemp");
+		$body = $Language->Phrase("ViewPageDetailLink") . $Language->TablePhrase("t04_pinjamanangsurantemp", "TblCaption");
+		$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t04_pinjamanangsurantemplist.php?" . EW_TABLE_SHOW_MASTER . "=t03_pinjaman&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
+		$links = "";
+		if ($GLOBALS["t04_pinjamanangsurantemp_grid"] && $GLOBALS["t04_pinjamanangsurantemp_grid"]->DetailView) {
+			$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t04_pinjamanangsurantemp")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
+			if ($DetailViewTblVar <> "") $DetailViewTblVar .= ",";
+			$DetailViewTblVar .= "t04_pinjamanangsurantemp";
+		}
+		if ($GLOBALS["t04_pinjamanangsurantemp_grid"] && $GLOBALS["t04_pinjamanangsurantemp_grid"]->DetailEdit) {
+			$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t04_pinjamanangsurantemp")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
+			if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
+			$DetailEditTblVar .= "t04_pinjamanangsurantemp";
+		}
+		if ($links <> "") {
+			$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
+			$body .= "<ul class=\"dropdown-menu\">". $links . "</ul>";
+		}
+		$body = "<div class=\"btn-group\">" . $body . "</div>";
+		$item->Body = $body;
+		$item->Visible = TRUE;
+		if ($item->Visible) {
+			if ($DetailTableLink <> "") $DetailTableLink .= ",";
+			$DetailTableLink .= "t04_pinjamanangsurantemp";
+		}
+		if ($this->ShowMultipleDetails) $item->Visible = FALSE;
+
+		// "detail_t06_pinjamantitipan"
+		$item = &$option->Add("detail_t06_pinjamantitipan");
+		$body = $Language->Phrase("ViewPageDetailLink") . $Language->TablePhrase("t06_pinjamantitipan", "TblCaption");
+		$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t06_pinjamantitipanlist.php?" . EW_TABLE_SHOW_MASTER . "=t03_pinjaman&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
+		$links = "";
+		if ($GLOBALS["t06_pinjamantitipan_grid"] && $GLOBALS["t06_pinjamantitipan_grid"]->DetailView) {
+			$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t06_pinjamantitipan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
+			if ($DetailViewTblVar <> "") $DetailViewTblVar .= ",";
+			$DetailViewTblVar .= "t06_pinjamantitipan";
+		}
+		if ($GLOBALS["t06_pinjamantitipan_grid"] && $GLOBALS["t06_pinjamantitipan_grid"]->DetailEdit) {
+			$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t06_pinjamantitipan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
+			if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
+			$DetailEditTblVar .= "t06_pinjamantitipan";
+		}
+		if ($links <> "") {
+			$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
+			$body .= "<ul class=\"dropdown-menu\">". $links . "</ul>";
+		}
+		$body = "<div class=\"btn-group\">" . $body . "</div>";
+		$item->Body = $body;
+		$item->Visible = TRUE;
+		if ($item->Visible) {
+			if ($DetailTableLink <> "") $DetailTableLink .= ",";
+			$DetailTableLink .= "t06_pinjamantitipan";
+		}
+		if ($this->ShowMultipleDetails) $item->Visible = FALSE;
+
+		// Multiple details
+		if ($this->ShowMultipleDetails) {
+			$body = $Language->Phrase("MultipleMasterDetails");
+			$body = "<div class=\"btn-group\">";
+			$links = "";
+			if ($DetailViewTblVar <> "") {
+				$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailViewTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
+			}
+			if ($DetailEditTblVar <> "") {
+				$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailEditTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
+			}
+			if ($DetailCopyTblVar <> "") {
+				$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailCopyTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
+			}
+			if ($links <> "") {
+				$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewMasterDetail\" title=\"" . ew_HtmlTitle($Language->Phrase("MultipleMasterDetails")) . "\" data-toggle=\"dropdown\">" . $Language->Phrase("MultipleMasterDetails") . "<b class=\"caret\"></b></button>";
+				$body .= "<ul class=\"dropdown-menu ewMenu\">". $links . "</ul>";
+			}
+			$body .= "</div>";
+
+			// Multiple details
+			$oListOpt = &$option->Add("details");
+			$oListOpt->Body = $body;
+		}
+
+		// Set up detail default
+		$option = &$options["detail"];
+		$options["detail"]->DropDownButtonPhrase = $Language->Phrase("ButtonDetails");
+		$option->UseImageAndText = TRUE;
+		$ar = explode(",", $DetailTableLink);
+		$cnt = count($ar);
+		$option->UseDropDownButton = ($cnt > 1);
+		$option->UseButtonGroup = TRUE;
+		$item = &$option->Add($option->GroupOptionName);
+		$item->Body = "";
+		$item->Visible = FALSE;
 
 		// Set up action default
 		$option = &$options["action"];
@@ -575,32 +640,6 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 			$this->StartRec = intval(($this->StartRec-1)/$this->DisplayRecs)*$this->DisplayRecs+1; // Point to page boundary
 			$this->setStartRecordNumber($this->StartRec);
 		}
-	}
-
-	// Load recordset
-	function LoadRecordset($offset = -1, $rowcnt = -1) {
-
-		// Load List page SQL
-		$sSql = $this->SelectSQL();
-		$conn = &$this->Connection();
-
-		// Load recordset
-		$dbtype = ew_GetConnectionType($this->DBID);
-		if ($this->UseSelectLimit) {
-			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
-			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
-			} else {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
-			}
-			$conn->raiseErrorFn = '';
-		} else {
-			$rs = ew_LoadRecordset($sSql, $conn);
-		}
-
-		// Call Recordset Selected event
-		$this->Recordset_Selected($rs);
-		return $rs;
 	}
 
 	// Load row based on key values
@@ -650,6 +689,7 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
 		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -673,6 +713,7 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		$this->Biaya_Administrasi->DbValue = $row['Biaya_Administrasi'];
 		$this->Biaya_Materai->DbValue = $row['Biaya_Materai'];
 		$this->marketing_id->DbValue = $row['marketing_id'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Render row values based on field settings
@@ -740,6 +781,7 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		// Biaya_Administrasi
 		// Biaya_Materai
 		// marketing_id
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -896,6 +938,10 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		}
 		$this->marketing_id->ViewCustomAttributes = "";
 
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 			// Kontrak_No
 			$this->Kontrak_No->LinkCustomAttributes = "";
 			$this->Kontrak_No->HrefValue = "";
@@ -982,6 +1028,49 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 			$this->Row_Rendered();
 	}
 
+	// Set up detail parms based on QueryString
+	function SetUpDetailParms() {
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_DETAIL])) {
+			$sDetailTblVar = $_GET[EW_TABLE_SHOW_DETAIL];
+			$this->setCurrentDetailTable($sDetailTblVar);
+		} else {
+			$sDetailTblVar = $this->getCurrentDetailTable();
+		}
+		if ($sDetailTblVar <> "") {
+			$DetailTblVar = explode(",", $sDetailTblVar);
+			if (in_array("t04_pinjamanangsurantemp", $DetailTblVar)) {
+				if (!isset($GLOBALS["t04_pinjamanangsurantemp_grid"]))
+					$GLOBALS["t04_pinjamanangsurantemp_grid"] = new ct04_pinjamanangsurantemp_grid;
+				if ($GLOBALS["t04_pinjamanangsurantemp_grid"]->DetailView) {
+					$GLOBALS["t04_pinjamanangsurantemp_grid"]->CurrentMode = "view";
+
+					// Save current master table to detail table
+					$GLOBALS["t04_pinjamanangsurantemp_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t04_pinjamanangsurantemp_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t04_pinjamanangsurantemp_grid"]->pinjaman_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t04_pinjamanangsurantemp_grid"]->pinjaman_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t04_pinjamanangsurantemp_grid"]->pinjaman_id->setSessionValue($GLOBALS["t04_pinjamanangsurantemp_grid"]->pinjaman_id->CurrentValue);
+				}
+			}
+			if (in_array("t06_pinjamantitipan", $DetailTblVar)) {
+				if (!isset($GLOBALS["t06_pinjamantitipan_grid"]))
+					$GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid;
+				if ($GLOBALS["t06_pinjamantitipan_grid"]->DetailView) {
+					$GLOBALS["t06_pinjamantitipan_grid"]->CurrentMode = "view";
+
+					// Save current master table to detail table
+					$GLOBALS["t06_pinjamantitipan_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t06_pinjamantitipan_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->setSessionValue($GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue);
+				}
+			}
+		}
+	}
+
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
@@ -990,6 +1079,15 @@ class ct03_pinjaman_view extends ct03_pinjaman {
 		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t03_pinjamanlist.php"), "", $this->TableVar, TRUE);
 		$PageId = "view";
 		$Breadcrumb->Add("view", $PageId, $url);
+	}
+
+	// Set up detail pages
+	function SetupDetailPages() {
+		$pages = new cSubPages();
+		$pages->Style = "tabs";
+		$pages->Add('t04_pinjamanangsurantemp');
+		$pages->Add('t06_pinjamantitipan');
+		$this->DetailPages = $pages;
 	}
 
 	// Setup lookup filters of a field
@@ -1350,48 +1448,59 @@ $t03_pinjaman_view->ShowMessage();
 	</tr>
 <?php } ?>
 </table>
-<?php if (!$t03_pinjaman_view->IsModal) { ?>
-<?php if (!isset($t03_pinjaman_view->Pager)) $t03_pinjaman_view->Pager = new cPrevNextPager($t03_pinjaman_view->StartRec, $t03_pinjaman_view->DisplayRecs, $t03_pinjaman_view->TotalRecs) ?>
-<?php if ($t03_pinjaman_view->Pager->RecordCount > 0 && $t03_pinjaman_view->Pager->Visible) { ?>
-<div class="ewPager">
-<span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
-<div class="ewPrevNext"><div class="input-group">
-<div class="input-group-btn">
-<!--first page button-->
-	<?php if ($t03_pinjaman_view->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t03_pinjaman_view->PageUrl() ?>start=<?php echo $t03_pinjaman_view->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
-	<?php } ?>
-<!--previous page button-->
-	<?php if ($t03_pinjaman_view->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t03_pinjaman_view->PageUrl() ?>start=<?php echo $t03_pinjaman_view->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
-	<?php } ?>
-</div>
-<!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t03_pinjaman_view->Pager->CurrentPage ?>">
-<div class="input-group-btn">
-<!--next page button-->
-	<?php if ($t03_pinjaman_view->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t03_pinjaman_view->PageUrl() ?>start=<?php echo $t03_pinjaman_view->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
-	<?php } ?>
-<!--last page button-->
-	<?php if ($t03_pinjaman_view->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t03_pinjaman_view->PageUrl() ?>start=<?php echo $t03_pinjaman_view->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } else { ?>
-	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
-	<?php } ?>
-</div>
-</div>
-</div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t03_pinjaman_view->Pager->PageCount ?></span>
-</div>
+<?php if ($t03_pinjaman->getCurrentDetailTable() <> "") { ?>
+<?php
+	$t03_pinjaman_view->DetailPages->ValidKeys = explode(",", $t03_pinjaman->getCurrentDetailTable());
+	$FirstActiveDetailTable = $t03_pinjaman_view->DetailPages->ActivePageIndex();
+?>
+<div class="ewDetailPages">
+<div class="tabbable" id="t03_pinjaman_view_details">
+	<ul class="nav<?php echo $t03_pinjaman_view->DetailPages->NavStyle() ?>">
+<?php
+	if (in_array("t04_pinjamanangsurantemp", explode(",", $t03_pinjaman->getCurrentDetailTable())) && $t04_pinjamanangsurantemp->DetailView) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t04_pinjamanangsurantemp") {
+			$FirstActiveDetailTable = "t04_pinjamanangsurantemp";
+		}
+?>
+		<li<?php echo $t03_pinjaman_view->DetailPages->TabStyle("t04_pinjamanangsurantemp") ?>><a href="#tab_t04_pinjamanangsurantemp" data-toggle="tab"><?php echo $Language->TablePhrase("t04_pinjamanangsurantemp", "TblCaption") ?></a></li>
+<?php
+	}
+?>
+<?php
+	if (in_array("t06_pinjamantitipan", explode(",", $t03_pinjaman->getCurrentDetailTable())) && $t06_pinjamantitipan->DetailView) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t06_pinjamantitipan") {
+			$FirstActiveDetailTable = "t06_pinjamantitipan";
+		}
+?>
+		<li<?php echo $t03_pinjaman_view->DetailPages->TabStyle("t06_pinjamantitipan") ?>><a href="#tab_t06_pinjamantitipan" data-toggle="tab"><?php echo $Language->TablePhrase("t06_pinjamantitipan", "TblCaption") ?></a></li>
+<?php
+	}
+?>
+	</ul>
+	<div class="tab-content">
+<?php
+	if (in_array("t04_pinjamanangsurantemp", explode(",", $t03_pinjaman->getCurrentDetailTable())) && $t04_pinjamanangsurantemp->DetailView) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t04_pinjamanangsurantemp") {
+			$FirstActiveDetailTable = "t04_pinjamanangsurantemp";
+		}
+?>
+		<div class="tab-pane<?php echo $t03_pinjaman_view->DetailPages->PageStyle("t04_pinjamanangsurantemp") ?>" id="tab_t04_pinjamanangsurantemp">
+<?php include_once "t04_pinjamanangsurantempgrid.php" ?>
+		</div>
 <?php } ?>
-<div class="clearfix"></div>
+<?php
+	if (in_array("t06_pinjamantitipan", explode(",", $t03_pinjaman->getCurrentDetailTable())) && $t06_pinjamantitipan->DetailView) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t06_pinjamantitipan") {
+			$FirstActiveDetailTable = "t06_pinjamantitipan";
+		}
+?>
+		<div class="tab-pane<?php echo $t03_pinjaman_view->DetailPages->PageStyle("t06_pinjamantitipan") ?>" id="tab_t06_pinjamantitipan">
+<?php include_once "t06_pinjamantitipangrid.php" ?>
+		</div>
+<?php } ?>
+	</div>
+</div>
+</div>
 <?php } ?>
 </form>
 <script type="text/javascript">

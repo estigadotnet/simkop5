@@ -1256,7 +1256,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->ListOptions->UseImageAndText = TRUE;
 		$this->ListOptions->UseDropDownButton = FALSE;
 		$this->ListOptions->DropDownButtonPhrase = $Language->Phrase("ButtonListOptions");
-		$this->ListOptions->UseButtonGroup = TRUE;
+		$this->ListOptions->UseButtonGroup = FALSE;
 		if ($this->ListOptions->UseButtonGroup && ew_IsMobile())
 			$this->ListOptions->UseDropDownButton = TRUE;
 		$this->ListOptions->ButtonClass = "btn-sm"; // Class for button group
@@ -2465,13 +2465,20 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// jika ada perubahan pada data master tapi sudah ada data pembayaran
 		// maka perubahan harus tidak diperbolehkan
 
-		$q = "select count(id) as rec_cnt from t04_pinjamanangsurantemp where
+		if ($pinjaman_id <> "") {
+			$q = "select * from t04_pinjamanangsurantemp where
 			pinjaman_id = ".$pinjaman_id." and Tanggal_Bayar is not null"; //echo $q; //exit;
-		$r = Conn()->Execute($q);
-		if ($r->EOF) {
-		}
-		else {
-			$this->ListOptions->Items["edit"]->Body = "";
+			$r = Conn()->Execute($q);
+			if ($r->EOF) {
+			}
+			else {
+				$this->ListOptions->Items["edit"]->Body = "";
+
+				//$this->ListOptions->Items["delete"]->Body = "";
+			}
+			if ($this->Periode->CurrentValue <> $GLOBALS["Periode"]) {
+				$this->ListOptions->Items["delete"]->Body = "";
+			}
 		}
 		$t04_pinjamanangsurantemp_id = 0;
 		if ($pinjaman_id <> "") {
