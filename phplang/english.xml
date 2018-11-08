@@ -586,15 +586,6 @@
     <menu id="16">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="1">
-      <phrase id="menutext" value="Nasabah" />
-    </menu>
-    <menu id="2">
-      <phrase id="menutext" value="Jaminan" />
-    </menu>
-    <menu id="14">
-      <phrase id="menutext" value="Marketing" />
-    </menu>
     <menu id="3">
       <phrase id="menutext" value="Pinjaman" />
     </menu>
@@ -616,8 +607,26 @@
     <menu id="17">
       <phrase id="menutext" value="Tutup Buku" />
     </menu>
+    <menu id="10019">
+      <phrase id="menutext" value="List" />
+    </menu>
+    <menu id="10018">
+      <phrase id="menutext" value="Pinjaman" />
+    </menu>
+    <menu id="36">
+      <phrase id="menutext" value="Activity Log" />
+    </menu>
     <menu id="35">
       <phrase id="menutext" value="Setup" />
+    </menu>
+    <menu id="1">
+      <phrase id="menutext" value="Nasabah" />
+    </menu>
+    <menu id="2">
+      <phrase id="menutext" value="Jaminan" />
+    </menu>
+    <menu id="14">
+      <phrase id="menutext" value="Marketing" />
     </menu>
     <menu id="7">
       <phrase id="menutext" value="Periode" />
@@ -639,9 +648,6 @@
     </menu>
     <menu id="12">
       <phrase id="menutext" value="Daftar Menu" />
-    </menu>
-    <menu id="36">
-      <phrase id="menutext" value="Activity Log" />
     </menu>
     <menu id="10001">
       <phrase id="menutext" value="t 01 nasabah" />
@@ -693,9 +699,6 @@
     </menu>
     <menu id="10017">
       <phrase id="menutext" value="t 99 audittrail" />
-    </menu>
-    <menu id="10018">
-      <phrase id="menutext" value="Pinjaman" />
     </menu>
     <table id="cf01_home_php">
       <phrase id="tblcaption" value="Home" />
