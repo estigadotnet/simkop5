@@ -1305,16 +1305,25 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 				t03_pinjaman a
 				join t01_nasabah b on a.nasabah_id = b.id
 			where
-				a.id = ".$_SESSION["pinjaman_id"]."";
+				a.id = ".$_SESSION["pinjaman_id"].""; //echo $q;
 		$r = Conn()->Execute($q);
 
 		// detail jaminan
-		$ajaminans = explode(",", $r->fields["jaminan_id"]);
+		//echo strlen($r->fields["jaminan_id"]);
+		//if (strlen(trim($r->fields["jaminan_id"])) > 1) {
+
+		$ajaminans = explode(",", $r->fields["jaminan_id"]); //var_dump($ajaminans);
 		$jaminan = "";
 		foreach ($ajaminans as $ajaminan) {
 			$jaminan .= ew_ExecuteScalar("select Merk_Type from t02_jaminan where id = ".$ajaminan."") . ", ";
 		}
 		$jaminan = substr($jaminan, 0, -2);
+
+		//}
+		//else {
+		//	$jaminan = ew_ExecuteScalar("select Merk_Type from t02_jaminan where id = ".$r->fields["jaminan_id"]."");
+		//}
+
 		echo "
 			<table class=\"table table-bordered table-striped ewViewTable\">
 				<tbody>

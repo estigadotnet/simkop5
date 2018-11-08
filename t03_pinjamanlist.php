@@ -2552,7 +2552,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		//$this->ListOptions->Items["new"]->Body = "xxx";
 
 		$pinjaman_id = $this->id->CurrentValue; //echo $pinjaman_id;
-		$_SESSION["pinjaman_id"] = $pinjaman_id;
+		$_SESSION["pinjaman_id"] = $pinjaman_id; //echo $_SESSION["pinjaman_id"];
 
 		//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
 		// check perubahan data master pinjaman
@@ -2576,6 +2576,8 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		}
 		$t04_pinjamanangsurantemp_id = 0;
 		if ($pinjaman_id <> "") {
+
+			//echo "-".$pinjaman_id;
 			$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
 		}
 		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";

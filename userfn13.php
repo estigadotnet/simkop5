@@ -8,8 +8,8 @@ function Page_Loading() {
 	// simpan data periode berjalan
 
 	$GLOBALS["Periode"] = ew_ExecuteScalar("select Tahun_Bulan from t93_Periode");
-	$_SESSION["pinjaman_id"] = 0;
 
+	//$_SESSION["pinjaman_id"] = 0;
 	//echo "0".$GLOBALS["Periode"]; //exit;
 	//$GLOBALS["t03_pinjaman"]->Angsuran_Denda->CurrentValue;
 

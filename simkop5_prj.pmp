@@ -778,6 +778,7 @@ function Page_Loading() {
 
 	// simpan data periode berjalan
 	$GLOBALS["Periode"] = ew_ExecuteScalar("select Tahun_Bulan from t93_Periode");
+	//$_SESSION["pinjaman_id"] = 0;
 
 	//echo "0".$GLOBALS["Periode"]; //exit;
 	//$GLOBALS["t03_pinjaman"]->Angsuran_Denda->CurrentValue;
@@ -819,16 +820,22 @@ function Page_DataRendering(&$header) {
 			t03_pinjaman a
 			join t01_nasabah b on a.nasabah_id = b.id
 		where
-			a.id = ".$_SESSION["pinjaman_id"]."";
+			a.id = ".$_SESSION["pinjaman_id"].""; //echo $q;
 	$r = Conn()->Execute($q);
 
 	// detail jaminan
-	$ajaminans = explode(",", $r->fields["jaminan_id"]);
+	//echo strlen($r->fields["jaminan_id"]);
+	//if (strlen(trim($r->fields["jaminan_id"])) > 1) {
+	$ajaminans = explode(",", $r->fields["jaminan_id"]); //var_dump($ajaminans);
 	$jaminan = "";
 	foreach ($ajaminans as $ajaminan) {
 		$jaminan .= ew_ExecuteScalar("select Merk_Type from t02_jaminan where id = ".$ajaminan."") . ", ";
 	}
 	$jaminan = substr($jaminan, 0, -2);
+	//}
+	//else {
+	//	$jaminan = ew_ExecuteScalar("select Merk_Type from t02_jaminan where id = ".$r->fields["jaminan_id"]."");
+	//}
 
 	echo "
 		<table class=\"table table-bordered table-striped ewViewTable\">
@@ -1033,7 +1040,7 @@ function ListOptions_Rendered() {
 	//$this->ListOptions->Items["new"]->Body = "xxx";
 
 	$pinjaman_id = $this->id->CurrentValue; //echo $pinjaman_id;
-	$_SESSION["pinjaman_id"] = $pinjaman_id;
+	$_SESSION["pinjaman_id"] = $pinjaman_id; //echo $_SESSION["pinjaman_id"];
 
 	//$this->ListOptions->Items["print_x"]->Body = "<a href='./_custom_/print_x.php?id=".CurrentTable()->id->CurrentValue."'>Print X</a>";
 	// check perubahan data master pinjaman
@@ -1057,6 +1064,7 @@ function ListOptions_Rendered() {
 	}
 	$t04_pinjamanangsurantemp_id = 0;
 	if ($pinjaman_id <> "") {
+		//echo "-".$pinjaman_id;
 		$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
 	}
 
@@ -1482,6 +1490,21 @@ else {
 <?php
 }
 ?>
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Page_Load" ScriptCtrlID="add" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// Page Load event
+function Page_Load() {
+	//echo "Page Load";
+
+	$_SESSION["pinjaman_id"] = 0;
+}
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Other" ScriptName="Page_Redirecting" ScriptCtrlID="logout" ScriptL1Key="" ScriptL2Key=""><![CDATA[// Page Redirecting event
+function Page_Redirecting(&$url) {
+	// Example:
+	//$url = "your URL";
+
+	$url = ".";
+}
 ]]></CustomScript>
   <Menu MenuID="16" MenuText="Home" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="8" MenuSecurity="" MenuUrl="cf01_home.php" MenuCustomUrl="0" MenuLevel="0" MenuShow="1" MenuDisplayOrder="100" />
   <Menu MenuID="1" MenuText="Nasabah" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="t01_nasabah" MenuCustomUrl="0" MenuLevel="0" MenuShow="1" MenuDisplayOrder="200" />

@@ -1678,6 +1678,7 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 	function Page_Load() {
 
 		//echo "Page Load";
+		$_SESSION["pinjaman_id"] = 0;
 	}
 
 	// Page Unload event
