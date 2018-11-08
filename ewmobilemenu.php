@@ -13,9 +13,9 @@ $RootMenu->AddMenuItem(35, "mmci_Setup", $Language->MenuPhrase("35", "MenuText")
 $RootMenu->AddMenuItem(1, "mmi_t01_nasabah", $Language->MenuPhrase("1", "MenuText"), "t01_nasabahlist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t01_nasabah'), FALSE, FALSE);
 $RootMenu->AddMenuItem(14, "mmi_t07_marketing", $Language->MenuPhrase("14", "MenuText"), "t07_marketinglist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t07_marketing'), FALSE, FALSE);
 $RootMenu->AddMenuItem(7, "mmi_t93_periode", $Language->MenuPhrase("7", "MenuText"), "t93_periodelist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t93_periode'), FALSE, FALSE);
-$RootMenu->AddMenuItem(8, "mmi_t94_log", $Language->MenuPhrase("8", "MenuText"), "t94_loglist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t94_log'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10, "mmi_t96_employees", $Language->MenuPhrase("10", "MenuText"), "t96_employeeslist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t96_employees'), FALSE, FALSE);
 $RootMenu->AddMenuItem(11, "mmi_t97_userlevels", $Language->MenuPhrase("11", "MenuText"), "t97_userlevelslist.php", 35, "", (@$_SESSION[EW_SESSION_USER_LEVEL] & EW_ALLOW_ADMIN) == EW_ALLOW_ADMIN, FALSE, FALSE);
+$RootMenu->AddMenuItem(8, "mmi_t94_log", $Language->MenuPhrase("8", "MenuText"), "t94_loglist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t94_log'), FALSE, FALSE);
 $RootMenu->AddMenuItem(-2, "mmi_changepwd", $Language->Phrase("ChangePwd"), "changepwd.php", -1, "", IsLoggedIn() && !IsSysAdmin());
 $RootMenu->AddMenuItem(-1, "mmi_logout", $Language->Phrase("Logout"), "logout.php", -1, "", IsLoggedIn());
 $RootMenu->AddMenuItem(-1, "mmi_login", $Language->Phrase("Login"), "login.php", -1, "", !IsLoggedIn() && substr(@$_SERVER["URL"], -1 * strlen("login.php")) <> "login.php");

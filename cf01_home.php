@@ -333,10 +333,28 @@ $db =& DbHelper();
 	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
 ?>
 
+<!-- periode -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#periode">Periode</a></strong></div>
+	<div id="periode" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div>
+				<table class='table table-striped table-hover table-condensed'>
+					<tbody>
+					<tr>
+						<td><?php echo "Periode: ".ew_ExecuteScalar("select Bulan from t93_Periode")." - ".ew_ExecuteScalar("select Tahun from t93_Periode"); ?></td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- log -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Progress Log</a></strong></div>
-	<div id="log" class="panel-collapse collapse in">
+	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
 			<div>
 				<p>&nbsp;</p>

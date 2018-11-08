@@ -634,12 +634,6 @@
     <menu id="18">
       <phrase id="menutext" value="t 92 periodeold" />
     </menu>
-    <menu id="8">
-      <phrase id="menutext" value="Apps. Log" />
-    </menu>
-    <menu id="9">
-      <phrase id="menutext" value="Description" />
-    </menu>
     <menu id="10">
       <phrase id="menutext" value="Users" />
     </menu>
@@ -648,6 +642,12 @@
     </menu>
     <menu id="12">
       <phrase id="menutext" value="Daftar Menu" />
+    </menu>
+    <menu id="8">
+      <phrase id="menutext" value="Progress Log" />
+    </menu>
+    <menu id="9">
+      <phrase id="menutext" value="Description" />
     </menu>
     <menu id="10001">
       <phrase id="menutext" value="t 01 nasabah" />
@@ -1016,7 +1016,7 @@
       </field>
     </table>
     <table id="t94_log">
-      <phrase id="tblcaption" value="Apps. Log" />
+      <phrase id="tblcaption" value="Progress Log" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
