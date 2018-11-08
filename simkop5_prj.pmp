@@ -335,7 +335,7 @@ $("#x_Kontrak_Tgl").val("<?php echo date('d-m-Y');?>");
 		var bayar_total = x_Total_Denda + x_Bayar_Titipan + x_Bayar_Non_Titipan;
 		$("#x_Bayar_Total").val(bayar_total);
 		$("#x_Bayar_Total").autoNumeric('update');
-	}
+	};
 
 	// Table 't03_pinjaman' Field 'Pinjaman'
 	$('[data-table=t03_pinjaman][data-field=x_Pinjaman]').on(
@@ -497,7 +497,7 @@ $("#x_Kontrak_Tgl").val("<?php echo date('d-m-Y');?>");
 	// Cetak hasil	
 	//document.write(ribuan); // Hasil: 23.456.789
 	return ribuan;
-	}
+	};
 ]]></CustomScript>
   <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Page_Render" ScriptCtrlID="view" ScriptL1Key="t01_nasabah" ScriptL2Key=""><![CDATA[// Page Render event
 function Page_Render() {

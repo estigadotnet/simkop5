@@ -57,7 +57,7 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 		var bayar_total = x_Total_Denda + x_Bayar_Titipan + x_Bayar_Non_Titipan;
 		$("#x_Bayar_Total").val(bayar_total);
 		$("#x_Bayar_Total").autoNumeric('update');
-	}
+	};
 
 	// Table 't03_pinjaman' Field 'Pinjaman'
 	$('[data-table=t03_pinjaman][data-field=x_Pinjaman]').on(
@@ -220,7 +220,7 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 	//document.write(ribuan); // Hasil: 23.456.789
 
 	return ribuan;
-	}
+	};
 </script>
 </body>
 </html>
