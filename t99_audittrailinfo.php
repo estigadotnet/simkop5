@@ -12,8 +12,8 @@ class ct99_audittrail extends cTable {
 	var $script;
 	var $user;
 	var $action;
-	var $table;
-	var $field;
+	var $_table;
+	var $_field;
 	var $keyvalue;
 	var $oldvalue;
 	var $newvalue;
@@ -76,14 +76,14 @@ class ct99_audittrail extends cTable {
 		$this->fields['action'] = &$this->action;
 
 		// table
-		$this->table = new cField('t99_audittrail', 't99_audittrail', 'x_table', 'table', '`table`', '`table`', 200, -1, FALSE, '`table`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->table->Sortable = TRUE; // Allow sort
-		$this->fields['table'] = &$this->table;
+		$this->_table = new cField('t99_audittrail', 't99_audittrail', 'x__table', 'table', '`table`', '`table`', 200, -1, FALSE, '`table`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->_table->Sortable = TRUE; // Allow sort
+		$this->fields['table'] = &$this->_table;
 
 		// field
-		$this->field = new cField('t99_audittrail', 't99_audittrail', 'x_field', 'field', '`field`', '`field`', 200, -1, FALSE, '`field`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->field->Sortable = TRUE; // Allow sort
-		$this->fields['field'] = &$this->field;
+		$this->_field = new cField('t99_audittrail', 't99_audittrail', 'x__field', 'field', '`field`', '`field`', 200, -1, FALSE, '`field`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->_field->Sortable = TRUE; // Allow sort
+		$this->fields['field'] = &$this->_field;
 
 		// keyvalue
 		$this->keyvalue = new cField('t99_audittrail', 't99_audittrail', 'x_keyvalue', 'keyvalue', '`keyvalue`', '`keyvalue`', 201, -1, FALSE, '`keyvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
@@ -606,8 +606,8 @@ class ct99_audittrail extends cTable {
 		$this->script->setDbValue($rs->fields('script'));
 		$this->user->setDbValue($rs->fields('user'));
 		$this->action->setDbValue($rs->fields('action'));
-		$this->table->setDbValue($rs->fields('table'));
-		$this->field->setDbValue($rs->fields('field'));
+		$this->_table->setDbValue($rs->fields('table'));
+		$this->_field->setDbValue($rs->fields('field'));
 		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
 		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
 		$this->newvalue->setDbValue($rs->fields('newvalue'));
@@ -654,12 +654,12 @@ class ct99_audittrail extends cTable {
 		$this->action->ViewCustomAttributes = "";
 
 		// table
-		$this->table->ViewValue = $this->table->CurrentValue;
-		$this->table->ViewCustomAttributes = "";
+		$this->_table->ViewValue = $this->_table->CurrentValue;
+		$this->_table->ViewCustomAttributes = "";
 
 		// field
-		$this->field->ViewValue = $this->field->CurrentValue;
-		$this->field->ViewCustomAttributes = "";
+		$this->_field->ViewValue = $this->_field->CurrentValue;
+		$this->_field->ViewCustomAttributes = "";
 
 		// keyvalue
 		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
@@ -699,14 +699,14 @@ class ct99_audittrail extends cTable {
 		$this->action->TooltipValue = "";
 
 		// table
-		$this->table->LinkCustomAttributes = "";
-		$this->table->HrefValue = "";
-		$this->table->TooltipValue = "";
+		$this->_table->LinkCustomAttributes = "";
+		$this->_table->HrefValue = "";
+		$this->_table->TooltipValue = "";
 
 		// field
-		$this->field->LinkCustomAttributes = "";
-		$this->field->HrefValue = "";
-		$this->field->TooltipValue = "";
+		$this->_field->LinkCustomAttributes = "";
+		$this->_field->HrefValue = "";
+		$this->_field->TooltipValue = "";
 
 		// keyvalue
 		$this->keyvalue->LinkCustomAttributes = "";
@@ -765,16 +765,16 @@ class ct99_audittrail extends cTable {
 		$this->action->PlaceHolder = ew_RemoveHtml($this->action->FldCaption());
 
 		// table
-		$this->table->EditAttrs["class"] = "form-control";
-		$this->table->EditCustomAttributes = "";
-		$this->table->EditValue = $this->table->CurrentValue;
-		$this->table->PlaceHolder = ew_RemoveHtml($this->table->FldCaption());
+		$this->_table->EditAttrs["class"] = "form-control";
+		$this->_table->EditCustomAttributes = "";
+		$this->_table->EditValue = $this->_table->CurrentValue;
+		$this->_table->PlaceHolder = ew_RemoveHtml($this->_table->FldCaption());
 
 		// field
-		$this->field->EditAttrs["class"] = "form-control";
-		$this->field->EditCustomAttributes = "";
-		$this->field->EditValue = $this->field->CurrentValue;
-		$this->field->PlaceHolder = ew_RemoveHtml($this->field->FldCaption());
+		$this->_field->EditAttrs["class"] = "form-control";
+		$this->_field->EditCustomAttributes = "";
+		$this->_field->EditValue = $this->_field->CurrentValue;
+		$this->_field->PlaceHolder = ew_RemoveHtml($this->_field->FldCaption());
 
 		// keyvalue
 		$this->keyvalue->EditAttrs["class"] = "form-control";
@@ -825,8 +825,8 @@ class ct99_audittrail extends cTable {
 					if ($this->script->Exportable) $Doc->ExportCaption($this->script);
 					if ($this->user->Exportable) $Doc->ExportCaption($this->user);
 					if ($this->action->Exportable) $Doc->ExportCaption($this->action);
-					if ($this->table->Exportable) $Doc->ExportCaption($this->table);
-					if ($this->field->Exportable) $Doc->ExportCaption($this->field);
+					if ($this->_table->Exportable) $Doc->ExportCaption($this->_table);
+					if ($this->_field->Exportable) $Doc->ExportCaption($this->_field);
 					if ($this->keyvalue->Exportable) $Doc->ExportCaption($this->keyvalue);
 					if ($this->oldvalue->Exportable) $Doc->ExportCaption($this->oldvalue);
 					if ($this->newvalue->Exportable) $Doc->ExportCaption($this->newvalue);
@@ -836,8 +836,8 @@ class ct99_audittrail extends cTable {
 					if ($this->script->Exportable) $Doc->ExportCaption($this->script);
 					if ($this->user->Exportable) $Doc->ExportCaption($this->user);
 					if ($this->action->Exportable) $Doc->ExportCaption($this->action);
-					if ($this->table->Exportable) $Doc->ExportCaption($this->table);
-					if ($this->field->Exportable) $Doc->ExportCaption($this->field);
+					if ($this->_table->Exportable) $Doc->ExportCaption($this->_table);
+					if ($this->_field->Exportable) $Doc->ExportCaption($this->_field);
 				}
 				$Doc->EndExportRow();
 			}
@@ -873,8 +873,8 @@ class ct99_audittrail extends cTable {
 						if ($this->script->Exportable) $Doc->ExportField($this->script);
 						if ($this->user->Exportable) $Doc->ExportField($this->user);
 						if ($this->action->Exportable) $Doc->ExportField($this->action);
-						if ($this->table->Exportable) $Doc->ExportField($this->table);
-						if ($this->field->Exportable) $Doc->ExportField($this->field);
+						if ($this->_table->Exportable) $Doc->ExportField($this->_table);
+						if ($this->_field->Exportable) $Doc->ExportField($this->_field);
 						if ($this->keyvalue->Exportable) $Doc->ExportField($this->keyvalue);
 						if ($this->oldvalue->Exportable) $Doc->ExportField($this->oldvalue);
 						if ($this->newvalue->Exportable) $Doc->ExportField($this->newvalue);
@@ -884,8 +884,8 @@ class ct99_audittrail extends cTable {
 						if ($this->script->Exportable) $Doc->ExportField($this->script);
 						if ($this->user->Exportable) $Doc->ExportField($this->user);
 						if ($this->action->Exportable) $Doc->ExportField($this->action);
-						if ($this->table->Exportable) $Doc->ExportField($this->table);
-						if ($this->field->Exportable) $Doc->ExportField($this->field);
+						if ($this->_table->Exportable) $Doc->ExportField($this->_table);
+						if ($this->_field->Exportable) $Doc->ExportField($this->_field);
 					}
 					$Doc->EndExportRow();
 				}

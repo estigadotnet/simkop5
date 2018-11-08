@@ -635,10 +635,10 @@
       <phrase id="menutext" value="Users" />
     </menu>
     <menu id="11">
-      <phrase id="menutext" value="Level" />
+      <phrase id="menutext" value="Hak Akses" />
     </menu>
     <menu id="12">
-      <phrase id="menutext" value="Hak Akses" />
+      <phrase id="menutext" value="Daftar Menu" />
     </menu>
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
@@ -1065,7 +1065,7 @@
       </field>
     </table>
     <table id="t97_userlevels">
-      <phrase id="tblcaption" value="Level" />
+      <phrase id="tblcaption" value="Hak Akses" />
       <field id="userlevelid">
         <phrase id="fldcaption" value="userlevelid" />
       </field>
@@ -1074,7 +1074,7 @@
       </field>
     </table>
     <table id="t98_userlevelpermissions">
-      <phrase id="tblcaption" value="Hak Akses" />
+      <phrase id="tblcaption" value="Daftar Menu" />
       <field id="userlevelid">
         <phrase id="fldcaption" value="userlevelid" />
       </field>
@@ -1102,10 +1102,10 @@
       <field id="action">
         <phrase id="fldcaption" value="action" />
       </field>
-      <field id="table">
+      <field id="_table">
         <phrase id="fldcaption" value="table" />
       </field>
-      <field id="field">
+      <field id="_field">
         <phrase id="fldcaption" value="field" />
       </field>
       <field id="keyvalue">

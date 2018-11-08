@@ -374,8 +374,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->script->SetVisibility();
 		$this->user->SetVisibility();
 		$this->action->SetVisibility();
-		$this->table->SetVisibility();
-		$this->field->SetVisibility();
+		$this->_table->SetVisibility();
+		$this->_field->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -699,8 +699,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$sFilterList = ew_Concat($sFilterList, $this->script->AdvancedSearch->ToJSON(), ","); // Field script
 		$sFilterList = ew_Concat($sFilterList, $this->user->AdvancedSearch->ToJSON(), ","); // Field user
 		$sFilterList = ew_Concat($sFilterList, $this->action->AdvancedSearch->ToJSON(), ","); // Field action
-		$sFilterList = ew_Concat($sFilterList, $this->table->AdvancedSearch->ToJSON(), ","); // Field table
-		$sFilterList = ew_Concat($sFilterList, $this->field->AdvancedSearch->ToJSON(), ","); // Field field
+		$sFilterList = ew_Concat($sFilterList, $this->_table->AdvancedSearch->ToJSON(), ","); // Field table
+		$sFilterList = ew_Concat($sFilterList, $this->_field->AdvancedSearch->ToJSON(), ","); // Field field
 		$sFilterList = ew_Concat($sFilterList, $this->keyvalue->AdvancedSearch->ToJSON(), ","); // Field keyvalue
 		$sFilterList = ew_Concat($sFilterList, $this->oldvalue->AdvancedSearch->ToJSON(), ","); // Field oldvalue
 		$sFilterList = ew_Concat($sFilterList, $this->newvalue->AdvancedSearch->ToJSON(), ","); // Field newvalue
@@ -789,20 +789,20 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->action->AdvancedSearch->Save();
 
 		// Field table
-		$this->table->AdvancedSearch->SearchValue = @$filter["x_table"];
-		$this->table->AdvancedSearch->SearchOperator = @$filter["z_table"];
-		$this->table->AdvancedSearch->SearchCondition = @$filter["v_table"];
-		$this->table->AdvancedSearch->SearchValue2 = @$filter["y_table"];
-		$this->table->AdvancedSearch->SearchOperator2 = @$filter["w_table"];
-		$this->table->AdvancedSearch->Save();
+		$this->_table->AdvancedSearch->SearchValue = @$filter["x__table"];
+		$this->_table->AdvancedSearch->SearchOperator = @$filter["z__table"];
+		$this->_table->AdvancedSearch->SearchCondition = @$filter["v__table"];
+		$this->_table->AdvancedSearch->SearchValue2 = @$filter["y__table"];
+		$this->_table->AdvancedSearch->SearchOperator2 = @$filter["w__table"];
+		$this->_table->AdvancedSearch->Save();
 
 		// Field field
-		$this->field->AdvancedSearch->SearchValue = @$filter["x_field"];
-		$this->field->AdvancedSearch->SearchOperator = @$filter["z_field"];
-		$this->field->AdvancedSearch->SearchCondition = @$filter["v_field"];
-		$this->field->AdvancedSearch->SearchValue2 = @$filter["y_field"];
-		$this->field->AdvancedSearch->SearchOperator2 = @$filter["w_field"];
-		$this->field->AdvancedSearch->Save();
+		$this->_field->AdvancedSearch->SearchValue = @$filter["x__field"];
+		$this->_field->AdvancedSearch->SearchOperator = @$filter["z__field"];
+		$this->_field->AdvancedSearch->SearchCondition = @$filter["v__field"];
+		$this->_field->AdvancedSearch->SearchValue2 = @$filter["y__field"];
+		$this->_field->AdvancedSearch->SearchOperator2 = @$filter["w__field"];
+		$this->_field->AdvancedSearch->Save();
 
 		// Field keyvalue
 		$this->keyvalue->AdvancedSearch->SearchValue = @$filter["x_keyvalue"];
@@ -837,8 +837,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->BuildBasicSearchSQL($sWhere, $this->script, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->user, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->action, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->table, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->field, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->_table, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->_field, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->keyvalue, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->oldvalue, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->newvalue, $arKeywords, $type);
@@ -1014,8 +1014,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 			$this->UpdateSort($this->script, $bCtrl); // script
 			$this->UpdateSort($this->user, $bCtrl); // user
 			$this->UpdateSort($this->action, $bCtrl); // action
-			$this->UpdateSort($this->table, $bCtrl); // table
-			$this->UpdateSort($this->field, $bCtrl); // field
+			$this->UpdateSort($this->_table, $bCtrl); // table
+			$this->UpdateSort($this->_field, $bCtrl); // field
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1052,8 +1052,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 				$this->script->setSort("");
 				$this->user->setSort("");
 				$this->action->setSort("");
-				$this->table->setSort("");
-				$this->field->setSort("");
+				$this->_table->setSort("");
+				$this->_field->setSort("");
 			}
 
 			// Reset start position
@@ -1518,8 +1518,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->script->setDbValue($rs->fields('script'));
 		$this->user->setDbValue($rs->fields('user'));
 		$this->action->setDbValue($rs->fields('action'));
-		$this->table->setDbValue($rs->fields('table'));
-		$this->field->setDbValue($rs->fields('field'));
+		$this->_table->setDbValue($rs->fields('table'));
+		$this->_field->setDbValue($rs->fields('field'));
 		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
 		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
 		$this->newvalue->setDbValue($rs->fields('newvalue'));
@@ -1534,8 +1534,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->script->DbValue = $row['script'];
 		$this->user->DbValue = $row['user'];
 		$this->action->DbValue = $row['action'];
-		$this->table->DbValue = $row['table'];
-		$this->field->DbValue = $row['field'];
+		$this->_table->DbValue = $row['table'];
+		$this->_field->DbValue = $row['field'];
 		$this->keyvalue->DbValue = $row['keyvalue'];
 		$this->oldvalue->DbValue = $row['oldvalue'];
 		$this->newvalue->DbValue = $row['newvalue'];
@@ -1615,12 +1615,12 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->action->ViewCustomAttributes = "";
 
 		// table
-		$this->table->ViewValue = $this->table->CurrentValue;
-		$this->table->ViewCustomAttributes = "";
+		$this->_table->ViewValue = $this->_table->CurrentValue;
+		$this->_table->ViewCustomAttributes = "";
 
 		// field
-		$this->field->ViewValue = $this->field->CurrentValue;
-		$this->field->ViewCustomAttributes = "";
+		$this->_field->ViewValue = $this->_field->CurrentValue;
+		$this->_field->ViewCustomAttributes = "";
 
 			// datetime
 			$this->datetime->LinkCustomAttributes = "";
@@ -1643,14 +1643,14 @@ class ct99_audittrail_list extends ct99_audittrail {
 			$this->action->TooltipValue = "";
 
 			// table
-			$this->table->LinkCustomAttributes = "";
-			$this->table->HrefValue = "";
-			$this->table->TooltipValue = "";
+			$this->_table->LinkCustomAttributes = "";
+			$this->_table->HrefValue = "";
+			$this->_table->TooltipValue = "";
 
 			// field
-			$this->field->LinkCustomAttributes = "";
-			$this->field->HrefValue = "";
-			$this->field->TooltipValue = "";
+			$this->_field->LinkCustomAttributes = "";
+			$this->_field->HrefValue = "";
+			$this->_field->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1988,21 +1988,21 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t99_audittrail->table->Visible) { // table ?>
-	<?php if ($t99_audittrail->SortUrl($t99_audittrail->table) == "") { ?>
-		<th data-name="table"><div id="elh_t99_audittrail_table" class="t99_audittrail_table"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->table->FldCaption() ?></div></div></th>
+<?php if ($t99_audittrail->_table->Visible) { // table ?>
+	<?php if ($t99_audittrail->SortUrl($t99_audittrail->_table) == "") { ?>
+		<th data-name="_table"><div id="elh_t99_audittrail__table" class="t99_audittrail__table"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->_table->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="table"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->table) ?>',2);"><div id="elh_t99_audittrail_table" class="t99_audittrail_table">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->table->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->table->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->table->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="_table"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->_table) ?>',2);"><div id="elh_t99_audittrail__table" class="t99_audittrail__table">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->_table->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->_table->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->_table->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t99_audittrail->field->Visible) { // field ?>
-	<?php if ($t99_audittrail->SortUrl($t99_audittrail->field) == "") { ?>
-		<th data-name="field"><div id="elh_t99_audittrail_field" class="t99_audittrail_field"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->field->FldCaption() ?></div></div></th>
+<?php if ($t99_audittrail->_field->Visible) { // field ?>
+	<?php if ($t99_audittrail->SortUrl($t99_audittrail->_field) == "") { ?>
+		<th data-name="_field"><div id="elh_t99_audittrail__field" class="t99_audittrail__field"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->_field->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="field"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->field) ?>',2);"><div id="elh_t99_audittrail_field" class="t99_audittrail_field">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->field->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->field->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->field->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="_field"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->_field) ?>',2);"><div id="elh_t99_audittrail__field" class="t99_audittrail__field">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->_field->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->_field->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->_field->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2103,19 +2103,19 @@ $t99_audittrail_list->ListOptions->Render("body", "left", $t99_audittrail_list->
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t99_audittrail->table->Visible) { // table ?>
-		<td data-name="table"<?php echo $t99_audittrail->table->CellAttributes() ?>>
-<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail_table" class="t99_audittrail_table">
-<span<?php echo $t99_audittrail->table->ViewAttributes() ?>>
-<?php echo $t99_audittrail->table->ListViewValue() ?></span>
+	<?php if ($t99_audittrail->_table->Visible) { // table ?>
+		<td data-name="_table"<?php echo $t99_audittrail->_table->CellAttributes() ?>>
+<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail__table" class="t99_audittrail__table">
+<span<?php echo $t99_audittrail->_table->ViewAttributes() ?>>
+<?php echo $t99_audittrail->_table->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t99_audittrail->field->Visible) { // field ?>
-		<td data-name="field"<?php echo $t99_audittrail->field->CellAttributes() ?>>
-<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail_field" class="t99_audittrail_field">
-<span<?php echo $t99_audittrail->field->ViewAttributes() ?>>
-<?php echo $t99_audittrail->field->ListViewValue() ?></span>
+	<?php if ($t99_audittrail->_field->Visible) { // field ?>
+		<td data-name="_field"<?php echo $t99_audittrail->_field->CellAttributes() ?>>
+<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail__field" class="t99_audittrail__field">
+<span<?php echo $t99_audittrail->_field->ViewAttributes() ?>>
+<?php echo $t99_audittrail->_field->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

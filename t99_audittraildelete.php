@@ -286,8 +286,8 @@ class ct99_audittrail_delete extends ct99_audittrail {
 		$this->script->SetVisibility();
 		$this->user->SetVisibility();
 		$this->action->SetVisibility();
-		$this->table->SetVisibility();
-		$this->field->SetVisibility();
+		$this->_table->SetVisibility();
+		$this->_field->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -467,8 +467,8 @@ class ct99_audittrail_delete extends ct99_audittrail {
 		$this->script->setDbValue($rs->fields('script'));
 		$this->user->setDbValue($rs->fields('user'));
 		$this->action->setDbValue($rs->fields('action'));
-		$this->table->setDbValue($rs->fields('table'));
-		$this->field->setDbValue($rs->fields('field'));
+		$this->_table->setDbValue($rs->fields('table'));
+		$this->_field->setDbValue($rs->fields('field'));
 		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
 		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
 		$this->newvalue->setDbValue($rs->fields('newvalue'));
@@ -483,8 +483,8 @@ class ct99_audittrail_delete extends ct99_audittrail {
 		$this->script->DbValue = $row['script'];
 		$this->user->DbValue = $row['user'];
 		$this->action->DbValue = $row['action'];
-		$this->table->DbValue = $row['table'];
-		$this->field->DbValue = $row['field'];
+		$this->_table->DbValue = $row['table'];
+		$this->_field->DbValue = $row['field'];
 		$this->keyvalue->DbValue = $row['keyvalue'];
 		$this->oldvalue->DbValue = $row['oldvalue'];
 		$this->newvalue->DbValue = $row['newvalue'];
@@ -535,12 +535,12 @@ class ct99_audittrail_delete extends ct99_audittrail {
 		$this->action->ViewCustomAttributes = "";
 
 		// table
-		$this->table->ViewValue = $this->table->CurrentValue;
-		$this->table->ViewCustomAttributes = "";
+		$this->_table->ViewValue = $this->_table->CurrentValue;
+		$this->_table->ViewCustomAttributes = "";
 
 		// field
-		$this->field->ViewValue = $this->field->CurrentValue;
-		$this->field->ViewCustomAttributes = "";
+		$this->_field->ViewValue = $this->_field->CurrentValue;
+		$this->_field->ViewCustomAttributes = "";
 
 			// datetime
 			$this->datetime->LinkCustomAttributes = "";
@@ -563,14 +563,14 @@ class ct99_audittrail_delete extends ct99_audittrail {
 			$this->action->TooltipValue = "";
 
 			// table
-			$this->table->LinkCustomAttributes = "";
-			$this->table->HrefValue = "";
-			$this->table->TooltipValue = "";
+			$this->_table->LinkCustomAttributes = "";
+			$this->_table->HrefValue = "";
+			$this->_table->TooltipValue = "";
 
 			// field
-			$this->field->LinkCustomAttributes = "";
-			$this->field->HrefValue = "";
-			$this->field->TooltipValue = "";
+			$this->_field->LinkCustomAttributes = "";
+			$this->_field->HrefValue = "";
+			$this->_field->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -833,11 +833,11 @@ $t99_audittrail_delete->ShowMessage();
 <?php if ($t99_audittrail->action->Visible) { // action ?>
 		<th><span id="elh_t99_audittrail_action" class="t99_audittrail_action"><?php echo $t99_audittrail->action->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t99_audittrail->table->Visible) { // table ?>
-		<th><span id="elh_t99_audittrail_table" class="t99_audittrail_table"><?php echo $t99_audittrail->table->FldCaption() ?></span></th>
+<?php if ($t99_audittrail->_table->Visible) { // table ?>
+		<th><span id="elh_t99_audittrail__table" class="t99_audittrail__table"><?php echo $t99_audittrail->_table->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t99_audittrail->field->Visible) { // field ?>
-		<th><span id="elh_t99_audittrail_field" class="t99_audittrail_field"><?php echo $t99_audittrail->field->FldCaption() ?></span></th>
+<?php if ($t99_audittrail->_field->Visible) { // field ?>
+		<th><span id="elh_t99_audittrail__field" class="t99_audittrail__field"><?php echo $t99_audittrail->_field->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
@@ -892,19 +892,19 @@ while (!$t99_audittrail_delete->Recordset->EOF) {
 </span>
 </td>
 <?php } ?>
-<?php if ($t99_audittrail->table->Visible) { // table ?>
-		<td<?php echo $t99_audittrail->table->CellAttributes() ?>>
-<span id="el<?php echo $t99_audittrail_delete->RowCnt ?>_t99_audittrail_table" class="t99_audittrail_table">
-<span<?php echo $t99_audittrail->table->ViewAttributes() ?>>
-<?php echo $t99_audittrail->table->ListViewValue() ?></span>
+<?php if ($t99_audittrail->_table->Visible) { // table ?>
+		<td<?php echo $t99_audittrail->_table->CellAttributes() ?>>
+<span id="el<?php echo $t99_audittrail_delete->RowCnt ?>_t99_audittrail__table" class="t99_audittrail__table">
+<span<?php echo $t99_audittrail->_table->ViewAttributes() ?>>
+<?php echo $t99_audittrail->_table->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t99_audittrail->field->Visible) { // field ?>
-		<td<?php echo $t99_audittrail->field->CellAttributes() ?>>
-<span id="el<?php echo $t99_audittrail_delete->RowCnt ?>_t99_audittrail_field" class="t99_audittrail_field">
-<span<?php echo $t99_audittrail->field->ViewAttributes() ?>>
-<?php echo $t99_audittrail->field->ListViewValue() ?></span>
+<?php if ($t99_audittrail->_field->Visible) { // field ?>
+		<td<?php echo $t99_audittrail->_field->CellAttributes() ?>>
+<span id="el<?php echo $t99_audittrail_delete->RowCnt ?>_t99_audittrail__field" class="t99_audittrail__field">
+<span<?php echo $t99_audittrail->_field->ViewAttributes() ?>>
+<?php echo $t99_audittrail->_field->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

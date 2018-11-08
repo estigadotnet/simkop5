@@ -289,8 +289,8 @@ class ct99_audittrail_edit extends ct99_audittrail {
 		$this->script->SetVisibility();
 		$this->user->SetVisibility();
 		$this->action->SetVisibility();
-		$this->table->SetVisibility();
-		$this->field->SetVisibility();
+		$this->_table->SetVisibility();
+		$this->_field->SetVisibility();
 		$this->keyvalue->SetVisibility();
 		$this->oldvalue->SetVisibility();
 		$this->newvalue->SetVisibility();
@@ -514,11 +514,11 @@ class ct99_audittrail_edit extends ct99_audittrail {
 		if (!$this->action->FldIsDetailKey) {
 			$this->action->setFormValue($objForm->GetValue("x_action"));
 		}
-		if (!$this->table->FldIsDetailKey) {
-			$this->table->setFormValue($objForm->GetValue("x_table"));
+		if (!$this->_table->FldIsDetailKey) {
+			$this->_table->setFormValue($objForm->GetValue("x__table"));
 		}
-		if (!$this->field->FldIsDetailKey) {
-			$this->field->setFormValue($objForm->GetValue("x_field"));
+		if (!$this->_field->FldIsDetailKey) {
+			$this->_field->setFormValue($objForm->GetValue("x__field"));
 		}
 		if (!$this->keyvalue->FldIsDetailKey) {
 			$this->keyvalue->setFormValue($objForm->GetValue("x_keyvalue"));
@@ -543,8 +543,8 @@ class ct99_audittrail_edit extends ct99_audittrail {
 		$this->script->CurrentValue = $this->script->FormValue;
 		$this->user->CurrentValue = $this->user->FormValue;
 		$this->action->CurrentValue = $this->action->FormValue;
-		$this->table->CurrentValue = $this->table->FormValue;
-		$this->field->CurrentValue = $this->field->FormValue;
+		$this->_table->CurrentValue = $this->_table->FormValue;
+		$this->_field->CurrentValue = $this->_field->FormValue;
 		$this->keyvalue->CurrentValue = $this->keyvalue->FormValue;
 		$this->oldvalue->CurrentValue = $this->oldvalue->FormValue;
 		$this->newvalue->CurrentValue = $this->newvalue->FormValue;
@@ -584,8 +584,8 @@ class ct99_audittrail_edit extends ct99_audittrail {
 		$this->script->setDbValue($rs->fields('script'));
 		$this->user->setDbValue($rs->fields('user'));
 		$this->action->setDbValue($rs->fields('action'));
-		$this->table->setDbValue($rs->fields('table'));
-		$this->field->setDbValue($rs->fields('field'));
+		$this->_table->setDbValue($rs->fields('table'));
+		$this->_field->setDbValue($rs->fields('field'));
 		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
 		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
 		$this->newvalue->setDbValue($rs->fields('newvalue'));
@@ -600,8 +600,8 @@ class ct99_audittrail_edit extends ct99_audittrail {
 		$this->script->DbValue = $row['script'];
 		$this->user->DbValue = $row['user'];
 		$this->action->DbValue = $row['action'];
-		$this->table->DbValue = $row['table'];
-		$this->field->DbValue = $row['field'];
+		$this->_table->DbValue = $row['table'];
+		$this->_field->DbValue = $row['field'];
 		$this->keyvalue->DbValue = $row['keyvalue'];
 		$this->oldvalue->DbValue = $row['oldvalue'];
 		$this->newvalue->DbValue = $row['newvalue'];
@@ -652,12 +652,12 @@ class ct99_audittrail_edit extends ct99_audittrail {
 		$this->action->ViewCustomAttributes = "";
 
 		// table
-		$this->table->ViewValue = $this->table->CurrentValue;
-		$this->table->ViewCustomAttributes = "";
+		$this->_table->ViewValue = $this->_table->CurrentValue;
+		$this->_table->ViewCustomAttributes = "";
 
 		// field
-		$this->field->ViewValue = $this->field->CurrentValue;
-		$this->field->ViewCustomAttributes = "";
+		$this->_field->ViewValue = $this->_field->CurrentValue;
+		$this->_field->ViewCustomAttributes = "";
 
 		// keyvalue
 		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
@@ -692,14 +692,14 @@ class ct99_audittrail_edit extends ct99_audittrail {
 			$this->action->TooltipValue = "";
 
 			// table
-			$this->table->LinkCustomAttributes = "";
-			$this->table->HrefValue = "";
-			$this->table->TooltipValue = "";
+			$this->_table->LinkCustomAttributes = "";
+			$this->_table->HrefValue = "";
+			$this->_table->TooltipValue = "";
 
 			// field
-			$this->field->LinkCustomAttributes = "";
-			$this->field->HrefValue = "";
-			$this->field->TooltipValue = "";
+			$this->_field->LinkCustomAttributes = "";
+			$this->_field->HrefValue = "";
+			$this->_field->TooltipValue = "";
 
 			// keyvalue
 			$this->keyvalue->LinkCustomAttributes = "";
@@ -742,16 +742,16 @@ class ct99_audittrail_edit extends ct99_audittrail {
 			$this->action->PlaceHolder = ew_RemoveHtml($this->action->FldCaption());
 
 			// table
-			$this->table->EditAttrs["class"] = "form-control";
-			$this->table->EditCustomAttributes = "";
-			$this->table->EditValue = ew_HtmlEncode($this->table->CurrentValue);
-			$this->table->PlaceHolder = ew_RemoveHtml($this->table->FldCaption());
+			$this->_table->EditAttrs["class"] = "form-control";
+			$this->_table->EditCustomAttributes = "";
+			$this->_table->EditValue = ew_HtmlEncode($this->_table->CurrentValue);
+			$this->_table->PlaceHolder = ew_RemoveHtml($this->_table->FldCaption());
 
 			// field
-			$this->field->EditAttrs["class"] = "form-control";
-			$this->field->EditCustomAttributes = "";
-			$this->field->EditValue = ew_HtmlEncode($this->field->CurrentValue);
-			$this->field->PlaceHolder = ew_RemoveHtml($this->field->FldCaption());
+			$this->_field->EditAttrs["class"] = "form-control";
+			$this->_field->EditCustomAttributes = "";
+			$this->_field->EditValue = ew_HtmlEncode($this->_field->CurrentValue);
+			$this->_field->PlaceHolder = ew_RemoveHtml($this->_field->FldCaption());
 
 			// keyvalue
 			$this->keyvalue->EditAttrs["class"] = "form-control";
@@ -790,12 +790,12 @@ class ct99_audittrail_edit extends ct99_audittrail {
 			$this->action->HrefValue = "";
 
 			// table
-			$this->table->LinkCustomAttributes = "";
-			$this->table->HrefValue = "";
+			$this->_table->LinkCustomAttributes = "";
+			$this->_table->HrefValue = "";
 
 			// field
-			$this->field->LinkCustomAttributes = "";
-			$this->field->HrefValue = "";
+			$this->_field->LinkCustomAttributes = "";
+			$this->_field->HrefValue = "";
 
 			// keyvalue
 			$this->keyvalue->LinkCustomAttributes = "";
@@ -885,10 +885,10 @@ class ct99_audittrail_edit extends ct99_audittrail {
 			$this->action->SetDbValueDef($rsnew, $this->action->CurrentValue, NULL, $this->action->ReadOnly);
 
 			// table
-			$this->table->SetDbValueDef($rsnew, $this->table->CurrentValue, NULL, $this->table->ReadOnly);
+			$this->_table->SetDbValueDef($rsnew, $this->_table->CurrentValue, NULL, $this->_table->ReadOnly);
 
 			// field
-			$this->field->SetDbValueDef($rsnew, $this->field->CurrentValue, NULL, $this->field->ReadOnly);
+			$this->_field->SetDbValueDef($rsnew, $this->_field->CurrentValue, NULL, $this->_field->ReadOnly);
 
 			// keyvalue
 			$this->keyvalue->SetDbValueDef($rsnew, $this->keyvalue->CurrentValue, NULL, $this->keyvalue->ReadOnly);
@@ -1172,24 +1172,24 @@ $t99_audittrail_edit->ShowMessage();
 <?php echo $t99_audittrail->action->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
-<?php if ($t99_audittrail->table->Visible) { // table ?>
-	<div id="r_table" class="form-group">
-		<label id="elh_t99_audittrail_table" for="x_table" class="col-sm-2 control-label ewLabel"><?php echo $t99_audittrail->table->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t99_audittrail->table->CellAttributes() ?>>
-<span id="el_t99_audittrail_table">
-<input type="text" data-table="t99_audittrail" data-field="x_table" name="x_table" id="x_table" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t99_audittrail->table->getPlaceHolder()) ?>" value="<?php echo $t99_audittrail->table->EditValue ?>"<?php echo $t99_audittrail->table->EditAttributes() ?>>
+<?php if ($t99_audittrail->_table->Visible) { // table ?>
+	<div id="r__table" class="form-group">
+		<label id="elh_t99_audittrail__table" for="x__table" class="col-sm-2 control-label ewLabel"><?php echo $t99_audittrail->_table->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t99_audittrail->_table->CellAttributes() ?>>
+<span id="el_t99_audittrail__table">
+<input type="text" data-table="t99_audittrail" data-field="x__table" name="x__table" id="x__table" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t99_audittrail->_table->getPlaceHolder()) ?>" value="<?php echo $t99_audittrail->_table->EditValue ?>"<?php echo $t99_audittrail->_table->EditAttributes() ?>>
 </span>
-<?php echo $t99_audittrail->table->CustomMsg ?></div></div>
+<?php echo $t99_audittrail->_table->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
-<?php if ($t99_audittrail->field->Visible) { // field ?>
-	<div id="r_field" class="form-group">
-		<label id="elh_t99_audittrail_field" for="x_field" class="col-sm-2 control-label ewLabel"><?php echo $t99_audittrail->field->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t99_audittrail->field->CellAttributes() ?>>
-<span id="el_t99_audittrail_field">
-<input type="text" data-table="t99_audittrail" data-field="x_field" name="x_field" id="x_field" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t99_audittrail->field->getPlaceHolder()) ?>" value="<?php echo $t99_audittrail->field->EditValue ?>"<?php echo $t99_audittrail->field->EditAttributes() ?>>
+<?php if ($t99_audittrail->_field->Visible) { // field ?>
+	<div id="r__field" class="form-group">
+		<label id="elh_t99_audittrail__field" for="x__field" class="col-sm-2 control-label ewLabel"><?php echo $t99_audittrail->_field->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t99_audittrail->_field->CellAttributes() ?>>
+<span id="el_t99_audittrail__field">
+<input type="text" data-table="t99_audittrail" data-field="x__field" name="x__field" id="x__field" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t99_audittrail->_field->getPlaceHolder()) ?>" value="<?php echo $t99_audittrail->_field->EditValue ?>"<?php echo $t99_audittrail->_field->EditAttributes() ?>>
 </span>
-<?php echo $t99_audittrail->field->CustomMsg ?></div></div>
+<?php echo $t99_audittrail->_field->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 <?php if ($t99_audittrail->keyvalue->Visible) { // keyvalue ?>

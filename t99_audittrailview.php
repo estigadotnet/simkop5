@@ -343,8 +343,8 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->script->SetVisibility();
 		$this->user->SetVisibility();
 		$this->action->SetVisibility();
-		$this->table->SetVisibility();
-		$this->field->SetVisibility();
+		$this->_table->SetVisibility();
+		$this->_field->SetVisibility();
 		$this->keyvalue->SetVisibility();
 		$this->oldvalue->SetVisibility();
 		$this->newvalue->SetVisibility();
@@ -602,8 +602,8 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->script->setDbValue($rs->fields('script'));
 		$this->user->setDbValue($rs->fields('user'));
 		$this->action->setDbValue($rs->fields('action'));
-		$this->table->setDbValue($rs->fields('table'));
-		$this->field->setDbValue($rs->fields('field'));
+		$this->_table->setDbValue($rs->fields('table'));
+		$this->_field->setDbValue($rs->fields('field'));
 		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
 		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
 		$this->newvalue->setDbValue($rs->fields('newvalue'));
@@ -618,8 +618,8 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->script->DbValue = $row['script'];
 		$this->user->DbValue = $row['user'];
 		$this->action->DbValue = $row['action'];
-		$this->table->DbValue = $row['table'];
-		$this->field->DbValue = $row['field'];
+		$this->_table->DbValue = $row['table'];
+		$this->_field->DbValue = $row['field'];
 		$this->keyvalue->DbValue = $row['keyvalue'];
 		$this->oldvalue->DbValue = $row['oldvalue'];
 		$this->newvalue->DbValue = $row['newvalue'];
@@ -676,12 +676,12 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->action->ViewCustomAttributes = "";
 
 		// table
-		$this->table->ViewValue = $this->table->CurrentValue;
-		$this->table->ViewCustomAttributes = "";
+		$this->_table->ViewValue = $this->_table->CurrentValue;
+		$this->_table->ViewCustomAttributes = "";
 
 		// field
-		$this->field->ViewValue = $this->field->CurrentValue;
-		$this->field->ViewCustomAttributes = "";
+		$this->_field->ViewValue = $this->_field->CurrentValue;
+		$this->_field->ViewCustomAttributes = "";
 
 		// keyvalue
 		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
@@ -716,14 +716,14 @@ class ct99_audittrail_view extends ct99_audittrail {
 			$this->action->TooltipValue = "";
 
 			// table
-			$this->table->LinkCustomAttributes = "";
-			$this->table->HrefValue = "";
-			$this->table->TooltipValue = "";
+			$this->_table->LinkCustomAttributes = "";
+			$this->_table->HrefValue = "";
+			$this->_table->TooltipValue = "";
 
 			// field
-			$this->field->LinkCustomAttributes = "";
-			$this->field->HrefValue = "";
-			$this->field->TooltipValue = "";
+			$this->_field->LinkCustomAttributes = "";
+			$this->_field->HrefValue = "";
+			$this->_field->TooltipValue = "";
 
 			// keyvalue
 			$this->keyvalue->LinkCustomAttributes = "";
@@ -978,24 +978,24 @@ $t99_audittrail_view->ShowMessage();
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t99_audittrail->table->Visible) { // table ?>
-	<tr id="r_table">
-		<td><span id="elh_t99_audittrail_table"><?php echo $t99_audittrail->table->FldCaption() ?></span></td>
-		<td data-name="table"<?php echo $t99_audittrail->table->CellAttributes() ?>>
-<span id="el_t99_audittrail_table">
-<span<?php echo $t99_audittrail->table->ViewAttributes() ?>>
-<?php echo $t99_audittrail->table->ViewValue ?></span>
+<?php if ($t99_audittrail->_table->Visible) { // table ?>
+	<tr id="r__table">
+		<td><span id="elh_t99_audittrail__table"><?php echo $t99_audittrail->_table->FldCaption() ?></span></td>
+		<td data-name="_table"<?php echo $t99_audittrail->_table->CellAttributes() ?>>
+<span id="el_t99_audittrail__table">
+<span<?php echo $t99_audittrail->_table->ViewAttributes() ?>>
+<?php echo $t99_audittrail->_table->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t99_audittrail->field->Visible) { // field ?>
-	<tr id="r_field">
-		<td><span id="elh_t99_audittrail_field"><?php echo $t99_audittrail->field->FldCaption() ?></span></td>
-		<td data-name="field"<?php echo $t99_audittrail->field->CellAttributes() ?>>
-<span id="el_t99_audittrail_field">
-<span<?php echo $t99_audittrail->field->ViewAttributes() ?>>
-<?php echo $t99_audittrail->field->ViewValue ?></span>
+<?php if ($t99_audittrail->_field->Visible) { // field ?>
+	<tr id="r__field">
+		<td><span id="elh_t99_audittrail__field"><?php echo $t99_audittrail->_field->FldCaption() ?></span></td>
+		<td data-name="_field"<?php echo $t99_audittrail->_field->CellAttributes() ?>>
+<span id="el_t99_audittrail__field">
+<span<?php echo $t99_audittrail->_field->ViewAttributes() ?>>
+<?php echo $t99_audittrail->_field->ViewValue ?></span>
 </span>
 </td>
 	</tr>
