@@ -12,8 +12,8 @@ class ct99_audittrail extends cTable {
 	var $script;
 	var $user;
 	var $action;
-	var $_table;
-	var $_field;
+	var $table;
+	var $field;
 	var $keyvalue;
 	var $oldvalue;
 	var $newvalue;
@@ -76,14 +76,14 @@ class ct99_audittrail extends cTable {
 		$this->fields['action'] = &$this->action;
 
 		// table
-		$this->_table = new cField('t99_audittrail', 't99_audittrail', 'x__table', 'table', '`table`', '`table`', 200, -1, FALSE, '`table`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->_table->Sortable = TRUE; // Allow sort
-		$this->fields['table'] = &$this->_table;
+		$this->table = new cField('t99_audittrail', 't99_audittrail', 'x_table', 'table', '`table`', '`table`', 200, -1, FALSE, '`table`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->table->Sortable = TRUE; // Allow sort
+		$this->fields['table'] = &$this->table;
 
 		// field
-		$this->_field = new cField('t99_audittrail', 't99_audittrail', 'x__field', 'field', '`field`', '`field`', 200, -1, FALSE, '`field`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->_field->Sortable = TRUE; // Allow sort
-		$this->fields['field'] = &$this->_field;
+		$this->field = new cField('t99_audittrail', 't99_audittrail', 'x_field', 'field', '`field`', '`field`', 200, -1, FALSE, '`field`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->field->Sortable = TRUE; // Allow sort
+		$this->fields['field'] = &$this->field;
 
 		// keyvalue
 		$this->keyvalue = new cField('t99_audittrail', 't99_audittrail', 'x_keyvalue', 'keyvalue', '`keyvalue`', '`keyvalue`', 201, -1, FALSE, '`keyvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
@@ -107,8 +107,8 @@ class ct99_audittrail extends cTable {
 		return $this->$fldparm->Visible; // Returns original value
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -118,9 +118,20 @@ class ct99_audittrail extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -595,8 +606,8 @@ class ct99_audittrail extends cTable {
 		$this->script->setDbValue($rs->fields('script'));
 		$this->user->setDbValue($rs->fields('user'));
 		$this->action->setDbValue($rs->fields('action'));
-		$this->_table->setDbValue($rs->fields('table'));
-		$this->_field->setDbValue($rs->fields('field'));
+		$this->table->setDbValue($rs->fields('table'));
+		$this->field->setDbValue($rs->fields('field'));
 		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
 		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
 		$this->newvalue->setDbValue($rs->fields('newvalue'));
@@ -643,12 +654,12 @@ class ct99_audittrail extends cTable {
 		$this->action->ViewCustomAttributes = "";
 
 		// table
-		$this->_table->ViewValue = $this->_table->CurrentValue;
-		$this->_table->ViewCustomAttributes = "";
+		$this->table->ViewValue = $this->table->CurrentValue;
+		$this->table->ViewCustomAttributes = "";
 
 		// field
-		$this->_field->ViewValue = $this->_field->CurrentValue;
-		$this->_field->ViewCustomAttributes = "";
+		$this->field->ViewValue = $this->field->CurrentValue;
+		$this->field->ViewCustomAttributes = "";
 
 		// keyvalue
 		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
@@ -688,14 +699,14 @@ class ct99_audittrail extends cTable {
 		$this->action->TooltipValue = "";
 
 		// table
-		$this->_table->LinkCustomAttributes = "";
-		$this->_table->HrefValue = "";
-		$this->_table->TooltipValue = "";
+		$this->table->LinkCustomAttributes = "";
+		$this->table->HrefValue = "";
+		$this->table->TooltipValue = "";
 
 		// field
-		$this->_field->LinkCustomAttributes = "";
-		$this->_field->HrefValue = "";
-		$this->_field->TooltipValue = "";
+		$this->field->LinkCustomAttributes = "";
+		$this->field->HrefValue = "";
+		$this->field->TooltipValue = "";
 
 		// keyvalue
 		$this->keyvalue->LinkCustomAttributes = "";
@@ -754,16 +765,16 @@ class ct99_audittrail extends cTable {
 		$this->action->PlaceHolder = ew_RemoveHtml($this->action->FldCaption());
 
 		// table
-		$this->_table->EditAttrs["class"] = "form-control";
-		$this->_table->EditCustomAttributes = "";
-		$this->_table->EditValue = $this->_table->CurrentValue;
-		$this->_table->PlaceHolder = ew_RemoveHtml($this->_table->FldCaption());
+		$this->table->EditAttrs["class"] = "form-control";
+		$this->table->EditCustomAttributes = "";
+		$this->table->EditValue = $this->table->CurrentValue;
+		$this->table->PlaceHolder = ew_RemoveHtml($this->table->FldCaption());
 
 		// field
-		$this->_field->EditAttrs["class"] = "form-control";
-		$this->_field->EditCustomAttributes = "";
-		$this->_field->EditValue = $this->_field->CurrentValue;
-		$this->_field->PlaceHolder = ew_RemoveHtml($this->_field->FldCaption());
+		$this->field->EditAttrs["class"] = "form-control";
+		$this->field->EditCustomAttributes = "";
+		$this->field->EditValue = $this->field->CurrentValue;
+		$this->field->PlaceHolder = ew_RemoveHtml($this->field->FldCaption());
 
 		// keyvalue
 		$this->keyvalue->EditAttrs["class"] = "form-control";
@@ -810,13 +821,12 @@ class ct99_audittrail extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->datetime->Exportable) $Doc->ExportCaption($this->datetime);
 					if ($this->script->Exportable) $Doc->ExportCaption($this->script);
 					if ($this->user->Exportable) $Doc->ExportCaption($this->user);
 					if ($this->action->Exportable) $Doc->ExportCaption($this->action);
-					if ($this->_table->Exportable) $Doc->ExportCaption($this->_table);
-					if ($this->_field->Exportable) $Doc->ExportCaption($this->_field);
+					if ($this->table->Exportable) $Doc->ExportCaption($this->table);
+					if ($this->field->Exportable) $Doc->ExportCaption($this->field);
 					if ($this->keyvalue->Exportable) $Doc->ExportCaption($this->keyvalue);
 					if ($this->oldvalue->Exportable) $Doc->ExportCaption($this->oldvalue);
 					if ($this->newvalue->Exportable) $Doc->ExportCaption($this->newvalue);
@@ -826,8 +836,8 @@ class ct99_audittrail extends cTable {
 					if ($this->script->Exportable) $Doc->ExportCaption($this->script);
 					if ($this->user->Exportable) $Doc->ExportCaption($this->user);
 					if ($this->action->Exportable) $Doc->ExportCaption($this->action);
-					if ($this->_table->Exportable) $Doc->ExportCaption($this->_table);
-					if ($this->_field->Exportable) $Doc->ExportCaption($this->_field);
+					if ($this->table->Exportable) $Doc->ExportCaption($this->table);
+					if ($this->field->Exportable) $Doc->ExportCaption($this->field);
 				}
 				$Doc->EndExportRow();
 			}
@@ -859,13 +869,12 @@ class ct99_audittrail extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->datetime->Exportable) $Doc->ExportField($this->datetime);
 						if ($this->script->Exportable) $Doc->ExportField($this->script);
 						if ($this->user->Exportable) $Doc->ExportField($this->user);
 						if ($this->action->Exportable) $Doc->ExportField($this->action);
-						if ($this->_table->Exportable) $Doc->ExportField($this->_table);
-						if ($this->_field->Exportable) $Doc->ExportField($this->_field);
+						if ($this->table->Exportable) $Doc->ExportField($this->table);
+						if ($this->field->Exportable) $Doc->ExportField($this->field);
 						if ($this->keyvalue->Exportable) $Doc->ExportField($this->keyvalue);
 						if ($this->oldvalue->Exportable) $Doc->ExportField($this->oldvalue);
 						if ($this->newvalue->Exportable) $Doc->ExportField($this->newvalue);
@@ -875,8 +884,8 @@ class ct99_audittrail extends cTable {
 						if ($this->script->Exportable) $Doc->ExportField($this->script);
 						if ($this->user->Exportable) $Doc->ExportField($this->user);
 						if ($this->action->Exportable) $Doc->ExportField($this->action);
-						if ($this->_table->Exportable) $Doc->ExportField($this->_table);
-						if ($this->_field->Exportable) $Doc->ExportField($this->_field);
+						if ($this->table->Exportable) $Doc->ExportField($this->table);
+						if ($this->field->Exportable) $Doc->ExportField($this->field);
 					}
 					$Doc->EndExportRow();
 				}
@@ -977,28 +986,7 @@ class ct99_audittrail extends cTable {
 
 		// Enter your code here
 		// To cancel, set return value to FALSE
-		// check perubahan data master pinjaman
-		// jika ada perubahan pada data master tapi sudah ada data pembayaran
-		// maka perubahan harus tidak diperbolehkan
 
-		$q = "select count(id) from t04_pinjamanangsuran where
-			pinjaman_id = ".$rsold["id"].""; //echo $q; exit;
-		$t04_reccount = ew_ExecuteScalar($q);
-		if ($t04_reccount > 0) {
-			if (
-				$rsold["Angsuran_Lama"] == $rsnew["Angsuran_Lama"] and
-				$rsold["Angsuran_Pokok"] == $rsnew["Angsuran_Pokok"] and
-				$rsold["Angsuran_Bunga"] == $rsnew["Angsuran_Bunga"] and
-				$rsold["Angsuran_Total"] == $rsnew["Angsuran_Total"]
-			) {
-			}
-			else {
-
-				//$this->setFailureMessage("Sudah ada Transaksi Pembayaran Angsuran, data tidak bisa diubah !");
-				$this->setWarningMessage("Sudah ada Transaksi Pembayaran Angsuran, data Pinjaman tidak bisa diubah !");
-				return FALSE;
-			}
-		}
 		return TRUE;
 	}
 

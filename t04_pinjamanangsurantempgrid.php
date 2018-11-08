@@ -1,3 +1,4 @@
+<?php include_once "t96_employeesinfo.php" ?>
 <?php
 
 // Create page object
@@ -160,6 +161,8 @@ if ($t04_pinjamanangsurantemp->CurrentAction == "gridadd") {
 
 	// Set no record found message
 	if ($t04_pinjamanangsurantemp->CurrentAction == "" && $t04_pinjamanangsurantemp_grid->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t04_pinjamanangsurantemp_grid->setWarningMessage(ew_DeniedMsg());
 		if ($t04_pinjamanangsurantemp_grid->SearchWhere == "0=101")
 			$t04_pinjamanangsurantemp_grid->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else

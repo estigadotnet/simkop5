@@ -6,8 +6,10 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t03_pinjamaninfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "t04_pinjamanangsurantempgridcls.php" ?>
 <?php include_once "t06_pinjamantitipangridcls.php" ?>
+<?php include_once "t08_pinjamanpotongangridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -257,6 +259,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -287,6 +290,9 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->MultiDeleteUrl = "t03_pinjamandelete.php";
 		$this->MultiUpdateUrl = "t03_pinjamanupdate.php";
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -300,6 +306,12 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -335,6 +347,23 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -389,6 +418,14 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			if (@$_POST["grid"] == "ft06_pinjamantitipangrid") {
 				if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid;
 				$GLOBALS["t06_pinjamantitipan_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
+
+			// Process auto fill for detail table 't08_pinjamanpotongan'
+			if (@$_POST["grid"] == "ft08_pinjamanpotongangrid") {
+				if (!isset($GLOBALS["t08_pinjamanpotongan_grid"])) $GLOBALS["t08_pinjamanpotongan_grid"] = new ct08_pinjamanpotongan_grid;
+				$GLOBALS["t08_pinjamanpotongan_grid"]->Page_Init();
 				$this->Page_Terminate();
 				exit();
 			}
@@ -621,6 +658,8 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
 		if ($sFilter == "") {
@@ -905,6 +944,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 	function AdvancedSearchWhere($Default = FALSE) {
 		global $Security;
 		$sWhere = "";
+		if (!$Security->CanSearch()) return "";
 		$this->BuildSearchSql($sWhere, $this->id, $Default, FALSE); // id
 		$this->BuildSearchSql($sWhere, $this->Kontrak_No, $Default, FALSE); // Kontrak_No
 		$this->BuildSearchSql($sWhere, $this->Kontrak_Tgl, $Default, FALSE); // Kontrak_Tgl
@@ -1106,26 +1146,29 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->Kontrak_No); // Kontrak_No
-			$this->UpdateSort($this->Kontrak_Tgl); // Kontrak_Tgl
-			$this->UpdateSort($this->nasabah_id); // nasabah_id
-			$this->UpdateSort($this->jaminan_id); // jaminan_id
-			$this->UpdateSort($this->Pinjaman); // Pinjaman
-			$this->UpdateSort($this->Angsuran_Lama); // Angsuran_Lama
-			$this->UpdateSort($this->Angsuran_Bunga_Prosen); // Angsuran_Bunga_Prosen
-			$this->UpdateSort($this->Angsuran_Denda); // Angsuran_Denda
-			$this->UpdateSort($this->Dispensasi_Denda); // Dispensasi_Denda
-			$this->UpdateSort($this->Angsuran_Pokok); // Angsuran_Pokok
-			$this->UpdateSort($this->Angsuran_Bunga); // Angsuran_Bunga
-			$this->UpdateSort($this->Angsuran_Total); // Angsuran_Total
-			$this->UpdateSort($this->No_Ref); // No_Ref
-			$this->UpdateSort($this->Biaya_Administrasi); // Biaya_Administrasi
-			$this->UpdateSort($this->Biaya_Materai); // Biaya_Materai
-			$this->UpdateSort($this->marketing_id); // marketing_id
+			$this->UpdateSort($this->Kontrak_No, $bCtrl); // Kontrak_No
+			$this->UpdateSort($this->Kontrak_Tgl, $bCtrl); // Kontrak_Tgl
+			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
+			$this->UpdateSort($this->jaminan_id, $bCtrl); // jaminan_id
+			$this->UpdateSort($this->Pinjaman, $bCtrl); // Pinjaman
+			$this->UpdateSort($this->Angsuran_Lama, $bCtrl); // Angsuran_Lama
+			$this->UpdateSort($this->Angsuran_Bunga_Prosen, $bCtrl); // Angsuran_Bunga_Prosen
+			$this->UpdateSort($this->Angsuran_Denda, $bCtrl); // Angsuran_Denda
+			$this->UpdateSort($this->Dispensasi_Denda, $bCtrl); // Dispensasi_Denda
+			$this->UpdateSort($this->Angsuran_Pokok, $bCtrl); // Angsuran_Pokok
+			$this->UpdateSort($this->Angsuran_Bunga, $bCtrl); // Angsuran_Bunga
+			$this->UpdateSort($this->Angsuran_Total, $bCtrl); // Angsuran_Total
+			$this->UpdateSort($this->No_Ref, $bCtrl); // No_Ref
+			$this->UpdateSort($this->Biaya_Administrasi, $bCtrl); // Biaya_Administrasi
+			$this->UpdateSort($this->Biaya_Materai, $bCtrl); // Biaya_Materai
+			$this->UpdateSort($this->marketing_id, $bCtrl); // marketing_id
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1195,19 +1238,19 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// "detail_t04_pinjamanangsurantemp"
 		$item = &$this->ListOptions->Add("detail_t04_pinjamanangsurantemp");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE && !$this->ShowMultipleDetails;
+		$item->Visible = $Security->AllowList(CurrentProjectID() . 't04_pinjamanangsurantemp') && !$this->ShowMultipleDetails;
 		$item->OnLeft = TRUE;
 		$item->ShowInButtonGroup = FALSE;
 		if (!isset($GLOBALS["t04_pinjamanangsurantemp_grid"])) $GLOBALS["t04_pinjamanangsurantemp_grid"] = new ct04_pinjamanangsurantemp_grid;
@@ -1215,10 +1258,18 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// "detail_t06_pinjamantitipan"
 		$item = &$this->ListOptions->Add("detail_t06_pinjamantitipan");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE && !$this->ShowMultipleDetails;
+		$item->Visible = $Security->AllowList(CurrentProjectID() . 't06_pinjamantitipan') && !$this->ShowMultipleDetails;
 		$item->OnLeft = TRUE;
 		$item->ShowInButtonGroup = FALSE;
 		if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid;
+
+		// "detail_t08_pinjamanpotongan"
+		$item = &$this->ListOptions->Add("detail_t08_pinjamanpotongan");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = $Security->AllowList(CurrentProjectID() . 't08_pinjamanpotongan') && !$this->ShowMultipleDetails;
+		$item->OnLeft = TRUE;
+		$item->ShowInButtonGroup = FALSE;
+		if (!isset($GLOBALS["t08_pinjamanpotongan_grid"])) $GLOBALS["t08_pinjamanpotongan_grid"] = new ct08_pinjamanpotongan_grid;
 
 		// Multiple details
 		if ($this->ShowMultipleDetails) {
@@ -1233,6 +1284,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$pages = new cSubPages();
 		$pages->Add("t04_pinjamanangsurantemp");
 		$pages->Add("t06_pinjamantitipan");
+		$pages->Add("t08_pinjamanpotongan");
 		$this->DetailPages = $pages;
 
 		// List actions
@@ -1276,7 +1328,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1284,7 +1336,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete())
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -1323,11 +1375,11 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		// "detail_t04_pinjamanangsurantemp"
 		$oListOpt = &$this->ListOptions->Items["detail_t04_pinjamanangsurantemp"];
-		if (TRUE) {
+		if ($Security->AllowList(CurrentProjectID() . 't04_pinjamanangsurantemp')) {
 			$body = $Language->Phrase("DetailLink") . $Language->TablePhrase("t04_pinjamanangsurantemp", "TblCaption");
 			$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t04_pinjamanangsurantemplist.php?" . EW_TABLE_SHOW_MASTER . "=t03_pinjaman&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
 			$links = "";
-			if ($GLOBALS["t04_pinjamanangsurantemp_grid"]->DetailEdit) {
+			if ($GLOBALS["t04_pinjamanangsurantemp_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't04_pinjamanangsurantemp')) {
 				$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t04_pinjamanangsurantemp")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
 				if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
 				$DetailEditTblVar .= "t04_pinjamanangsurantemp";
@@ -1343,14 +1395,34 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		// "detail_t06_pinjamantitipan"
 		$oListOpt = &$this->ListOptions->Items["detail_t06_pinjamantitipan"];
-		if (TRUE) {
+		if ($Security->AllowList(CurrentProjectID() . 't06_pinjamantitipan')) {
 			$body = $Language->Phrase("DetailLink") . $Language->TablePhrase("t06_pinjamantitipan", "TblCaption");
 			$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t06_pinjamantitipanlist.php?" . EW_TABLE_SHOW_MASTER . "=t03_pinjaman&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
 			$links = "";
-			if ($GLOBALS["t06_pinjamantitipan_grid"]->DetailEdit) {
+			if ($GLOBALS["t06_pinjamantitipan_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't06_pinjamantitipan')) {
 				$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t06_pinjamantitipan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
 				if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
 				$DetailEditTblVar .= "t06_pinjamantitipan";
+			}
+			if ($links <> "") {
+				$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
+				$body .= "<ul class=\"dropdown-menu\">". $links . "</ul>";
+			}
+			$body = "<div class=\"btn-group\">" . $body . "</div>";
+			$oListOpt->Body = $body;
+			if ($this->ShowMultipleDetails) $oListOpt->Visible = FALSE;
+		}
+
+		// "detail_t08_pinjamanpotongan"
+		$oListOpt = &$this->ListOptions->Items["detail_t08_pinjamanpotongan"];
+		if ($Security->AllowList(CurrentProjectID() . 't08_pinjamanpotongan')) {
+			$body = $Language->Phrase("DetailLink") . $Language->TablePhrase("t08_pinjamanpotongan", "TblCaption");
+			$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t08_pinjamanpotonganlist.php?" . EW_TABLE_SHOW_MASTER . "=t03_pinjaman&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
+			$links = "";
+			if ($GLOBALS["t08_pinjamanpotongan_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't08_pinjamanpotongan')) {
+				$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t08_pinjamanpotongan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
+				if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
+				$DetailEditTblVar .= "t08_pinjamanpotongan";
 			}
 			if ($links <> "") {
 				$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
@@ -1403,14 +1475,14 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["detail"];
 		$DetailTableLink = "";
 		$item = &$option->Add("detailadd_t04_pinjamanangsurantemp");
 		$url = $this->GetAddUrl(EW_TABLE_SHOW_DETAIL . "=t04_pinjamanangsurantemp");
 		$caption = $Language->Phrase("Add") . "&nbsp;" . $this->TableCaption() . "/" . $GLOBALS["t04_pinjamanangsurantemp"]->TableCaption();
 		$item->Body = "<a class=\"ewDetailAddGroup ewDetailAdd\" title=\"" . ew_HtmlTitle($caption) . "\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . $caption . "</a>";
-		$item->Visible = ($GLOBALS["t04_pinjamanangsurantemp"]->DetailAdd);
+		$item->Visible = ($GLOBALS["t04_pinjamanangsurantemp"]->DetailAdd && $Security->AllowAdd(CurrentProjectID() . 't04_pinjamanangsurantemp') && $Security->CanAdd());
 		if ($item->Visible) {
 			if ($DetailTableLink <> "") $DetailTableLink .= ",";
 			$DetailTableLink .= "t04_pinjamanangsurantemp";
@@ -1419,10 +1491,19 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$url = $this->GetAddUrl(EW_TABLE_SHOW_DETAIL . "=t06_pinjamantitipan");
 		$caption = $Language->Phrase("Add") . "&nbsp;" . $this->TableCaption() . "/" . $GLOBALS["t06_pinjamantitipan"]->TableCaption();
 		$item->Body = "<a class=\"ewDetailAddGroup ewDetailAdd\" title=\"" . ew_HtmlTitle($caption) . "\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . $caption . "</a>";
-		$item->Visible = ($GLOBALS["t06_pinjamantitipan"]->DetailAdd);
+		$item->Visible = ($GLOBALS["t06_pinjamantitipan"]->DetailAdd && $Security->AllowAdd(CurrentProjectID() . 't06_pinjamantitipan') && $Security->CanAdd());
 		if ($item->Visible) {
 			if ($DetailTableLink <> "") $DetailTableLink .= ",";
 			$DetailTableLink .= "t06_pinjamantitipan";
+		}
+		$item = &$option->Add("detailadd_t08_pinjamanpotongan");
+		$url = $this->GetAddUrl(EW_TABLE_SHOW_DETAIL . "=t08_pinjamanpotongan");
+		$caption = $Language->Phrase("Add") . "&nbsp;" . $this->TableCaption() . "/" . $GLOBALS["t08_pinjamanpotongan"]->TableCaption();
+		$item->Body = "<a class=\"ewDetailAddGroup ewDetailAdd\" title=\"" . ew_HtmlTitle($caption) . "\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . $caption . "</a>";
+		$item->Visible = ($GLOBALS["t08_pinjamanpotongan"]->DetailAdd && $Security->AllowAdd(CurrentProjectID() . 't08_pinjamanpotongan') && $Security->CanAdd());
+		if ($item->Visible) {
+			if ($DetailTableLink <> "") $DetailTableLink .= ",";
+			$DetailTableLink .= "t08_pinjamanpotongan";
 		}
 
 		// Add multiple details
@@ -1430,7 +1511,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$item = &$option->Add("detailsadd");
 			$url = $this->GetAddUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailTableLink);
 			$item->Body = "<a class=\"ewDetailAddGroup ewDetailAdd\" title=\"" . ew_HtmlTitle($Language->Phrase("AddMasterDetailLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("AddMasterDetailLink")) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . $Language->Phrase("AddMasterDetailLink") . "</a>";
-			$item->Visible = ($DetailTableLink <> "");
+			$item->Visible = ($DetailTableLink <> "" && $Security->CanAdd());
 
 			// Hide single master/detail items
 			$ar = explode(",", $DetailTableLink);
@@ -1611,6 +1692,11 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -2441,11 +2527,11 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 
 		/*$this->ListOptions->Add("print_x"); // Replace abclink with your name of the link
 		$this->ListOptions->Items["print_x"]->Header = "<b>Print X</b>";*/
-		$opt = &$this->ListOptions->Add("angsuran");
+		$opt = &$this->ListOptions->Add("rincian_angsuran");
 		$opt->Header = "";
 		$opt->OnLeft = TRUE; // Link on left
 		$opt->MoveTo(0); // Move to first column
-		$opt = &$this->ListOptions->Add("rincian_angsuran");
+		$opt = &$this->ListOptions->Add("angsuran");
 		$opt->Header = "";
 		$opt->OnLeft = TRUE; // Link on left
 		$opt->MoveTo(1); // Move to first column
@@ -2453,6 +2539,10 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$opt->Header = "";
 		$opt->OnLeft = TRUE; // Link on left
 		$opt->MoveTo(2); // Move to first column
+		$opt = &$this->ListOptions->Add("potongan");
+		$opt->Header = "";
+		$opt->OnLeft = TRUE; // Link on left
+		$opt->MoveTo(3); // Move to first column
 	}
 
 	// ListOptions Rendered event
@@ -2491,6 +2581,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
 		$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
 		$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["potongan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Potongan\" data-caption=\"Potongan\" href=\"t08_pinjamanpotonganlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Potongan</a>"; // definisikan link, style, dan caption tombol //"xxx";
 	}
 
 	// Row Custom Action event
@@ -2643,6 +2734,8 @@ ft03_pinjamanlistsrch.ValidateRequired = false; // No JavaScript validation
 
 	// Set no record found message
 	if ($t03_pinjaman->CurrentAction == "" && $t03_pinjaman_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t03_pinjaman_list->setWarningMessage(ew_DeniedMsg());
 		if ($t03_pinjaman_list->SearchWhere == "0=101")
 			$t03_pinjaman_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
@@ -2657,6 +2750,7 @@ ft03_pinjamanlistsrch.ValidateRequired = false; // No JavaScript validation
 	}
 $t03_pinjaman_list->RenderOtherOptions();
 ?>
+<?php if ($Security->CanSearch()) { ?>
 <?php if ($t03_pinjaman->Export == "" && $t03_pinjaman->CurrentAction == "") { ?>
 <form name="ft03_pinjamanlistsrch" id="ft03_pinjamanlistsrch" class="form-inline ewForm" action="<?php echo ew_CurrentPage() ?>">
 <?php $SearchPanelClass = ($t03_pinjaman_list->SearchWhere <> "") ? " in" : " in"; ?>
@@ -2693,6 +2787,7 @@ $t03_pinjaman_list->RenderRow();
 </div>
 </form>
 <?php } ?>
+<?php } ?>
 <?php $t03_pinjaman_list->ShowPageHeader(); ?>
 <?php
 $t03_pinjaman_list->ShowMessage();
@@ -2725,7 +2820,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Kontrak_No) == "") { ?>
 		<th data-name="Kontrak_No"><div id="elh_t03_pinjaman_Kontrak_No" class="t03_pinjaman_Kontrak_No"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Kontrak_No->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Kontrak_No"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Kontrak_No) ?>',1);"><div id="elh_t03_pinjaman_Kontrak_No" class="t03_pinjaman_Kontrak_No">
+		<th data-name="Kontrak_No"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Kontrak_No) ?>',2);"><div id="elh_t03_pinjaman_Kontrak_No" class="t03_pinjaman_Kontrak_No">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Kontrak_No->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Kontrak_No->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Kontrak_No->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2734,7 +2829,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Kontrak_Tgl) == "") { ?>
 		<th data-name="Kontrak_Tgl"><div id="elh_t03_pinjaman_Kontrak_Tgl" class="t03_pinjaman_Kontrak_Tgl"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Kontrak_Tgl->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Kontrak_Tgl"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Kontrak_Tgl) ?>',1);"><div id="elh_t03_pinjaman_Kontrak_Tgl" class="t03_pinjaman_Kontrak_Tgl">
+		<th data-name="Kontrak_Tgl"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Kontrak_Tgl) ?>',2);"><div id="elh_t03_pinjaman_Kontrak_Tgl" class="t03_pinjaman_Kontrak_Tgl">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Kontrak_Tgl->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Kontrak_Tgl->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Kontrak_Tgl->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2743,7 +2838,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->nasabah_id) == "") { ?>
 		<th data-name="nasabah_id"><div id="elh_t03_pinjaman_nasabah_id" class="t03_pinjaman_nasabah_id"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->nasabah_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="nasabah_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->nasabah_id) ?>',1);"><div id="elh_t03_pinjaman_nasabah_id" class="t03_pinjaman_nasabah_id">
+		<th data-name="nasabah_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->nasabah_id) ?>',2);"><div id="elh_t03_pinjaman_nasabah_id" class="t03_pinjaman_nasabah_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->nasabah_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->nasabah_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->nasabah_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2752,7 +2847,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->jaminan_id) == "") { ?>
 		<th data-name="jaminan_id"><div id="elh_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->jaminan_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="jaminan_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->jaminan_id) ?>',1);"><div id="elh_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id">
+		<th data-name="jaminan_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->jaminan_id) ?>',2);"><div id="elh_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->jaminan_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->jaminan_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->jaminan_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2761,7 +2856,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Pinjaman) == "") { ?>
 		<th data-name="Pinjaman"><div id="elh_t03_pinjaman_Pinjaman" class="t03_pinjaman_Pinjaman"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Pinjaman->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Pinjaman"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Pinjaman) ?>',1);"><div id="elh_t03_pinjaman_Pinjaman" class="t03_pinjaman_Pinjaman">
+		<th data-name="Pinjaman"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Pinjaman) ?>',2);"><div id="elh_t03_pinjaman_Pinjaman" class="t03_pinjaman_Pinjaman">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Pinjaman->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Pinjaman->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Pinjaman->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2770,7 +2865,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Lama) == "") { ?>
 		<th data-name="Angsuran_Lama"><div id="elh_t03_pinjaman_Angsuran_Lama" class="t03_pinjaman_Angsuran_Lama"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Lama->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Lama"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Lama) ?>',1);"><div id="elh_t03_pinjaman_Angsuran_Lama" class="t03_pinjaman_Angsuran_Lama">
+		<th data-name="Angsuran_Lama"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Lama) ?>',2);"><div id="elh_t03_pinjaman_Angsuran_Lama" class="t03_pinjaman_Angsuran_Lama">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Lama->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Angsuran_Lama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Angsuran_Lama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2779,7 +2874,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Bunga_Prosen) == "") { ?>
 		<th data-name="Angsuran_Bunga_Prosen"><div id="elh_t03_pinjaman_Angsuran_Bunga_Prosen" class="t03_pinjaman_Angsuran_Bunga_Prosen"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Bunga_Prosen->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Bunga_Prosen"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Bunga_Prosen) ?>',1);"><div id="elh_t03_pinjaman_Angsuran_Bunga_Prosen" class="t03_pinjaman_Angsuran_Bunga_Prosen">
+		<th data-name="Angsuran_Bunga_Prosen"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Bunga_Prosen) ?>',2);"><div id="elh_t03_pinjaman_Angsuran_Bunga_Prosen" class="t03_pinjaman_Angsuran_Bunga_Prosen">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Bunga_Prosen->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Angsuran_Bunga_Prosen->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Angsuran_Bunga_Prosen->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2788,7 +2883,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Denda) == "") { ?>
 		<th data-name="Angsuran_Denda"><div id="elh_t03_pinjaman_Angsuran_Denda" class="t03_pinjaman_Angsuran_Denda"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Denda->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Denda"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Denda) ?>',1);"><div id="elh_t03_pinjaman_Angsuran_Denda" class="t03_pinjaman_Angsuran_Denda">
+		<th data-name="Angsuran_Denda"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Denda) ?>',2);"><div id="elh_t03_pinjaman_Angsuran_Denda" class="t03_pinjaman_Angsuran_Denda">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Denda->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Angsuran_Denda->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Angsuran_Denda->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2797,7 +2892,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Dispensasi_Denda) == "") { ?>
 		<th data-name="Dispensasi_Denda"><div id="elh_t03_pinjaman_Dispensasi_Denda" class="t03_pinjaman_Dispensasi_Denda"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Dispensasi_Denda->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Dispensasi_Denda"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Dispensasi_Denda) ?>',1);"><div id="elh_t03_pinjaman_Dispensasi_Denda" class="t03_pinjaman_Dispensasi_Denda">
+		<th data-name="Dispensasi_Denda"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Dispensasi_Denda) ?>',2);"><div id="elh_t03_pinjaman_Dispensasi_Denda" class="t03_pinjaman_Dispensasi_Denda">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Dispensasi_Denda->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Dispensasi_Denda->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Dispensasi_Denda->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2806,7 +2901,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Pokok) == "") { ?>
 		<th data-name="Angsuran_Pokok"><div id="elh_t03_pinjaman_Angsuran_Pokok" class="t03_pinjaman_Angsuran_Pokok"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Pokok->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Pokok"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Pokok) ?>',1);"><div id="elh_t03_pinjaman_Angsuran_Pokok" class="t03_pinjaman_Angsuran_Pokok">
+		<th data-name="Angsuran_Pokok"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Pokok) ?>',2);"><div id="elh_t03_pinjaman_Angsuran_Pokok" class="t03_pinjaman_Angsuran_Pokok">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Pokok->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Angsuran_Pokok->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Angsuran_Pokok->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2815,7 +2910,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Bunga) == "") { ?>
 		<th data-name="Angsuran_Bunga"><div id="elh_t03_pinjaman_Angsuran_Bunga" class="t03_pinjaman_Angsuran_Bunga"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Bunga->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Bunga"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Bunga) ?>',1);"><div id="elh_t03_pinjaman_Angsuran_Bunga" class="t03_pinjaman_Angsuran_Bunga">
+		<th data-name="Angsuran_Bunga"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Bunga) ?>',2);"><div id="elh_t03_pinjaman_Angsuran_Bunga" class="t03_pinjaman_Angsuran_Bunga">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Bunga->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Angsuran_Bunga->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Angsuran_Bunga->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2824,7 +2919,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Total) == "") { ?>
 		<th data-name="Angsuran_Total"><div id="elh_t03_pinjaman_Angsuran_Total" class="t03_pinjaman_Angsuran_Total"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Total->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Total"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Total) ?>',1);"><div id="elh_t03_pinjaman_Angsuran_Total" class="t03_pinjaman_Angsuran_Total">
+		<th data-name="Angsuran_Total"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Angsuran_Total) ?>',2);"><div id="elh_t03_pinjaman_Angsuran_Total" class="t03_pinjaman_Angsuran_Total">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Angsuran_Total->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Angsuran_Total->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Angsuran_Total->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2833,7 +2928,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->No_Ref) == "") { ?>
 		<th data-name="No_Ref"><div id="elh_t03_pinjaman_No_Ref" class="t03_pinjaman_No_Ref"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->No_Ref->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="No_Ref"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->No_Ref) ?>',1);"><div id="elh_t03_pinjaman_No_Ref" class="t03_pinjaman_No_Ref">
+		<th data-name="No_Ref"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->No_Ref) ?>',2);"><div id="elh_t03_pinjaman_No_Ref" class="t03_pinjaman_No_Ref">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->No_Ref->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->No_Ref->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->No_Ref->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2842,7 +2937,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Biaya_Administrasi) == "") { ?>
 		<th data-name="Biaya_Administrasi"><div id="elh_t03_pinjaman_Biaya_Administrasi" class="t03_pinjaman_Biaya_Administrasi"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Biaya_Administrasi->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Biaya_Administrasi"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Biaya_Administrasi) ?>',1);"><div id="elh_t03_pinjaman_Biaya_Administrasi" class="t03_pinjaman_Biaya_Administrasi">
+		<th data-name="Biaya_Administrasi"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Biaya_Administrasi) ?>',2);"><div id="elh_t03_pinjaman_Biaya_Administrasi" class="t03_pinjaman_Biaya_Administrasi">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Biaya_Administrasi->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Biaya_Administrasi->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Biaya_Administrasi->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2851,7 +2946,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Biaya_Materai) == "") { ?>
 		<th data-name="Biaya_Materai"><div id="elh_t03_pinjaman_Biaya_Materai" class="t03_pinjaman_Biaya_Materai"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Biaya_Materai->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Biaya_Materai"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Biaya_Materai) ?>',1);"><div id="elh_t03_pinjaman_Biaya_Materai" class="t03_pinjaman_Biaya_Materai">
+		<th data-name="Biaya_Materai"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Biaya_Materai) ?>',2);"><div id="elh_t03_pinjaman_Biaya_Materai" class="t03_pinjaman_Biaya_Materai">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Biaya_Materai->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Biaya_Materai->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Biaya_Materai->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2860,7 +2955,7 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->marketing_id) == "") { ?>
 		<th data-name="marketing_id"><div id="elh_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->marketing_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="marketing_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->marketing_id) ?>',1);"><div id="elh_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id">
+		<th data-name="marketing_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->marketing_id) ?>',2);"><div id="elh_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->marketing_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->marketing_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->marketing_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>

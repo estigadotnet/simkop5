@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t94_loginfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +216,7 @@ class ct94_log_delete extends ct94_log {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +232,9 @@ class ct94_log_delete extends ct94_log {
 			$GLOBALS["Table"] = &$GLOBALS["t94_log"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'delete', TRUE);
@@ -243,6 +248,12 @@ class ct94_log_delete extends ct94_log {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,9 +261,27 @@ class ct94_log_delete extends ct94_log {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanDelete()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t94_loglist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->index_->SetVisibility();
 		$this->subj_->SetVisibility();
 
@@ -471,11 +500,6 @@ class ct94_log_delete extends ct94_log {
 		$this->subj_->ViewValue = $this->subj_->CurrentValue;
 		$this->subj_->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// index_
 			$this->index_->LinkCustomAttributes = "";
 			$this->index_->HrefValue = "";
@@ -497,6 +521,10 @@ class ct94_log_delete extends ct94_log {
 	//
 	function DeleteRows() {
 		global $Language, $Security;
+		if (!$Security->CanDelete()) {
+			$this->setFailureMessage($Language->Phrase("NoDeletePermission")); // No delete permission
+			return FALSE;
+		}
 		$DeleteRows = TRUE;
 		$sSql = $this->SQL();
 		$conn = &$this->Connection();
@@ -516,6 +544,7 @@ class ct94_log_delete extends ct94_log {
 		}
 		$rows = ($rs) ? $rs->GetRows() : array();
 		$conn->BeginTrans();
+		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
 
 		// Clone old rows
 		$rsold = $rows;
@@ -558,8 +587,10 @@ class ct94_log_delete extends ct94_log {
 		}
 		if ($DeleteRows) {
 			$conn->CommitTrans(); // Commit the changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
 		} else {
 			$conn->RollbackTrans(); // Rollback changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
 		}
 
 		// Call Row Deleted event
@@ -731,9 +762,6 @@ $t94_log_delete->ShowMessage();
 <?php echo $t94_log->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t94_log->id->Visible) { // id ?>
-		<th><span id="elh_t94_log_id" class="t94_log_id"><?php echo $t94_log->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t94_log->index_->Visible) { // index_ ?>
 		<th><span id="elh_t94_log_index_" class="t94_log_index_"><?php echo $t94_log->index_->FldCaption() ?></span></th>
 <?php } ?>
@@ -761,14 +789,6 @@ while (!$t94_log_delete->Recordset->EOF) {
 	$t94_log_delete->RenderRow();
 ?>
 	<tr<?php echo $t94_log->RowAttributes() ?>>
-<?php if ($t94_log->id->Visible) { // id ?>
-		<td<?php echo $t94_log->id->CellAttributes() ?>>
-<span id="el<?php echo $t94_log_delete->RowCnt ?>_t94_log_id" class="t94_log_id">
-<span<?php echo $t94_log->id->ViewAttributes() ?>>
-<?php echo $t94_log->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t94_log->index_->Visible) { // index_ ?>
 		<td<?php echo $t94_log->index_->CellAttributes() ?>>
 <span id="el<?php echo $t94_log_delete->RowCnt ?>_t94_log_index_" class="t94_log_index_">

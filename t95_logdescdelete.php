@@ -6,6 +6,8 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t95_logdescinfo.php" ?>
+<?php include_once "t94_loginfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +217,7 @@ class ct95_logdesc_delete extends ct95_logdesc {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +233,12 @@ class ct95_logdesc_delete extends ct95_logdesc {
 			$GLOBALS["Table"] = &$GLOBALS["t95_logdesc"];
 		}
 
+		// Table object (t94_log)
+		if (!isset($GLOBALS['t94_log'])) $GLOBALS['t94_log'] = new ct94_log();
+
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'delete', TRUE);
@@ -243,6 +252,12 @@ class ct95_logdesc_delete extends ct95_logdesc {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,11 +265,30 @@ class ct95_logdesc_delete extends ct95_logdesc {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanDelete()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t95_logdesclist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->log_id->SetVisibility();
 		$this->date_issued->SetVisibility();
+		$this->desc_->SetVisibility();
 		$this->date_solved->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
@@ -331,6 +365,9 @@ class ct95_logdesc_delete extends ct95_logdesc {
 	//
 	function Page_Main() {
 		global $Language;
+
+		// Set up master/detail parameters
+		$this->SetUpMasterParms();
 
 		// Set up Breadcrumb
 		$this->SetupBreadcrumb();
@@ -472,6 +509,26 @@ class ct95_logdesc_delete extends ct95_logdesc {
 
 		// log_id
 		$this->log_id->ViewValue = $this->log_id->CurrentValue;
+		if (strval($this->log_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->log_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `subj_` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t94_log`";
+		$sWhereWrk = "";
+		$this->log_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->log_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->log_id->ViewValue = $this->log_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->log_id->ViewValue = $this->log_id->CurrentValue;
+			}
+		} else {
+			$this->log_id->ViewValue = NULL;
+		}
 		$this->log_id->ViewCustomAttributes = "";
 
 		// date_issued
@@ -479,15 +536,14 @@ class ct95_logdesc_delete extends ct95_logdesc {
 		$this->date_issued->ViewValue = ew_FormatDateTime($this->date_issued->ViewValue, 0);
 		$this->date_issued->ViewCustomAttributes = "";
 
+		// desc_
+		$this->desc_->ViewValue = $this->desc_->CurrentValue;
+		$this->desc_->ViewCustomAttributes = "";
+
 		// date_solved
 		$this->date_solved->ViewValue = $this->date_solved->CurrentValue;
 		$this->date_solved->ViewValue = ew_FormatDateTime($this->date_solved->ViewValue, 0);
 		$this->date_solved->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// log_id
 			$this->log_id->LinkCustomAttributes = "";
@@ -498,6 +554,11 @@ class ct95_logdesc_delete extends ct95_logdesc {
 			$this->date_issued->LinkCustomAttributes = "";
 			$this->date_issued->HrefValue = "";
 			$this->date_issued->TooltipValue = "";
+
+			// desc_
+			$this->desc_->LinkCustomAttributes = "";
+			$this->desc_->HrefValue = "";
+			$this->desc_->TooltipValue = "";
 
 			// date_solved
 			$this->date_solved->LinkCustomAttributes = "";
@@ -515,6 +576,10 @@ class ct95_logdesc_delete extends ct95_logdesc {
 	//
 	function DeleteRows() {
 		global $Language, $Security;
+		if (!$Security->CanDelete()) {
+			$this->setFailureMessage($Language->Phrase("NoDeletePermission")); // No delete permission
+			return FALSE;
+		}
 		$DeleteRows = TRUE;
 		$sSql = $this->SQL();
 		$conn = &$this->Connection();
@@ -534,6 +599,7 @@ class ct95_logdesc_delete extends ct95_logdesc {
 		}
 		$rows = ($rs) ? $rs->GetRows() : array();
 		$conn->BeginTrans();
+		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
 
 		// Clone old rows
 		$rsold = $rows;
@@ -576,8 +642,10 @@ class ct95_logdesc_delete extends ct95_logdesc {
 		}
 		if ($DeleteRows) {
 			$conn->CommitTrans(); // Commit the changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
 		} else {
 			$conn->RollbackTrans(); // Rollback changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
 		}
 
 		// Call Row Deleted event
@@ -587,6 +655,66 @@ class ct95_logdesc_delete extends ct95_logdesc {
 			}
 		}
 		return $DeleteRows;
+	}
+
+	// Set up master/detail based on QueryString
+	function SetUpMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t94_log") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t94_log"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->log_id->setQueryStringValue($GLOBALS["t94_log"]->id->QueryStringValue);
+					$this->log_id->setSessionValue($this->log_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t94_log"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t94_log") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t94_log"]->id->setFormValue($_POST["fk_id"]);
+					$this->log_id->setFormValue($GLOBALS["t94_log"]->id->FormValue);
+					$this->log_id->setSessionValue($this->log_id->FormValue);
+					if (!is_numeric($GLOBALS["t94_log"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+
+			// Reset start record counter (new master key)
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t94_log") {
+				if ($this->log_id->CurrentValue == "") $this->log_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
 	}
 
 	// Set up Breadcrumb
@@ -717,8 +845,9 @@ ft95_logdescdelete.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft95_logdescdelete.Lists["x_log_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_subj_","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t94_log"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -749,14 +878,14 @@ $t95_logdesc_delete->ShowMessage();
 <?php echo $t95_logdesc->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t95_logdesc->id->Visible) { // id ?>
-		<th><span id="elh_t95_logdesc_id" class="t95_logdesc_id"><?php echo $t95_logdesc->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t95_logdesc->log_id->Visible) { // log_id ?>
 		<th><span id="elh_t95_logdesc_log_id" class="t95_logdesc_log_id"><?php echo $t95_logdesc->log_id->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t95_logdesc->date_issued->Visible) { // date_issued ?>
 		<th><span id="elh_t95_logdesc_date_issued" class="t95_logdesc_date_issued"><?php echo $t95_logdesc->date_issued->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t95_logdesc->desc_->Visible) { // desc_ ?>
+		<th><span id="elh_t95_logdesc_desc_" class="t95_logdesc_desc_"><?php echo $t95_logdesc->desc_->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t95_logdesc->date_solved->Visible) { // date_solved ?>
 		<th><span id="elh_t95_logdesc_date_solved" class="t95_logdesc_date_solved"><?php echo $t95_logdesc->date_solved->FldCaption() ?></span></th>
@@ -782,14 +911,6 @@ while (!$t95_logdesc_delete->Recordset->EOF) {
 	$t95_logdesc_delete->RenderRow();
 ?>
 	<tr<?php echo $t95_logdesc->RowAttributes() ?>>
-<?php if ($t95_logdesc->id->Visible) { // id ?>
-		<td<?php echo $t95_logdesc->id->CellAttributes() ?>>
-<span id="el<?php echo $t95_logdesc_delete->RowCnt ?>_t95_logdesc_id" class="t95_logdesc_id">
-<span<?php echo $t95_logdesc->id->ViewAttributes() ?>>
-<?php echo $t95_logdesc->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t95_logdesc->log_id->Visible) { // log_id ?>
 		<td<?php echo $t95_logdesc->log_id->CellAttributes() ?>>
 <span id="el<?php echo $t95_logdesc_delete->RowCnt ?>_t95_logdesc_log_id" class="t95_logdesc_log_id">
@@ -803,6 +924,14 @@ while (!$t95_logdesc_delete->Recordset->EOF) {
 <span id="el<?php echo $t95_logdesc_delete->RowCnt ?>_t95_logdesc_date_issued" class="t95_logdesc_date_issued">
 <span<?php echo $t95_logdesc->date_issued->ViewAttributes() ?>>
 <?php echo $t95_logdesc->date_issued->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t95_logdesc->desc_->Visible) { // desc_ ?>
+		<td<?php echo $t95_logdesc->desc_->CellAttributes() ?>>
+<span id="el<?php echo $t95_logdesc_delete->RowCnt ?>_t95_logdesc_desc_" class="t95_logdesc_desc_">
+<span<?php echo $t95_logdesc->desc_->ViewAttributes() ?>>
+<?php echo $t95_logdesc->desc_->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

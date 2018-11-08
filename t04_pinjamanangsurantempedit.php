@@ -7,6 +7,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t04_pinjamanangsurantempinfo.php" ?>
 <?php include_once "t03_pinjamaninfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -216,6 +217,7 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -234,6 +236,9 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 		// Table object (t03_pinjaman)
 		if (!isset($GLOBALS['t03_pinjaman'])) $GLOBALS['t03_pinjaman'] = new ct03_pinjaman();
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'edit', TRUE);
@@ -247,6 +252,12 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -254,6 +265,26 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanEdit()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t04_pinjamanangsurantemplist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Create form object
 		$objForm = new cFormObj();

@@ -179,8 +179,8 @@ class ct03_pinjaman extends cTable {
 		return $this->$fldparm->Visible; // Returns original value
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -190,9 +190,20 @@ class ct03_pinjaman extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -216,6 +227,10 @@ class ct03_pinjaman extends cTable {
 		}
 		if ($this->getCurrentDetailTable() == "t06_pinjamantitipan") {
 			$sDetailUrl = $GLOBALS["t06_pinjamantitipan"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
+			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
+		}
+		if ($this->getCurrentDetailTable() == "t08_pinjamanpotongan") {
+			$sDetailUrl = $GLOBALS["t08_pinjamanpotongan"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
 			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
 		}
 		if ($sDetailUrl == "") {
@@ -521,6 +536,26 @@ class ct03_pinjaman extends cTable {
 				$rswrk->MoveNext();
 			}
 		}
+
+		// Cascade Update detail table 't08_pinjamanpotongan'
+		$bCascadeUpdate = FALSE;
+		$rscascade = array();
+		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'pinjaman_id'
+			$bCascadeUpdate = TRUE;
+			$rscascade['pinjaman_id'] = $rs['id']; 
+		}
+		if ($bCascadeUpdate) {
+			if (!isset($GLOBALS["t08_pinjamanpotongan"])) $GLOBALS["t08_pinjamanpotongan"] = new ct08_pinjamanpotongan();
+			$rswrk = $GLOBALS["t08_pinjamanpotongan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
+			while ($rswrk && !$rswrk->EOF) {
+				$rskey = array();
+				$fldname = 'id';
+				$rskey[$fldname] = $rswrk->fields[$fldname];
+				$bUpdate = $GLOBALS["t08_pinjamanpotongan"]->Update($rscascade, $rskey, $rswrk->fields);
+				if (!$bUpdate) return FALSE;
+				$rswrk->MoveNext();
+			}
+		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
@@ -566,6 +601,14 @@ class ct03_pinjaman extends cTable {
 		$rscascade = $GLOBALS["t06_pinjamantitipan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
 		while ($rscascade && !$rscascade->EOF) {
 			$GLOBALS["t06_pinjamantitipan"]->Delete($rscascade->fields);
+			$rscascade->MoveNext();
+		}
+
+		// Cascade delete detail table 't08_pinjamanpotongan'
+		if (!isset($GLOBALS["t08_pinjamanpotongan"])) $GLOBALS["t08_pinjamanpotongan"] = new ct08_pinjamanpotongan();
+		$rscascade = $GLOBALS["t08_pinjamanpotongan"]->LoadRs("`pinjaman_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
+		while ($rscascade && !$rscascade->EOF) {
+			$GLOBALS["t08_pinjamanpotongan"]->Delete($rscascade->fields);
 			$rscascade->MoveNext();
 		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
@@ -1346,7 +1389,7 @@ class ct03_pinjaman extends cTable {
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
 		$table = 't03_pinjaman';
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
 
@@ -1364,7 +1407,7 @@ class ct03_pinjaman extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		foreach (array_keys($rs) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
@@ -1398,7 +1441,7 @@ class ct03_pinjaman extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		foreach (array_keys($rsnew) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && array_key_exists($fldname, $rsold) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldDataType == EW_DATATYPE_DATE) { // DateTime field
@@ -1446,7 +1489,7 @@ class ct03_pinjaman extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$curUser = CurrentUserName();
+		$curUser = CurrentUserID();
 		foreach (array_keys($rs) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {

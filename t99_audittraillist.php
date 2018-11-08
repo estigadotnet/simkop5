@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t99_audittrailinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -255,6 +256,7 @@ class ct99_audittrail_list extends ct99_audittrail {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -285,6 +287,9 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->MultiDeleteUrl = "t99_audittraildelete.php";
 		$this->MultiUpdateUrl = "t99_audittrailupdate.php";
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -298,6 +303,12 @@ class ct99_audittrail_list extends ct99_audittrail {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -333,6 +344,23 @@ class ct99_audittrail_list extends ct99_audittrail {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -342,14 +370,12 @@ class ct99_audittrail_list extends ct99_audittrail {
 
 		// Set up list options
 		$this->SetupListOptions();
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->datetime->SetVisibility();
 		$this->script->SetVisibility();
 		$this->user->SetVisibility();
 		$this->action->SetVisibility();
-		$this->_table->SetVisibility();
-		$this->_field->SetVisibility();
+		$this->table->SetVisibility();
+		$this->field->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -593,6 +619,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
@@ -671,8 +699,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$sFilterList = ew_Concat($sFilterList, $this->script->AdvancedSearch->ToJSON(), ","); // Field script
 		$sFilterList = ew_Concat($sFilterList, $this->user->AdvancedSearch->ToJSON(), ","); // Field user
 		$sFilterList = ew_Concat($sFilterList, $this->action->AdvancedSearch->ToJSON(), ","); // Field action
-		$sFilterList = ew_Concat($sFilterList, $this->_table->AdvancedSearch->ToJSON(), ","); // Field table
-		$sFilterList = ew_Concat($sFilterList, $this->_field->AdvancedSearch->ToJSON(), ","); // Field field
+		$sFilterList = ew_Concat($sFilterList, $this->table->AdvancedSearch->ToJSON(), ","); // Field table
+		$sFilterList = ew_Concat($sFilterList, $this->field->AdvancedSearch->ToJSON(), ","); // Field field
 		$sFilterList = ew_Concat($sFilterList, $this->keyvalue->AdvancedSearch->ToJSON(), ","); // Field keyvalue
 		$sFilterList = ew_Concat($sFilterList, $this->oldvalue->AdvancedSearch->ToJSON(), ","); // Field oldvalue
 		$sFilterList = ew_Concat($sFilterList, $this->newvalue->AdvancedSearch->ToJSON(), ","); // Field newvalue
@@ -761,20 +789,20 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->action->AdvancedSearch->Save();
 
 		// Field table
-		$this->_table->AdvancedSearch->SearchValue = @$filter["x__table"];
-		$this->_table->AdvancedSearch->SearchOperator = @$filter["z__table"];
-		$this->_table->AdvancedSearch->SearchCondition = @$filter["v__table"];
-		$this->_table->AdvancedSearch->SearchValue2 = @$filter["y__table"];
-		$this->_table->AdvancedSearch->SearchOperator2 = @$filter["w__table"];
-		$this->_table->AdvancedSearch->Save();
+		$this->table->AdvancedSearch->SearchValue = @$filter["x_table"];
+		$this->table->AdvancedSearch->SearchOperator = @$filter["z_table"];
+		$this->table->AdvancedSearch->SearchCondition = @$filter["v_table"];
+		$this->table->AdvancedSearch->SearchValue2 = @$filter["y_table"];
+		$this->table->AdvancedSearch->SearchOperator2 = @$filter["w_table"];
+		$this->table->AdvancedSearch->Save();
 
 		// Field field
-		$this->_field->AdvancedSearch->SearchValue = @$filter["x__field"];
-		$this->_field->AdvancedSearch->SearchOperator = @$filter["z__field"];
-		$this->_field->AdvancedSearch->SearchCondition = @$filter["v__field"];
-		$this->_field->AdvancedSearch->SearchValue2 = @$filter["y__field"];
-		$this->_field->AdvancedSearch->SearchOperator2 = @$filter["w__field"];
-		$this->_field->AdvancedSearch->Save();
+		$this->field->AdvancedSearch->SearchValue = @$filter["x_field"];
+		$this->field->AdvancedSearch->SearchOperator = @$filter["z_field"];
+		$this->field->AdvancedSearch->SearchCondition = @$filter["v_field"];
+		$this->field->AdvancedSearch->SearchValue2 = @$filter["y_field"];
+		$this->field->AdvancedSearch->SearchOperator2 = @$filter["w_field"];
+		$this->field->AdvancedSearch->Save();
 
 		// Field keyvalue
 		$this->keyvalue->AdvancedSearch->SearchValue = @$filter["x_keyvalue"];
@@ -809,8 +837,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->BuildBasicSearchSQL($sWhere, $this->script, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->user, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->action, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->_table, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->_field, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->table, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->field, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->keyvalue, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->oldvalue, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->newvalue, $arKeywords, $type);
@@ -887,6 +915,7 @@ class ct99_audittrail_list extends ct99_audittrail {
 	function BasicSearchWhere($Default = FALSE) {
 		global $Security;
 		$sSearchStr = "";
+		if (!$Security->CanSearch()) return "";
 		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
 		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
 		if ($sSearchKeyword <> "") {
@@ -974,17 +1003,19 @@ class ct99_audittrail_list extends ct99_audittrail {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->datetime); // datetime
-			$this->UpdateSort($this->script); // script
-			$this->UpdateSort($this->user); // user
-			$this->UpdateSort($this->action); // action
-			$this->UpdateSort($this->_table); // table
-			$this->UpdateSort($this->_field); // field
+			$this->UpdateSort($this->datetime, $bCtrl); // datetime
+			$this->UpdateSort($this->script, $bCtrl); // script
+			$this->UpdateSort($this->user, $bCtrl); // user
+			$this->UpdateSort($this->action, $bCtrl); // action
+			$this->UpdateSort($this->table, $bCtrl); // table
+			$this->UpdateSort($this->field, $bCtrl); // field
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1017,13 +1048,12 @@ class ct99_audittrail_list extends ct99_audittrail {
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->id->setSort("");
 				$this->datetime->setSort("");
 				$this->script->setSort("");
 				$this->user->setSort("");
 				$this->action->setSort("");
-				$this->_table->setSort("");
-				$this->_field->setSort("");
+				$this->table->setSort("");
+				$this->field->setSort("");
 			}
 
 			// Reset start position
@@ -1045,25 +1075,25 @@ class ct99_audittrail_list extends ct99_audittrail {
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanView();
 		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// List actions
@@ -1080,6 +1110,14 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$item->OnLeft = TRUE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
 		$item->MoveTo(0);
+		$item->ShowInDropDown = FALSE;
+		$item->ShowInButtonGroup = FALSE;
+
+		// "sequence"
+		$item = &$this->ListOptions->Add("sequence");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = TRUE;
+		$item->OnLeft = TRUE; // Always on left
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
@@ -1104,10 +1142,14 @@ class ct99_audittrail_list extends ct99_audittrail {
 		global $Security, $Language, $objForm;
 		$this->ListOptions->LoadDefault();
 
+		// "sequence"
+		$oListOpt = &$this->ListOptions->Items["sequence"];
+		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
+
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if (TRUE) {
+		if ($Security->CanView()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1116,7 +1158,7 @@ class ct99_audittrail_list extends ct99_audittrail {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1125,7 +1167,7 @@ class ct99_audittrail_list extends ct99_audittrail {
 		// "copy"
 		$oListOpt = &$this->ListOptions->Items["copy"];
 		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if (TRUE) {
+		if ($Security->CanAdd()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1133,7 +1175,7 @@ class ct99_audittrail_list extends ct99_audittrail {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete())
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -1186,7 +1228,7 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
 		// Set up options default
@@ -1358,6 +1400,11 @@ class ct99_audittrail_list extends ct99_audittrail {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -1471,8 +1518,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->script->setDbValue($rs->fields('script'));
 		$this->user->setDbValue($rs->fields('user'));
 		$this->action->setDbValue($rs->fields('action'));
-		$this->_table->setDbValue($rs->fields('table'));
-		$this->_field->setDbValue($rs->fields('field'));
+		$this->table->setDbValue($rs->fields('table'));
+		$this->field->setDbValue($rs->fields('field'));
 		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
 		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
 		$this->newvalue->setDbValue($rs->fields('newvalue'));
@@ -1487,8 +1534,8 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->script->DbValue = $row['script'];
 		$this->user->DbValue = $row['user'];
 		$this->action->DbValue = $row['action'];
-		$this->_table->DbValue = $row['table'];
-		$this->_field->DbValue = $row['field'];
+		$this->table->DbValue = $row['table'];
+		$this->field->DbValue = $row['field'];
 		$this->keyvalue->DbValue = $row['keyvalue'];
 		$this->oldvalue->DbValue = $row['oldvalue'];
 		$this->newvalue->DbValue = $row['newvalue'];
@@ -1568,17 +1615,12 @@ class ct99_audittrail_list extends ct99_audittrail {
 		$this->action->ViewCustomAttributes = "";
 
 		// table
-		$this->_table->ViewValue = $this->_table->CurrentValue;
-		$this->_table->ViewCustomAttributes = "";
+		$this->table->ViewValue = $this->table->CurrentValue;
+		$this->table->ViewCustomAttributes = "";
 
 		// field
-		$this->_field->ViewValue = $this->_field->CurrentValue;
-		$this->_field->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
+		$this->field->ViewValue = $this->field->CurrentValue;
+		$this->field->ViewCustomAttributes = "";
 
 			// datetime
 			$this->datetime->LinkCustomAttributes = "";
@@ -1601,14 +1643,14 @@ class ct99_audittrail_list extends ct99_audittrail {
 			$this->action->TooltipValue = "";
 
 			// table
-			$this->_table->LinkCustomAttributes = "";
-			$this->_table->HrefValue = "";
-			$this->_table->TooltipValue = "";
+			$this->table->LinkCustomAttributes = "";
+			$this->table->HrefValue = "";
+			$this->table->TooltipValue = "";
 
 			// field
-			$this->_field->LinkCustomAttributes = "";
-			$this->_field->HrefValue = "";
-			$this->_field->TooltipValue = "";
+			$this->field->LinkCustomAttributes = "";
+			$this->field->HrefValue = "";
+			$this->field->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1844,6 +1886,8 @@ var CurrentSearchForm = ft99_audittraillistsrch = new ew_Form("ft99_audittrailli
 
 	// Set no record found message
 	if ($t99_audittrail->CurrentAction == "" && $t99_audittrail_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t99_audittrail_list->setWarningMessage(ew_DeniedMsg());
 		if ($t99_audittrail_list->SearchWhere == "0=101")
 			$t99_audittrail_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
@@ -1851,6 +1895,7 @@ var CurrentSearchForm = ft99_audittraillistsrch = new ew_Form("ft99_audittrailli
 	}
 $t99_audittrail_list->RenderOtherOptions();
 ?>
+<?php if ($Security->CanSearch()) { ?>
 <?php if ($t99_audittrail->Export == "" && $t99_audittrail->CurrentAction == "") { ?>
 <form name="ft99_audittraillistsrch" id="ft99_audittraillistsrch" class="form-inline ewForm" action="<?php echo ew_CurrentPage() ?>">
 <?php $SearchPanelClass = ($t99_audittrail_list->SearchWhere <> "") ? " in" : " in"; ?>
@@ -1877,6 +1922,7 @@ $t99_audittrail_list->RenderOtherOptions();
 	</div>
 </div>
 </form>
+<?php } ?>
 <?php } ?>
 <?php $t99_audittrail_list->ShowPageHeader(); ?>
 <?php
@@ -1906,20 +1952,11 @@ $t99_audittrail_list->RenderListOptions();
 // Render list options (header, left)
 $t99_audittrail_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t99_audittrail->id->Visible) { // id ?>
-	<?php if ($t99_audittrail->SortUrl($t99_audittrail->id) == "") { ?>
-		<th data-name="id"><div id="elh_t99_audittrail_id" class="t99_audittrail_id"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->id) ?>',1);"><div id="elh_t99_audittrail_id" class="t99_audittrail_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t99_audittrail->datetime->Visible) { // datetime ?>
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->datetime) == "") { ?>
 		<th data-name="datetime"><div id="elh_t99_audittrail_datetime" class="t99_audittrail_datetime"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->datetime->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="datetime"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->datetime) ?>',1);"><div id="elh_t99_audittrail_datetime" class="t99_audittrail_datetime">
+		<th data-name="datetime"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->datetime) ?>',2);"><div id="elh_t99_audittrail_datetime" class="t99_audittrail_datetime">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->datetime->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->datetime->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->datetime->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1928,7 +1965,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->script) == "") { ?>
 		<th data-name="script"><div id="elh_t99_audittrail_script" class="t99_audittrail_script"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->script->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="script"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->script) ?>',1);"><div id="elh_t99_audittrail_script" class="t99_audittrail_script">
+		<th data-name="script"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->script) ?>',2);"><div id="elh_t99_audittrail_script" class="t99_audittrail_script">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->script->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->script->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->script->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1937,7 +1974,7 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->user) == "") { ?>
 		<th data-name="user"><div id="elh_t99_audittrail_user" class="t99_audittrail_user"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->user->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="user"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->user) ?>',1);"><div id="elh_t99_audittrail_user" class="t99_audittrail_user">
+		<th data-name="user"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->user) ?>',2);"><div id="elh_t99_audittrail_user" class="t99_audittrail_user">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->user->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->user->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->user->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1946,26 +1983,26 @@ $t99_audittrail_list->ListOptions->Render("header", "left");
 	<?php if ($t99_audittrail->SortUrl($t99_audittrail->action) == "") { ?>
 		<th data-name="action"><div id="elh_t99_audittrail_action" class="t99_audittrail_action"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->action->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="action"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->action) ?>',1);"><div id="elh_t99_audittrail_action" class="t99_audittrail_action">
+		<th data-name="action"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->action) ?>',2);"><div id="elh_t99_audittrail_action" class="t99_audittrail_action">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->action->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->action->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->action->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t99_audittrail->_table->Visible) { // table ?>
-	<?php if ($t99_audittrail->SortUrl($t99_audittrail->_table) == "") { ?>
-		<th data-name="_table"><div id="elh_t99_audittrail__table" class="t99_audittrail__table"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->_table->FldCaption() ?></div></div></th>
+<?php if ($t99_audittrail->table->Visible) { // table ?>
+	<?php if ($t99_audittrail->SortUrl($t99_audittrail->table) == "") { ?>
+		<th data-name="table"><div id="elh_t99_audittrail_table" class="t99_audittrail_table"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->table->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="_table"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->_table) ?>',1);"><div id="elh_t99_audittrail__table" class="t99_audittrail__table">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->_table->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->_table->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->_table->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="table"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->table) ?>',2);"><div id="elh_t99_audittrail_table" class="t99_audittrail_table">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->table->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->table->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->table->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t99_audittrail->_field->Visible) { // field ?>
-	<?php if ($t99_audittrail->SortUrl($t99_audittrail->_field) == "") { ?>
-		<th data-name="_field"><div id="elh_t99_audittrail__field" class="t99_audittrail__field"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->_field->FldCaption() ?></div></div></th>
+<?php if ($t99_audittrail->field->Visible) { // field ?>
+	<?php if ($t99_audittrail->SortUrl($t99_audittrail->field) == "") { ?>
+		<th data-name="field"><div id="elh_t99_audittrail_field" class="t99_audittrail_field"><div class="ewTableHeaderCaption"><?php echo $t99_audittrail->field->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="_field"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->_field) ?>',1);"><div id="elh_t99_audittrail__field" class="t99_audittrail__field">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->_field->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->_field->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->_field->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="field"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t99_audittrail->SortUrl($t99_audittrail->field) ?>',2);"><div id="elh_t99_audittrail_field" class="t99_audittrail_field">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t99_audittrail->field->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t99_audittrail->field->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t99_audittrail->field->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2034,21 +2071,13 @@ while ($t99_audittrail_list->RecCnt < $t99_audittrail_list->StopRec) {
 // Render list options (body, left)
 $t99_audittrail_list->ListOptions->Render("body", "left", $t99_audittrail_list->RowCnt);
 ?>
-	<?php if ($t99_audittrail->id->Visible) { // id ?>
-		<td data-name="id"<?php echo $t99_audittrail->id->CellAttributes() ?>>
-<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail_id" class="t99_audittrail_id">
-<span<?php echo $t99_audittrail->id->ViewAttributes() ?>>
-<?php echo $t99_audittrail->id->ListViewValue() ?></span>
-</span>
-<a id="<?php echo $t99_audittrail_list->PageObjName . "_row_" . $t99_audittrail_list->RowCnt ?>"></a></td>
-	<?php } ?>
 	<?php if ($t99_audittrail->datetime->Visible) { // datetime ?>
 		<td data-name="datetime"<?php echo $t99_audittrail->datetime->CellAttributes() ?>>
 <span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail_datetime" class="t99_audittrail_datetime">
 <span<?php echo $t99_audittrail->datetime->ViewAttributes() ?>>
 <?php echo $t99_audittrail->datetime->ListViewValue() ?></span>
 </span>
-</td>
+<a id="<?php echo $t99_audittrail_list->PageObjName . "_row_" . $t99_audittrail_list->RowCnt ?>"></a></td>
 	<?php } ?>
 	<?php if ($t99_audittrail->script->Visible) { // script ?>
 		<td data-name="script"<?php echo $t99_audittrail->script->CellAttributes() ?>>
@@ -2074,19 +2103,19 @@ $t99_audittrail_list->ListOptions->Render("body", "left", $t99_audittrail_list->
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t99_audittrail->_table->Visible) { // table ?>
-		<td data-name="_table"<?php echo $t99_audittrail->_table->CellAttributes() ?>>
-<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail__table" class="t99_audittrail__table">
-<span<?php echo $t99_audittrail->_table->ViewAttributes() ?>>
-<?php echo $t99_audittrail->_table->ListViewValue() ?></span>
+	<?php if ($t99_audittrail->table->Visible) { // table ?>
+		<td data-name="table"<?php echo $t99_audittrail->table->CellAttributes() ?>>
+<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail_table" class="t99_audittrail_table">
+<span<?php echo $t99_audittrail->table->ViewAttributes() ?>>
+<?php echo $t99_audittrail->table->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t99_audittrail->_field->Visible) { // field ?>
-		<td data-name="_field"<?php echo $t99_audittrail->_field->CellAttributes() ?>>
-<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail__field" class="t99_audittrail__field">
-<span<?php echo $t99_audittrail->_field->ViewAttributes() ?>>
-<?php echo $t99_audittrail->_field->ListViewValue() ?></span>
+	<?php if ($t99_audittrail->field->Visible) { // field ?>
+		<td data-name="field"<?php echo $t99_audittrail->field->CellAttributes() ?>>
+<span id="el<?php echo $t99_audittrail_list->RowCnt ?>_t99_audittrail_field" class="t99_audittrail_field">
+<span<?php echo $t99_audittrail->field->ViewAttributes() ?>>
+<?php echo $t99_audittrail->field->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

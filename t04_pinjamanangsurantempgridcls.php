@@ -1,4 +1,5 @@
 <?php include_once "t04_pinjamanangsurantempinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php
 
 //
@@ -223,6 +224,7 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$this->FormActionName .= '_' . $this->FormName;
 		$this->FormKeyName .= '_' . $this->FormName;
 		$this->FormOldKeyName .= '_' . $this->FormName;
@@ -247,6 +249,9 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 		}
 		$this->AddUrl = "t04_pinjamanangsurantempadd.php";
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'grid', TRUE);
@@ -260,6 +265,12 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -276,6 +287,23 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Get grid add count
 		$gridaddcnt = @$_GET[EW_TABLE_GRID_ADD_ROW_COUNT];
@@ -471,6 +499,8 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 
 		// Restore master/detail filter
 		$this->DbMasterFilter = $this->GetMasterFilter(); // Restore master filter
@@ -934,7 +964,7 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// Drop down button for ListOptions
@@ -994,7 +1024,7 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1950,6 +1980,10 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 	//
 	function DeleteRows() {
 		global $Language, $Security;
+		if (!$Security->CanDelete()) {
+			$this->setFailureMessage($Language->Phrase("NoDeletePermission")); // No delete permission
+			return FALSE;
+		}
 		$DeleteRows = TRUE;
 		$sSql = $this->SQL();
 		$conn = &$this->Connection();

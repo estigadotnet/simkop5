@@ -161,8 +161,8 @@ class ct04_pinjamanangsurantemp extends cTable {
 		return $this->$fldparm->Visible; // Returns original value
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -172,9 +172,20 @@ class ct04_pinjamanangsurantemp extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -1200,7 +1211,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
 		$table = 't04_pinjamanangsurantemp';
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
 
@@ -1218,7 +1229,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		foreach (array_keys($rs) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
@@ -1252,7 +1263,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		foreach (array_keys($rsnew) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && array_key_exists($fldname, $rsold) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldDataType == EW_DATATYPE_DATE) { // DateTime field
@@ -1300,7 +1311,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$curUser = CurrentUserName();
+		$curUser = CurrentUserID();
 		foreach (array_keys($rs) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
@@ -1388,6 +1399,70 @@ class ct04_pinjamanangsurantemp extends cTable {
 	function Row_Updated($rsold, &$rsnew) {
 
 		//echo "Row Updated";
+		// check nilai bayar titipan
+
+		if ($rsold["Bayar_Titipan"] == $rsnew["Bayar_Titipan"]) {
+
+			// tidak ada perubahan nilai bayar titipan
+		}
+		else {
+
+			// ada perubahan nilai bayar titipan
+			// hapus dulu data yang ada di tabel titipan
+			// berdasarkan pinjaman_id dan angsuran_ke
+
+			$q = "delete from t06_pinjamantitipan where
+				pinjaman_id = ".$_SESSION["pinjaman_id"]."
+				and Angsuran_Ke = ".$rsold["Angsuran_Ke"]."
+			";
+			Conn()->Execute($q);
+			/*
+
+			// check dulu apakah sudah pernah ada data setoran titipan
+			$q = "select * from t06_pinjamantitipan
+				where
+					pinjaman_id = ".$rsold["pinjaman_id"]."
+					and Sisa <> 0
+				order by
+					id desc
+				";
+			$r = Conn()->Execute($q);
+			if ($r->EOF) {
+			}
+			else {*/
+
+				// periksa apakah nilai titipan nya null atau nol
+				if (is_null($rsnew["Bayar_Titipan"]) or $rsnew["Bayar_Titipan"] == 0) {
+				}
+				else {
+
+					// ambil data tanggal bayar
+					if ($rsnew["Tanggal_Bayar"] == "" or is_null($rsnew["Tanggal_Bayar"])) {
+						$tanggal_bayar = $rsold["Tanggal_Bayar"];
+					}
+					else {
+						$tanggal_bayar = $rsnew["Tanggal_Bayar"];
+					}
+
+					// update ke tabel t06_pinjamantitipan sebagai data keluar
+					$q = "insert into t06_pinjamantitipan (
+						pinjaman_id,
+						Tanggal,
+						Keterangan,
+						Keluar,
+						Angsuran_Ke
+						) values (
+						".$rsold["pinjaman_id"].",
+						'".$tanggal_bayar."',
+						'Pembayaran Angsuran Ke-".$rsold["Angsuran_Ke"]."',
+						".$rsnew["Bayar_Titipan"].",
+						".$rsold["Angsuran_Ke"].")";
+					ew_Execute($q);
+				}
+
+			//}
+			f_update_saldo_titipan($_SESSION["pinjaman_id"]);
+		}
 	}
 
 	// Row Update Conflict event
@@ -1501,7 +1576,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 
 		// bayar titipan
 		$bayar_titipan = 0;
-		if (is_null($this->Bayar_Titipan->CurrentValue) or $this->Bayar_Titipan->CurrentValue == 0) {
+		if (is_null($this->Bayar_Titipan->CurrentValue)) { //or $this->Bayar_Titipan->CurrentValue == 0) {
 			$bayar_titipan = f_cari_saldo_titipan($_SESSION["pinjaman_id"]);
 		}
 		else {

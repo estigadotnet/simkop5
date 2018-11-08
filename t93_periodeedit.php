@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t93_periodeinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +216,7 @@ class ct93_periode_edit extends ct93_periode {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +232,9 @@ class ct93_periode_edit extends ct93_periode {
 			$GLOBALS["Table"] = &$GLOBALS["t93_periode"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'edit', TRUE);
@@ -243,6 +248,12 @@ class ct93_periode_edit extends ct93_periode {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -251,11 +262,29 @@ class ct93_periode_edit extends ct93_periode {
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
 
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanEdit()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t93_periodelist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
+
 		// Create form object
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->Bulan->SetVisibility();
 		$this->Tahun->SetVisibility();
 		$this->Tahun_Bulan->SetVisibility();
@@ -466,8 +495,6 @@ class ct93_periode_edit extends ct93_periode {
 
 		// Load from form
 		global $objForm;
-		if (!$this->id->FldIsDetailKey)
-			$this->id->setFormValue($objForm->GetValue("x_id"));
 		if (!$this->Bulan->FldIsDetailKey) {
 			$this->Bulan->setFormValue($objForm->GetValue("x_Bulan"));
 		}
@@ -477,6 +504,8 @@ class ct93_periode_edit extends ct93_periode {
 		if (!$this->Tahun_Bulan->FldIsDetailKey) {
 			$this->Tahun_Bulan->setFormValue($objForm->GetValue("x_Tahun_Bulan"));
 		}
+		if (!$this->id->FldIsDetailKey)
+			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
 
 	// Restore form values
@@ -567,11 +596,6 @@ class ct93_periode_edit extends ct93_periode {
 		$this->Tahun_Bulan->ViewValue = $this->Tahun_Bulan->CurrentValue;
 		$this->Tahun_Bulan->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// Bulan
 			$this->Bulan->LinkCustomAttributes = "";
 			$this->Bulan->HrefValue = "";
@@ -587,12 +611,6 @@ class ct93_periode_edit extends ct93_periode {
 			$this->Tahun_Bulan->HrefValue = "";
 			$this->Tahun_Bulan->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
-
-			// id
-			$this->id->EditAttrs["class"] = "form-control";
-			$this->id->EditCustomAttributes = "";
-			$this->id->EditValue = $this->id->CurrentValue;
-			$this->id->ViewCustomAttributes = "";
 
 			// Bulan
 			$this->Bulan->EditAttrs["class"] = "form-control";
@@ -613,12 +631,8 @@ class ct93_periode_edit extends ct93_periode {
 			$this->Tahun_Bulan->PlaceHolder = ew_RemoveHtml($this->Tahun_Bulan->FldCaption());
 
 			// Edit refer script
-			// id
-
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-
 			// Bulan
+
 			$this->Bulan->LinkCustomAttributes = "";
 			$this->Bulan->HrefValue = "";
 
@@ -953,18 +967,6 @@ $t93_periode_edit->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <div>
-<?php if ($t93_periode->id->Visible) { // id ?>
-	<div id="r_id" class="form-group">
-		<label id="elh_t93_periode_id" class="col-sm-2 control-label ewLabel"><?php echo $t93_periode->id->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t93_periode->id->CellAttributes() ?>>
-<span id="el_t93_periode_id">
-<span<?php echo $t93_periode->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t93_periode->id->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t93_periode" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t93_periode->id->CurrentValue) ?>">
-<?php echo $t93_periode->id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 <?php if ($t93_periode->Bulan->Visible) { // Bulan ?>
 	<div id="r_Bulan" class="form-group">
 		<label id="elh_t93_periode_Bulan" for="x_Bulan" class="col-sm-2 control-label ewLabel"><?php echo $t93_periode->Bulan->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
@@ -996,6 +998,7 @@ $t93_periode_edit->ShowMessage();
 	</div>
 <?php } ?>
 </div>
+<input type="hidden" data-table="t93_periode" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t93_periode->id->CurrentValue) ?>">
 <?php if (!$t93_periode_edit->IsModal) { ?>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">

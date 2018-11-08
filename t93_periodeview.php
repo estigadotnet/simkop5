@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t93_periodeinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -247,6 +248,7 @@ class ct93_periode_view extends ct93_periode {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -274,6 +276,9 @@ class ct93_periode_view extends ct93_periode {
 		$this->ExportCsvUrl = $this->PageUrl() . "export=csv" . $KeyUrl;
 		$this->ExportPdfUrl = $this->PageUrl() . "export=pdf" . $KeyUrl;
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'view', TRUE);
@@ -287,6 +292,12 @@ class ct93_periode_view extends ct93_periode {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// Export options
 		$this->ExportOptions = new cListOptions();
@@ -307,9 +318,27 @@ class ct93_periode_view extends ct93_periode {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanView()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t93_periodelist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->Bulan->SetVisibility();
 		$this->Tahun->SetVisibility();
 		$this->Tahun_Bulan->SetVisibility();
@@ -458,7 +487,7 @@ class ct93_periode_view extends ct93_periode {
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->AddUrl) . "',caption:'" . $addcaption . "'});\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 
 		// Edit
 		$item = &$option->Add("edit");
@@ -467,7 +496,7 @@ class ct93_periode_view extends ct93_periode {
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->EditUrl) . "',caption:'" . $editcaption . "'});\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
-		$item->Visible = ($this->EditUrl <> "");
+		$item->Visible = ($this->EditUrl <> "" && $Security->CanEdit());
 
 		// Copy
 		$item = &$option->Add("copy");
@@ -476,7 +505,7 @@ class ct93_periode_view extends ct93_periode {
 			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->CopyUrl) . "',caption:'" . $copycaption . "'});\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		$item->Visible = ($this->CopyUrl <> "");
+		$item->Visible = ($this->CopyUrl <> "" && $Security->CanAdd());
 
 		// Delete
 		$item = &$option->Add("delete");
@@ -484,7 +513,7 @@ class ct93_periode_view extends ct93_periode {
 			$item->Body = "<a onclick=\"return ew_ConfirmDelete(this);\" class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode(ew_AddQueryStringToUrl($this->DeleteUrl, "a_delete=1")) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
-		$item->Visible = ($this->DeleteUrl <> "");
+		$item->Visible = ($this->DeleteUrl <> "" && $Security->CanDelete());
 
 		// Set up action default
 		$option = &$options["action"];
@@ -562,6 +591,7 @@ class ct93_periode_view extends ct93_periode {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Bulan->setDbValue($rs->fields('Bulan'));
 		$this->Tahun->setDbValue($rs->fields('Tahun'));
@@ -616,11 +646,6 @@ class ct93_periode_view extends ct93_periode {
 		// Tahun_Bulan
 		$this->Tahun_Bulan->ViewValue = $this->Tahun_Bulan->CurrentValue;
 		$this->Tahun_Bulan->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// Bulan
 			$this->Bulan->LinkCustomAttributes = "";
@@ -831,17 +856,6 @@ $t93_periode_view->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t93_periode->id->Visible) { // id ?>
-	<tr id="r_id">
-		<td><span id="elh_t93_periode_id"><?php echo $t93_periode->id->FldCaption() ?></span></td>
-		<td data-name="id"<?php echo $t93_periode->id->CellAttributes() ?>>
-<span id="el_t93_periode_id">
-<span<?php echo $t93_periode->id->ViewAttributes() ?>>
-<?php echo $t93_periode->id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 <?php if ($t93_periode->Bulan->Visible) { // Bulan ?>
 	<tr id="r_Bulan">
 		<td><span id="elh_t93_periode_Bulan"><?php echo $t93_periode->Bulan->FldCaption() ?></span></td>

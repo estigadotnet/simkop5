@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t07_marketinginfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -255,6 +256,7 @@ class ct07_marketing_list extends ct07_marketing {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -285,6 +287,9 @@ class ct07_marketing_list extends ct07_marketing {
 		$this->MultiDeleteUrl = "t07_marketingdelete.php";
 		$this->MultiUpdateUrl = "t07_marketingupdate.php";
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -298,6 +303,12 @@ class ct07_marketing_list extends ct07_marketing {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -333,6 +344,23 @@ class ct07_marketing_list extends ct07_marketing {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -541,6 +569,8 @@ class ct07_marketing_list extends ct07_marketing {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
@@ -604,11 +634,14 @@ class ct07_marketing_list extends ct07_marketing {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->Nama); // Nama
+			$this->UpdateSort($this->Nama, $bCtrl); // Nama
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -659,25 +692,25 @@ class ct07_marketing_list extends ct07_marketing {
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanView();
 		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// List actions
@@ -733,7 +766,7 @@ class ct07_marketing_list extends ct07_marketing {
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if (TRUE) {
+		if ($Security->CanView()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -742,7 +775,7 @@ class ct07_marketing_list extends ct07_marketing {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -751,7 +784,7 @@ class ct07_marketing_list extends ct07_marketing {
 		// "copy"
 		$oListOpt = &$this->ListOptions->Items["copy"];
 		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if (TRUE) {
+		if ($Security->CanAdd()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -759,7 +792,7 @@ class ct07_marketing_list extends ct07_marketing {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete())
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -812,7 +845,7 @@ class ct07_marketing_list extends ct07_marketing {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
 		// Set up options default
@@ -973,6 +1006,11 @@ class ct07_marketing_list extends ct07_marketing {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -1370,6 +1408,8 @@ ft07_marketinglist.ValidateRequired = false;
 
 	// Set no record found message
 	if ($t07_marketing->CurrentAction == "" && $t07_marketing_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t07_marketing_list->setWarningMessage(ew_DeniedMsg());
 		if ($t07_marketing_list->SearchWhere == "0=101")
 			$t07_marketing_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
@@ -1409,7 +1449,7 @@ $t07_marketing_list->ListOptions->Render("header", "left");
 	<?php if ($t07_marketing->SortUrl($t07_marketing->Nama) == "") { ?>
 		<th data-name="Nama"><div id="elh_t07_marketing_Nama" class="t07_marketing_Nama"><div class="ewTableHeaderCaption"><?php echo $t07_marketing->Nama->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Nama"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t07_marketing->SortUrl($t07_marketing->Nama) ?>',1);"><div id="elh_t07_marketing_Nama" class="t07_marketing_Nama">
+		<th data-name="Nama"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t07_marketing->SortUrl($t07_marketing->Nama) ?>',2);"><div id="elh_t07_marketing_Nama" class="t07_marketing_Nama">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t07_marketing->Nama->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t07_marketing->Nama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t07_marketing->Nama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>

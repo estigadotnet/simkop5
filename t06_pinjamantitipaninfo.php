@@ -20,6 +20,7 @@ class ct06_pinjamantitipan extends cTable {
 	var $Masuk;
 	var $Keluar;
 	var $Sisa;
+	var $Angsuran_Ke;
 
 	//
 	// Table class constructor
@@ -91,6 +92,12 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Sisa->Sortable = TRUE; // Allow sort
 		$this->Sisa->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
 		$this->fields['Sisa'] = &$this->Sisa;
+
+		// Angsuran_Ke
+		$this->Angsuran_Ke = new cField('t06_pinjamantitipan', 't06_pinjamantitipan', 'x_Angsuran_Ke', 'Angsuran_Ke', '`Angsuran_Ke`', '`Angsuran_Ke`', 16, -1, FALSE, '`Angsuran_Ke`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Angsuran_Ke->Sortable = TRUE; // Allow sort
+		$this->Angsuran_Ke->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['Angsuran_Ke'] = &$this->Angsuran_Ke;
 	}
 
 	// Set Field Visibility
@@ -99,8 +106,8 @@ class ct06_pinjamantitipan extends cTable {
 		return $this->$fldparm->Visible; // Returns original value
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -110,9 +117,20 @@ class ct06_pinjamantitipan extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -650,6 +668,7 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Masuk->setDbValue($rs->fields('Masuk'));
 		$this->Keluar->setDbValue($rs->fields('Keluar'));
 		$this->Sisa->setDbValue($rs->fields('Sisa'));
+		$this->Angsuran_Ke->setDbValue($rs->fields('Angsuran_Ke'));
 	}
 
 	// Render list row values
@@ -667,6 +686,7 @@ class ct06_pinjamantitipan extends cTable {
 		// Masuk
 		// Keluar
 		// Sisa
+		// Angsuran_Ke
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -700,8 +720,12 @@ class ct06_pinjamantitipan extends cTable {
 		// Sisa
 		$this->Sisa->ViewValue = $this->Sisa->CurrentValue;
 		$this->Sisa->ViewValue = ew_FormatNumber($this->Sisa->ViewValue, 2, -2, -2, -2);
-		$this->Sisa->CellCssStyle .= "text-align: justify;";
+		$this->Sisa->CellCssStyle .= "text-align: right;";
 		$this->Sisa->ViewCustomAttributes = "";
+
+		// Angsuran_Ke
+		$this->Angsuran_Ke->ViewValue = $this->Angsuran_Ke->CurrentValue;
+		$this->Angsuran_Ke->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -738,6 +762,11 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Sisa->HrefValue = "";
 		$this->Sisa->TooltipValue = "";
 
+		// Angsuran_Ke
+		$this->Angsuran_Ke->LinkCustomAttributes = "";
+		$this->Angsuran_Ke->HrefValue = "";
+		$this->Angsuran_Ke->TooltipValue = "";
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -769,7 +798,7 @@ class ct06_pinjamantitipan extends cTable {
 
 		// Tanggal
 		$this->Tanggal->EditAttrs["class"] = "form-control";
-		$this->Tanggal->EditCustomAttributes = "";
+		$this->Tanggal->EditCustomAttributes = "style='width: 115px;'";
 		$this->Tanggal->EditValue = ew_FormatDateTime($this->Tanggal->CurrentValue, 7);
 		$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
@@ -799,6 +828,12 @@ class ct06_pinjamantitipan extends cTable {
 		$this->Sisa->EditValue = $this->Sisa->CurrentValue;
 		$this->Sisa->PlaceHolder = ew_RemoveHtml($this->Sisa->FldCaption());
 		if (strval($this->Sisa->EditValue) <> "" && is_numeric($this->Sisa->EditValue)) $this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, -2, -2, -2, -2);
+
+		// Angsuran_Ke
+		$this->Angsuran_Ke->EditAttrs["class"] = "form-control";
+		$this->Angsuran_Ke->EditCustomAttributes = "";
+		$this->Angsuran_Ke->EditValue = $this->Angsuran_Ke->CurrentValue;
+		$this->Angsuran_Ke->PlaceHolder = ew_RemoveHtml($this->Angsuran_Ke->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -832,6 +867,7 @@ class ct06_pinjamantitipan extends cTable {
 					if ($this->Masuk->Exportable) $Doc->ExportCaption($this->Masuk);
 					if ($this->Keluar->Exportable) $Doc->ExportCaption($this->Keluar);
 					if ($this->Sisa->Exportable) $Doc->ExportCaption($this->Sisa);
+					if ($this->Angsuran_Ke->Exportable) $Doc->ExportCaption($this->Angsuran_Ke);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->pinjaman_id->Exportable) $Doc->ExportCaption($this->pinjaman_id);
@@ -840,6 +876,7 @@ class ct06_pinjamantitipan extends cTable {
 					if ($this->Masuk->Exportable) $Doc->ExportCaption($this->Masuk);
 					if ($this->Keluar->Exportable) $Doc->ExportCaption($this->Keluar);
 					if ($this->Sisa->Exportable) $Doc->ExportCaption($this->Sisa);
+					if ($this->Angsuran_Ke->Exportable) $Doc->ExportCaption($this->Angsuran_Ke);
 				}
 				$Doc->EndExportRow();
 			}
@@ -876,6 +913,7 @@ class ct06_pinjamantitipan extends cTable {
 						if ($this->Masuk->Exportable) $Doc->ExportField($this->Masuk);
 						if ($this->Keluar->Exportable) $Doc->ExportField($this->Keluar);
 						if ($this->Sisa->Exportable) $Doc->ExportField($this->Sisa);
+						if ($this->Angsuran_Ke->Exportable) $Doc->ExportField($this->Angsuran_Ke);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->pinjaman_id->Exportable) $Doc->ExportField($this->pinjaman_id);
@@ -884,6 +922,7 @@ class ct06_pinjamantitipan extends cTable {
 						if ($this->Masuk->Exportable) $Doc->ExportField($this->Masuk);
 						if ($this->Keluar->Exportable) $Doc->ExportField($this->Keluar);
 						if ($this->Sisa->Exportable) $Doc->ExportField($this->Sisa);
+						if ($this->Angsuran_Ke->Exportable) $Doc->ExportField($this->Angsuran_Ke);
 					}
 					$Doc->EndExportRow();
 				}
@@ -928,7 +967,7 @@ class ct06_pinjamantitipan extends cTable {
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
 		$table = 't06_pinjamantitipan';
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
 
@@ -946,7 +985,7 @@ class ct06_pinjamantitipan extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		foreach (array_keys($rs) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
@@ -980,7 +1019,7 @@ class ct06_pinjamantitipan extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		foreach (array_keys($rsnew) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && array_key_exists($fldname, $rsold) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldDataType == EW_DATATYPE_DATE) { // DateTime field
@@ -1028,7 +1067,7 @@ class ct06_pinjamantitipan extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$curUser = CurrentUserName();
+		$curUser = CurrentUserID();
 		foreach (array_keys($rs) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {

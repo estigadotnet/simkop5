@@ -6,8 +6,10 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t03_pinjamaninfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "t04_pinjamanangsurantempgridcls.php" ?>
 <?php include_once "t06_pinjamantitipangridcls.php" ?>
+<?php include_once "t08_pinjamanpotongangridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -217,6 +219,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -232,6 +235,9 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			$GLOBALS["Table"] = &$GLOBALS["t03_pinjaman"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'edit', TRUE);
@@ -245,6 +251,12 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -252,6 +264,26 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanEdit()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t03_pinjamanlist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Create form object
 		$objForm = new cFormObj();
@@ -304,6 +336,14 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			if (@$_POST["grid"] == "ft06_pinjamantitipangrid") {
 				if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid;
 				$GLOBALS["t06_pinjamantitipan_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
+
+			// Process auto fill for detail table 't08_pinjamanpotongan'
+			if (@$_POST["grid"] == "ft08_pinjamanpotongangrid") {
+				if (!isset($GLOBALS["t08_pinjamanpotongan_grid"])) $GLOBALS["t08_pinjamanpotongan_grid"] = new ct08_pinjamanpotongan_grid;
+				$GLOBALS["t08_pinjamanpotongan_grid"]->Page_Init();
 				$this->Page_Terminate();
 				exit();
 			}
@@ -1298,6 +1338,10 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid(); // get detail page object
 			$GLOBALS["t06_pinjamantitipan_grid"]->ValidateGridForm();
 		}
+		if (in_array("t08_pinjamanpotongan", $DetailTblVar) && $GLOBALS["t08_pinjamanpotongan"]->DetailEdit) {
+			if (!isset($GLOBALS["t08_pinjamanpotongan_grid"])) $GLOBALS["t08_pinjamanpotongan_grid"] = new ct08_pinjamanpotongan_grid(); // get detail page object
+			$GLOBALS["t08_pinjamanpotongan_grid"]->ValidateGridForm();
+		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -1422,13 +1466,25 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 				if ($EditRow) {
 					if (in_array("t04_pinjamanangsurantemp", $DetailTblVar) && $GLOBALS["t04_pinjamanangsurantemp"]->DetailEdit) {
 						if (!isset($GLOBALS["t04_pinjamanangsurantemp_grid"])) $GLOBALS["t04_pinjamanangsurantemp_grid"] = new ct04_pinjamanangsurantemp_grid(); // Get detail page object
+						$Security->LoadCurrentUserLevel($this->ProjectID . "t04_pinjamanangsurantemp"); // Load user level of detail table
 						$EditRow = $GLOBALS["t04_pinjamanangsurantemp_grid"]->GridUpdate();
+						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
 					}
 				}
 				if ($EditRow) {
 					if (in_array("t06_pinjamantitipan", $DetailTblVar) && $GLOBALS["t06_pinjamantitipan"]->DetailEdit) {
 						if (!isset($GLOBALS["t06_pinjamantitipan_grid"])) $GLOBALS["t06_pinjamantitipan_grid"] = new ct06_pinjamantitipan_grid(); // Get detail page object
+						$Security->LoadCurrentUserLevel($this->ProjectID . "t06_pinjamantitipan"); // Load user level of detail table
 						$EditRow = $GLOBALS["t06_pinjamantitipan_grid"]->GridUpdate();
+						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+					}
+				}
+				if ($EditRow) {
+					if (in_array("t08_pinjamanpotongan", $DetailTblVar) && $GLOBALS["t08_pinjamanpotongan"]->DetailEdit) {
+						if (!isset($GLOBALS["t08_pinjamanpotongan_grid"])) $GLOBALS["t08_pinjamanpotongan_grid"] = new ct08_pinjamanpotongan_grid(); // Get detail page object
+						$Security->LoadCurrentUserLevel($this->ProjectID . "t08_pinjamanpotongan"); // Load user level of detail table
+						$EditRow = $GLOBALS["t08_pinjamanpotongan_grid"]->GridUpdate();
+						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
 					}
 				}
 
@@ -1503,6 +1559,21 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 					$GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->setSessionValue($GLOBALS["t06_pinjamantitipan_grid"]->pinjaman_id->CurrentValue);
 				}
 			}
+			if (in_array("t08_pinjamanpotongan", $DetailTblVar)) {
+				if (!isset($GLOBALS["t08_pinjamanpotongan_grid"]))
+					$GLOBALS["t08_pinjamanpotongan_grid"] = new ct08_pinjamanpotongan_grid;
+				if ($GLOBALS["t08_pinjamanpotongan_grid"]->DetailEdit) {
+					$GLOBALS["t08_pinjamanpotongan_grid"]->CurrentMode = "edit";
+					$GLOBALS["t08_pinjamanpotongan_grid"]->CurrentAction = "gridedit";
+
+					// Save current master table to detail table
+					$GLOBALS["t08_pinjamanpotongan_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t08_pinjamanpotongan_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t08_pinjamanpotongan_grid"]->pinjaman_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t08_pinjamanpotongan_grid"]->pinjaman_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t08_pinjamanpotongan_grid"]->pinjaman_id->setSessionValue($GLOBALS["t08_pinjamanpotongan_grid"]->pinjaman_id->CurrentValue);
+				}
+			}
 		}
 	}
 
@@ -1522,6 +1593,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		$pages->Style = "tabs";
 		$pages->Add('t04_pinjamanangsurantemp');
 		$pages->Add('t06_pinjamantitipan');
+		$pages->Add('t08_pinjamanpotongan');
 		$this->DetailPages = $pages;
 	}
 
@@ -2044,6 +2116,16 @@ ew_CreateCalendar("ft03_pinjamanedit", "x_Kontrak_Tgl", 7);
 <?php
 	}
 ?>
+<?php
+	if (in_array("t08_pinjamanpotongan", explode(",", $t03_pinjaman->getCurrentDetailTable())) && $t08_pinjamanpotongan->DetailEdit) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t08_pinjamanpotongan") {
+			$FirstActiveDetailTable = "t08_pinjamanpotongan";
+		}
+?>
+		<li<?php echo $t03_pinjaman_edit->DetailPages->TabStyle("t08_pinjamanpotongan") ?>><a href="#tab_t08_pinjamanpotongan" data-toggle="tab"><?php echo $Language->TablePhrase("t08_pinjamanpotongan", "TblCaption") ?></a></li>
+<?php
+	}
+?>
 	</ul>
 	<div class="tab-content">
 <?php
@@ -2064,6 +2146,16 @@ ew_CreateCalendar("ft03_pinjamanedit", "x_Kontrak_Tgl", 7);
 ?>
 		<div class="tab-pane<?php echo $t03_pinjaman_edit->DetailPages->PageStyle("t06_pinjamantitipan") ?>" id="tab_t06_pinjamantitipan">
 <?php include_once "t06_pinjamantitipangrid.php" ?>
+		</div>
+<?php } ?>
+<?php
+	if (in_array("t08_pinjamanpotongan", explode(",", $t03_pinjaman->getCurrentDetailTable())) && $t08_pinjamanpotongan->DetailEdit) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t08_pinjamanpotongan") {
+			$FirstActiveDetailTable = "t08_pinjamanpotongan";
+		}
+?>
+		<div class="tab-pane<?php echo $t03_pinjaman_edit->DetailPages->PageStyle("t08_pinjamanpotongan") ?>" id="tab_t08_pinjamanpotongan">
+<?php include_once "t08_pinjamanpotongangrid.php" ?>
 		</div>
 <?php } ?>
 	</div>

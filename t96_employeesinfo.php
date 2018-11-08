@@ -7,6 +7,12 @@ $t96_employees = NULL;
 // Table class for t96_employees
 //
 class ct96_employees extends cTable {
+	var $AuditTrailOnAdd = TRUE;
+	var $AuditTrailOnEdit = TRUE;
+	var $AuditTrailOnDelete = TRUE;
+	var $AuditTrailOnView = FALSE;
+	var $AuditTrailOnViewData = FALSE;
+	var $AuditTrailOnSearch = FALSE;
 	var $EmployeeID;
 	var $LastName;
 	var $FirstName;
@@ -161,8 +167,10 @@ class ct96_employees extends cTable {
 		$this->fields['Password'] = &$this->Password;
 
 		// UserLevel
-		$this->UserLevel = new cField('t96_employees', 't96_employees', 'x_UserLevel', 'UserLevel', '`UserLevel`', '`UserLevel`', 3, -1, FALSE, '`UserLevel`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->UserLevel = new cField('t96_employees', 't96_employees', 'x_UserLevel', 'UserLevel', '`UserLevel`', '`UserLevel`', 3, -1, FALSE, '`UserLevel`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
 		$this->UserLevel->Sortable = TRUE; // Allow sort
+		$this->UserLevel->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->UserLevel->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->UserLevel->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['UserLevel'] = &$this->UserLevel;
 
@@ -192,8 +200,8 @@ class ct96_employees extends cTable {
 		return $this->$fldparm->Visible; // Returns original value
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -203,9 +211,20 @@ class ct96_employees extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -294,12 +313,18 @@ class ct96_employees extends cTable {
 
 	// Apply User ID filters
 	function ApplyUserIDFilters($sFilter) {
+		global $Security;
+
+		// Add User ID filter
+		if ($Security->CurrentUserID() <> "" && !$Security->IsAdmin()) { // Non system admin
+			$sFilter = $this->AddUserIDFilter($sFilter);
+		}
 		return $sFilter;
 	}
 
 	// Check if User ID security allows view all
 	function UserIDAllow($id = "") {
-		$allow = EW_USER_ID_ALLOW;
+		$allow = $this->UserIDAllowSecurity;
 		switch ($id) {
 			case "add":
 			case "copy":
@@ -419,6 +444,8 @@ class ct96_employees extends cTable {
 		foreach ($rs as $name => $value) {
 			if (!isset($this->fields[$name]) || $this->fields[$name]->FldIsCustom)
 				continue;
+			if (EW_ENCRYPTED_PASSWORD && $name == 'Password')
+				$value = (EW_CASE_SENSITIVE_PASSWORD) ? ew_EncryptPassword($value) : ew_EncryptPassword(strtolower($value));
 			$names .= $this->fields[$name]->FldExpression . ",";
 			$values .= ew_QuotedValue($value, $this->fields[$name]->FldDataType, $this->DBID) . ",";
 		}
@@ -438,6 +465,8 @@ class ct96_employees extends cTable {
 			// Get insert id if necessary
 			$this->EmployeeID->setDbValue($conn->Insert_ID());
 			$rs['EmployeeID'] = $this->EmployeeID->DbValue;
+			if ($this->AuditTrailOnAdd)
+				$this->WriteAuditTrailOnAdd($rs);
 		}
 		return $bInsert;
 	}
@@ -448,6 +477,9 @@ class ct96_employees extends cTable {
 		foreach ($rs as $name => $value) {
 			if (!isset($this->fields[$name]) || $this->fields[$name]->FldIsCustom)
 				continue;
+			if (EW_ENCRYPTED_PASSWORD && $name == 'Password') {
+				$value = (EW_CASE_SENSITIVE_PASSWORD) ? ew_EncryptPassword($value) : ew_EncryptPassword(strtolower($value));
+			}
 			$sql .= $this->fields[$name]->FldExpression . "=";
 			$sql .= ew_QuotedValue($value, $this->fields[$name]->FldDataType, $this->DBID) . ",";
 		}
@@ -465,6 +497,12 @@ class ct96_employees extends cTable {
 	function Update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE) {
 		$conn = &$this->Connection();
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
+		if ($bUpdate && $this->AuditTrailOnEdit) {
+			$rsaudit = $rs;
+			$fldname = 'EmployeeID';
+			if (!array_key_exists($fldname, $rsaudit)) $rsaudit[$fldname] = $rsold[$fldname];
+			$this->WriteAuditTrailOnEdit($rsold, $rsaudit);
+		}
 		return $bUpdate;
 	}
 
@@ -490,6 +528,8 @@ class ct96_employees extends cTable {
 	function Delete(&$rs, $where = "", $curfilter = TRUE) {
 		$conn = &$this->Connection();
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
+		if ($bDelete && $this->AuditTrailOnDelete)
+			$this->WriteAuditTrailOnDelete($rs);
 		return $bDelete;
 	}
 
@@ -811,7 +851,30 @@ class ct96_employees extends cTable {
 		$this->Password->ViewCustomAttributes = "";
 
 		// UserLevel
-		$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+		if ($Security->CanAdmin()) { // System admin
+		if (strval($this->UserLevel->CurrentValue) <> "") {
+			$sFilterWrk = "`userlevelid`" . ew_SearchString("=", $this->UserLevel->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `userlevelid`, `userlevelname` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t97_userlevels`";
+		$sWhereWrk = "";
+		$this->UserLevel->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->UserLevel, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->UserLevel->ViewValue = $this->UserLevel->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+			}
+		} else {
+			$this->UserLevel->ViewValue = NULL;
+		}
+		} else {
+			$this->UserLevel->ViewValue = $Language->Phrase("PasswordMask");
+		}
 		$this->UserLevel->ViewCustomAttributes = "";
 
 		// Username
@@ -1065,7 +1128,7 @@ class ct96_employees extends cTable {
 		$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
 
 		// Password
-		$this->Password->EditAttrs["class"] = "form-control";
+		$this->Password->EditAttrs["class"] = "form-control ewPasswordStrength";
 		$this->Password->EditCustomAttributes = "";
 		$this->Password->EditValue = $this->Password->CurrentValue;
 		$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
@@ -1073,8 +1136,10 @@ class ct96_employees extends cTable {
 		// UserLevel
 		$this->UserLevel->EditAttrs["class"] = "form-control";
 		$this->UserLevel->EditCustomAttributes = "";
-		$this->UserLevel->EditValue = $this->UserLevel->CurrentValue;
-		$this->UserLevel->PlaceHolder = ew_RemoveHtml($this->UserLevel->FldCaption());
+		if (!$Security->CanAdmin()) { // System admin
+			$this->UserLevel->EditValue = $Language->Phrase("PasswordMask");
+		} else {
+		}
 
 		// Username
 		$this->Username->EditAttrs["class"] = "form-control";
@@ -1255,6 +1320,58 @@ class ct96_employees extends cTable {
 		}
 	}
 
+	// User ID filter
+	function UserIDFilter($userid) {
+		$sUserIDFilter = '`EmployeeID` = ' . ew_QuotedValue($userid, EW_DATATYPE_NUMBER, EW_USER_TABLE_DBID);
+		return $sUserIDFilter;
+	}
+
+	// Add User ID filter
+	function AddUserIDFilter($sFilter) {
+		global $Security;
+		$sFilterWrk = "";
+		$id = (CurrentPageID() == "list") ? $this->CurrentAction : CurrentPageID();
+		if (!$this->UserIDAllow($id) && !$Security->IsAdmin()) {
+			$sFilterWrk = $Security->UserIDList();
+			if ($sFilterWrk <> "")
+				$sFilterWrk = '`EmployeeID` IN (' . $sFilterWrk . ')';
+		}
+
+		// Call User ID Filtering event
+		$this->UserID_Filtering($sFilterWrk);
+		ew_AddFilter($sFilter, $sFilterWrk);
+		return $sFilter;
+	}
+
+	// User ID subquery
+	function GetUserIDSubquery(&$fld, &$masterfld) {
+		global $UserTableConn;
+		$sWrk = "";
+		$sSql = "SELECT " . $masterfld->FldExpression . " FROM `t96_employees`";
+		$sFilter = $this->AddUserIDFilter("");
+		if ($sFilter <> "") $sSql .= " WHERE " . $sFilter;
+
+		// Use subquery
+		if (EW_USE_SUBQUERY_FOR_MASTER_USER_ID) {
+			$sWrk = $sSql;
+		} else {
+
+			// List all values
+			if ($rs = $UserTableConn->Execute($sSql)) {
+				while (!$rs->EOF) {
+					if ($sWrk <> "") $sWrk .= ",";
+					$sWrk .= ew_QuotedValue($rs->fields[0], $masterfld->FldDataType, EW_USER_TABLE_DBID);
+					$rs->MoveNext();
+				}
+				$rs->Close();
+			}
+		}
+		if ($sWrk <> "") {
+			$sWrk = $fld->FldExpression . " IN (" . $sWrk . ")";
+		}
+		return $sWrk;
+	}
+
 	// Get auto fill value
 	function GetAutoFill($id, $val) {
 		$rsarr = array();
@@ -1278,6 +1395,137 @@ class ct96_employees extends cTable {
 			return ew_ArrayToJson($rsarr);
 		} else {
 			return FALSE;
+		}
+	}
+
+	// Write Audit Trail start/end for grid update
+	function WriteAuditTrailDummy($typ) {
+		$table = 't96_employees';
+		$usr = CurrentUserID();
+		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
+	}
+
+	// Write Audit Trail (add page)
+	function WriteAuditTrailOnAdd(&$rs) {
+		global $Language;
+		if (!$this->AuditTrailOnAdd) return;
+		$table = 't96_employees';
+
+		// Get key value
+		$key = "";
+		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rs['EmployeeID'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$usr = CurrentUserID();
+		foreach (array_keys($rs) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
+					$newvalue = $Language->Phrase("PasswordMask"); // Password Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) {
+					if (EW_AUDIT_TRAIL_TO_DATABASE)
+						$newvalue = $rs[$fldname];
+					else
+						$newvalue = "[MEMO]"; // Memo Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) {
+					$newvalue = "[XML]"; // XML Field
+				} else {
+					$newvalue = $rs[$fldname];
+				}
+				if ($fldname == 'Password')
+					$newvalue = $Language->Phrase("PasswordMask");
+				ew_WriteAuditTrail("log", $dt, $id, $usr, "A", $table, $fldname, $key, "", $newvalue);
+			}
+		}
+	}
+
+	// Write Audit Trail (edit page)
+	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
+		global $Language;
+		if (!$this->AuditTrailOnEdit) return;
+		$table = 't96_employees';
+
+		// Get key value
+		$key = "";
+		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rsold['EmployeeID'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$usr = CurrentUserID();
+		foreach (array_keys($rsnew) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && array_key_exists($fldname, $rsold) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldDataType == EW_DATATYPE_DATE) { // DateTime field
+					$modified = (ew_FormatDateTime($rsold[$fldname], 0) <> ew_FormatDateTime($rsnew[$fldname], 0));
+				} else {
+					$modified = !ew_CompareValue($rsold[$fldname], $rsnew[$fldname]);
+				}
+				if ($modified) {
+					if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") { // Password Field
+						$oldvalue = $Language->Phrase("PasswordMask");
+						$newvalue = $Language->Phrase("PasswordMask");
+					} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) { // Memo field
+						if (EW_AUDIT_TRAIL_TO_DATABASE) {
+							$oldvalue = $rsold[$fldname];
+							$newvalue = $rsnew[$fldname];
+						} else {
+							$oldvalue = "[MEMO]";
+							$newvalue = "[MEMO]";
+						}
+					} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) { // XML field
+						$oldvalue = "[XML]";
+						$newvalue = "[XML]";
+					} else {
+						$oldvalue = $rsold[$fldname];
+						$newvalue = $rsnew[$fldname];
+					}
+					if ($fldname == 'Password') {
+						$oldvalue = $Language->Phrase("PasswordMask");
+						$newvalue = $Language->Phrase("PasswordMask");
+					}
+					ew_WriteAuditTrail("log", $dt, $id, $usr, "U", $table, $fldname, $key, $oldvalue, $newvalue);
+				}
+			}
+		}
+	}
+
+	// Write Audit Trail (delete page)
+	function WriteAuditTrailOnDelete(&$rs) {
+		global $Language;
+		if (!$this->AuditTrailOnDelete) return;
+		$table = 't96_employees';
+
+		// Get key value
+		$key = "";
+		if ($key <> "")
+			$key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rs['EmployeeID'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$curUser = CurrentUserID();
+		foreach (array_keys($rs) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
+					$oldvalue = $Language->Phrase("PasswordMask"); // Password Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) {
+					if (EW_AUDIT_TRAIL_TO_DATABASE)
+						$oldvalue = $rs[$fldname];
+					else
+						$oldvalue = "[MEMO]"; // Memo field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) {
+					$oldvalue = "[XML]"; // XML field
+				} else {
+					$oldvalue = $rs[$fldname];
+				}
+				if ($fldname == 'Password')
+					$oldvalue = $Language->Phrase("PasswordMask");
+				ew_WriteAuditTrail("log", $dt, $id, $curUser, "D", $table, $fldname, $key, $oldvalue, "");
+			}
 		}
 	}
 

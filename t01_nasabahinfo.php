@@ -94,8 +94,8 @@ class ct01_nasabah extends cTable {
 		return $this->$fldparm->Visible; // Returns original value
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -105,9 +105,20 @@ class ct01_nasabah extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
 	}
 
@@ -916,7 +927,7 @@ class ct01_nasabah extends cTable {
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
 		$table = 't01_nasabah';
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
 
@@ -934,7 +945,7 @@ class ct01_nasabah extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		foreach (array_keys($rs) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
@@ -968,7 +979,7 @@ class ct01_nasabah extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$usr = CurrentUserName();
+		$usr = CurrentUserID();
 		foreach (array_keys($rsnew) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && array_key_exists($fldname, $rsold) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldDataType == EW_DATATYPE_DATE) { // DateTime field
@@ -1016,7 +1027,7 @@ class ct01_nasabah extends cTable {
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
 		$id = ew_ScriptName();
-		$curUser = CurrentUserName();
+		$curUser = CurrentUserID();
 		foreach (array_keys($rs) as $fldname) {
 			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
 				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {

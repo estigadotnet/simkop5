@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t97_userlevelsinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +216,7 @@ class ct97_userlevels_add extends ct97_userlevels {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +232,9 @@ class ct97_userlevels_add extends ct97_userlevels {
 			$GLOBALS["Table"] = &$GLOBALS["t97_userlevels"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'add', TRUE);
@@ -243,6 +248,12 @@ class ct97_userlevels_add extends ct97_userlevels {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,6 +261,22 @@ class ct97_userlevels_add extends ct97_userlevels {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanAdmin()) {
+			$Security->SaveLastUrl();
+			$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Create form object
 		$objForm = new cFormObj();
@@ -364,6 +391,28 @@ class ct97_userlevels_add extends ct97_userlevels {
 			$this->CurrentAction = $_POST["a_add"]; // Get form action
 			$this->CopyRecord = $this->LoadOldRecord(); // Load old recordset
 			$this->LoadFormValues(); // Load form values
+
+			// Load values for user privileges
+			$AllowAdd = @$_POST["x__AllowAdd"];
+			if ($AllowAdd == "") $AllowAdd = 0;
+			$AllowEdit = @$_POST["x__AllowEdit"];
+			if ($AllowEdit == "") $AllowEdit = 0;
+			$AllowDelete = @$_POST["x__AllowDelete"];
+			if ($AllowDelete == "") $AllowDelete = 0;
+			$AllowList = @$_POST["x__AllowList"];
+			if ($AllowList == "") $AllowList = 0;
+			if (defined("EW_USER_LEVEL_COMPAT")) {
+				$this->Priv = intval($AllowAdd) + intval($AllowEdit) +
+					intval($AllowDelete) + intval($AllowList);
+			} else {
+				$AllowView = @$_POST["x__AllowView"];
+				if ($AllowView == "") $AllowView = 0;
+				$AllowSearch = @$_POST["x__AllowSearch"];
+				if ($AllowSearch == "") $AllowSearch = 0;
+				$this->Priv = intval($AllowAdd) + intval($AllowEdit) +
+					intval($AllowDelete) + intval($AllowList) +
+					intval($AllowView) + intval($AllowSearch);
+			}
 		} else { // Not post back
 
 			// Load key values from QueryString
@@ -499,6 +548,11 @@ class ct97_userlevels_add extends ct97_userlevels {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->userlevelid->setDbValue($rs->fields('userlevelid'));
+		if (is_null($this->userlevelid->CurrentValue)) {
+			$this->userlevelid->CurrentValue = 0;
+		} else {
+			$this->userlevelid->CurrentValue = intval($this->userlevelid->CurrentValue);
+		}
 		$this->userlevelname->setDbValue($rs->fields('userlevelname'));
 	}
 
@@ -554,6 +608,7 @@ class ct97_userlevels_add extends ct97_userlevels {
 
 		// userlevelname
 		$this->userlevelname->ViewValue = $this->userlevelname->CurrentValue;
+		if ($Security->GetUserLevelName($this->userlevelid->CurrentValue) <> "") $this->userlevelname->ViewValue = $Security->GetUserLevelName($this->userlevelid->CurrentValue);
 		$this->userlevelname->ViewCustomAttributes = "";
 
 			// userlevelid
@@ -635,6 +690,25 @@ class ct97_userlevels_add extends ct97_userlevels {
 	// Add record
 	function AddRow($rsold = NULL) {
 		global $Language, $Security;
+		if (trim(strval($this->userlevelid->CurrentValue)) == "") {
+			$this->setFailureMessage($Language->Phrase("MissingUserLevelID"));
+		} elseif (trim($this->userlevelname->CurrentValue) == "") {
+			$this->setFailureMessage($Language->Phrase("MissingUserLevelName"));
+		} elseif (!is_numeric($this->userlevelid->CurrentValue)) {
+			$this->setFailureMessage($Language->Phrase("UserLevelIDInteger"));
+		} elseif (intval($this->userlevelid->CurrentValue) < -2) {
+			$this->setFailureMessage($Language->Phrase("UserLevelIDIncorrect"));
+		} elseif (intval($this->userlevelid->CurrentValue) == 0 && !ew_SameText($this->userlevelname->CurrentValue, "Default")) {
+			$this->setFailureMessage($Language->Phrase("UserLevelDefaultName"));
+		} elseif (intval($this->userlevelid->CurrentValue) == -1 && !ew_SameText($this->userlevelname->CurrentValue, "Administrator")) {
+			$this->setFailureMessage($Language->Phrase("UserLevelAdministratorName"));
+		} elseif (intval($this->userlevelid->CurrentValue) == -2 && !ew_SameText($this->userlevelname->CurrentValue, "Anonymous")) {
+			$this->setFailureMessage($Language->Phrase("UserLevelAnonymousName"));
+		} elseif (intval($this->userlevelid->CurrentValue) > 0 && in_array(strtolower(trim($this->userlevelname->CurrentValue)), array("anonymous", "administrator", "default"))) {
+			$this->setFailureMessage($Language->Phrase("UserLevelNameIncorrect"));
+		}
+		if ($this->getFailureMessage() <> "")
+			return FALSE;
 		$conn = &$this->Connection();
 
 		// Load db values from rsold
@@ -693,6 +767,29 @@ class ct97_userlevels_add extends ct97_userlevels {
 			// Call Row Inserted event
 			$rs = ($rsold == NULL) ? NULL : $rsold->fields;
 			$this->Row_Inserted($rs, $rsnew);
+		}
+		if ($AddRow) {
+
+			// Add User Level priv
+			if ($this->Priv > 0) {
+				$UserLevelList = array();
+				$UserLevelPrivList = array();
+				$TableList = array();
+				$GLOBALS["Security"]->LoadUserLevelFromConfigFile($UserLevelList, $UserLevelPrivList, $TableList, TRUE);
+				$TableNameCount = count($TableList);
+				for ($i = 0; $i < $TableNameCount; $i++) {
+					$sSql = "INSERT INTO " . EW_USER_LEVEL_PRIV_TABLE . " (" .
+						EW_USER_LEVEL_PRIV_TABLE_NAME_FIELD . ", " .
+						EW_USER_LEVEL_PRIV_USER_LEVEL_ID_FIELD . ", " .
+						EW_USER_LEVEL_PRIV_PRIV_FIELD . ") VALUES ('" .
+						ew_AdjustSql($TableList[$i][4] . $TableList[$i][0], EW_USER_LEVEL_PRIV_DBID) .
+						"', " . $this->userlevelid->CurrentValue . ", " . $this->Priv . ")";
+					$conn->Execute($sSql);
+				}
+			}
+
+			// Load user level information again
+			$Security->SetupUserLevel();
 		}
 		return $AddRow;
 	}
@@ -840,6 +937,26 @@ ft97_userlevelsadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_userlevelname");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t97_userlevels->userlevelname->FldCaption(), $t97_userlevels->userlevelname->ReqErrMsg)) ?>");
+			var elId = fobj.elements["x" + infix + "_userlevelid"];
+			var elName = fobj.elements["x" + infix + "_userlevelname"];
+			if (elId && elName) {
+				elId.value = $.trim(elId.value);
+				elName.value = $.trim(elName.value);
+				if (elId && !ew_CheckInteger(elId.value))
+					return this.OnError(elId, ewLanguage.Phrase("UserLevelIDInteger"));
+				var level = parseInt(elId.value, 10);
+				if (level == 0 && !ew_SameText(elName.value, "Default")) {
+					return this.OnError(elName, ewLanguage.Phrase("UserLevelDefaultName"));
+				} else if (level == -1 && !ew_SameText(elName.value, "Administrator")) {
+					return this.OnError(elName, ewLanguage.Phrase("UserLevelAdministratorName"));
+				} else if (level == -2 && !ew_SameText(elName.value, "Anonymous")) {
+					return this.OnError(elName, ewLanguage.Phrase("UserLevelAnonymousName"));
+				} else if (level < -2) {
+					return this.OnError(elId, ewLanguage.Phrase("UserLevelIDIncorrect"));
+				} else if (level > 0 && ew_InArray(elName.value.toLowerCase(), ["anonymous", "administrator", "default"]) > -1) {
+					return this.OnError(elName, ewLanguage.Phrase("UserLevelNameIncorrect"));
+				}
+			}
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -921,6 +1038,22 @@ $t97_userlevels_add->ShowMessage();
 <?php echo $t97_userlevels->userlevelname->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
+	<!-- row for permission values -->
+	<div id="rp_permission" class="form-group">
+		<label class="col-sm-2 control-label ewLabel"><?php echo ew_HtmlTitle($Language->Phrase("Permission")) ?></label>
+		<div class="col-sm-10">
+<label class="checkbox-inline"><input type="checkbox" name="x__AllowAdd" id="Add" value="<?php echo EW_ALLOW_ADD ?>"><?php echo $Language->Phrase("PermissionAddCopy") ?></label>
+<label class="checkbox-inline"><input type="checkbox" name="x__AllowDelete" id="Delete" value="<?php echo EW_ALLOW_DELETE ?>"><?php echo $Language->Phrase("PermissionDelete") ?></label>
+<label class="checkbox-inline"><input type="checkbox" name="x__AllowEdit" id="Edit" value="<?php echo EW_ALLOW_EDIT ?>"><?php echo $Language->Phrase("PermissionEdit") ?></label>
+<?php if (defined("EW_USER_LEVEL_COMPAT")) { ?>
+<label class="checkbox-inline"><input type="checkbox" name="x__AllowList" id="List" value="<?php echo EW_ALLOW_LIST ?>"><?php echo $Language->Phrase("PermissionListSearchView") ?></label>
+<?php } else { ?>
+<label class="checkbox-inline"><input type="checkbox" name="x__AllowList" id="List" value="<?php echo EW_ALLOW_LIST ?>"><?php echo $Language->Phrase("PermissionList") ?></label>
+<label class="checkbox-inline"><input type="checkbox" name="x__AllowView" id="View" value="<?php echo EW_ALLOW_VIEW ?>"><?php echo $Language->Phrase("PermissionView") ?></label>
+<label class="checkbox-inline"><input type="checkbox" name="x__AllowSearch" id="Search" value="<?php echo EW_ALLOW_SEARCH ?>"><?php echo $Language->Phrase("PermissionSearch") ?></label>
+<?php } ?>
+		</div>
+	</div>
 </div>
 <?php if (!$t97_userlevels_add->IsModal) { ?>
 <div class="form-group">

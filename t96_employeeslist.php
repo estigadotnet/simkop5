@@ -255,6 +255,7 @@ class ct96_employees_list extends ct96_employees {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -299,6 +300,12 @@ class ct96_employees_list extends ct96_employees {
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
 
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
+
 		// List options
 		$this->ListOptions = new cListOptions();
 		$this->ListOptions->TableVar = $this->TableVar;
@@ -333,6 +340,27 @@ class ct96_employees_list extends ct96_employees {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+			if (strval($Security->CurrentUserID()) == "") {
+				$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+				$this->Page_Terminate();
+			}
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -622,6 +650,8 @@ class ct96_employees_list extends ct96_employees {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
@@ -953,6 +983,7 @@ class ct96_employees_list extends ct96_employees {
 	function AdvancedSearchWhere($Default = FALSE) {
 		global $Security;
 		$sWhere = "";
+		if (!$Security->CanSearch()) return "";
 		$this->BuildSearchSql($sWhere, $this->EmployeeID, $Default, FALSE); // EmployeeID
 		$this->BuildSearchSql($sWhere, $this->LastName, $Default, FALSE); // LastName
 		$this->BuildSearchSql($sWhere, $this->FirstName, $Default, FALSE); // FirstName
@@ -1150,6 +1181,7 @@ class ct96_employees_list extends ct96_employees {
 	function BasicSearchWhere($Default = FALSE) {
 		global $Security;
 		$sSearchStr = "";
+		if (!$Security->CanSearch()) return "";
 		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
 		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
 		if ($sSearchKeyword <> "") {
@@ -1338,31 +1370,34 @@ class ct96_employees_list extends ct96_employees {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->EmployeeID); // EmployeeID
-			$this->UpdateSort($this->LastName); // LastName
-			$this->UpdateSort($this->FirstName); // FirstName
-			$this->UpdateSort($this->Title); // Title
-			$this->UpdateSort($this->TitleOfCourtesy); // TitleOfCourtesy
-			$this->UpdateSort($this->BirthDate); // BirthDate
-			$this->UpdateSort($this->HireDate); // HireDate
-			$this->UpdateSort($this->Address); // Address
-			$this->UpdateSort($this->City); // City
-			$this->UpdateSort($this->Region); // Region
-			$this->UpdateSort($this->PostalCode); // PostalCode
-			$this->UpdateSort($this->Country); // Country
-			$this->UpdateSort($this->HomePhone); // HomePhone
-			$this->UpdateSort($this->Extension); // Extension
-			$this->UpdateSort($this->_Email); // Email
-			$this->UpdateSort($this->Photo); // Photo
-			$this->UpdateSort($this->ReportsTo); // ReportsTo
-			$this->UpdateSort($this->Password); // Password
-			$this->UpdateSort($this->UserLevel); // UserLevel
-			$this->UpdateSort($this->Username); // Username
-			$this->UpdateSort($this->Activated); // Activated
+			$this->UpdateSort($this->EmployeeID, $bCtrl); // EmployeeID
+			$this->UpdateSort($this->LastName, $bCtrl); // LastName
+			$this->UpdateSort($this->FirstName, $bCtrl); // FirstName
+			$this->UpdateSort($this->Title, $bCtrl); // Title
+			$this->UpdateSort($this->TitleOfCourtesy, $bCtrl); // TitleOfCourtesy
+			$this->UpdateSort($this->BirthDate, $bCtrl); // BirthDate
+			$this->UpdateSort($this->HireDate, $bCtrl); // HireDate
+			$this->UpdateSort($this->Address, $bCtrl); // Address
+			$this->UpdateSort($this->City, $bCtrl); // City
+			$this->UpdateSort($this->Region, $bCtrl); // Region
+			$this->UpdateSort($this->PostalCode, $bCtrl); // PostalCode
+			$this->UpdateSort($this->Country, $bCtrl); // Country
+			$this->UpdateSort($this->HomePhone, $bCtrl); // HomePhone
+			$this->UpdateSort($this->Extension, $bCtrl); // Extension
+			$this->UpdateSort($this->_Email, $bCtrl); // Email
+			$this->UpdateSort($this->Photo, $bCtrl); // Photo
+			$this->UpdateSort($this->ReportsTo, $bCtrl); // ReportsTo
+			$this->UpdateSort($this->Password, $bCtrl); // Password
+			$this->UpdateSort($this->UserLevel, $bCtrl); // UserLevel
+			$this->UpdateSort($this->Username, $bCtrl); // Username
+			$this->UpdateSort($this->Activated, $bCtrl); // Activated
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1437,25 +1472,25 @@ class ct96_employees_list extends ct96_employees {
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanView();
 		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// List actions
@@ -1472,6 +1507,14 @@ class ct96_employees_list extends ct96_employees {
 		$item->OnLeft = TRUE;
 		$item->Header = "<input type=\"checkbox\" name=\"key\" id=\"key\" onclick=\"ew_SelectAllKey(this);\">";
 		$item->MoveTo(0);
+		$item->ShowInDropDown = FALSE;
+		$item->ShowInButtonGroup = FALSE;
+
+		// "sequence"
+		$item = &$this->ListOptions->Add("sequence");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = TRUE;
+		$item->OnLeft = TRUE; // Always on left
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
@@ -1496,10 +1539,14 @@ class ct96_employees_list extends ct96_employees {
 		global $Security, $Language, $objForm;
 		$this->ListOptions->LoadDefault();
 
+		// "sequence"
+		$oListOpt = &$this->ListOptions->Items["sequence"];
+		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
+
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if (TRUE) {
+		if ($Security->CanView() && $this->ShowOptionLink('view')) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1508,7 +1555,7 @@ class ct96_employees_list extends ct96_employees {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit() && $this->ShowOptionLink('edit')) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1517,7 +1564,7 @@ class ct96_employees_list extends ct96_employees {
 		// "copy"
 		$oListOpt = &$this->ListOptions->Items["copy"];
 		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if (TRUE) {
+		if ($Security->CanAdd() && $this->ShowOptionLink('add')) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1525,7 +1572,7 @@ class ct96_employees_list extends ct96_employees {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete() && $this->ShowOptionLink('delete'))
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -1578,7 +1625,7 @@ class ct96_employees_list extends ct96_employees {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
 		// Set up options default
@@ -1677,7 +1724,19 @@ class ct96_employees_list extends ct96_employees {
 				while (!$rs->EOF) {
 					$this->SelectedIndex++;
 					$row = $rs->fields;
-					$Processed = $this->Row_CustomAction($UserAction, $row);
+					$user = $row['Username'];
+					if ($userlist <> "") $userlist .= ",";
+					$userlist .= $user;
+					if ($UserAction == "resendregisteremail")
+						$Processed = FALSE;
+					elseif ($UserAction == "resetconcurrentuser")
+						$Processed = FALSE;
+					elseif ($UserAction == "resetloginretry")
+						$Processed = FALSE;
+					elseif ($UserAction == "setpasswordexpired")
+						$Processed = FALSE;
+					else
+						$Processed = $this->Row_CustomAction($UserAction, $row);
 					if (!$Processed) break;
 					$rs->MoveNext();
 				}
@@ -1750,6 +1809,11 @@ class ct96_employees_list extends ct96_employees {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -2174,7 +2238,30 @@ class ct96_employees_list extends ct96_employees {
 		$this->Password->ViewCustomAttributes = "";
 
 		// UserLevel
-		$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+		if ($Security->CanAdmin()) { // System admin
+		if (strval($this->UserLevel->CurrentValue) <> "") {
+			$sFilterWrk = "`userlevelid`" . ew_SearchString("=", $this->UserLevel->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `userlevelid`, `userlevelname` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t97_userlevels`";
+		$sWhereWrk = "";
+		$this->UserLevel->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->UserLevel, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->UserLevel->ViewValue = $this->UserLevel->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+			}
+		} else {
+			$this->UserLevel->ViewValue = NULL;
+		}
+		} else {
+			$this->UserLevel->ViewValue = $Language->Phrase("PasswordMask");
+		}
 		$this->UserLevel->ViewCustomAttributes = "";
 
 		// Username
@@ -2298,8 +2385,14 @@ class ct96_employees_list extends ct96_employees {
 			// EmployeeID
 			$this->EmployeeID->EditAttrs["class"] = "form-control";
 			$this->EmployeeID->EditCustomAttributes = "";
+			if (!$Security->IsAdmin() && $Security->IsLoggedIn() && !$this->UserIDAllow($this->CurrentAction)) { // Non system admin
+				$this->EmployeeID->AdvancedSearch->SearchValue = CurrentUserID();
+			$this->EmployeeID->EditValue = $this->EmployeeID->AdvancedSearch->SearchValue;
+			$this->EmployeeID->ViewCustomAttributes = "";
+			} else {
 			$this->EmployeeID->EditValue = ew_HtmlEncode($this->EmployeeID->AdvancedSearch->SearchValue);
 			$this->EmployeeID->PlaceHolder = ew_RemoveHtml($this->EmployeeID->FldCaption());
+			}
 
 			// LastName
 			$this->LastName->EditAttrs["class"] = "form-control";
@@ -2398,7 +2491,7 @@ class ct96_employees_list extends ct96_employees {
 			$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
 
 			// Password
-			$this->Password->EditAttrs["class"] = "form-control";
+			$this->Password->EditAttrs["class"] = "form-control ewPasswordStrength";
 			$this->Password->EditCustomAttributes = "";
 			$this->Password->EditValue = ew_HtmlEncode($this->Password->AdvancedSearch->SearchValue);
 			$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
@@ -2406,8 +2499,10 @@ class ct96_employees_list extends ct96_employees {
 			// UserLevel
 			$this->UserLevel->EditAttrs["class"] = "form-control";
 			$this->UserLevel->EditCustomAttributes = "";
-			$this->UserLevel->EditValue = ew_HtmlEncode($this->UserLevel->AdvancedSearch->SearchValue);
-			$this->UserLevel->PlaceHolder = ew_RemoveHtml($this->UserLevel->FldCaption());
+			if (!$Security->CanAdmin()) { // System admin
+				$this->UserLevel->EditValue = $Language->Phrase("PasswordMask");
+			} else {
+			}
 
 			// Username
 			$this->Username->EditAttrs["class"] = "form-control";
@@ -2478,6 +2573,14 @@ class ct96_employees_list extends ct96_employees {
 		$this->Username->AdvancedSearch->Load();
 		$this->Activated->AdvancedSearch->Load();
 		$this->Profile->AdvancedSearch->Load();
+	}
+
+	// Show link optionally based on User ID
+	function ShowOptionLink($id = "") {
+		global $Security;
+		if ($Security->IsLoggedIn() && !$Security->IsAdmin() && !$this->UserIDAllow($id))
+			return $Security->IsValidUserID($this->EmployeeID->CurrentValue);
+		return TRUE;
 	}
 
 	// Set up Breadcrumb
@@ -2677,6 +2780,7 @@ ft96_employeeslist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
+ft96_employeeslist.Lists["x_UserLevel"] = {"LinkField":"x_userlevelid","Ajax":true,"AutoFill":false,"DisplayFields":["x_userlevelname","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t97_userlevels"};
 ft96_employeeslist.Lists["x_Activated"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft96_employeeslist.Lists["x_Activated"].Options = <?php echo json_encode($t96_employees->Activated->Options()) ?>;
 
@@ -2752,13 +2856,23 @@ ft96_employeeslistsrch.Lists["x_Activated"].Options = <?php echo json_encode($t9
 
 	// Set no record found message
 	if ($t96_employees->CurrentAction == "" && $t96_employees_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t96_employees_list->setWarningMessage(ew_DeniedMsg());
 		if ($t96_employees_list->SearchWhere == "0=101")
 			$t96_employees_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
 			$t96_employees_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t96_employees_list->AuditTrailOnSearch && $t96_employees_list->Command == "search" && !$t96_employees_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t96_employees_list->getSessionWhere();
+		$t96_employees_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t96_employees_list->RenderOtherOptions();
 ?>
+<?php if ($Security->CanSearch()) { ?>
 <?php if ($t96_employees->Export == "" && $t96_employees->CurrentAction == "") { ?>
 <form name="ft96_employeeslistsrch" id="ft96_employeeslistsrch" class="form-inline ewForm" action="<?php echo ew_CurrentPage() ?>">
 <?php $SearchPanelClass = ($t96_employees_list->SearchWhere <> "") ? " in" : " in"; ?>
@@ -2811,6 +2925,7 @@ $t96_employees_list->RenderRow();
 </div>
 </form>
 <?php } ?>
+<?php } ?>
 <?php $t96_employees_list->ShowPageHeader(); ?>
 <?php
 $t96_employees_list->ShowMessage();
@@ -2843,7 +2958,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->EmployeeID) == "") { ?>
 		<th data-name="EmployeeID"><div id="elh_t96_employees_EmployeeID" class="t96_employees_EmployeeID"><div class="ewTableHeaderCaption"><?php echo $t96_employees->EmployeeID->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="EmployeeID"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->EmployeeID) ?>',1);"><div id="elh_t96_employees_EmployeeID" class="t96_employees_EmployeeID">
+		<th data-name="EmployeeID"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->EmployeeID) ?>',2);"><div id="elh_t96_employees_EmployeeID" class="t96_employees_EmployeeID">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->EmployeeID->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->EmployeeID->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->EmployeeID->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2852,7 +2967,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->LastName) == "") { ?>
 		<th data-name="LastName"><div id="elh_t96_employees_LastName" class="t96_employees_LastName"><div class="ewTableHeaderCaption"><?php echo $t96_employees->LastName->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="LastName"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->LastName) ?>',1);"><div id="elh_t96_employees_LastName" class="t96_employees_LastName">
+		<th data-name="LastName"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->LastName) ?>',2);"><div id="elh_t96_employees_LastName" class="t96_employees_LastName">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->LastName->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->LastName->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->LastName->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2861,7 +2976,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->FirstName) == "") { ?>
 		<th data-name="FirstName"><div id="elh_t96_employees_FirstName" class="t96_employees_FirstName"><div class="ewTableHeaderCaption"><?php echo $t96_employees->FirstName->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="FirstName"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->FirstName) ?>',1);"><div id="elh_t96_employees_FirstName" class="t96_employees_FirstName">
+		<th data-name="FirstName"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->FirstName) ?>',2);"><div id="elh_t96_employees_FirstName" class="t96_employees_FirstName">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->FirstName->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->FirstName->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->FirstName->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2870,7 +2985,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Title) == "") { ?>
 		<th data-name="Title"><div id="elh_t96_employees_Title" class="t96_employees_Title"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Title->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Title"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Title) ?>',1);"><div id="elh_t96_employees_Title" class="t96_employees_Title">
+		<th data-name="Title"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Title) ?>',2);"><div id="elh_t96_employees_Title" class="t96_employees_Title">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Title->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Title->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Title->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2879,7 +2994,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->TitleOfCourtesy) == "") { ?>
 		<th data-name="TitleOfCourtesy"><div id="elh_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy"><div class="ewTableHeaderCaption"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="TitleOfCourtesy"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->TitleOfCourtesy) ?>',1);"><div id="elh_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy">
+		<th data-name="TitleOfCourtesy"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->TitleOfCourtesy) ?>',2);"><div id="elh_t96_employees_TitleOfCourtesy" class="t96_employees_TitleOfCourtesy">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->TitleOfCourtesy->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->TitleOfCourtesy->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->TitleOfCourtesy->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2888,7 +3003,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->BirthDate) == "") { ?>
 		<th data-name="BirthDate"><div id="elh_t96_employees_BirthDate" class="t96_employees_BirthDate"><div class="ewTableHeaderCaption"><?php echo $t96_employees->BirthDate->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="BirthDate"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->BirthDate) ?>',1);"><div id="elh_t96_employees_BirthDate" class="t96_employees_BirthDate">
+		<th data-name="BirthDate"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->BirthDate) ?>',2);"><div id="elh_t96_employees_BirthDate" class="t96_employees_BirthDate">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->BirthDate->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->BirthDate->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->BirthDate->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2897,7 +3012,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->HireDate) == "") { ?>
 		<th data-name="HireDate"><div id="elh_t96_employees_HireDate" class="t96_employees_HireDate"><div class="ewTableHeaderCaption"><?php echo $t96_employees->HireDate->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="HireDate"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->HireDate) ?>',1);"><div id="elh_t96_employees_HireDate" class="t96_employees_HireDate">
+		<th data-name="HireDate"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->HireDate) ?>',2);"><div id="elh_t96_employees_HireDate" class="t96_employees_HireDate">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->HireDate->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->HireDate->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->HireDate->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2906,7 +3021,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Address) == "") { ?>
 		<th data-name="Address"><div id="elh_t96_employees_Address" class="t96_employees_Address"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Address->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Address"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Address) ?>',1);"><div id="elh_t96_employees_Address" class="t96_employees_Address">
+		<th data-name="Address"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Address) ?>',2);"><div id="elh_t96_employees_Address" class="t96_employees_Address">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Address->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Address->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Address->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2915,7 +3030,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->City) == "") { ?>
 		<th data-name="City"><div id="elh_t96_employees_City" class="t96_employees_City"><div class="ewTableHeaderCaption"><?php echo $t96_employees->City->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="City"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->City) ?>',1);"><div id="elh_t96_employees_City" class="t96_employees_City">
+		<th data-name="City"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->City) ?>',2);"><div id="elh_t96_employees_City" class="t96_employees_City">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->City->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->City->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->City->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2924,7 +3039,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Region) == "") { ?>
 		<th data-name="Region"><div id="elh_t96_employees_Region" class="t96_employees_Region"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Region->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Region"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Region) ?>',1);"><div id="elh_t96_employees_Region" class="t96_employees_Region">
+		<th data-name="Region"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Region) ?>',2);"><div id="elh_t96_employees_Region" class="t96_employees_Region">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Region->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Region->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Region->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2933,7 +3048,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->PostalCode) == "") { ?>
 		<th data-name="PostalCode"><div id="elh_t96_employees_PostalCode" class="t96_employees_PostalCode"><div class="ewTableHeaderCaption"><?php echo $t96_employees->PostalCode->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="PostalCode"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->PostalCode) ?>',1);"><div id="elh_t96_employees_PostalCode" class="t96_employees_PostalCode">
+		<th data-name="PostalCode"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->PostalCode) ?>',2);"><div id="elh_t96_employees_PostalCode" class="t96_employees_PostalCode">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->PostalCode->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->PostalCode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->PostalCode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2942,7 +3057,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Country) == "") { ?>
 		<th data-name="Country"><div id="elh_t96_employees_Country" class="t96_employees_Country"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Country->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Country"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Country) ?>',1);"><div id="elh_t96_employees_Country" class="t96_employees_Country">
+		<th data-name="Country"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Country) ?>',2);"><div id="elh_t96_employees_Country" class="t96_employees_Country">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Country->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Country->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Country->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2951,7 +3066,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->HomePhone) == "") { ?>
 		<th data-name="HomePhone"><div id="elh_t96_employees_HomePhone" class="t96_employees_HomePhone"><div class="ewTableHeaderCaption"><?php echo $t96_employees->HomePhone->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="HomePhone"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->HomePhone) ?>',1);"><div id="elh_t96_employees_HomePhone" class="t96_employees_HomePhone">
+		<th data-name="HomePhone"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->HomePhone) ?>',2);"><div id="elh_t96_employees_HomePhone" class="t96_employees_HomePhone">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->HomePhone->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->HomePhone->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->HomePhone->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2960,7 +3075,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Extension) == "") { ?>
 		<th data-name="Extension"><div id="elh_t96_employees_Extension" class="t96_employees_Extension"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Extension->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Extension"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Extension) ?>',1);"><div id="elh_t96_employees_Extension" class="t96_employees_Extension">
+		<th data-name="Extension"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Extension) ?>',2);"><div id="elh_t96_employees_Extension" class="t96_employees_Extension">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Extension->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Extension->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Extension->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2969,7 +3084,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->_Email) == "") { ?>
 		<th data-name="_Email"><div id="elh_t96_employees__Email" class="t96_employees__Email"><div class="ewTableHeaderCaption"><?php echo $t96_employees->_Email->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="_Email"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->_Email) ?>',1);"><div id="elh_t96_employees__Email" class="t96_employees__Email">
+		<th data-name="_Email"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->_Email) ?>',2);"><div id="elh_t96_employees__Email" class="t96_employees__Email">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->_Email->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->_Email->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->_Email->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2978,7 +3093,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Photo) == "") { ?>
 		<th data-name="Photo"><div id="elh_t96_employees_Photo" class="t96_employees_Photo"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Photo->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Photo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Photo) ?>',1);"><div id="elh_t96_employees_Photo" class="t96_employees_Photo">
+		<th data-name="Photo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Photo) ?>',2);"><div id="elh_t96_employees_Photo" class="t96_employees_Photo">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Photo->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Photo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Photo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2987,7 +3102,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->ReportsTo) == "") { ?>
 		<th data-name="ReportsTo"><div id="elh_t96_employees_ReportsTo" class="t96_employees_ReportsTo"><div class="ewTableHeaderCaption"><?php echo $t96_employees->ReportsTo->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="ReportsTo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->ReportsTo) ?>',1);"><div id="elh_t96_employees_ReportsTo" class="t96_employees_ReportsTo">
+		<th data-name="ReportsTo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->ReportsTo) ?>',2);"><div id="elh_t96_employees_ReportsTo" class="t96_employees_ReportsTo">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->ReportsTo->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->ReportsTo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->ReportsTo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2996,7 +3111,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Password) == "") { ?>
 		<th data-name="Password"><div id="elh_t96_employees_Password" class="t96_employees_Password"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Password->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Password"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Password) ?>',1);"><div id="elh_t96_employees_Password" class="t96_employees_Password">
+		<th data-name="Password"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Password) ?>',2);"><div id="elh_t96_employees_Password" class="t96_employees_Password">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Password->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Password->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Password->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -3005,7 +3120,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->UserLevel) == "") { ?>
 		<th data-name="UserLevel"><div id="elh_t96_employees_UserLevel" class="t96_employees_UserLevel"><div class="ewTableHeaderCaption"><?php echo $t96_employees->UserLevel->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="UserLevel"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->UserLevel) ?>',1);"><div id="elh_t96_employees_UserLevel" class="t96_employees_UserLevel">
+		<th data-name="UserLevel"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->UserLevel) ?>',2);"><div id="elh_t96_employees_UserLevel" class="t96_employees_UserLevel">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->UserLevel->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->UserLevel->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->UserLevel->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -3014,7 +3129,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Username) == "") { ?>
 		<th data-name="Username"><div id="elh_t96_employees_Username" class="t96_employees_Username"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Username->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Username"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Username) ?>',1);"><div id="elh_t96_employees_Username" class="t96_employees_Username">
+		<th data-name="Username"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Username) ?>',2);"><div id="elh_t96_employees_Username" class="t96_employees_Username">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Username->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Username->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Username->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -3023,7 +3138,7 @@ $t96_employees_list->ListOptions->Render("header", "left");
 	<?php if ($t96_employees->SortUrl($t96_employees->Activated) == "") { ?>
 		<th data-name="Activated"><div id="elh_t96_employees_Activated" class="t96_employees_Activated"><div class="ewTableHeaderCaption"><?php echo $t96_employees->Activated->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Activated"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Activated) ?>',1);"><div id="elh_t96_employees_Activated" class="t96_employees_Activated">
+		<th data-name="Activated"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t96_employees->SortUrl($t96_employees->Activated) ?>',2);"><div id="elh_t96_employees_Activated" class="t96_employees_Activated">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t96_employees->Activated->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t96_employees->Activated->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t96_employees->Activated->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>

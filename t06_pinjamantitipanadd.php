@@ -7,6 +7,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t06_pinjamantitipaninfo.php" ?>
 <?php include_once "t03_pinjamaninfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -216,6 +217,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -234,6 +236,9 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		// Table object (t03_pinjaman)
 		if (!isset($GLOBALS['t03_pinjaman'])) $GLOBALS['t03_pinjaman'] = new ct03_pinjaman();
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'add', TRUE);
@@ -247,6 +252,12 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -254,6 +265,26 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanAdd()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t06_pinjamantitipanlist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Create form object
 		$objForm = new cFormObj();
@@ -263,6 +294,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$this->Masuk->SetVisibility();
 		$this->Keluar->SetVisibility();
 		$this->Sisa->SetVisibility();
+		$this->Angsuran_Ke->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -459,6 +491,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$this->Masuk->CurrentValue = 0.00;
 		$this->Keluar->CurrentValue = 0.00;
 		$this->Sisa->CurrentValue = 0.00;
+		$this->Angsuran_Ke->CurrentValue = 0;
 	}
 
 	// Load form values
@@ -482,6 +515,9 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		if (!$this->Sisa->FldIsDetailKey) {
 			$this->Sisa->setFormValue($objForm->GetValue("x_Sisa"));
 		}
+		if (!$this->Angsuran_Ke->FldIsDetailKey) {
+			$this->Angsuran_Ke->setFormValue($objForm->GetValue("x_Angsuran_Ke"));
+		}
 	}
 
 	// Restore form values
@@ -494,6 +530,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$this->Masuk->CurrentValue = $this->Masuk->FormValue;
 		$this->Keluar->CurrentValue = $this->Keluar->FormValue;
 		$this->Sisa->CurrentValue = $this->Sisa->FormValue;
+		$this->Angsuran_Ke->CurrentValue = $this->Angsuran_Ke->FormValue;
 	}
 
 	// Load row based on key values
@@ -532,6 +569,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$this->Masuk->setDbValue($rs->fields('Masuk'));
 		$this->Keluar->setDbValue($rs->fields('Keluar'));
 		$this->Sisa->setDbValue($rs->fields('Sisa'));
+		$this->Angsuran_Ke->setDbValue($rs->fields('Angsuran_Ke'));
 	}
 
 	// Load DbValue from recordset
@@ -545,6 +583,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$this->Masuk->DbValue = $row['Masuk'];
 		$this->Keluar->DbValue = $row['Keluar'];
 		$this->Sisa->DbValue = $row['Sisa'];
+		$this->Angsuran_Ke->DbValue = $row['Angsuran_Ke'];
 	}
 
 	// Load old record
@@ -599,6 +638,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		// Masuk
 		// Keluar
 		// Sisa
+		// Angsuran_Ke
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -634,8 +674,12 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		// Sisa
 		$this->Sisa->ViewValue = $this->Sisa->CurrentValue;
 		$this->Sisa->ViewValue = ew_FormatNumber($this->Sisa->ViewValue, 2, -2, -2, -2);
-		$this->Sisa->CellCssStyle .= "text-align: justify;";
+		$this->Sisa->CellCssStyle .= "text-align: right;";
 		$this->Sisa->ViewCustomAttributes = "";
+
+		// Angsuran_Ke
+		$this->Angsuran_Ke->ViewValue = $this->Angsuran_Ke->CurrentValue;
+		$this->Angsuran_Ke->ViewCustomAttributes = "";
 
 			// Tanggal
 			$this->Tanggal->LinkCustomAttributes = "";
@@ -661,11 +705,16 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 			$this->Sisa->LinkCustomAttributes = "";
 			$this->Sisa->HrefValue = "";
 			$this->Sisa->TooltipValue = "";
+
+			// Angsuran_Ke
+			$this->Angsuran_Ke->LinkCustomAttributes = "";
+			$this->Angsuran_Ke->HrefValue = "";
+			$this->Angsuran_Ke->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// Tanggal
 			$this->Tanggal->EditAttrs["class"] = "form-control";
-			$this->Tanggal->EditCustomAttributes = "";
+			$this->Tanggal->EditCustomAttributes = "style='width: 115px;'";
 			$this->Tanggal->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Tanggal->CurrentValue, 7));
 			$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
@@ -696,6 +745,12 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 			$this->Sisa->PlaceHolder = ew_RemoveHtml($this->Sisa->FldCaption());
 			if (strval($this->Sisa->EditValue) <> "" && is_numeric($this->Sisa->EditValue)) $this->Sisa->EditValue = ew_FormatNumber($this->Sisa->EditValue, -2, -2, -2, -2);
 
+			// Angsuran_Ke
+			$this->Angsuran_Ke->EditAttrs["class"] = "form-control";
+			$this->Angsuran_Ke->EditCustomAttributes = "";
+			$this->Angsuran_Ke->EditValue = ew_HtmlEncode($this->Angsuran_Ke->CurrentValue);
+			$this->Angsuran_Ke->PlaceHolder = ew_RemoveHtml($this->Angsuran_Ke->FldCaption());
+
 			// Add refer script
 			// Tanggal
 
@@ -717,6 +772,10 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 			// Sisa
 			$this->Sisa->LinkCustomAttributes = "";
 			$this->Sisa->HrefValue = "";
+
+			// Angsuran_Ke
+			$this->Angsuran_Ke->LinkCustomAttributes = "";
+			$this->Angsuran_Ke->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -762,6 +821,12 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		}
 		if (!ew_CheckNumber($this->Sisa->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Sisa->FldErrMsg());
+		}
+		if (!$this->Angsuran_Ke->FldIsDetailKey && !is_null($this->Angsuran_Ke->FormValue) && $this->Angsuran_Ke->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Angsuran_Ke->FldCaption(), $this->Angsuran_Ke->ReqErrMsg));
+		}
+		if (!ew_CheckInteger($this->Angsuran_Ke->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Angsuran_Ke->FldErrMsg());
 		}
 
 		// Return validate result
@@ -821,6 +886,9 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 
 		// Sisa
 		$this->Sisa->SetDbValueDef($rsnew, $this->Sisa->CurrentValue, 0, strval($this->Sisa->CurrentValue) == "");
+
+		// Angsuran_Ke
+		$this->Angsuran_Ke->SetDbValueDef($rsnew, $this->Angsuran_Ke->CurrentValue, 0, strval($this->Angsuran_Ke->CurrentValue) == "");
 
 		// pinjaman_id
 		if ($this->pinjaman_id->getSessionValue() <> "") {
@@ -1075,6 +1143,12 @@ ft06_pinjamantitipanadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Sisa");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->Sisa->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Angsuran_Ke");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pinjamantitipan->Angsuran_Ke->FldCaption(), $t06_pinjamantitipan->Angsuran_Ke->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Angsuran_Ke");
+			if (elm && !ew_CheckInteger(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->Angsuran_Ke->FldErrMsg()) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1145,7 +1219,7 @@ $t06_pinjamantitipan_add->ShowMessage();
 		<label id="elh_t06_pinjamantitipan_Tanggal" for="x_Tanggal" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->Tanggal->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t06_pinjamantitipan->Tanggal->CellAttributes() ?>>
 <span id="el_t06_pinjamantitipan_Tanggal">
-<input type="text" data-table="t06_pinjamantitipan" data-field="x_Tanggal" data-format="7" name="x_Tanggal" id="x_Tanggal" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->Tanggal->EditValue ?>"<?php echo $t06_pinjamantitipan->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t06_pinjamantitipan" data-field="x_Tanggal" data-format="7" name="x_Tanggal" id="x_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->Tanggal->EditValue ?>"<?php echo $t06_pinjamantitipan->Tanggal->EditAttributes() ?>>
 <?php if (!$t06_pinjamantitipan->Tanggal->ReadOnly && !$t06_pinjamantitipan->Tanggal->Disabled && !isset($t06_pinjamantitipan->Tanggal->EditAttrs["readonly"]) && !isset($t06_pinjamantitipan->Tanggal->EditAttrs["disabled"])) { ?>
 <script type="text/javascript">
 ew_CreateCalendar("ft06_pinjamantitipanadd", "x_Tanggal", 7);
@@ -1160,7 +1234,7 @@ ew_CreateCalendar("ft06_pinjamantitipanadd", "x_Tanggal", 7);
 		<label id="elh_t06_pinjamantitipan_Keterangan" for="x_Keterangan" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->Keterangan->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t06_pinjamantitipan->Keterangan->CellAttributes() ?>>
 <span id="el_t06_pinjamantitipan_Keterangan">
-<textarea data-table="t06_pinjamantitipan" data-field="x_Keterangan" name="x_Keterangan" id="x_Keterangan" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Keterangan->getPlaceHolder()) ?>"<?php echo $t06_pinjamantitipan->Keterangan->EditAttributes() ?>><?php echo $t06_pinjamantitipan->Keterangan->EditValue ?></textarea>
+<textarea data-table="t06_pinjamantitipan" data-field="x_Keterangan" name="x_Keterangan" id="x_Keterangan" cols="15" rows="2" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Keterangan->getPlaceHolder()) ?>"<?php echo $t06_pinjamantitipan->Keterangan->EditAttributes() ?>><?php echo $t06_pinjamantitipan->Keterangan->EditValue ?></textarea>
 </span>
 <?php echo $t06_pinjamantitipan->Keterangan->CustomMsg ?></div></div>
 	</div>
@@ -1193,6 +1267,16 @@ ew_CreateCalendar("ft06_pinjamantitipanadd", "x_Tanggal", 7);
 <input type="text" data-table="t06_pinjamantitipan" data-field="x_Sisa" name="x_Sisa" id="x_Sisa" size="10" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Sisa->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->Sisa->EditValue ?>"<?php echo $t06_pinjamantitipan->Sisa->EditAttributes() ?>>
 </span>
 <?php echo $t06_pinjamantitipan->Sisa->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t06_pinjamantitipan->Angsuran_Ke->Visible) { // Angsuran_Ke ?>
+	<div id="r_Angsuran_Ke" class="form-group">
+		<label id="elh_t06_pinjamantitipan_Angsuran_Ke" for="x_Angsuran_Ke" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->Angsuran_Ke->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t06_pinjamantitipan->Angsuran_Ke->CellAttributes() ?>>
+<span id="el_t06_pinjamantitipan_Angsuran_Ke">
+<input type="text" data-table="t06_pinjamantitipan" data-field="x_Angsuran_Ke" name="x_Angsuran_Ke" id="x_Angsuran_Ke" size="30" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Angsuran_Ke->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->Angsuran_Ke->EditValue ?>"<?php echo $t06_pinjamantitipan->Angsuran_Ke->EditAttributes() ?>>
+</span>
+<?php echo $t06_pinjamantitipan->Angsuran_Ke->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

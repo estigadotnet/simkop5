@@ -5,6 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -177,6 +178,7 @@ class cdefault {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -192,6 +194,12 @@ class cdefault {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect();
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -199,6 +207,9 @@ class cdefault {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -253,7 +264,51 @@ class cdefault {
 		// If session expired, show session expired message
 		if (@$_GET["expired"] == "1")
 			$this->setFailureMessage($Language->Phrase("SessionExpired"));
-		$this->Page_Terminate("t03_pinjamanlist.php"); // Exit and go to default page
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		$Security->LoadUserLevel(); // Load User Level
+		if ($Security->AllowList(CurrentProjectID() . 'cf01_home.php'))
+		$this->Page_Terminate("cf01_home.php"); // Exit and go to default page
+		if ($Security->AllowList(CurrentProjectID() . 'cf02_tutupbuku.php'))
+			$this->Page_Terminate("cf02_tutupbuku.php");
+		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
+			$this->Page_Terminate("t01_nasabahlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))
+			$this->Page_Terminate("t02_jaminanlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't03_pinjaman'))
+			$this->Page_Terminate("t03_pinjamanlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't04_pinjamanangsuran'))
+			$this->Page_Terminate("t04_pinjamanangsuranlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't04_pinjamanangsurantemp'))
+			$this->Page_Terminate("t04_pinjamanangsurantemplist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't05_pinjamanjaminan'))
+			$this->Page_Terminate("t05_pinjamanjaminanlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't06_pinjamantitipan'))
+			$this->Page_Terminate("t06_pinjamantitipanlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't07_marketing'))
+			$this->Page_Terminate("t07_marketinglist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't08_pinjamanpotongan'))
+			$this->Page_Terminate("t08_pinjamanpotonganlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't92_periodeold'))
+			$this->Page_Terminate("t92_periodeoldlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't93_periode'))
+			$this->Page_Terminate("t93_periodelist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't94_log'))
+			$this->Page_Terminate("t94_loglist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't95_logdesc'))
+			$this->Page_Terminate("t95_logdesclist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't96_employees'))
+			$this->Page_Terminate("t96_employeeslist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't97_userlevels'))
+			$this->Page_Terminate("t97_userlevelslist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't98_userlevelpermissions'))
+			$this->Page_Terminate("t98_userlevelpermissionslist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
+			$this->Page_Terminate("t99_audittraillist.php");
+		if ($Security->IsLoggedIn()) {
+			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
+		} else {
+			$this->Page_Terminate("login.php"); // Exit and go to login page
+		}
 	}
 
 	// Page Load event

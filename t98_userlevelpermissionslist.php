@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t98_userlevelpermissionsinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -255,6 +256,7 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -285,6 +287,9 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 		$this->MultiDeleteUrl = "t98_userlevelpermissionsdelete.php";
 		$this->MultiUpdateUrl = "t98_userlevelpermissionsupdate.php";
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -298,6 +303,12 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -333,6 +344,22 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanAdmin()) {
+			$Security->SaveLastUrl();
+			$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -588,6 +615,8 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
@@ -813,6 +842,7 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 	function BasicSearchWhere($Default = FALSE) {
 		global $Security;
 		$sSearchStr = "";
+		if (!$Security->CanSearch()) return "";
 		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
 		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
 		if ($sSearchKeyword <> "") {
@@ -900,13 +930,16 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->userlevelid); // userlevelid
-			$this->UpdateSort($this->_tablename); // tablename
-			$this->UpdateSort($this->permission); // permission
+			$this->UpdateSort($this->userlevelid, $bCtrl); // userlevelid
+			$this->UpdateSort($this->_tablename, $bCtrl); // tablename
+			$this->UpdateSort($this->permission, $bCtrl); // permission
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -963,25 +996,25 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanView();
 		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// List actions
@@ -1025,7 +1058,7 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if (TRUE) {
+		if ($Security->CanView()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1034,7 +1067,7 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1043,7 +1076,7 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 		// "copy"
 		$oListOpt = &$this->ListOptions->Items["copy"];
 		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if (TRUE) {
+		if ($Security->CanAdd()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1051,7 +1084,7 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete())
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -1104,7 +1137,7 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
 		// Set up options default
@@ -1276,6 +1309,11 @@ class ct98_userlevelpermissions_list extends ct98_userlevelpermissions {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -1708,13 +1746,23 @@ var CurrentSearchForm = ft98_userlevelpermissionslistsrch = new ew_Form("ft98_us
 
 	// Set no record found message
 	if ($t98_userlevelpermissions->CurrentAction == "" && $t98_userlevelpermissions_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t98_userlevelpermissions_list->setWarningMessage(ew_DeniedMsg());
 		if ($t98_userlevelpermissions_list->SearchWhere == "0=101")
 			$t98_userlevelpermissions_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
 			$t98_userlevelpermissions_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t98_userlevelpermissions_list->AuditTrailOnSearch && $t98_userlevelpermissions_list->Command == "search" && !$t98_userlevelpermissions_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t98_userlevelpermissions_list->getSessionWhere();
+		$t98_userlevelpermissions_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t98_userlevelpermissions_list->RenderOtherOptions();
 ?>
+<?php if ($Security->CanSearch()) { ?>
 <?php if ($t98_userlevelpermissions->Export == "" && $t98_userlevelpermissions->CurrentAction == "") { ?>
 <form name="ft98_userlevelpermissionslistsrch" id="ft98_userlevelpermissionslistsrch" class="form-inline ewForm" action="<?php echo ew_CurrentPage() ?>">
 <?php $SearchPanelClass = ($t98_userlevelpermissions_list->SearchWhere <> "") ? " in" : " in"; ?>
@@ -1741,6 +1789,7 @@ $t98_userlevelpermissions_list->RenderOtherOptions();
 	</div>
 </div>
 </form>
+<?php } ?>
 <?php } ?>
 <?php $t98_userlevelpermissions_list->ShowPageHeader(); ?>
 <?php
@@ -1774,7 +1823,7 @@ $t98_userlevelpermissions_list->ListOptions->Render("header", "left");
 	<?php if ($t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->userlevelid) == "") { ?>
 		<th data-name="userlevelid"><div id="elh_t98_userlevelpermissions_userlevelid" class="t98_userlevelpermissions_userlevelid"><div class="ewTableHeaderCaption"><?php echo $t98_userlevelpermissions->userlevelid->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="userlevelid"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->userlevelid) ?>',1);"><div id="elh_t98_userlevelpermissions_userlevelid" class="t98_userlevelpermissions_userlevelid">
+		<th data-name="userlevelid"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->userlevelid) ?>',2);"><div id="elh_t98_userlevelpermissions_userlevelid" class="t98_userlevelpermissions_userlevelid">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t98_userlevelpermissions->userlevelid->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t98_userlevelpermissions->userlevelid->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t98_userlevelpermissions->userlevelid->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1783,7 +1832,7 @@ $t98_userlevelpermissions_list->ListOptions->Render("header", "left");
 	<?php if ($t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->_tablename) == "") { ?>
 		<th data-name="_tablename"><div id="elh_t98_userlevelpermissions__tablename" class="t98_userlevelpermissions__tablename"><div class="ewTableHeaderCaption"><?php echo $t98_userlevelpermissions->_tablename->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="_tablename"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->_tablename) ?>',1);"><div id="elh_t98_userlevelpermissions__tablename" class="t98_userlevelpermissions__tablename">
+		<th data-name="_tablename"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->_tablename) ?>',2);"><div id="elh_t98_userlevelpermissions__tablename" class="t98_userlevelpermissions__tablename">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t98_userlevelpermissions->_tablename->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t98_userlevelpermissions->_tablename->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t98_userlevelpermissions->_tablename->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1792,7 +1841,7 @@ $t98_userlevelpermissions_list->ListOptions->Render("header", "left");
 	<?php if ($t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->permission) == "") { ?>
 		<th data-name="permission"><div id="elh_t98_userlevelpermissions_permission" class="t98_userlevelpermissions_permission"><div class="ewTableHeaderCaption"><?php echo $t98_userlevelpermissions->permission->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="permission"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->permission) ?>',1);"><div id="elh_t98_userlevelpermissions_permission" class="t98_userlevelpermissions_permission">
+		<th data-name="permission"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t98_userlevelpermissions->SortUrl($t98_userlevelpermissions->permission) ?>',2);"><div id="elh_t98_userlevelpermissions_permission" class="t98_userlevelpermissions_permission">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t98_userlevelpermissions->permission->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t98_userlevelpermissions->permission->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t98_userlevelpermissions->permission->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>

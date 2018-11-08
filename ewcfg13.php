@@ -25,7 +25,7 @@ define("EW_CONFIG_FILE_FOLDER", EW_PROJECT_NAME, TRUE); // Config file name
 define("EW_PROJECT_ID", "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}", TRUE); // Project ID (GUID)
 $EW_RELATED_PROJECT_ID = "";
 $EW_RELATED_LANGUAGE_FOLDER = "";
-define("EW_RANDOM_KEY", '6Kxi2igj877C36Og', TRUE); // Random key for encryption
+define("EW_RANDOM_KEY", 'cB9r8YfvxgnOa9cx', TRUE); // Random key for encryption
 define("EW_PROJECT_STYLESHEET_FILENAME", "phpcss/simkop5_prj.css", TRUE); // Project stylesheet file name
 define("EW_CHARSET", "", TRUE); // Project charset
 define("EW_EMAIL_CHARSET", EW_CHARSET, TRUE); // Email charset
@@ -48,7 +48,7 @@ if (!defined("EW_ADODB_TZ_OFFSET"))
 	define("EW_ADODB_TZ_OFFSET", FALSE, TRUE); // Use ADOdb time zone offset
 if (!defined("EW_USE_MYSQLI"))
 	define('EW_USE_MYSQLI', extension_loaded("mysqli"), TRUE); // Use MySQLi
-$EW_CONN["DB"] = array("conn" => NULL, "id" => "DB", "type" => "MYSQL", "host" => "localhost", "port" => 3307, "user" => "root", "pass" => "admin", "db" => "db_simkop5", "qs" => "`", "qe" => "`");
+$EW_CONN["DB"] = array("conn" => NULL, "id" => "DB", "type" => "MYSQL", "host" => "localhost", "port" => 3306, "user" => "root", "pass" => "admin", "db" => "db_simkop5", "qs" => "`", "qe" => "`");
 $EW_CONN[0] = &$EW_CONN["DB"];
 
 // Set up database error function
@@ -92,8 +92,8 @@ define("EW_MYSQL_CHARSET", "", TRUE);
  * Otherwise, existing users will not be able to login. MD5 hash is
  * irreversible, password will be reset during password recovery.
  */
-define("EW_ENCRYPTED_PASSWORD", FALSE, TRUE); // Use encrypted password
-define("EW_CASE_SENSITIVE_PASSWORD", FALSE, TRUE); // Case-sensitive password
+define("EW_ENCRYPTED_PASSWORD", TRUE, TRUE); // Use encrypted password
+define("EW_CASE_SENSITIVE_PASSWORD", TRUE, TRUE); // Case-sensitive password
 /**
  * Remove XSS
  * Note: If you want to allow these keywords, remove them from the following EW_XSS_ARRAY at your own risks.
@@ -207,15 +207,15 @@ define("EW_AUDIT_TRAIL_TO_DATABASE", TRUE, TRUE); // Write audit trail to DB
 define("EW_AUDIT_TRAIL_DBID", "DB", TRUE); // Audit trail DBID
 define("EW_AUDIT_TRAIL_TABLE_NAME", "t99_audittrail", TRUE); // Audit trail table name
 define("EW_AUDIT_TRAIL_TABLE_VAR", "t99_audittrail", TRUE); // Audit trail table var
-define("EW_AUDIT_TRAIL_FIELD_NAME_DATETIME", "", TRUE); // Audit trail DateTime field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_SCRIPT", "", TRUE); // Audit trail Script field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_USER", "", TRUE); // Audit trail User field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_ACTION", "", TRUE); // Audit trail Action field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_TABLE", "", TRUE); // Audit trail Table field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_FIELD", "", TRUE); // Audit trail Field field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_KEYVALUE", "", TRUE); // Audit trail Key Value field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_OLDVALUE", "", TRUE); // Audit trail Old Value field name
-define("EW_AUDIT_TRAIL_FIELD_NAME_NEWVALUE", "", TRUE); // Audit trail New Value field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_DATETIME", "datetime", TRUE); // Audit trail DateTime field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_SCRIPT", "script", TRUE); // Audit trail Script field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_USER", "user", TRUE); // Audit trail User field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_ACTION", "action", TRUE); // Audit trail Action field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_TABLE", "table", TRUE); // Audit trail Table field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_FIELD", "field", TRUE); // Audit trail Field field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_KEYVALUE", "keyvalue", TRUE); // Audit trail Key Value field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_OLDVALUE", "oldvalue", TRUE); // Audit trail Old Value field name
+define("EW_AUDIT_TRAIL_FIELD_NAME_NEWVALUE", "newvalue", TRUE); // Audit trail New Value field name
 
 // Security
 define("EW_ADMIN_USER_NAME", "", TRUE); // Administrator user name
@@ -224,6 +224,23 @@ define("EW_USE_CUSTOM_LOGIN", TRUE, TRUE); // Use custom login
 define("EW_ALLOW_LOGIN_BY_URL", FALSE, TRUE); // Allow login by URL
 define("EW_ALLOW_LOGIN_BY_SESSION", FALSE, TRUE); // Allow login by session variables
 define("EW_PHPASS_ITERATION_COUNT_LOG2", "[10,8]", TRUE); // Note: Use JSON array syntax
+
+// Dynamic User Level settings
+// User level definition table/field names
+
+@define("EW_USER_LEVEL_DBID", "DB", TRUE);
+@define("EW_USER_LEVEL_TABLE", "`t97_userlevels`", TRUE);
+@define("EW_USER_LEVEL_ID_FIELD", "`userlevelid`", TRUE);
+@define("EW_USER_LEVEL_NAME_FIELD", "`userlevelname`", TRUE);
+
+// User Level privileges table/field names
+@define("EW_USER_LEVEL_PRIV_DBID", "DB", TRUE);
+@define("EW_USER_LEVEL_PRIV_TABLE", "`t98_userlevelpermissions`", TRUE);
+@define("EW_USER_LEVEL_PRIV_TABLE_NAME_FIELD", "`tablename`", TRUE);
+@define("EW_USER_LEVEL_PRIV_TABLE_NAME_FIELD_2", "tablename", TRUE);
+@define("EW_USER_LEVEL_PRIV_TABLE_NAME_FIELD_SIZE", 255, TRUE);
+@define("EW_USER_LEVEL_PRIV_USER_LEVEL_ID_FIELD", "`userlevelid`", TRUE);
+@define("EW_USER_LEVEL_PRIV_PRIV_FIELD", "`permission`", TRUE);
 
 // User level constants
 define("EW_ALLOW_ADD", 1, TRUE); // Add
@@ -248,8 +265,14 @@ define("EW_USE_SUBQUERY_FOR_MASTER_USER_ID", FALSE, TRUE);
 define("EW_USER_ID_ALLOW", 104, TRUE);
 
 // User table filters
-// User Profile Constants
+define("EW_USER_TABLE_DBID", "DB", TRUE);
+define("EW_USER_TABLE", "`t96_employees`", TRUE);
+define("EW_USER_NAME_FILTER", "(`Username` = '%u')", TRUE);
+define("EW_USER_ID_FILTER", "(`EmployeeID` = %u)", TRUE);
+define("EW_USER_EMAIL_FILTER", "", TRUE);
+define("EW_USER_ACTIVATE_FILTER", "", TRUE);
 
+// User Profile Constants
 define("EW_USER_PROFILE_KEY_SEPARATOR", "", TRUE);
 define("EW_USER_PROFILE_FIELD_SEPARATOR", "", TRUE);
 define("EW_USER_PROFILE_SESSION_ID", "SessionID", TRUE);

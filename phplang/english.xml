@@ -583,6 +583,9 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="16">
+      <phrase id="menutext" value="Home" />
+    </menu>
     <menu id="1">
       <phrase id="menutext" value="Nasabah" />
     </menu>
@@ -601,33 +604,51 @@
     <menu id="6">
       <phrase id="menutext" value="Rincian Titipan" />
     </menu>
+    <menu id="19">
+      <phrase id="menutext" value="Potongan" />
+    </menu>
     <menu id="4">
       <phrase id="menutext" value="t 04 pinjamanangsuran" />
     </menu>
     <menu id="5">
       <phrase id="menutext" value="t 05 pinjamanjaminan" />
     </menu>
+    <menu id="17">
+      <phrase id="menutext" value="Tutup Buku" />
+    </menu>
+    <menu id="35">
+      <phrase id="menutext" value="Setup" />
+    </menu>
     <menu id="7">
-      <phrase id="menutext" value="t 93 periode" />
+      <phrase id="menutext" value="Periode" />
+    </menu>
+    <menu id="18">
+      <phrase id="menutext" value="t 92 periodeold" />
     </menu>
     <menu id="8">
-      <phrase id="menutext" value="t 94 log" />
+      <phrase id="menutext" value="Apps. Log" />
     </menu>
     <menu id="9">
-      <phrase id="menutext" value="t 95 logdesc" />
+      <phrase id="menutext" value="Description" />
     </menu>
     <menu id="10">
-      <phrase id="menutext" value="t 96 employees" />
+      <phrase id="menutext" value="Users" />
     </menu>
     <menu id="11">
-      <phrase id="menutext" value="t 97 userlevels" />
+      <phrase id="menutext" value="Level" />
     </menu>
     <menu id="12">
-      <phrase id="menutext" value="t 98 userlevelpermissions" />
+      <phrase id="menutext" value="Hak Akses" />
     </menu>
-    <menu id="13">
-      <phrase id="menutext" value="t 99 audittrail" />
+    <menu id="36">
+      <phrase id="menutext" value="Activity Log" />
     </menu>
+    <table id="cf01_home_php">
+      <phrase id="tblcaption" value="Home" />
+    </table>
+    <table id="cf02_tutupbuku_php">
+      <phrase id="tblcaption" value="Tutup Buku" />
+    </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
       <field id="id">
@@ -876,6 +897,9 @@
       <field id="sisa">
         <phrase id="fldcaption" value="Sisa" />
       </field>
+      <field id="angsuran_ke">
+        <phrase id="fldcaption" value="Angsuran Ke" />
+      </field>
     </table>
     <table id="t07_marketing">
       <phrase id="tblcaption" value="Marketing" />
@@ -886,8 +910,41 @@
         <phrase id="fldcaption" value="Nama" />
       </field>
     </table>
+    <table id="t08_pinjamanpotongan">
+      <phrase id="tblcaption" value="Potongan" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="pinjaman_id">
+        <phrase id="fldcaption" value="pinjaman id" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tgl. Input" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="t92_periodeold">
+      <phrase id="tblcaption" value="t 92 periodeold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="bulan">
+        <phrase id="fldcaption" value="Bulan" />
+      </field>
+      <field id="tahun">
+        <phrase id="fldcaption" value="Tahun" />
+      </field>
+      <field id="tahun_bulan">
+        <phrase id="fldcaption" value="Tahun Bulan" />
+      </field>
+    </table>
     <table id="t93_periode">
-      <phrase id="tblcaption" value="t 93 periode" />
+      <phrase id="tblcaption" value="Periode" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -902,37 +959,37 @@
       </field>
     </table>
     <table id="t94_log">
-      <phrase id="tblcaption" value="t 94 log" />
+      <phrase id="tblcaption" value="Apps. Log" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="index_">
-        <phrase id="fldcaption" value="index " />
+        <phrase id="fldcaption" value="#" />
       </field>
       <field id="subj_">
-        <phrase id="fldcaption" value="subj " />
+        <phrase id="fldcaption" value="Subject" />
       </field>
     </table>
     <table id="t95_logdesc">
-      <phrase id="tblcaption" value="t 95 logdesc" />
+      <phrase id="tblcaption" value="Description" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="log_id">
-        <phrase id="fldcaption" value="log id" />
+        <phrase id="fldcaption" value="Subject" />
       </field>
       <field id="date_issued">
-        <phrase id="fldcaption" value="date issued" />
+        <phrase id="fldcaption" value="Issued" />
       </field>
       <field id="desc_">
-        <phrase id="fldcaption" value="desc " />
+        <phrase id="fldcaption" value="Description" />
       </field>
       <field id="date_solved">
-        <phrase id="fldcaption" value="date solved" />
+        <phrase id="fldcaption" value="Solved" />
       </field>
     </table>
     <table id="t96_employees">
-      <phrase id="tblcaption" value="t 96 employees" />
+      <phrase id="tblcaption" value="Users" />
       <field id="employeeid">
         <phrase id="fldcaption" value="Employee ID" />
       </field>
@@ -1008,7 +1065,7 @@
       </field>
     </table>
     <table id="t97_userlevels">
-      <phrase id="tblcaption" value="t 97 userlevels" />
+      <phrase id="tblcaption" value="Level" />
       <field id="userlevelid">
         <phrase id="fldcaption" value="userlevelid" />
       </field>
@@ -1017,7 +1074,7 @@
       </field>
     </table>
     <table id="t98_userlevelpermissions">
-      <phrase id="tblcaption" value="t 98 userlevelpermissions" />
+      <phrase id="tblcaption" value="Hak Akses" />
       <field id="userlevelid">
         <phrase id="fldcaption" value="userlevelid" />
       </field>
@@ -1029,7 +1086,7 @@
       </field>
     </table>
     <table id="t99_audittrail">
-      <phrase id="tblcaption" value="t 99 audittrail" />
+      <phrase id="tblcaption" value="Activity Log" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -1045,10 +1102,10 @@
       <field id="action">
         <phrase id="fldcaption" value="action" />
       </field>
-      <field id="_table">
+      <field id="table">
         <phrase id="fldcaption" value="table" />
       </field>
-      <field id="_field">
+      <field id="field">
         <phrase id="fldcaption" value="field" />
       </field>
       <field id="keyvalue">

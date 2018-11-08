@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t01_nasabahinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "t02_jaminangridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -216,6 +217,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -231,6 +233,9 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$GLOBALS["Table"] = &$GLOBALS["t01_nasabah"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'edit', TRUE);
@@ -244,6 +249,12 @@ class ct01_nasabah_edit extends ct01_nasabah {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -251,6 +262,26 @@ class ct01_nasabah_edit extends ct01_nasabah {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanEdit()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t01_nasabahlist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Create form object
 		$objForm = new cFormObj();
@@ -836,7 +867,9 @@ class ct01_nasabah_edit extends ct01_nasabah {
 				if ($EditRow) {
 					if (in_array("t02_jaminan", $DetailTblVar) && $GLOBALS["t02_jaminan"]->DetailEdit) {
 						if (!isset($GLOBALS["t02_jaminan_grid"])) $GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid(); // Get detail page object
+						$Security->LoadCurrentUserLevel($this->ProjectID . "t02_jaminan"); // Load user level of detail table
 						$EditRow = $GLOBALS["t02_jaminan_grid"]->GridUpdate();
+						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
 					}
 				}
 

@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t05_pinjamanjaminaninfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -255,6 +256,7 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -285,6 +287,9 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 		$this->MultiDeleteUrl = "t05_pinjamanjaminandelete.php";
 		$this->MultiUpdateUrl = "t05_pinjamanjaminanupdate.php";
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -298,6 +303,12 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -333,6 +344,23 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -544,6 +572,8 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
@@ -607,13 +637,16 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->pinjaman_id); // pinjaman_id
-			$this->UpdateSort($this->jaminan_id); // jaminan_id
+			$this->UpdateSort($this->id, $bCtrl); // id
+			$this->UpdateSort($this->pinjaman_id, $bCtrl); // pinjaman_id
+			$this->UpdateSort($this->jaminan_id, $bCtrl); // jaminan_id
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -666,25 +699,25 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanView();
 		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// List actions
@@ -728,7 +761,7 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if (TRUE) {
+		if ($Security->CanView()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -737,7 +770,7 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -746,7 +779,7 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 		// "copy"
 		$oListOpt = &$this->ListOptions->Items["copy"];
 		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if (TRUE) {
+		if ($Security->CanAdd()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -754,7 +787,7 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete())
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -807,7 +840,7 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
 		// Set up options default
@@ -968,6 +1001,11 @@ class ct05_pinjamanjaminan_list extends ct05_pinjamanjaminan {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -1382,6 +1420,8 @@ ft05_pinjamanjaminanlist.ValidateRequired = false;
 
 	// Set no record found message
 	if ($t05_pinjamanjaminan->CurrentAction == "" && $t05_pinjamanjaminan_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t05_pinjamanjaminan_list->setWarningMessage(ew_DeniedMsg());
 		if ($t05_pinjamanjaminan_list->SearchWhere == "0=101")
 			$t05_pinjamanjaminan_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
@@ -1421,7 +1461,7 @@ $t05_pinjamanjaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->id) == "") { ?>
 		<th data-name="id"><div id="elh_t05_pinjamanjaminan_id" class="t05_pinjamanjaminan_id"><div class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->id) ?>',1);"><div id="elh_t05_pinjamanjaminan_id" class="t05_pinjamanjaminan_id">
+		<th data-name="id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->id) ?>',2);"><div id="elh_t05_pinjamanjaminan_id" class="t05_pinjamanjaminan_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t05_pinjamanjaminan->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t05_pinjamanjaminan->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1430,7 +1470,7 @@ $t05_pinjamanjaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->pinjaman_id) == "") { ?>
 		<th data-name="pinjaman_id"><div id="elh_t05_pinjamanjaminan_pinjaman_id" class="t05_pinjamanjaminan_pinjaman_id"><div class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->pinjaman_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="pinjaman_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->pinjaman_id) ?>',1);"><div id="elh_t05_pinjamanjaminan_pinjaman_id" class="t05_pinjamanjaminan_pinjaman_id">
+		<th data-name="pinjaman_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->pinjaman_id) ?>',2);"><div id="elh_t05_pinjamanjaminan_pinjaman_id" class="t05_pinjamanjaminan_pinjaman_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->pinjaman_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t05_pinjamanjaminan->pinjaman_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t05_pinjamanjaminan->pinjaman_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1439,7 +1479,7 @@ $t05_pinjamanjaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->jaminan_id) == "") { ?>
 		<th data-name="jaminan_id"><div id="elh_t05_pinjamanjaminan_jaminan_id" class="t05_pinjamanjaminan_jaminan_id"><div class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="jaminan_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->jaminan_id) ?>',1);"><div id="elh_t05_pinjamanjaminan_jaminan_id" class="t05_pinjamanjaminan_jaminan_id">
+		<th data-name="jaminan_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t05_pinjamanjaminan->SortUrl($t05_pinjamanjaminan->jaminan_id) ?>',2);"><div id="elh_t05_pinjamanjaminan_jaminan_id" class="t05_pinjamanjaminan_jaminan_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t05_pinjamanjaminan->jaminan_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t05_pinjamanjaminan->jaminan_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t05_pinjamanjaminan->jaminan_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>

@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t97_userlevelsinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +216,7 @@ class ct97_userlevels_delete extends ct97_userlevels {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +232,9 @@ class ct97_userlevels_delete extends ct97_userlevels {
 			$GLOBALS["Table"] = &$GLOBALS["t97_userlevels"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'delete', TRUE);
@@ -243,6 +248,12 @@ class ct97_userlevels_delete extends ct97_userlevels {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,6 +261,22 @@ class ct97_userlevels_delete extends ct97_userlevels {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanAdmin()) {
+			$Security->SaveLastUrl();
+			$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 		$this->userlevelid->SetVisibility();
 		$this->userlevelname->SetVisibility();
@@ -428,6 +455,11 @@ class ct97_userlevels_delete extends ct97_userlevels {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->userlevelid->setDbValue($rs->fields('userlevelid'));
+		if (is_null($this->userlevelid->CurrentValue)) {
+			$this->userlevelid->CurrentValue = 0;
+		} else {
+			$this->userlevelid->CurrentValue = intval($this->userlevelid->CurrentValue);
+		}
 		$this->userlevelname->setDbValue($rs->fields('userlevelname'));
 	}
 
@@ -460,6 +492,7 @@ class ct97_userlevels_delete extends ct97_userlevels {
 
 		// userlevelname
 		$this->userlevelname->ViewValue = $this->userlevelname->CurrentValue;
+		if ($Security->GetUserLevelName($this->userlevelid->CurrentValue) <> "") $this->userlevelname->ViewValue = $Security->GetUserLevelName($this->userlevelid->CurrentValue);
 		$this->userlevelname->ViewCustomAttributes = "";
 
 			// userlevelid
@@ -483,6 +516,10 @@ class ct97_userlevels_delete extends ct97_userlevels {
 	//
 	function DeleteRows() {
 		global $Language, $Security;
+		if (!$Security->CanDelete()) {
+			$this->setFailureMessage($Language->Phrase("NoDeletePermission")); // No delete permission
+			return FALSE;
+		}
 		$DeleteRows = TRUE;
 		$sSql = $this->SQL();
 		$conn = &$this->Connection();
@@ -502,6 +539,7 @@ class ct97_userlevels_delete extends ct97_userlevels {
 		}
 		$rows = ($rs) ? $rs->GetRows() : array();
 		$conn->BeginTrans();
+		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
 
 		// Clone old rows
 		$rsold = $rows;
@@ -521,6 +559,7 @@ class ct97_userlevels_delete extends ct97_userlevels {
 				$sThisKey = "";
 				if ($sThisKey <> "") $sThisKey .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
 				$sThisKey .= $row['userlevelid'];
+				$x_userlevelid = $row['userlevelid']; // Get User Level id
 				$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 				$DeleteRows = $this->Delete($row); // Delete
 				$conn->raiseErrorFn = '';
@@ -528,6 +567,9 @@ class ct97_userlevels_delete extends ct97_userlevels {
 					break;
 				if ($sKey <> "") $sKey .= ", ";
 				$sKey .= $sThisKey;
+				if (!is_null($x_userlevelid)) {
+					$conn->Execute("DELETE FROM " . EW_USER_LEVEL_PRIV_TABLE . " WHERE " . EW_USER_LEVEL_PRIV_USER_LEVEL_ID_FIELD . " = " . $x_userlevelid); // Delete user rights as well
+				}
 			}
 		} else {
 
@@ -544,8 +586,10 @@ class ct97_userlevels_delete extends ct97_userlevels {
 		}
 		if ($DeleteRows) {
 			$conn->CommitTrans(); // Commit the changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
 		} else {
 			$conn->RollbackTrans(); // Rollback changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
 		}
 
 		// Call Row Deleted event

@@ -1,3 +1,4 @@
+<?php include_once "t96_employeesinfo.php" ?>
 <?php
 
 // Create page object
@@ -129,6 +130,8 @@ if ($t02_jaminan->CurrentAction == "gridadd") {
 
 	// Set no record found message
 	if ($t02_jaminan->CurrentAction == "" && $t02_jaminan_grid->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t02_jaminan_grid->setWarningMessage(ew_DeniedMsg());
 		if ($t02_jaminan_grid->SearchWhere == "0=101")
 			$t02_jaminan_grid->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else

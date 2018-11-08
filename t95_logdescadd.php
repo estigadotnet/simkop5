@@ -6,6 +6,8 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t95_logdescinfo.php" ?>
+<?php include_once "t94_loginfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +217,7 @@ class ct95_logdesc_add extends ct95_logdesc {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +233,12 @@ class ct95_logdesc_add extends ct95_logdesc {
 			$GLOBALS["Table"] = &$GLOBALS["t95_logdesc"];
 		}
 
+		// Table object (t94_log)
+		if (!isset($GLOBALS['t94_log'])) $GLOBALS['t94_log'] = new ct94_log();
+
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'add', TRUE);
@@ -243,6 +252,12 @@ class ct95_logdesc_add extends ct95_logdesc {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,6 +265,26 @@ class ct95_logdesc_add extends ct95_logdesc {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanAdd()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t95_logdesclist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Create form object
 		$objForm = new cFormObj();
@@ -360,6 +395,9 @@ class ct95_logdesc_add extends ct95_logdesc {
 		$this->IsModal = (@$_GET["modal"] == "1" || @$_POST["modal"] == "1");
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
+
+		// Set up master/detail parameters
+		$this->SetUpMasterParms();
 
 		// Process form if post back
 		if (@$_POST["a_add"] <> "") {
@@ -581,6 +619,26 @@ class ct95_logdesc_add extends ct95_logdesc {
 
 		// log_id
 		$this->log_id->ViewValue = $this->log_id->CurrentValue;
+		if (strval($this->log_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->log_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `subj_` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t94_log`";
+		$sWhereWrk = "";
+		$this->log_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->log_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->log_id->ViewValue = $this->log_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->log_id->ViewValue = $this->log_id->CurrentValue;
+			}
+		} else {
+			$this->log_id->ViewValue = NULL;
+		}
 		$this->log_id->ViewCustomAttributes = "";
 
 		// date_issued
@@ -621,8 +679,54 @@ class ct95_logdesc_add extends ct95_logdesc {
 			// log_id
 			$this->log_id->EditAttrs["class"] = "form-control";
 			$this->log_id->EditCustomAttributes = "";
+			if ($this->log_id->getSessionValue() <> "") {
+				$this->log_id->CurrentValue = $this->log_id->getSessionValue();
+			$this->log_id->ViewValue = $this->log_id->CurrentValue;
+			if (strval($this->log_id->CurrentValue) <> "") {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->log_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$sSqlWrk = "SELECT `id`, `subj_` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t94_log`";
+			$sWhereWrk = "";
+			$this->log_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->log_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$this->log_id->ViewValue = $this->log_id->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->log_id->ViewValue = $this->log_id->CurrentValue;
+				}
+			} else {
+				$this->log_id->ViewValue = NULL;
+			}
+			$this->log_id->ViewCustomAttributes = "";
+			} else {
 			$this->log_id->EditValue = ew_HtmlEncode($this->log_id->CurrentValue);
+			if (strval($this->log_id->CurrentValue) <> "") {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->log_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$sSqlWrk = "SELECT `id`, `subj_` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t94_log`";
+			$sWhereWrk = "";
+			$this->log_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->log_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+					$this->log_id->EditValue = $this->log_id->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->log_id->EditValue = ew_HtmlEncode($this->log_id->CurrentValue);
+				}
+			} else {
+				$this->log_id->EditValue = NULL;
+			}
 			$this->log_id->PlaceHolder = ew_RemoveHtml($this->log_id->FldCaption());
+			}
 
 			// date_issued
 			$this->date_issued->EditAttrs["class"] = "form-control";
@@ -715,6 +819,26 @@ class ct95_logdesc_add extends ct95_logdesc {
 	// Add record
 	function AddRow($rsold = NULL) {
 		global $Language, $Security;
+
+		// Check referential integrity for master table 't94_log'
+		$bValidMasterRecord = TRUE;
+		$sMasterFilter = $this->SqlMasterFilter_t94_log();
+		if (strval($this->log_id->CurrentValue) <> "") {
+			$sMasterFilter = str_replace("@id@", ew_AdjustSql($this->log_id->CurrentValue, "DB"), $sMasterFilter);
+		} else {
+			$bValidMasterRecord = FALSE;
+		}
+		if ($bValidMasterRecord) {
+			if (!isset($GLOBALS["t94_log"])) $GLOBALS["t94_log"] = new ct94_log();
+			$rsmaster = $GLOBALS["t94_log"]->LoadRs($sMasterFilter);
+			$bValidMasterRecord = ($rsmaster && !$rsmaster->EOF);
+			$rsmaster->Close();
+		}
+		if (!$bValidMasterRecord) {
+			$sRelatedRecordMsg = str_replace("%t", "t94_log", $Language->Phrase("RelatedRecordRequired"));
+			$this->setFailureMessage($sRelatedRecordMsg);
+			return FALSE;
+		}
 		$conn = &$this->Connection();
 
 		// Load db values from rsold
@@ -765,6 +889,66 @@ class ct95_logdesc_add extends ct95_logdesc {
 		return $AddRow;
 	}
 
+	// Set up master/detail based on QueryString
+	function SetUpMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t94_log") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t94_log"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->log_id->setQueryStringValue($GLOBALS["t94_log"]->id->QueryStringValue);
+					$this->log_id->setSessionValue($this->log_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t94_log"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t94_log") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t94_log"]->id->setFormValue($_POST["fk_id"]);
+					$this->log_id->setFormValue($GLOBALS["t94_log"]->id->FormValue);
+					$this->log_id->setSessionValue($this->log_id->FormValue);
+					if (!is_numeric($GLOBALS["t94_log"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+
+			// Reset start record counter (new master key)
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t94_log") {
+				if ($this->log_id->CurrentValue == "") $this->log_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
+	}
+
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
@@ -780,6 +964,18 @@ class ct95_logdesc_add extends ct95_logdesc {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_log_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `subj_` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t94_log`";
+			$sWhereWrk = "{filter}";
+			$this->log_id->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->log_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -788,6 +984,19 @@ class ct95_logdesc_add extends ct95_logdesc {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_log_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id`, `subj_` AS `DispFld` FROM `t94_log`";
+			$sWhereWrk = "`subj_` LIKE '{query_value}%'";
+			$this->log_id->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->log_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " LIMIT " . EW_AUTO_SUGGEST_MAX_ENTRIES;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -950,8 +1159,9 @@ ft95_logdescadd.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft95_logdescadd.Lists["x_log_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_subj_","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t94_log"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -977,14 +1187,38 @@ $t95_logdesc_add->ShowMessage();
 <?php if ($t95_logdesc_add->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
+<?php if ($t95_logdesc->getCurrentMasterTable() == "t94_log") { ?>
+<input type="hidden" name="<?php echo EW_TABLE_SHOW_MASTER ?>" value="t94_log">
+<input type="hidden" name="fk_id" value="<?php echo $t95_logdesc->log_id->getSessionValue() ?>">
+<?php } ?>
 <div>
 <?php if ($t95_logdesc->log_id->Visible) { // log_id ?>
 	<div id="r_log_id" class="form-group">
-		<label id="elh_t95_logdesc_log_id" for="x_log_id" class="col-sm-2 control-label ewLabel"><?php echo $t95_logdesc->log_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t95_logdesc_log_id" class="col-sm-2 control-label ewLabel"><?php echo $t95_logdesc->log_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t95_logdesc->log_id->CellAttributes() ?>>
+<?php if ($t95_logdesc->log_id->getSessionValue() <> "") { ?>
 <span id="el_t95_logdesc_log_id">
-<input type="text" data-table="t95_logdesc" data-field="x_log_id" name="x_log_id" id="x_log_id" size="30" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->log_id->getPlaceHolder()) ?>" value="<?php echo $t95_logdesc->log_id->EditValue ?>"<?php echo $t95_logdesc->log_id->EditAttributes() ?>>
+<span<?php echo $t95_logdesc->log_id->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t95_logdesc->log_id->ViewValue ?></p></span>
 </span>
+<input type="hidden" id="x_log_id" name="x_log_id" value="<?php echo ew_HtmlEncode($t95_logdesc->log_id->CurrentValue) ?>">
+<?php } else { ?>
+<span id="el_t95_logdesc_log_id">
+<?php
+$wrkonchange = trim(" " . @$t95_logdesc->log_id->EditAttrs["onchange"]);
+if ($wrkonchange <> "") $wrkonchange = " onchange=\"" . ew_JsEncode2($wrkonchange) . "\"";
+$t95_logdesc->log_id->EditAttrs["onchange"] = "";
+?>
+<span id="as_x_log_id" style="white-space: nowrap; z-index: 8980">
+	<input type="text" name="sv_x_log_id" id="sv_x_log_id" value="<?php echo $t95_logdesc->log_id->EditValue ?>" size="30" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->log_id->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t95_logdesc->log_id->getPlaceHolder()) ?>"<?php echo $t95_logdesc->log_id->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t95_logdesc" data-field="x_log_id" data-value-separator="<?php echo $t95_logdesc->log_id->DisplayValueSeparatorAttribute() ?>" name="x_log_id" id="x_log_id" value="<?php echo ew_HtmlEncode($t95_logdesc->log_id->CurrentValue) ?>"<?php echo $wrkonchange ?>>
+<input type="hidden" name="q_x_log_id" id="q_x_log_id" value="<?php echo $t95_logdesc->log_id->LookupFilterQuery(true) ?>">
+<script type="text/javascript">
+ft95_logdescadd.CreateAutoSuggest({"id":"x_log_id","forceSelect":false});
+</script>
+</span>
+<?php } ?>
 <?php echo $t95_logdesc->log_id->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
@@ -994,6 +1228,11 @@ $t95_logdesc_add->ShowMessage();
 		<div class="col-sm-10"><div<?php echo $t95_logdesc->date_issued->CellAttributes() ?>>
 <span id="el_t95_logdesc_date_issued">
 <input type="text" data-table="t95_logdesc" data-field="x_date_issued" name="x_date_issued" id="x_date_issued" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->date_issued->getPlaceHolder()) ?>" value="<?php echo $t95_logdesc->date_issued->EditValue ?>"<?php echo $t95_logdesc->date_issued->EditAttributes() ?>>
+<?php if (!$t95_logdesc->date_issued->ReadOnly && !$t95_logdesc->date_issued->Disabled && !isset($t95_logdesc->date_issued->EditAttrs["readonly"]) && !isset($t95_logdesc->date_issued->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft95_logdescadd", "x_date_issued", 0);
+</script>
+<?php } ?>
 </span>
 <?php echo $t95_logdesc->date_issued->CustomMsg ?></div></div>
 	</div>
@@ -1014,6 +1253,11 @@ $t95_logdesc_add->ShowMessage();
 		<div class="col-sm-10"><div<?php echo $t95_logdesc->date_solved->CellAttributes() ?>>
 <span id="el_t95_logdesc_date_solved">
 <input type="text" data-table="t95_logdesc" data-field="x_date_solved" name="x_date_solved" id="x_date_solved" placeholder="<?php echo ew_HtmlEncode($t95_logdesc->date_solved->getPlaceHolder()) ?>" value="<?php echo $t95_logdesc->date_solved->EditValue ?>"<?php echo $t95_logdesc->date_solved->EditAttributes() ?>>
+<?php if (!$t95_logdesc->date_solved->ReadOnly && !$t95_logdesc->date_solved->Disabled && !isset($t95_logdesc->date_solved->EditAttrs["readonly"]) && !isset($t95_logdesc->date_solved->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft95_logdescadd", "x_date_solved", 0);
+</script>
+<?php } ?>
 </span>
 <?php echo $t95_logdesc->date_solved->CustomMsg ?></div></div>
 	</div>

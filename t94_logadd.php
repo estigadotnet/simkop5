@@ -6,6 +6,8 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t94_loginfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
+<?php include_once "t95_logdescgridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +217,7 @@ class ct94_log_add extends ct94_log {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +233,9 @@ class ct94_log_add extends ct94_log {
 			$GLOBALS["Table"] = &$GLOBALS["t94_log"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'add', TRUE);
@@ -243,6 +249,12 @@ class ct94_log_add extends ct94_log {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,6 +262,26 @@ class ct94_log_add extends ct94_log {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanAdd()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t94_loglist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Create form object
 		$objForm = new cFormObj();
@@ -272,6 +304,14 @@ class ct94_log_add extends ct94_log {
 
 		// Process auto fill
 		if (@$_POST["ajax"] == "autofill") {
+
+			// Process auto fill for detail table 't95_logdesc'
+			if (@$_POST["grid"] == "ft95_logdescgrid") {
+				if (!isset($GLOBALS["t95_logdesc_grid"])) $GLOBALS["t95_logdesc_grid"] = new ct95_logdesc_grid;
+				$GLOBALS["t95_logdesc_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
 			$results = $this->GetAutoFill(@$_POST["name"], @$_POST["q"]);
 			if ($results) {
 
@@ -385,6 +425,9 @@ class ct94_log_add extends ct94_log {
 		// Set up Breadcrumb
 		$this->SetupBreadcrumb();
 
+		// Set up detail parameters
+		$this->SetUpDetailParms();
+
 		// Validate form if post back
 		if (@$_POST["a_add"] <> "") {
 			if (!$this->ValidateForm()) {
@@ -407,13 +450,19 @@ class ct94_log_add extends ct94_log {
 					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
 					$this->Page_Terminate("t94_loglist.php"); // No matching record, return to list
 				}
+
+				// Set up detail parameters
+				$this->SetUpDetailParms();
 				break;
 			case "A": // Add new record
 				$this->SendEmail = TRUE; // Send email on add success
 				if ($this->AddRow($this->OldRecordset)) { // Add successful
 					if ($this->getSuccessMessage() == "")
 						$this->setSuccessMessage($Language->Phrase("AddSuccess")); // Set up success message
-					$sReturnUrl = $this->getReturnUrl();
+					if ($this->getCurrentDetailTable() <> "") // Master/detail add
+						$sReturnUrl = $this->GetDetailUrl();
+					else
+						$sReturnUrl = $this->getReturnUrl();
 					if (ew_GetPageName($sReturnUrl) == "t94_loglist.php")
 						$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 					elseif (ew_GetPageName($sReturnUrl) == "t94_logview.php")
@@ -422,6 +471,9 @@ class ct94_log_add extends ct94_log {
 				} else {
 					$this->EventCancelled = TRUE; // Event cancelled
 					$this->RestoreFormValues(); // Add failed, restore form values
+
+					// Set up detail parameters
+					$this->SetUpDetailParms();
 				}
 		}
 
@@ -627,6 +679,13 @@ class ct94_log_add extends ct94_log {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->subj_->FldCaption(), $this->subj_->ReqErrMsg));
 		}
 
+		// Validate detail grid
+		$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+		if (in_array("t95_logdesc", $DetailTblVar) && $GLOBALS["t95_logdesc"]->DetailAdd) {
+			if (!isset($GLOBALS["t95_logdesc_grid"])) $GLOBALS["t95_logdesc_grid"] = new ct95_logdesc_grid(); // get detail page object
+			$GLOBALS["t95_logdesc_grid"]->ValidateGridForm();
+		}
+
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
 
@@ -643,6 +702,10 @@ class ct94_log_add extends ct94_log {
 	function AddRow($rsold = NULL) {
 		global $Language, $Security;
 		$conn = &$this->Connection();
+
+		// Begin transaction
+		if ($this->getCurrentDetailTable() <> "")
+			$conn->BeginTrans();
 
 		// Load db values from rsold
 		if ($rsold) {
@@ -677,6 +740,29 @@ class ct94_log_add extends ct94_log {
 			}
 			$AddRow = FALSE;
 		}
+
+		// Add detail records
+		if ($AddRow) {
+			$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+			if (in_array("t95_logdesc", $DetailTblVar) && $GLOBALS["t95_logdesc"]->DetailAdd) {
+				$GLOBALS["t95_logdesc"]->log_id->setSessionValue($this->id->CurrentValue); // Set master key
+				if (!isset($GLOBALS["t95_logdesc_grid"])) $GLOBALS["t95_logdesc_grid"] = new ct95_logdesc_grid(); // Get detail page object
+				$Security->LoadCurrentUserLevel($this->ProjectID . "t95_logdesc"); // Load user level of detail table
+				$AddRow = $GLOBALS["t95_logdesc_grid"]->GridInsert();
+				$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+				if (!$AddRow)
+					$GLOBALS["t95_logdesc"]->log_id->setSessionValue(""); // Clear master key if insert failed
+			}
+		}
+
+		// Commit/Rollback transaction
+		if ($this->getCurrentDetailTable() <> "") {
+			if ($AddRow) {
+				$conn->CommitTrans(); // Commit transaction
+			} else {
+				$conn->RollbackTrans(); // Rollback transaction
+			}
+		}
 		if ($AddRow) {
 
 			// Call Row Inserted event
@@ -684,6 +770,39 @@ class ct94_log_add extends ct94_log {
 			$this->Row_Inserted($rs, $rsnew);
 		}
 		return $AddRow;
+	}
+
+	// Set up detail parms based on QueryString
+	function SetUpDetailParms() {
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_DETAIL])) {
+			$sDetailTblVar = $_GET[EW_TABLE_SHOW_DETAIL];
+			$this->setCurrentDetailTable($sDetailTblVar);
+		} else {
+			$sDetailTblVar = $this->getCurrentDetailTable();
+		}
+		if ($sDetailTblVar <> "") {
+			$DetailTblVar = explode(",", $sDetailTblVar);
+			if (in_array("t95_logdesc", $DetailTblVar)) {
+				if (!isset($GLOBALS["t95_logdesc_grid"]))
+					$GLOBALS["t95_logdesc_grid"] = new ct95_logdesc_grid;
+				if ($GLOBALS["t95_logdesc_grid"]->DetailAdd) {
+					if ($this->CopyRecord)
+						$GLOBALS["t95_logdesc_grid"]->CurrentMode = "copy";
+					else
+						$GLOBALS["t95_logdesc_grid"]->CurrentMode = "add";
+					$GLOBALS["t95_logdesc_grid"]->CurrentAction = "gridadd";
+
+					// Save current master table to detail table
+					$GLOBALS["t95_logdesc_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t95_logdesc_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t95_logdesc_grid"]->log_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t95_logdesc_grid"]->log_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t95_logdesc_grid"]->log_id->setSessionValue($GLOBALS["t95_logdesc_grid"]->log_id->CurrentValue);
+				}
+			}
+		}
 	}
 
 	// Set up Breadcrumb
@@ -911,6 +1030,14 @@ $t94_log_add->ShowMessage();
 	</div>
 <?php } ?>
 </div>
+<?php
+	if (in_array("t95_logdesc", explode(",", $t94_log->getCurrentDetailTable())) && $t95_logdesc->DetailAdd) {
+?>
+<?php if ($t94_log->getCurrentDetailTable() <> "") { ?>
+<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t95_logdesc", "TblCaption") ?></h4>
+<?php } ?>
+<?php include_once "t95_logdescgrid.php" ?>
+<?php } ?>
 <?php if (!$t94_log_add->IsModal) { ?>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">

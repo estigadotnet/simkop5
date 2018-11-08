@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t97_userlevelsinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +216,7 @@ class ct97_userlevels_edit extends ct97_userlevels {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +232,9 @@ class ct97_userlevels_edit extends ct97_userlevels {
 			$GLOBALS["Table"] = &$GLOBALS["t97_userlevels"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'edit', TRUE);
@@ -243,6 +248,12 @@ class ct97_userlevels_edit extends ct97_userlevels {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,6 +261,22 @@ class ct97_userlevels_edit extends ct97_userlevels {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanAdmin()) {
+			$Security->SaveLastUrl();
+			$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Create form object
 		$objForm = new cFormObj();
@@ -509,6 +536,11 @@ class ct97_userlevels_edit extends ct97_userlevels {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->userlevelid->setDbValue($rs->fields('userlevelid'));
+		if (is_null($this->userlevelid->CurrentValue)) {
+			$this->userlevelid->CurrentValue = 0;
+		} else {
+			$this->userlevelid->CurrentValue = intval($this->userlevelid->CurrentValue);
+		}
 		$this->userlevelname->setDbValue($rs->fields('userlevelname'));
 	}
 
@@ -541,6 +573,7 @@ class ct97_userlevels_edit extends ct97_userlevels {
 
 		// userlevelname
 		$this->userlevelname->ViewValue = $this->userlevelname->CurrentValue;
+		if ($Security->GetUserLevelName($this->userlevelid->CurrentValue) <> "") $this->userlevelname->ViewValue = $Security->GetUserLevelName($this->userlevelid->CurrentValue);
 		$this->userlevelname->ViewCustomAttributes = "";
 
 			// userlevelid
@@ -564,6 +597,7 @@ class ct97_userlevels_edit extends ct97_userlevels {
 			$this->userlevelname->EditAttrs["class"] = "form-control";
 			$this->userlevelname->EditCustomAttributes = "";
 			$this->userlevelname->EditValue = ew_HtmlEncode($this->userlevelname->CurrentValue);
+			if (in_array($this->userlevelid->CurrentValue, array(-2,-1,0))) $this->userlevelname->ReadOnly = TRUE;
 			$this->userlevelname->PlaceHolder = ew_RemoveHtml($this->userlevelname->FldCaption());
 
 			// Edit refer script
@@ -675,6 +709,10 @@ class ct97_userlevels_edit extends ct97_userlevels {
 		// Call Row_Updated event
 		if ($EditRow)
 			$this->Row_Updated($rsold, $rsnew);
+
+		// Load user level information again
+		if ($EditRow)
+			$Security->SetupUserLevel();
 		$rs->Close();
 		return $EditRow;
 	}
@@ -822,6 +860,26 @@ ft97_userlevelsedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_userlevelname");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t97_userlevels->userlevelname->FldCaption(), $t97_userlevels->userlevelname->ReqErrMsg)) ?>");
+			var elId = fobj.elements["x" + infix + "_userlevelid"];
+			var elName = fobj.elements["x" + infix + "_userlevelname"];
+			if (elId && elName) {
+				elId.value = $.trim(elId.value);
+				elName.value = $.trim(elName.value);
+				if (elId && !ew_CheckInteger(elId.value))
+					return this.OnError(elId, ewLanguage.Phrase("UserLevelIDInteger"));
+				var level = parseInt(elId.value, 10);
+				if (level == 0 && !ew_SameText(elName.value, "Default")) {
+					return this.OnError(elName, ewLanguage.Phrase("UserLevelDefaultName"));
+				} else if (level == -1 && !ew_SameText(elName.value, "Administrator")) {
+					return this.OnError(elName, ewLanguage.Phrase("UserLevelAdministratorName"));
+				} else if (level == -2 && !ew_SameText(elName.value, "Anonymous")) {
+					return this.OnError(elName, ewLanguage.Phrase("UserLevelAnonymousName"));
+				} else if (level < -2) {
+					return this.OnError(elId, ewLanguage.Phrase("UserLevelIDIncorrect"));
+				} else if (level > 0 && ew_InArray(elName.value.toLowerCase(), ["anonymous", "administrator", "default"]) > -1) {
+					return this.OnError(elName, ewLanguage.Phrase("UserLevelNameIncorrect"));
+				}
+			}
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))

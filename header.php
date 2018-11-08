@@ -74,7 +74,7 @@ var EW_IS_LOGGEDIN = <?php echo IsLoggedIn() ? "true" : "false" ?>; // Is logged
 var EW_IS_SYS_ADMIN = <?php echo IsSysAdmin() ? "true" : "false" ?>; // Is sys admin
 var EW_CURRENT_USER_NAME = "<?php echo ew_JsEncode2(CurrentUserName()) ?>"; // Current user name
 var EW_IS_AUTOLOGIN = <?php echo IsAutoLogin() ? "true" : "false" ?>; // Is logged in with option "Auto login until I logout explicitly"
-var EW_TIMEOUT_URL = EW_RELATIVE_PATH + "index.php"; // Timeout URL
+var EW_TIMEOUT_URL = EW_RELATIVE_PATH + "logout.php"; // Timeout URL
 var EW_LOOKUP_FILE_NAME = "ewlookup13.php"; // Lookup file name
 var EW_LOOKUP_FILTER_VALUE_SEPARATOR = "<?php echo EW_LOOKUP_FILTER_VALUE_SEPARATOR ?>"; // Lookup filter value separator
 var EW_MODAL_LOOKUP_FILE_NAME = "ewmodallookup13.php"; // Modal lookup file name
@@ -118,7 +118,7 @@ var ewVar = <?php echo json_encode($EW_CLIENT_VAR); ?>;
 <?php if (@!$gbSkipHeaderFooter) { ?>
 <div class="ewLayout">
 	<!-- header (begin) --><!-- ** Note: Only licensed users are allowed to change the logo ** -->
-	<div id="ewHeaderRow" class="<?php echo $gsHeaderRowClass ?>"><img src="<?php echo $EW_RELATIVE_PATH ?>phpimages/phpmkrlogo2017.png" alt=""></div>
+	<div id="ewHeaderRow" class="<?php echo $gsHeaderRowClass ?>"><img src="<?php echo $EW_RELATIVE_PATH ?>phpimages/simkop5.png" alt=""></div>
 <?php if (ew_IsResponsiveLayout()) { ?>
 <nav id="ewMobileMenu" role="navigation" class="navbar navbar-default visible-xs hidden-print">
 	<div class="container-fluid"><!-- Brand and toggle get grouped for better mobile display -->

@@ -215,6 +215,7 @@ class ct96_employees_edit extends ct96_employees {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -243,6 +244,12 @@ class ct96_employees_edit extends ct96_employees {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,6 +257,30 @@ class ct96_employees_edit extends ct96_employees {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanEdit()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t96_employeeslist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+			if (strval($Security->CurrentUserID()) == "") {
+				$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+				$this->Page_Terminate(ew_GetUrl("t96_employeeslist.php"));
+			}
+		}
 
 		// Create form object
 		$objForm = new cFormObj();
@@ -607,6 +638,15 @@ class ct96_employees_edit extends ct96_employees {
 			$this->LoadRowValues($rs); // Load row values
 			$rs->Close();
 		}
+
+		// Check if valid user id
+		if ($res) {
+			$res = $this->ShowOptionLink('edit');
+			if (!$res) {
+				$sUserIdMsg = ew_DeniedMsg();
+				$this->setFailureMessage($sUserIdMsg);
+			}
+		}
 		return $res;
 	}
 
@@ -786,7 +826,30 @@ class ct96_employees_edit extends ct96_employees {
 		$this->Password->ViewCustomAttributes = "";
 
 		// UserLevel
-		$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+		if ($Security->CanAdmin()) { // System admin
+		if (strval($this->UserLevel->CurrentValue) <> "") {
+			$sFilterWrk = "`userlevelid`" . ew_SearchString("=", $this->UserLevel->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `userlevelid`, `userlevelname` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t97_userlevels`";
+		$sWhereWrk = "";
+		$this->UserLevel->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->UserLevel, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->UserLevel->ViewValue = $this->UserLevel->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+			}
+		} else {
+			$this->UserLevel->ViewValue = NULL;
+		}
+		} else {
+			$this->UserLevel->ViewValue = $Language->Phrase("PasswordMask");
+		}
 		$this->UserLevel->ViewCustomAttributes = "";
 
 		// Username
@@ -1030,7 +1093,7 @@ class ct96_employees_edit extends ct96_employees {
 			$this->ReportsTo->PlaceHolder = ew_RemoveHtml($this->ReportsTo->FldCaption());
 
 			// Password
-			$this->Password->EditAttrs["class"] = "form-control";
+			$this->Password->EditAttrs["class"] = "form-control ewPasswordStrength";
 			$this->Password->EditCustomAttributes = "";
 			$this->Password->EditValue = ew_HtmlEncode($this->Password->CurrentValue);
 			$this->Password->PlaceHolder = ew_RemoveHtml($this->Password->FldCaption());
@@ -1038,8 +1101,25 @@ class ct96_employees_edit extends ct96_employees {
 			// UserLevel
 			$this->UserLevel->EditAttrs["class"] = "form-control";
 			$this->UserLevel->EditCustomAttributes = "";
-			$this->UserLevel->EditValue = ew_HtmlEncode($this->UserLevel->CurrentValue);
-			$this->UserLevel->PlaceHolder = ew_RemoveHtml($this->UserLevel->FldCaption());
+			if (!$Security->CanAdmin()) { // System admin
+				$this->UserLevel->EditValue = $Language->Phrase("PasswordMask");
+			} else {
+			if (trim(strval($this->UserLevel->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`userlevelid`" . ew_SearchString("=", $this->UserLevel->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `userlevelid`, `userlevelname` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t97_userlevels`";
+			$sWhereWrk = "";
+			$this->UserLevel->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->UserLevel, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->UserLevel->EditValue = $arwrk;
+			}
 
 			// Username
 			$this->Username->EditAttrs["class"] = "form-control";
@@ -1184,9 +1264,6 @@ class ct96_employees_edit extends ct96_employees {
 		if (!$this->Password->FldIsDetailKey && !is_null($this->Password->FormValue) && $this->Password->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Password->FldCaption(), $this->Password->ReqErrMsg));
 		}
-		if (!ew_CheckInteger($this->UserLevel->FormValue)) {
-			ew_AddMessage($gsFormError, $this->UserLevel->FldErrMsg());
-		}
 		if (!$this->Username->FldIsDetailKey && !is_null($this->Username->FormValue) && $this->Username->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Username->FldCaption(), $this->Username->ReqErrMsg));
 		}
@@ -1300,10 +1377,12 @@ class ct96_employees_edit extends ct96_employees {
 			$this->ReportsTo->SetDbValueDef($rsnew, $this->ReportsTo->CurrentValue, NULL, $this->ReportsTo->ReadOnly);
 
 			// Password
-			$this->Password->SetDbValueDef($rsnew, $this->Password->CurrentValue, "", $this->Password->ReadOnly);
+			$this->Password->SetDbValueDef($rsnew, $this->Password->CurrentValue, "", $this->Password->ReadOnly || (EW_ENCRYPTED_PASSWORD && $rs->fields('Password') == $this->Password->CurrentValue));
 
 			// UserLevel
+			if ($Security->CanAdmin()) { // System admin
 			$this->UserLevel->SetDbValueDef($rsnew, $this->UserLevel->CurrentValue, NULL, $this->UserLevel->ReadOnly);
+			}
 
 			// Username
 			$this->Username->SetDbValueDef($rsnew, $this->Username->CurrentValue, "", $this->Username->ReadOnly);
@@ -1346,6 +1425,14 @@ class ct96_employees_edit extends ct96_employees {
 		return $EditRow;
 	}
 
+	// Show link optionally based on User ID
+	function ShowOptionLink($id = "") {
+		global $Security;
+		if ($Security->IsLoggedIn() && !$Security->IsAdmin() && !$this->UserIDAllow($id))
+			return $Security->IsValidUserID($this->EmployeeID->CurrentValue);
+		return TRUE;
+	}
+
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
@@ -1361,6 +1448,18 @@ class ct96_employees_edit extends ct96_employees {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_UserLevel":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `userlevelid` AS `LinkFld`, `userlevelname` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t97_userlevels`";
+			$sWhereWrk = "";
+			$this->UserLevel->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`userlevelid` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->UserLevel, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -1492,9 +1591,9 @@ ft96_employeesedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Password");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t96_employees->Password->FldCaption(), $t96_employees->Password->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_UserLevel");
-			if (elm && !ew_CheckInteger(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t96_employees->UserLevel->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Password");
+			if (elm && $(elm).hasClass("ewPasswordStrength") && !$(elm).data("validated"))
+				return this.OnError(elm, ewLanguage.Phrase("PasswordTooSimple"));
 			elm = this.GetElements("x" + infix + "_Username");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t96_employees->Username->FldCaption(), $t96_employees->Username->ReqErrMsg)) ?>");
@@ -1534,6 +1633,7 @@ ft96_employeesedit.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
+ft96_employeesedit.Lists["x_UserLevel"] = {"LinkField":"x_userlevelid","Ajax":true,"AutoFill":false,"DisplayFields":["x_userlevelname","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t97_userlevels"};
 ft96_employeesedit.Lists["x_Activated"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft96_employeesedit.Lists["x_Activated"].Options = <?php echo json_encode($t96_employees->Activated->Options()) ?>;
 
@@ -1563,6 +1663,9 @@ $t96_employees_edit->ShowMessage();
 <?php if ($t96_employees_edit->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
+<!-- Fields to prevent google autofill -->
+<input class="hidden" type="text" name="<?php echo ew_Encrypt(ew_Random()) ?>">
+<input class="hidden" type="password" name="<?php echo ew_Encrypt(ew_Random()) ?>">
 <div>
 <?php if ($t96_employees->EmployeeID->Visible) { // EmployeeID ?>
 	<div id="r_EmployeeID" class="form-group">
@@ -1751,7 +1854,16 @@ $t96_employees_edit->ShowMessage();
 		<label id="elh_t96_employees_Password" for="x_Password" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->Password->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t96_employees->Password->CellAttributes() ?>>
 <span id="el_t96_employees_Password">
-<input type="text" data-table="t96_employees" data-field="x_Password" name="x_Password" id="x_Password" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t96_employees->Password->getPlaceHolder()) ?>" value="<?php echo $t96_employees->Password->EditValue ?>"<?php echo $t96_employees->Password->EditAttributes() ?>>
+<div class="input-group" id="ig_Password">
+<input type="text" data-password-strength="pst_Password" data-password-generated="pgt_Password" data-table="t96_employees" data-field="x_Password" name="x_Password" id="x_Password" value="<?php echo $t96_employees->Password->EditValue ?>" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t96_employees->Password->getPlaceHolder()) ?>"<?php echo $t96_employees->Password->EditAttributes() ?>>
+<span class="input-group-btn">
+	<button type="button" class="btn btn-default ewPasswordGenerator" title="<?php echo ew_HtmlTitle($Language->Phrase("GeneratePassword")) ?>" data-password-field="x_Password" data-password-confirm="c_Password" data-password-strength="pst_Password" data-password-generated="pgt_Password"><?php echo $Language->Phrase("GeneratePassword") ?></button>
+</span>
+</div>
+<span class="help-block" id="pgt_Password" style="display: none;"></span>
+<div class="progress ewPasswordStrengthBar" id="pst_Password" style="display: none;">
+	<div class="progress-bar" role="progressbar"></div>
+</div>
 </span>
 <?php echo $t96_employees->Password->CustomMsg ?></div></div>
 	</div>
@@ -1760,9 +1872,18 @@ $t96_employees_edit->ShowMessage();
 	<div id="r_UserLevel" class="form-group">
 		<label id="elh_t96_employees_UserLevel" for="x_UserLevel" class="col-sm-2 control-label ewLabel"><?php echo $t96_employees->UserLevel->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t96_employees->UserLevel->CellAttributes() ?>>
+<?php if (!$Security->IsAdmin() && $Security->IsLoggedIn()) { // Non system admin ?>
 <span id="el_t96_employees_UserLevel">
-<input type="text" data-table="t96_employees" data-field="x_UserLevel" name="x_UserLevel" id="x_UserLevel" size="30" placeholder="<?php echo ew_HtmlEncode($t96_employees->UserLevel->getPlaceHolder()) ?>" value="<?php echo $t96_employees->UserLevel->EditValue ?>"<?php echo $t96_employees->UserLevel->EditAttributes() ?>>
+<p class="form-control-static"><?php echo $t96_employees->UserLevel->EditValue ?></p>
 </span>
+<?php } else { ?>
+<span id="el_t96_employees_UserLevel">
+<select data-table="t96_employees" data-field="x_UserLevel" data-value-separator="<?php echo $t96_employees->UserLevel->DisplayValueSeparatorAttribute() ?>" id="x_UserLevel" name="x_UserLevel"<?php echo $t96_employees->UserLevel->EditAttributes() ?>>
+<?php echo $t96_employees->UserLevel->SelectOptionListHtml("x_UserLevel") ?>
+</select>
+<input type="hidden" name="s_x_UserLevel" id="s_x_UserLevel" value="<?php echo $t96_employees->UserLevel->LookupFilterQuery() ?>">
+</span>
+<?php } ?>
 <?php echo $t96_employees->UserLevel->CustomMsg ?></div></div>
 	</div>
 <?php } ?>

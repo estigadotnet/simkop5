@@ -215,6 +215,7 @@ class ct96_employees_delete extends ct96_employees {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -243,6 +244,12 @@ class ct96_employees_delete extends ct96_employees {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -250,6 +257,30 @@ class ct96_employees_delete extends ct96_employees {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanDelete()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t96_employeeslist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+			if (strval($Security->CurrentUserID()) == "") {
+				$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+				$this->Page_Terminate(ew_GetUrl("t96_employeeslist.php"));
+			}
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 		$this->EmployeeID->SetVisibility();
 		$this->EmployeeID->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
@@ -362,6 +393,25 @@ class ct96_employees_delete extends ct96_employees {
 		// SQL constructor in t96_employees class, t96_employeesinfo.php
 
 		$this->CurrentFilter = $sFilter;
+
+		// Check if valid user id
+		$conn = &$this->Connection();
+		$sql = $this->GetSQL($this->CurrentFilter, "");
+		if ($this->Recordset = ew_LoadRecordset($sql, $conn)) {
+			$res = TRUE;
+			while (!$this->Recordset->EOF) {
+				$this->LoadRowValues($this->Recordset);
+				if (!$this->ShowOptionLink('delete')) {
+					$sUserIdMsg = $Language->Phrase("NoDeletePermission");
+					$this->setFailureMessage($sUserIdMsg);
+					$res = FALSE;
+					break;
+				}
+				$this->Recordset->MoveNext();
+			}
+			$this->Recordset->Close();
+			if (!$res) $this->Page_Terminate("t96_employeeslist.php"); // Return to list
+		}
 
 		// Get action
 		if (@$_POST["a_delete"] <> "") {
@@ -612,7 +662,30 @@ class ct96_employees_delete extends ct96_employees {
 		$this->Password->ViewCustomAttributes = "";
 
 		// UserLevel
-		$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+		if ($Security->CanAdmin()) { // System admin
+		if (strval($this->UserLevel->CurrentValue) <> "") {
+			$sFilterWrk = "`userlevelid`" . ew_SearchString("=", $this->UserLevel->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `userlevelid`, `userlevelname` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t97_userlevels`";
+		$sWhereWrk = "";
+		$this->UserLevel->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->UserLevel, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->UserLevel->ViewValue = $this->UserLevel->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+			}
+		} else {
+			$this->UserLevel->ViewValue = NULL;
+		}
+		} else {
+			$this->UserLevel->ViewValue = $Language->Phrase("PasswordMask");
+		}
 		$this->UserLevel->ViewCustomAttributes = "";
 
 		// Username
@@ -743,6 +816,10 @@ class ct96_employees_delete extends ct96_employees {
 	//
 	function DeleteRows() {
 		global $Language, $Security;
+		if (!$Security->CanDelete()) {
+			$this->setFailureMessage($Language->Phrase("NoDeletePermission")); // No delete permission
+			return FALSE;
+		}
 		$DeleteRows = TRUE;
 		$sSql = $this->SQL();
 		$conn = &$this->Connection();
@@ -762,6 +839,7 @@ class ct96_employees_delete extends ct96_employees {
 		}
 		$rows = ($rs) ? $rs->GetRows() : array();
 		$conn->BeginTrans();
+		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
 
 		// Clone old rows
 		$rsold = $rows;
@@ -804,8 +882,10 @@ class ct96_employees_delete extends ct96_employees {
 		}
 		if ($DeleteRows) {
 			$conn->CommitTrans(); // Commit the changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
 		} else {
 			$conn->RollbackTrans(); // Rollback changes
+			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
 		}
 
 		// Call Row Deleted event
@@ -815,6 +895,14 @@ class ct96_employees_delete extends ct96_employees {
 			}
 		}
 		return $DeleteRows;
+	}
+
+	// Show link optionally based on User ID
+	function ShowOptionLink($id = "") {
+		global $Security;
+		if ($Security->IsLoggedIn() && !$Security->IsAdmin() && !$this->UserIDAllow($id))
+			return $Security->IsValidUserID($this->EmployeeID->CurrentValue);
+		return TRUE;
 	}
 
 	// Set up Breadcrumb
@@ -945,6 +1033,7 @@ ft96_employeesdelete.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
+ft96_employeesdelete.Lists["x_UserLevel"] = {"LinkField":"x_userlevelid","Ajax":true,"AutoFill":false,"DisplayFields":["x_userlevelname","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t97_userlevels"};
 ft96_employeesdelete.Lists["x_Activated"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft96_employeesdelete.Lists["x_Activated"].Options = <?php echo json_encode($t96_employees->Activated->Options()) ?>;
 

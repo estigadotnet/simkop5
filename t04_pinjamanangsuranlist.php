@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t04_pinjamanangsuraninfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -255,6 +256,7 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -285,6 +287,9 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		$this->MultiDeleteUrl = "t04_pinjamanangsurandelete.php";
 		$this->MultiUpdateUrl = "t04_pinjamanangsuranupdate.php";
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -298,6 +303,12 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -333,6 +344,23 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -598,6 +626,8 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
@@ -940,6 +970,7 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 	function BasicSearchWhere($Default = FALSE) {
 		global $Security;
 		$sSearchStr = "";
+		if (!$Security->CanSearch()) return "";
 		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
 		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
 		if ($sSearchKeyword <> "") {
@@ -1027,23 +1058,26 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->Angsuran_Ke); // Angsuran_Ke
-			$this->UpdateSort($this->Angsuran_Tanggal); // Angsuran_Tanggal
-			$this->UpdateSort($this->Angsuran_Pokok); // Angsuran_Pokok
-			$this->UpdateSort($this->Angsuran_Bunga); // Angsuran_Bunga
-			$this->UpdateSort($this->Angsuran_Total); // Angsuran_Total
-			$this->UpdateSort($this->Sisa_Hutang); // Sisa_Hutang
-			$this->UpdateSort($this->Tanggal_Bayar); // Tanggal_Bayar
-			$this->UpdateSort($this->Terlambat); // Terlambat
-			$this->UpdateSort($this->Total_Denda); // Total_Denda
-			$this->UpdateSort($this->Bayar_Titipan); // Bayar_Titipan
-			$this->UpdateSort($this->Bayar_Non_Titipan); // Bayar_Non_Titipan
-			$this->UpdateSort($this->Bayar_Total); // Bayar_Total
-			$this->UpdateSort($this->Periode); // Periode
+			$this->UpdateSort($this->Angsuran_Ke, $bCtrl); // Angsuran_Ke
+			$this->UpdateSort($this->Angsuran_Tanggal, $bCtrl); // Angsuran_Tanggal
+			$this->UpdateSort($this->Angsuran_Pokok, $bCtrl); // Angsuran_Pokok
+			$this->UpdateSort($this->Angsuran_Bunga, $bCtrl); // Angsuran_Bunga
+			$this->UpdateSort($this->Angsuran_Total, $bCtrl); // Angsuran_Total
+			$this->UpdateSort($this->Sisa_Hutang, $bCtrl); // Sisa_Hutang
+			$this->UpdateSort($this->Tanggal_Bayar, $bCtrl); // Tanggal_Bayar
+			$this->UpdateSort($this->Terlambat, $bCtrl); // Terlambat
+			$this->UpdateSort($this->Total_Denda, $bCtrl); // Total_Denda
+			$this->UpdateSort($this->Bayar_Titipan, $bCtrl); // Bayar_Titipan
+			$this->UpdateSort($this->Bayar_Non_Titipan, $bCtrl); // Bayar_Non_Titipan
+			$this->UpdateSort($this->Bayar_Total, $bCtrl); // Bayar_Total
+			$this->UpdateSort($this->Periode, $bCtrl); // Periode
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1110,25 +1144,25 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanView();
 		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// List actions
@@ -1172,7 +1206,7 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if (TRUE) {
+		if ($Security->CanView()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1181,7 +1215,7 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1190,7 +1224,7 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		// "copy"
 		$oListOpt = &$this->ListOptions->Items["copy"];
 		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if (TRUE) {
+		if ($Security->CanAdd()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1198,7 +1232,7 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete())
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -1251,7 +1285,7 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
 		// Set up options default
@@ -1423,6 +1457,11 @@ class ct04_pinjamanangsuran_list extends ct04_pinjamanangsuran {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -2022,6 +2061,8 @@ var CurrentSearchForm = ft04_pinjamanangsuranlistsrch = new ew_Form("ft04_pinjam
 
 	// Set no record found message
 	if ($t04_pinjamanangsuran->CurrentAction == "" && $t04_pinjamanangsuran_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t04_pinjamanangsuran_list->setWarningMessage(ew_DeniedMsg());
 		if ($t04_pinjamanangsuran_list->SearchWhere == "0=101")
 			$t04_pinjamanangsuran_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
@@ -2036,6 +2077,7 @@ var CurrentSearchForm = ft04_pinjamanangsuranlistsrch = new ew_Form("ft04_pinjam
 	}
 $t04_pinjamanangsuran_list->RenderOtherOptions();
 ?>
+<?php if ($Security->CanSearch()) { ?>
 <?php if ($t04_pinjamanangsuran->Export == "" && $t04_pinjamanangsuran->CurrentAction == "") { ?>
 <form name="ft04_pinjamanangsuranlistsrch" id="ft04_pinjamanangsuranlistsrch" class="form-inline ewForm" action="<?php echo ew_CurrentPage() ?>">
 <?php $SearchPanelClass = ($t04_pinjamanangsuran_list->SearchWhere <> "") ? " in" : " in"; ?>
@@ -2062,6 +2104,7 @@ $t04_pinjamanangsuran_list->RenderOtherOptions();
 	</div>
 </div>
 </form>
+<?php } ?>
 <?php } ?>
 <?php $t04_pinjamanangsuran_list->ShowPageHeader(); ?>
 <?php
@@ -2095,7 +2138,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Ke) == "") { ?>
 		<th data-name="Angsuran_Ke"><div id="elh_t04_pinjamanangsuran_Angsuran_Ke" class="t04_pinjamanangsuran_Angsuran_Ke"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Ke->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Ke"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Ke) ?>',1);"><div id="elh_t04_pinjamanangsuran_Angsuran_Ke" class="t04_pinjamanangsuran_Angsuran_Ke">
+		<th data-name="Angsuran_Ke"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Ke) ?>',2);"><div id="elh_t04_pinjamanangsuran_Angsuran_Ke" class="t04_pinjamanangsuran_Angsuran_Ke">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Ke->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Angsuran_Ke->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Angsuran_Ke->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2104,7 +2147,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Tanggal) == "") { ?>
 		<th data-name="Angsuran_Tanggal"><div id="elh_t04_pinjamanangsuran_Angsuran_Tanggal" class="t04_pinjamanangsuran_Angsuran_Tanggal"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Tanggal->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Tanggal"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Tanggal) ?>',1);"><div id="elh_t04_pinjamanangsuran_Angsuran_Tanggal" class="t04_pinjamanangsuran_Angsuran_Tanggal">
+		<th data-name="Angsuran_Tanggal"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Tanggal) ?>',2);"><div id="elh_t04_pinjamanangsuran_Angsuran_Tanggal" class="t04_pinjamanangsuran_Angsuran_Tanggal">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Tanggal->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Angsuran_Tanggal->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Angsuran_Tanggal->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2113,7 +2156,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Pokok) == "") { ?>
 		<th data-name="Angsuran_Pokok"><div id="elh_t04_pinjamanangsuran_Angsuran_Pokok" class="t04_pinjamanangsuran_Angsuran_Pokok"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Pokok->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Pokok"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Pokok) ?>',1);"><div id="elh_t04_pinjamanangsuran_Angsuran_Pokok" class="t04_pinjamanangsuran_Angsuran_Pokok">
+		<th data-name="Angsuran_Pokok"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Pokok) ?>',2);"><div id="elh_t04_pinjamanangsuran_Angsuran_Pokok" class="t04_pinjamanangsuran_Angsuran_Pokok">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Pokok->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Angsuran_Pokok->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Angsuran_Pokok->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2122,7 +2165,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Bunga) == "") { ?>
 		<th data-name="Angsuran_Bunga"><div id="elh_t04_pinjamanangsuran_Angsuran_Bunga" class="t04_pinjamanangsuran_Angsuran_Bunga"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Bunga->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Bunga"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Bunga) ?>',1);"><div id="elh_t04_pinjamanangsuran_Angsuran_Bunga" class="t04_pinjamanangsuran_Angsuran_Bunga">
+		<th data-name="Angsuran_Bunga"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Bunga) ?>',2);"><div id="elh_t04_pinjamanangsuran_Angsuran_Bunga" class="t04_pinjamanangsuran_Angsuran_Bunga">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Bunga->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Angsuran_Bunga->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Angsuran_Bunga->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2131,7 +2174,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Total) == "") { ?>
 		<th data-name="Angsuran_Total"><div id="elh_t04_pinjamanangsuran_Angsuran_Total" class="t04_pinjamanangsuran_Angsuran_Total"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Total->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Angsuran_Total"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Total) ?>',1);"><div id="elh_t04_pinjamanangsuran_Angsuran_Total" class="t04_pinjamanangsuran_Angsuran_Total">
+		<th data-name="Angsuran_Total"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Angsuran_Total) ?>',2);"><div id="elh_t04_pinjamanangsuran_Angsuran_Total" class="t04_pinjamanangsuran_Angsuran_Total">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Angsuran_Total->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Angsuran_Total->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Angsuran_Total->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2140,7 +2183,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Sisa_Hutang) == "") { ?>
 		<th data-name="Sisa_Hutang"><div id="elh_t04_pinjamanangsuran_Sisa_Hutang" class="t04_pinjamanangsuran_Sisa_Hutang"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Sisa_Hutang->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Sisa_Hutang"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Sisa_Hutang) ?>',1);"><div id="elh_t04_pinjamanangsuran_Sisa_Hutang" class="t04_pinjamanangsuran_Sisa_Hutang">
+		<th data-name="Sisa_Hutang"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Sisa_Hutang) ?>',2);"><div id="elh_t04_pinjamanangsuran_Sisa_Hutang" class="t04_pinjamanangsuran_Sisa_Hutang">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Sisa_Hutang->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Sisa_Hutang->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Sisa_Hutang->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2149,7 +2192,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Tanggal_Bayar) == "") { ?>
 		<th data-name="Tanggal_Bayar"><div id="elh_t04_pinjamanangsuran_Tanggal_Bayar" class="t04_pinjamanangsuran_Tanggal_Bayar"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Tanggal_Bayar->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Tanggal_Bayar"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Tanggal_Bayar) ?>',1);"><div id="elh_t04_pinjamanangsuran_Tanggal_Bayar" class="t04_pinjamanangsuran_Tanggal_Bayar">
+		<th data-name="Tanggal_Bayar"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Tanggal_Bayar) ?>',2);"><div id="elh_t04_pinjamanangsuran_Tanggal_Bayar" class="t04_pinjamanangsuran_Tanggal_Bayar">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Tanggal_Bayar->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Tanggal_Bayar->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Tanggal_Bayar->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2158,7 +2201,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Terlambat) == "") { ?>
 		<th data-name="Terlambat"><div id="elh_t04_pinjamanangsuran_Terlambat" class="t04_pinjamanangsuran_Terlambat"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Terlambat->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Terlambat"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Terlambat) ?>',1);"><div id="elh_t04_pinjamanangsuran_Terlambat" class="t04_pinjamanangsuran_Terlambat">
+		<th data-name="Terlambat"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Terlambat) ?>',2);"><div id="elh_t04_pinjamanangsuran_Terlambat" class="t04_pinjamanangsuran_Terlambat">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Terlambat->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Terlambat->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Terlambat->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2167,7 +2210,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Total_Denda) == "") { ?>
 		<th data-name="Total_Denda"><div id="elh_t04_pinjamanangsuran_Total_Denda" class="t04_pinjamanangsuran_Total_Denda"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Total_Denda->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Total_Denda"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Total_Denda) ?>',1);"><div id="elh_t04_pinjamanangsuran_Total_Denda" class="t04_pinjamanangsuran_Total_Denda">
+		<th data-name="Total_Denda"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Total_Denda) ?>',2);"><div id="elh_t04_pinjamanangsuran_Total_Denda" class="t04_pinjamanangsuran_Total_Denda">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Total_Denda->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Total_Denda->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Total_Denda->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2176,7 +2219,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Titipan) == "") { ?>
 		<th data-name="Bayar_Titipan"><div id="elh_t04_pinjamanangsuran_Bayar_Titipan" class="t04_pinjamanangsuran_Bayar_Titipan"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Bayar_Titipan->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Bayar_Titipan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Titipan) ?>',1);"><div id="elh_t04_pinjamanangsuran_Bayar_Titipan" class="t04_pinjamanangsuran_Bayar_Titipan">
+		<th data-name="Bayar_Titipan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Titipan) ?>',2);"><div id="elh_t04_pinjamanangsuran_Bayar_Titipan" class="t04_pinjamanangsuran_Bayar_Titipan">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Bayar_Titipan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Bayar_Titipan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Bayar_Titipan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2185,7 +2228,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Non_Titipan) == "") { ?>
 		<th data-name="Bayar_Non_Titipan"><div id="elh_t04_pinjamanangsuran_Bayar_Non_Titipan" class="t04_pinjamanangsuran_Bayar_Non_Titipan"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Bayar_Non_Titipan->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Bayar_Non_Titipan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Non_Titipan) ?>',1);"><div id="elh_t04_pinjamanangsuran_Bayar_Non_Titipan" class="t04_pinjamanangsuran_Bayar_Non_Titipan">
+		<th data-name="Bayar_Non_Titipan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Non_Titipan) ?>',2);"><div id="elh_t04_pinjamanangsuran_Bayar_Non_Titipan" class="t04_pinjamanangsuran_Bayar_Non_Titipan">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Bayar_Non_Titipan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Bayar_Non_Titipan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Bayar_Non_Titipan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2194,7 +2237,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Total) == "") { ?>
 		<th data-name="Bayar_Total"><div id="elh_t04_pinjamanangsuran_Bayar_Total" class="t04_pinjamanangsuran_Bayar_Total"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Bayar_Total->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Bayar_Total"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Total) ?>',1);"><div id="elh_t04_pinjamanangsuran_Bayar_Total" class="t04_pinjamanangsuran_Bayar_Total">
+		<th data-name="Bayar_Total"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Bayar_Total) ?>',2);"><div id="elh_t04_pinjamanangsuran_Bayar_Total" class="t04_pinjamanangsuran_Bayar_Total">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Bayar_Total->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Bayar_Total->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Bayar_Total->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2203,7 +2246,7 @@ $t04_pinjamanangsuran_list->ListOptions->Render("header", "left");
 	<?php if ($t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Periode) == "") { ?>
 		<th data-name="Periode"><div id="elh_t04_pinjamanangsuran_Periode" class="t04_pinjamanangsuran_Periode"><div class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Periode->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Periode"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Periode) ?>',1);"><div id="elh_t04_pinjamanangsuran_Periode" class="t04_pinjamanangsuran_Periode">
+		<th data-name="Periode"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t04_pinjamanangsuran->SortUrl($t04_pinjamanangsuran->Periode) ?>',2);"><div id="elh_t04_pinjamanangsuran_Periode" class="t04_pinjamanangsuran_Periode">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t04_pinjamanangsuran->Periode->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t04_pinjamanangsuran->Periode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t04_pinjamanangsuran->Periode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>

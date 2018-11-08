@@ -6,6 +6,8 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t94_loginfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
+<?php include_once "t95_logdescgridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -215,6 +217,7 @@ class ct94_log_edit extends ct94_log {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -230,6 +233,9 @@ class ct94_log_edit extends ct94_log {
 			$GLOBALS["Table"] = &$GLOBALS["t94_log"];
 		}
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'edit', TRUE);
@@ -243,6 +249,12 @@ class ct94_log_edit extends ct94_log {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 	}
 
 	//
@@ -251,11 +263,29 @@ class ct94_log_edit extends ct94_log {
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
 
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanEdit()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t94_loglist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
+
 		// Create form object
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->index_->SetVisibility();
 		$this->subj_->SetVisibility();
 
@@ -274,6 +304,14 @@ class ct94_log_edit extends ct94_log {
 
 		// Process auto fill
 		if (@$_POST["ajax"] == "autofill") {
+
+			// Process auto fill for detail table 't95_logdesc'
+			if (@$_POST["grid"] == "ft95_logdescgrid") {
+				if (!isset($GLOBALS["t95_logdesc_grid"])) $GLOBALS["t95_logdesc_grid"] = new ct95_logdesc_grid;
+				$GLOBALS["t95_logdesc_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
 			$results = $this->GetAutoFill(@$_POST["name"], @$_POST["q"]);
 			if ($results) {
 
@@ -366,6 +404,9 @@ class ct94_log_edit extends ct94_log {
 		if (@$_POST["a_edit"] <> "") {
 			$this->CurrentAction = $_POST["a_edit"]; // Get action code
 			$this->LoadFormValues(); // Get form values
+
+			// Set up detail parameters
+			$this->SetUpDetailParms();
 		} else {
 			$this->CurrentAction = "I"; // Default action is display
 		}
@@ -390,9 +431,15 @@ class ct94_log_edit extends ct94_log {
 					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
 					$this->Page_Terminate("t94_loglist.php"); // No matching record, return to list
 				}
+
+				// Set up detail parameters
+				$this->SetUpDetailParms();
 				break;
 			Case "U": // Update
-				$sReturnUrl = $this->getReturnUrl();
+				if ($this->getCurrentDetailTable() <> "") // Master/detail edit
+					$sReturnUrl = $this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $this->getCurrentDetailTable()); // Master/Detail view page
+				else
+					$sReturnUrl = $this->getReturnUrl();
 				if (ew_GetPageName($sReturnUrl) == "t94_loglist.php")
 					$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 				$this->SendEmail = TRUE; // Send email on update success
@@ -405,6 +452,9 @@ class ct94_log_edit extends ct94_log {
 				} else {
 					$this->EventCancelled = TRUE; // Event cancelled
 					$this->RestoreFormValues(); // Restore form values if update failed
+
+					// Set up detail parameters
+					$this->SetUpDetailParms();
 				}
 		}
 
@@ -465,14 +515,14 @@ class ct94_log_edit extends ct94_log {
 
 		// Load from form
 		global $objForm;
-		if (!$this->id->FldIsDetailKey)
-			$this->id->setFormValue($objForm->GetValue("x_id"));
 		if (!$this->index_->FldIsDetailKey) {
 			$this->index_->setFormValue($objForm->GetValue("x_index_"));
 		}
 		if (!$this->subj_->FldIsDetailKey) {
 			$this->subj_->setFormValue($objForm->GetValue("x_subj_"));
 		}
+		if (!$this->id->FldIsDetailKey)
+			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
 
 	// Restore form values
@@ -555,11 +605,6 @@ class ct94_log_edit extends ct94_log {
 		$this->subj_->ViewValue = $this->subj_->CurrentValue;
 		$this->subj_->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// index_
 			$this->index_->LinkCustomAttributes = "";
 			$this->index_->HrefValue = "";
@@ -570,12 +615,6 @@ class ct94_log_edit extends ct94_log {
 			$this->subj_->HrefValue = "";
 			$this->subj_->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
-
-			// id
-			$this->id->EditAttrs["class"] = "form-control";
-			$this->id->EditCustomAttributes = "";
-			$this->id->EditValue = $this->id->CurrentValue;
-			$this->id->ViewCustomAttributes = "";
 
 			// index_
 			$this->index_->EditAttrs["class"] = "form-control";
@@ -590,12 +629,8 @@ class ct94_log_edit extends ct94_log {
 			$this->subj_->PlaceHolder = ew_RemoveHtml($this->subj_->FldCaption());
 
 			// Edit refer script
-			// id
-
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-
 			// index_
+
 			$this->index_->LinkCustomAttributes = "";
 			$this->index_->HrefValue = "";
 
@@ -634,6 +669,13 @@ class ct94_log_edit extends ct94_log {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->subj_->FldCaption(), $this->subj_->ReqErrMsg));
 		}
 
+		// Validate detail grid
+		$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+		if (in_array("t95_logdesc", $DetailTblVar) && $GLOBALS["t95_logdesc"]->DetailEdit) {
+			if (!isset($GLOBALS["t95_logdesc_grid"])) $GLOBALS["t95_logdesc_grid"] = new ct95_logdesc_grid(); // get detail page object
+			$GLOBALS["t95_logdesc_grid"]->ValidateGridForm();
+		}
+
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
 
@@ -664,6 +706,10 @@ class ct94_log_edit extends ct94_log {
 			$EditRow = FALSE; // Update Failed
 		} else {
 
+			// Begin transaction
+			if ($this->getCurrentDetailTable() <> "")
+				$conn->BeginTrans();
+
 			// Save old values
 			$rsold = &$rs->fields;
 			$this->LoadDbValues($rsold);
@@ -686,6 +732,26 @@ class ct94_log_edit extends ct94_log {
 				$conn->raiseErrorFn = '';
 				if ($EditRow) {
 				}
+
+				// Update detail records
+				$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+				if ($EditRow) {
+					if (in_array("t95_logdesc", $DetailTblVar) && $GLOBALS["t95_logdesc"]->DetailEdit) {
+						if (!isset($GLOBALS["t95_logdesc_grid"])) $GLOBALS["t95_logdesc_grid"] = new ct95_logdesc_grid(); // Get detail page object
+						$Security->LoadCurrentUserLevel($this->ProjectID . "t95_logdesc"); // Load user level of detail table
+						$EditRow = $GLOBALS["t95_logdesc_grid"]->GridUpdate();
+						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+					}
+				}
+
+				// Commit/Rollback transaction
+				if ($this->getCurrentDetailTable() <> "") {
+					if ($EditRow) {
+						$conn->CommitTrans(); // Commit transaction
+					} else {
+						$conn->RollbackTrans(); // Rollback transaction
+					}
+				}
 			} else {
 				if ($this->getSuccessMessage() <> "" || $this->getFailureMessage() <> "") {
 
@@ -705,6 +771,36 @@ class ct94_log_edit extends ct94_log {
 			$this->Row_Updated($rsold, $rsnew);
 		$rs->Close();
 		return $EditRow;
+	}
+
+	// Set up detail parms based on QueryString
+	function SetUpDetailParms() {
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_DETAIL])) {
+			$sDetailTblVar = $_GET[EW_TABLE_SHOW_DETAIL];
+			$this->setCurrentDetailTable($sDetailTblVar);
+		} else {
+			$sDetailTblVar = $this->getCurrentDetailTable();
+		}
+		if ($sDetailTblVar <> "") {
+			$DetailTblVar = explode(",", $sDetailTblVar);
+			if (in_array("t95_logdesc", $DetailTblVar)) {
+				if (!isset($GLOBALS["t95_logdesc_grid"]))
+					$GLOBALS["t95_logdesc_grid"] = new ct95_logdesc_grid;
+				if ($GLOBALS["t95_logdesc_grid"]->DetailEdit) {
+					$GLOBALS["t95_logdesc_grid"]->CurrentMode = "edit";
+					$GLOBALS["t95_logdesc_grid"]->CurrentAction = "gridedit";
+
+					// Save current master table to detail table
+					$GLOBALS["t95_logdesc_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t95_logdesc_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t95_logdesc_grid"]->log_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t95_logdesc_grid"]->log_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t95_logdesc_grid"]->log_id->setSessionValue($GLOBALS["t95_logdesc_grid"]->log_id->CurrentValue);
+				}
+			}
+		}
 	}
 
 	// Set up Breadcrumb
@@ -911,18 +1007,6 @@ $t94_log_edit->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <div>
-<?php if ($t94_log->id->Visible) { // id ?>
-	<div id="r_id" class="form-group">
-		<label id="elh_t94_log_id" class="col-sm-2 control-label ewLabel"><?php echo $t94_log->id->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t94_log->id->CellAttributes() ?>>
-<span id="el_t94_log_id">
-<span<?php echo $t94_log->id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t94_log->id->EditValue ?></p></span>
-</span>
-<input type="hidden" data-table="t94_log" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t94_log->id->CurrentValue) ?>">
-<?php echo $t94_log->id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
 <?php if ($t94_log->index_->Visible) { // index_ ?>
 	<div id="r_index_" class="form-group">
 		<label id="elh_t94_log_index_" for="x_index_" class="col-sm-2 control-label ewLabel"><?php echo $t94_log->index_->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
@@ -944,6 +1028,15 @@ $t94_log_edit->ShowMessage();
 	</div>
 <?php } ?>
 </div>
+<input type="hidden" data-table="t94_log" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t94_log->id->CurrentValue) ?>">
+<?php
+	if (in_array("t95_logdesc", explode(",", $t94_log->getCurrentDetailTable())) && $t95_logdesc->DetailEdit) {
+?>
+<?php if ($t94_log->getCurrentDetailTable() <> "") { ?>
+<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t95_logdesc", "TblCaption") ?></h4>
+<?php } ?>
+<?php include_once "t95_logdescgrid.php" ?>
+<?php } ?>
 <?php if (!$t94_log_edit->IsModal) { ?>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">

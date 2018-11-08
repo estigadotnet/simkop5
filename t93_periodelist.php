@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t93_periodeinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -255,6 +256,7 @@ class ct93_periode_list extends ct93_periode {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -285,6 +287,9 @@ class ct93_periode_list extends ct93_periode {
 		$this->MultiDeleteUrl = "t93_periodedelete.php";
 		$this->MultiUpdateUrl = "t93_periodeupdate.php";
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -298,6 +303,12 @@ class ct93_periode_list extends ct93_periode {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -333,6 +344,23 @@ class ct93_periode_list extends ct93_periode {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -342,8 +370,6 @@ class ct93_periode_list extends ct93_periode {
 
 		// Set up list options
 		$this->SetupListOptions();
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->Bulan->SetVisibility();
 		$this->Tahun->SetVisibility();
 		$this->Tahun_Bulan->SetVisibility();
@@ -590,6 +616,8 @@ class ct93_periode_list extends ct93_periode {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
@@ -823,6 +851,7 @@ class ct93_periode_list extends ct93_periode {
 	function BasicSearchWhere($Default = FALSE) {
 		global $Security;
 		$sSearchStr = "";
+		if (!$Security->CanSearch()) return "";
 		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
 		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
 		if ($sSearchKeyword <> "") {
@@ -910,14 +939,16 @@ class ct93_periode_list extends ct93_periode {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id); // id
-			$this->UpdateSort($this->Bulan); // Bulan
-			$this->UpdateSort($this->Tahun); // Tahun
-			$this->UpdateSort($this->Tahun_Bulan); // Tahun_Bulan
+			$this->UpdateSort($this->Bulan, $bCtrl); // Bulan
+			$this->UpdateSort($this->Tahun, $bCtrl); // Tahun
+			$this->UpdateSort($this->Tahun_Bulan, $bCtrl); // Tahun_Bulan
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -950,7 +981,6 @@ class ct93_periode_list extends ct93_periode {
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->id->setSort("");
 				$this->Bulan->setSort("");
 				$this->Tahun->setSort("");
 				$this->Tahun_Bulan->setSort("");
@@ -975,25 +1005,25 @@ class ct93_periode_list extends ct93_periode {
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanView();
 		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// List actions
@@ -1037,7 +1067,7 @@ class ct93_periode_list extends ct93_periode {
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if (TRUE) {
+		if ($Security->CanView()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1046,7 +1076,7 @@ class ct93_periode_list extends ct93_periode {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1055,7 +1085,7 @@ class ct93_periode_list extends ct93_periode {
 		// "copy"
 		$oListOpt = &$this->ListOptions->Items["copy"];
 		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if (TRUE) {
+		if ($Security->CanAdd()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1063,7 +1093,7 @@ class ct93_periode_list extends ct93_periode {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete())
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -1116,7 +1146,7 @@ class ct93_periode_list extends ct93_periode {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
 		// Set up options default
@@ -1288,6 +1318,11 @@ class ct93_periode_list extends ct93_periode {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -1473,11 +1508,6 @@ class ct93_periode_list extends ct93_periode {
 		// Tahun_Bulan
 		$this->Tahun_Bulan->ViewValue = $this->Tahun_Bulan->CurrentValue;
 		$this->Tahun_Bulan->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// Bulan
 			$this->Bulan->LinkCustomAttributes = "";
@@ -1728,13 +1758,23 @@ var CurrentSearchForm = ft93_periodelistsrch = new ew_Form("ft93_periodelistsrch
 
 	// Set no record found message
 	if ($t93_periode->CurrentAction == "" && $t93_periode_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t93_periode_list->setWarningMessage(ew_DeniedMsg());
 		if ($t93_periode_list->SearchWhere == "0=101")
 			$t93_periode_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
 			$t93_periode_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t93_periode_list->AuditTrailOnSearch && $t93_periode_list->Command == "search" && !$t93_periode_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t93_periode_list->getSessionWhere();
+		$t93_periode_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t93_periode_list->RenderOtherOptions();
 ?>
+<?php if ($Security->CanSearch()) { ?>
 <?php if ($t93_periode->Export == "" && $t93_periode->CurrentAction == "") { ?>
 <form name="ft93_periodelistsrch" id="ft93_periodelistsrch" class="form-inline ewForm" action="<?php echo ew_CurrentPage() ?>">
 <?php $SearchPanelClass = ($t93_periode_list->SearchWhere <> "") ? " in" : " in"; ?>
@@ -1761,6 +1801,7 @@ $t93_periode_list->RenderOtherOptions();
 	</div>
 </div>
 </form>
+<?php } ?>
 <?php } ?>
 <?php $t93_periode_list->ShowPageHeader(); ?>
 <?php
@@ -1790,20 +1831,11 @@ $t93_periode_list->RenderListOptions();
 // Render list options (header, left)
 $t93_periode_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t93_periode->id->Visible) { // id ?>
-	<?php if ($t93_periode->SortUrl($t93_periode->id) == "") { ?>
-		<th data-name="id"><div id="elh_t93_periode_id" class="t93_periode_id"><div class="ewTableHeaderCaption"><?php echo $t93_periode->id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t93_periode->SortUrl($t93_periode->id) ?>',1);"><div id="elh_t93_periode_id" class="t93_periode_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t93_periode->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t93_periode->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t93_periode->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t93_periode->Bulan->Visible) { // Bulan ?>
 	<?php if ($t93_periode->SortUrl($t93_periode->Bulan) == "") { ?>
 		<th data-name="Bulan"><div id="elh_t93_periode_Bulan" class="t93_periode_Bulan"><div class="ewTableHeaderCaption"><?php echo $t93_periode->Bulan->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Bulan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t93_periode->SortUrl($t93_periode->Bulan) ?>',1);"><div id="elh_t93_periode_Bulan" class="t93_periode_Bulan">
+		<th data-name="Bulan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t93_periode->SortUrl($t93_periode->Bulan) ?>',2);"><div id="elh_t93_periode_Bulan" class="t93_periode_Bulan">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t93_periode->Bulan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t93_periode->Bulan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t93_periode->Bulan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1812,7 +1844,7 @@ $t93_periode_list->ListOptions->Render("header", "left");
 	<?php if ($t93_periode->SortUrl($t93_periode->Tahun) == "") { ?>
 		<th data-name="Tahun"><div id="elh_t93_periode_Tahun" class="t93_periode_Tahun"><div class="ewTableHeaderCaption"><?php echo $t93_periode->Tahun->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Tahun"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t93_periode->SortUrl($t93_periode->Tahun) ?>',1);"><div id="elh_t93_periode_Tahun" class="t93_periode_Tahun">
+		<th data-name="Tahun"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t93_periode->SortUrl($t93_periode->Tahun) ?>',2);"><div id="elh_t93_periode_Tahun" class="t93_periode_Tahun">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t93_periode->Tahun->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t93_periode->Tahun->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t93_periode->Tahun->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1821,7 +1853,7 @@ $t93_periode_list->ListOptions->Render("header", "left");
 	<?php if ($t93_periode->SortUrl($t93_periode->Tahun_Bulan) == "") { ?>
 		<th data-name="Tahun_Bulan"><div id="elh_t93_periode_Tahun_Bulan" class="t93_periode_Tahun_Bulan"><div class="ewTableHeaderCaption"><?php echo $t93_periode->Tahun_Bulan->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Tahun_Bulan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t93_periode->SortUrl($t93_periode->Tahun_Bulan) ?>',1);"><div id="elh_t93_periode_Tahun_Bulan" class="t93_periode_Tahun_Bulan">
+		<th data-name="Tahun_Bulan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t93_periode->SortUrl($t93_periode->Tahun_Bulan) ?>',2);"><div id="elh_t93_periode_Tahun_Bulan" class="t93_periode_Tahun_Bulan">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t93_periode->Tahun_Bulan->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t93_periode->Tahun_Bulan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t93_periode->Tahun_Bulan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -1891,21 +1923,13 @@ while ($t93_periode_list->RecCnt < $t93_periode_list->StopRec) {
 // Render list options (body, left)
 $t93_periode_list->ListOptions->Render("body", "left", $t93_periode_list->RowCnt);
 ?>
-	<?php if ($t93_periode->id->Visible) { // id ?>
-		<td data-name="id"<?php echo $t93_periode->id->CellAttributes() ?>>
-<span id="el<?php echo $t93_periode_list->RowCnt ?>_t93_periode_id" class="t93_periode_id">
-<span<?php echo $t93_periode->id->ViewAttributes() ?>>
-<?php echo $t93_periode->id->ListViewValue() ?></span>
-</span>
-<a id="<?php echo $t93_periode_list->PageObjName . "_row_" . $t93_periode_list->RowCnt ?>"></a></td>
-	<?php } ?>
 	<?php if ($t93_periode->Bulan->Visible) { // Bulan ?>
 		<td data-name="Bulan"<?php echo $t93_periode->Bulan->CellAttributes() ?>>
 <span id="el<?php echo $t93_periode_list->RowCnt ?>_t93_periode_Bulan" class="t93_periode_Bulan">
 <span<?php echo $t93_periode->Bulan->ViewAttributes() ?>>
 <?php echo $t93_periode->Bulan->ListViewValue() ?></span>
 </span>
-</td>
+<a id="<?php echo $t93_periode_list->PageObjName . "_row_" . $t93_periode_list->RowCnt ?>"></a></td>
 	<?php } ?>
 	<?php if ($t93_periode->Tahun->Visible) { // Tahun ?>
 		<td data-name="Tahun"<?php echo $t93_periode->Tahun->CellAttributes() ?>>

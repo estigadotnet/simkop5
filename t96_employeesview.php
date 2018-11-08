@@ -247,6 +247,7 @@ class ct96_employees_view extends ct96_employees {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -288,6 +289,12 @@ class ct96_employees_view extends ct96_employees {
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
 
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
+
 		// Export options
 		$this->ExportOptions = new cListOptions();
 		$this->ExportOptions->Tag = "div";
@@ -307,6 +314,30 @@ class ct96_employees_view extends ct96_employees {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanView()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t96_employeeslist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+			if (strval($Security->CurrentUserID()) == "") {
+				$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+				$this->Page_Terminate(ew_GetUrl("t96_employeeslist.php"));
+			}
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 		$this->EmployeeID->SetVisibility();
 		$this->EmployeeID->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
@@ -477,7 +508,7 @@ class ct96_employees_view extends ct96_employees {
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->AddUrl) . "',caption:'" . $addcaption . "'});\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 
 		// Edit
 		$item = &$option->Add("edit");
@@ -486,7 +517,7 @@ class ct96_employees_view extends ct96_employees {
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->EditUrl) . "',caption:'" . $editcaption . "'});\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
-		$item->Visible = ($this->EditUrl <> "");
+		$item->Visible = ($this->EditUrl <> "" && $Security->CanEdit()&& $this->ShowOptionLink('edit'));
 
 		// Copy
 		$item = &$option->Add("copy");
@@ -495,7 +526,7 @@ class ct96_employees_view extends ct96_employees {
 			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->CopyUrl) . "',caption:'" . $copycaption . "'});\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		$item->Visible = ($this->CopyUrl <> "");
+		$item->Visible = ($this->CopyUrl <> "" && $Security->CanAdd() && $this->ShowOptionLink('add'));
 
 		// Delete
 		$item = &$option->Add("delete");
@@ -503,7 +534,7 @@ class ct96_employees_view extends ct96_employees {
 			$item->Body = "<a onclick=\"return ew_ConfirmDelete(this);\" class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode(ew_AddQueryStringToUrl($this->DeleteUrl, "a_delete=1")) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
-		$item->Visible = ($this->DeleteUrl <> "");
+		$item->Visible = ($this->DeleteUrl <> "" && $Security->CanDelete() && $this->ShowOptionLink('delete'));
 
 		// Set up action default
 		$option = &$options["action"];
@@ -581,6 +612,7 @@ class ct96_employees_view extends ct96_employees {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->EmployeeID->setDbValue($rs->fields('EmployeeID'));
 		$this->LastName->setDbValue($rs->fields('LastName'));
 		$this->FirstName->setDbValue($rs->fields('FirstName'));
@@ -756,7 +788,30 @@ class ct96_employees_view extends ct96_employees {
 		$this->Password->ViewCustomAttributes = "";
 
 		// UserLevel
-		$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+		if ($Security->CanAdmin()) { // System admin
+		if (strval($this->UserLevel->CurrentValue) <> "") {
+			$sFilterWrk = "`userlevelid`" . ew_SearchString("=", $this->UserLevel->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `userlevelid`, `userlevelname` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t97_userlevels`";
+		$sWhereWrk = "";
+		$this->UserLevel->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->UserLevel, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->UserLevel->ViewValue = $this->UserLevel->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->UserLevel->ViewValue = $this->UserLevel->CurrentValue;
+			}
+		} else {
+			$this->UserLevel->ViewValue = NULL;
+		}
+		} else {
+			$this->UserLevel->ViewValue = $Language->Phrase("PasswordMask");
+		}
 		$this->UserLevel->ViewCustomAttributes = "";
 
 		// Username
@@ -894,6 +949,14 @@ class ct96_employees_view extends ct96_employees {
 		// Call Row Rendered event
 		if ($this->RowType <> EW_ROWTYPE_AGGREGATEINIT)
 			$this->Row_Rendered();
+	}
+
+	// Show link optionally based on User ID
+	function ShowOptionLink($id = "") {
+		global $Security;
+		if ($Security->IsLoggedIn() && !$Security->IsAdmin() && !$this->UserIDAllow($id))
+			return $Security->IsValidUserID($this->EmployeeID->CurrentValue);
+		return TRUE;
 	}
 
 	// Set up Breadcrumb
@@ -1050,6 +1113,7 @@ ft96_employeesview.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
+ft96_employeesview.Lists["x_UserLevel"] = {"LinkField":"x_userlevelid","Ajax":true,"AutoFill":false,"DisplayFields":["x_userlevelname","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t97_userlevels"};
 ft96_employeesview.Lists["x_Activated"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft96_employeesview.Lists["x_Activated"].Options = <?php echo json_encode($t96_employees->Activated->Options()) ?>;
 

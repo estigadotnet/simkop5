@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t99_audittrailinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -247,6 +248,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -274,6 +276,9 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->ExportCsvUrl = $this->PageUrl() . "export=csv" . $KeyUrl;
 		$this->ExportPdfUrl = $this->PageUrl() . "export=pdf" . $KeyUrl;
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'view', TRUE);
@@ -287,6 +292,12 @@ class ct99_audittrail_view extends ct99_audittrail {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// Export options
 		$this->ExportOptions = new cListOptions();
@@ -307,15 +318,33 @@ class ct99_audittrail_view extends ct99_audittrail {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanView()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t99_audittraillist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->datetime->SetVisibility();
 		$this->script->SetVisibility();
 		$this->user->SetVisibility();
 		$this->action->SetVisibility();
-		$this->_table->SetVisibility();
-		$this->_field->SetVisibility();
+		$this->table->SetVisibility();
+		$this->field->SetVisibility();
 		$this->keyvalue->SetVisibility();
 		$this->oldvalue->SetVisibility();
 		$this->newvalue->SetVisibility();
@@ -464,7 +493,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->AddUrl) . "',caption:'" . $addcaption . "'});\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 
 		// Edit
 		$item = &$option->Add("edit");
@@ -473,7 +502,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->EditUrl) . "',caption:'" . $editcaption . "'});\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
-		$item->Visible = ($this->EditUrl <> "");
+		$item->Visible = ($this->EditUrl <> "" && $Security->CanEdit());
 
 		// Copy
 		$item = &$option->Add("copy");
@@ -482,7 +511,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->CopyUrl) . "',caption:'" . $copycaption . "'});\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		$item->Visible = ($this->CopyUrl <> "");
+		$item->Visible = ($this->CopyUrl <> "" && $Security->CanAdd());
 
 		// Delete
 		$item = &$option->Add("delete");
@@ -490,7 +519,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 			$item->Body = "<a onclick=\"return ew_ConfirmDelete(this);\" class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode(ew_AddQueryStringToUrl($this->DeleteUrl, "a_delete=1")) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
-		$item->Visible = ($this->DeleteUrl <> "");
+		$item->Visible = ($this->DeleteUrl <> "" && $Security->CanDelete());
 
 		// Set up action default
 		$option = &$options["action"];
@@ -573,8 +602,8 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->script->setDbValue($rs->fields('script'));
 		$this->user->setDbValue($rs->fields('user'));
 		$this->action->setDbValue($rs->fields('action'));
-		$this->_table->setDbValue($rs->fields('table'));
-		$this->_field->setDbValue($rs->fields('field'));
+		$this->table->setDbValue($rs->fields('table'));
+		$this->field->setDbValue($rs->fields('field'));
 		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
 		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
 		$this->newvalue->setDbValue($rs->fields('newvalue'));
@@ -589,8 +618,8 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->script->DbValue = $row['script'];
 		$this->user->DbValue = $row['user'];
 		$this->action->DbValue = $row['action'];
-		$this->_table->DbValue = $row['table'];
-		$this->_field->DbValue = $row['field'];
+		$this->table->DbValue = $row['table'];
+		$this->field->DbValue = $row['field'];
 		$this->keyvalue->DbValue = $row['keyvalue'];
 		$this->oldvalue->DbValue = $row['oldvalue'];
 		$this->newvalue->DbValue = $row['newvalue'];
@@ -647,12 +676,12 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->action->ViewCustomAttributes = "";
 
 		// table
-		$this->_table->ViewValue = $this->_table->CurrentValue;
-		$this->_table->ViewCustomAttributes = "";
+		$this->table->ViewValue = $this->table->CurrentValue;
+		$this->table->ViewCustomAttributes = "";
 
 		// field
-		$this->_field->ViewValue = $this->_field->CurrentValue;
-		$this->_field->ViewCustomAttributes = "";
+		$this->field->ViewValue = $this->field->CurrentValue;
+		$this->field->ViewCustomAttributes = "";
 
 		// keyvalue
 		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
@@ -665,11 +694,6 @@ class ct99_audittrail_view extends ct99_audittrail {
 		// newvalue
 		$this->newvalue->ViewValue = $this->newvalue->CurrentValue;
 		$this->newvalue->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
 
 			// datetime
 			$this->datetime->LinkCustomAttributes = "";
@@ -692,14 +716,14 @@ class ct99_audittrail_view extends ct99_audittrail {
 			$this->action->TooltipValue = "";
 
 			// table
-			$this->_table->LinkCustomAttributes = "";
-			$this->_table->HrefValue = "";
-			$this->_table->TooltipValue = "";
+			$this->table->LinkCustomAttributes = "";
+			$this->table->HrefValue = "";
+			$this->table->TooltipValue = "";
 
 			// field
-			$this->_field->LinkCustomAttributes = "";
-			$this->_field->HrefValue = "";
-			$this->_field->TooltipValue = "";
+			$this->field->LinkCustomAttributes = "";
+			$this->field->HrefValue = "";
+			$this->field->TooltipValue = "";
 
 			// keyvalue
 			$this->keyvalue->LinkCustomAttributes = "";
@@ -910,17 +934,6 @@ $t99_audittrail_view->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t99_audittrail->id->Visible) { // id ?>
-	<tr id="r_id">
-		<td><span id="elh_t99_audittrail_id"><?php echo $t99_audittrail->id->FldCaption() ?></span></td>
-		<td data-name="id"<?php echo $t99_audittrail->id->CellAttributes() ?>>
-<span id="el_t99_audittrail_id">
-<span<?php echo $t99_audittrail->id->ViewAttributes() ?>>
-<?php echo $t99_audittrail->id->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
 <?php if ($t99_audittrail->datetime->Visible) { // datetime ?>
 	<tr id="r_datetime">
 		<td><span id="elh_t99_audittrail_datetime"><?php echo $t99_audittrail->datetime->FldCaption() ?></span></td>
@@ -965,24 +978,24 @@ $t99_audittrail_view->ShowMessage();
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t99_audittrail->_table->Visible) { // table ?>
-	<tr id="r__table">
-		<td><span id="elh_t99_audittrail__table"><?php echo $t99_audittrail->_table->FldCaption() ?></span></td>
-		<td data-name="_table"<?php echo $t99_audittrail->_table->CellAttributes() ?>>
-<span id="el_t99_audittrail__table">
-<span<?php echo $t99_audittrail->_table->ViewAttributes() ?>>
-<?php echo $t99_audittrail->_table->ViewValue ?></span>
+<?php if ($t99_audittrail->table->Visible) { // table ?>
+	<tr id="r_table">
+		<td><span id="elh_t99_audittrail_table"><?php echo $t99_audittrail->table->FldCaption() ?></span></td>
+		<td data-name="table"<?php echo $t99_audittrail->table->CellAttributes() ?>>
+<span id="el_t99_audittrail_table">
+<span<?php echo $t99_audittrail->table->ViewAttributes() ?>>
+<?php echo $t99_audittrail->table->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t99_audittrail->_field->Visible) { // field ?>
-	<tr id="r__field">
-		<td><span id="elh_t99_audittrail__field"><?php echo $t99_audittrail->_field->FldCaption() ?></span></td>
-		<td data-name="_field"<?php echo $t99_audittrail->_field->CellAttributes() ?>>
-<span id="el_t99_audittrail__field">
-<span<?php echo $t99_audittrail->_field->ViewAttributes() ?>>
-<?php echo $t99_audittrail->_field->ViewValue ?></span>
+<?php if ($t99_audittrail->field->Visible) { // field ?>
+	<tr id="r_field">
+		<td><span id="elh_t99_audittrail_field"><?php echo $t99_audittrail->field->FldCaption() ?></span></td>
+		<td data-name="field"<?php echo $t99_audittrail->field->CellAttributes() ?>>
+<span id="el_t99_audittrail_field">
+<span<?php echo $t99_audittrail->field->ViewAttributes() ?>>
+<?php echo $t99_audittrail->field->ViewValue ?></span>
 </span>
 </td>
 	</tr>

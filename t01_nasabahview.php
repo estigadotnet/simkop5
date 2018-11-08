@@ -6,6 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t01_nasabahinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "t02_jaminangridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -248,6 +249,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -275,6 +277,9 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->ExportCsvUrl = $this->PageUrl() . "export=csv" . $KeyUrl;
 		$this->ExportPdfUrl = $this->PageUrl() . "export=pdf" . $KeyUrl;
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'view', TRUE);
@@ -288,6 +293,12 @@ class ct01_nasabah_view extends ct01_nasabah {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// Export options
 		$this->ExportOptions = new cListOptions();
@@ -308,6 +319,26 @@ class ct01_nasabah_view extends ct01_nasabah {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanView()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			if ($Security->CanList())
+				$this->Page_Terminate(ew_GetUrl("t01_nasabahlist.php"));
+			else
+				$this->Page_Terminate(ew_GetUrl("login.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 		$this->Nama->SetVisibility();
 		$this->Alamat->SetVisibility();
@@ -463,7 +494,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->AddUrl) . "',caption:'" . $addcaption . "'});\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 
 		// Edit
 		$item = &$option->Add("edit");
@@ -472,7 +503,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->EditUrl) . "',caption:'" . $editcaption . "'});\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
-		$item->Visible = ($this->EditUrl <> "");
+		$item->Visible = ($this->EditUrl <> "" && $Security->CanEdit());
 
 		// Copy
 		$item = &$option->Add("copy");
@@ -481,7 +512,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->CopyUrl) . "',caption:'" . $copycaption . "'});\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		$item->Visible = ($this->CopyUrl <> "");
+		$item->Visible = ($this->CopyUrl <> "" && $Security->CanAdd());
 
 		// Delete
 		$item = &$option->Add("delete");
@@ -489,7 +520,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$item->Body = "<a onclick=\"return ew_ConfirmDelete(this);\" class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode(ew_AddQueryStringToUrl($this->DeleteUrl, "a_delete=1")) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
 		else
 			$item->Body = "<a class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
-		$item->Visible = ($this->DeleteUrl <> "");
+		$item->Visible = ($this->DeleteUrl <> "" && $Security->CanDelete());
 		$option = &$options["detail"];
 		$DetailTableLink = "";
 		$DetailViewTblVar = "";
@@ -501,17 +532,17 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$body = $Language->Phrase("ViewPageDetailLink") . $Language->TablePhrase("t02_jaminan", "TblCaption");
 		$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t02_jaminanlist.php?" . EW_TABLE_SHOW_MASTER . "=t01_nasabah&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
 		$links = "";
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailView) {
+		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailView && $Security->CanView() && $Security->AllowView(CurrentProjectID() . 't02_jaminan')) {
 			$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
 			if ($DetailViewTblVar <> "") $DetailViewTblVar .= ",";
 			$DetailViewTblVar .= "t02_jaminan";
 		}
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailEdit) {
+		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't02_jaminan')) {
 			$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
 			if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
 			$DetailEditTblVar .= "t02_jaminan";
 		}
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailAdd) {
+		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailAdd && $Security->CanAdd() && $Security->AllowAdd(CurrentProjectID() . 't02_jaminan')) {
 			$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
 			if ($DetailCopyTblVar <> "") $DetailCopyTblVar .= ",";
 			$DetailCopyTblVar .= "t02_jaminan";
@@ -522,7 +553,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 		}
 		$body = "<div class=\"btn-group\">" . $body . "</div>";
 		$item->Body = $body;
-		$item->Visible = TRUE;
+		$item->Visible = $Security->AllowList(CurrentProjectID() . 't02_jaminan');
 		if ($item->Visible) {
 			if ($DetailTableLink <> "") $DetailTableLink .= ",";
 			$DetailTableLink .= "t02_jaminan";

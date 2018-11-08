@@ -1,0 +1,1 @@
+//var angsuran_denda = parseFloat('<?php echo $angsuran_denda = ew_ExecuteScalar("select Angsuran_Denda from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");?>');

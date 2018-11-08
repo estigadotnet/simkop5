@@ -7,6 +7,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t02_jaminaninfo.php" ?>
 <?php include_once "t01_nasabahinfo.php" ?>
+<?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -256,6 +257,7 @@ class ct02_jaminan_list extends ct02_jaminan {
 	//
 	function __construct() {
 		global $conn, $Language;
+		global $UserTable, $UserTableConn;
 		$GLOBALS["Page"] = &$this;
 		$this->TokenTimeout = ew_SessionTimeoutTime();
 
@@ -289,6 +291,9 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// Table object (t01_nasabah)
 		if (!isset($GLOBALS['t01_nasabah'])) $GLOBALS['t01_nasabah'] = new ct01_nasabah();
 
+		// Table object (t96_employees)
+		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
+
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
 			define("EW_PAGE_ID", 'list', TRUE);
@@ -302,6 +307,12 @@ class ct02_jaminan_list extends ct02_jaminan {
 
 		// Open connection
 		if (!isset($conn)) $conn = ew_Connect($this->DBID);
+
+		// User table object (t96_employees)
+		if (!isset($UserTable)) {
+			$UserTable = new ct96_employees();
+			$UserTableConn = Conn($UserTable->DBID);
+		}
 
 		// List options
 		$this->ListOptions = new cListOptions();
@@ -337,6 +348,23 @@ class ct02_jaminan_list extends ct02_jaminan {
 	//
 	function Page_Init() {
 		global $gsExport, $gsCustomExport, $gsExportFile, $UserProfile, $Language, $Security, $objForm;
+
+		// Security
+		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanList()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 
 		// Get grid add count
@@ -600,6 +628,8 @@ class ct02_jaminan_list extends ct02_jaminan {
 
 		// Build filter
 		$sFilter = "";
+		if (!$Security->CanList())
+			$sFilter = "(0=1)"; // Filter all records
 
 		// Restore master/detail filter
 		$this->DbMasterFilter = $this->GetMasterFilter(); // Restore master filter
@@ -904,6 +934,7 @@ class ct02_jaminan_list extends ct02_jaminan {
 	function BasicSearchWhere($Default = FALSE) {
 		global $Security;
 		$sSearchStr = "";
+		if (!$Security->CanSearch()) return "";
 		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
 		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
 		if ($sSearchKeyword <> "") {
@@ -991,18 +1022,21 @@ class ct02_jaminan_list extends ct02_jaminan {
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
+		// Check for Ctrl pressed
+		$bCtrl = (@$_GET["ctrl"] <> "");
+
 		// Check for "order" parameter
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->nasabah_id); // nasabah_id
-			$this->UpdateSort($this->Merk_Type); // Merk_Type
-			$this->UpdateSort($this->No_Rangka); // No_Rangka
-			$this->UpdateSort($this->No_Mesin); // No_Mesin
-			$this->UpdateSort($this->Warna); // Warna
-			$this->UpdateSort($this->No_Pol); // No_Pol
-			$this->UpdateSort($this->Keterangan); // Keterangan
-			$this->UpdateSort($this->Atas_Nama); // Atas_Nama
+			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
+			$this->UpdateSort($this->Merk_Type, $bCtrl); // Merk_Type
+			$this->UpdateSort($this->No_Rangka, $bCtrl); // No_Rangka
+			$this->UpdateSort($this->No_Mesin, $bCtrl); // No_Mesin
+			$this->UpdateSort($this->Warna, $bCtrl); // Warna
+			$this->UpdateSort($this->No_Pol, $bCtrl); // No_Pol
+			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
+			$this->UpdateSort($this->Atas_Nama, $bCtrl); // Atas_Nama
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1072,25 +1106,25 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// "view"
 		$item = &$this->ListOptions->Add("view");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanView();
 		$item->OnLeft = TRUE;
 
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
 		// "copy"
 		$item = &$this->ListOptions->Add("copy");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
 		$item = &$this->ListOptions->Add("delete");
 		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
+		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// List actions
@@ -1146,7 +1180,7 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// "view"
 		$oListOpt = &$this->ListOptions->Items["view"];
 		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if (TRUE) {
+		if ($Security->CanView()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1155,7 +1189,7 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
-		if (TRUE) {
+		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1164,7 +1198,7 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// "copy"
 		$oListOpt = &$this->ListOptions->Items["copy"];
 		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if (TRUE) {
+		if ($Security->CanAdd()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
@@ -1172,7 +1206,7 @@ class ct02_jaminan_list extends ct02_jaminan {
 
 		// "delete"
 		$oListOpt = &$this->ListOptions->Items["delete"];
-		if (TRUE)
+		if ($Security->CanDelete())
 			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
 		else
 			$oListOpt->Body = "";
@@ -1225,7 +1259,7 @@ class ct02_jaminan_list extends ct02_jaminan {
 		$item = &$option->Add("add");
 		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
 		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "");
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 		$option = $options["action"];
 
 		// Set up options default
@@ -1397,6 +1431,11 @@ class ct02_jaminan_list extends ct02_jaminan {
 		// Hide search options
 		if ($this->Export <> "" || $this->CurrentAction <> "")
 			$this->SearchOptions->HideAllOptions();
+		global $Security;
+		if (!$Security->CanSearch()) {
+			$this->SearchOptions->HideAllOptions();
+			$this->FilterOptions->HideAllOptions();
+		}
 	}
 
 	function SetupListOptionsExt() {
@@ -1993,6 +2032,8 @@ if ($t02_jaminan_list->DbMasterFilter <> "" && $t02_jaminan->getCurrentMasterTab
 
 	// Set no record found message
 	if ($t02_jaminan->CurrentAction == "" && $t02_jaminan_list->TotalRecs == 0) {
+		if (!$Security->CanList())
+			$t02_jaminan_list->setWarningMessage(ew_DeniedMsg());
 		if ($t02_jaminan_list->SearchWhere == "0=101")
 			$t02_jaminan_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
@@ -2007,6 +2048,7 @@ if ($t02_jaminan_list->DbMasterFilter <> "" && $t02_jaminan->getCurrentMasterTab
 	}
 $t02_jaminan_list->RenderOtherOptions();
 ?>
+<?php if ($Security->CanSearch()) { ?>
 <?php if ($t02_jaminan->Export == "" && $t02_jaminan->CurrentAction == "") { ?>
 <form name="ft02_jaminanlistsrch" id="ft02_jaminanlistsrch" class="form-inline ewForm" action="<?php echo ew_CurrentPage() ?>">
 <?php $SearchPanelClass = ($t02_jaminan_list->SearchWhere <> "") ? " in" : " in"; ?>
@@ -2033,6 +2075,7 @@ $t02_jaminan_list->RenderOtherOptions();
 	</div>
 </div>
 </form>
+<?php } ?>
 <?php } ?>
 <?php $t02_jaminan_list->ShowPageHeader(); ?>
 <?php
@@ -2070,7 +2113,7 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->nasabah_id) == "") { ?>
 		<th data-name="nasabah_id"><div id="elh_t02_jaminan_nasabah_id" class="t02_jaminan_nasabah_id"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->nasabah_id->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="nasabah_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->nasabah_id) ?>',1);"><div id="elh_t02_jaminan_nasabah_id" class="t02_jaminan_nasabah_id">
+		<th data-name="nasabah_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->nasabah_id) ?>',2);"><div id="elh_t02_jaminan_nasabah_id" class="t02_jaminan_nasabah_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->nasabah_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->nasabah_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->nasabah_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2079,7 +2122,7 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->Merk_Type) == "") { ?>
 		<th data-name="Merk_Type"><div id="elh_t02_jaminan_Merk_Type" class="t02_jaminan_Merk_Type"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->Merk_Type->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Merk_Type"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Merk_Type) ?>',1);"><div id="elh_t02_jaminan_Merk_Type" class="t02_jaminan_Merk_Type">
+		<th data-name="Merk_Type"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Merk_Type) ?>',2);"><div id="elh_t02_jaminan_Merk_Type" class="t02_jaminan_Merk_Type">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->Merk_Type->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->Merk_Type->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->Merk_Type->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2088,7 +2131,7 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->No_Rangka) == "") { ?>
 		<th data-name="No_Rangka"><div id="elh_t02_jaminan_No_Rangka" class="t02_jaminan_No_Rangka"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->No_Rangka->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="No_Rangka"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->No_Rangka) ?>',1);"><div id="elh_t02_jaminan_No_Rangka" class="t02_jaminan_No_Rangka">
+		<th data-name="No_Rangka"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->No_Rangka) ?>',2);"><div id="elh_t02_jaminan_No_Rangka" class="t02_jaminan_No_Rangka">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->No_Rangka->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->No_Rangka->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->No_Rangka->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2097,7 +2140,7 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->No_Mesin) == "") { ?>
 		<th data-name="No_Mesin"><div id="elh_t02_jaminan_No_Mesin" class="t02_jaminan_No_Mesin"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->No_Mesin->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="No_Mesin"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->No_Mesin) ?>',1);"><div id="elh_t02_jaminan_No_Mesin" class="t02_jaminan_No_Mesin">
+		<th data-name="No_Mesin"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->No_Mesin) ?>',2);"><div id="elh_t02_jaminan_No_Mesin" class="t02_jaminan_No_Mesin">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->No_Mesin->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->No_Mesin->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->No_Mesin->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2106,7 +2149,7 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->Warna) == "") { ?>
 		<th data-name="Warna"><div id="elh_t02_jaminan_Warna" class="t02_jaminan_Warna"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->Warna->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Warna"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Warna) ?>',1);"><div id="elh_t02_jaminan_Warna" class="t02_jaminan_Warna">
+		<th data-name="Warna"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Warna) ?>',2);"><div id="elh_t02_jaminan_Warna" class="t02_jaminan_Warna">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->Warna->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->Warna->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->Warna->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2115,7 +2158,7 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->No_Pol) == "") { ?>
 		<th data-name="No_Pol"><div id="elh_t02_jaminan_No_Pol" class="t02_jaminan_No_Pol"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->No_Pol->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="No_Pol"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->No_Pol) ?>',1);"><div id="elh_t02_jaminan_No_Pol" class="t02_jaminan_No_Pol">
+		<th data-name="No_Pol"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->No_Pol) ?>',2);"><div id="elh_t02_jaminan_No_Pol" class="t02_jaminan_No_Pol">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->No_Pol->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->No_Pol->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->No_Pol->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2124,7 +2167,7 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->Keterangan) == "") { ?>
 		<th data-name="Keterangan"><div id="elh_t02_jaminan_Keterangan" class="t02_jaminan_Keterangan"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->Keterangan->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Keterangan) ?>',1);"><div id="elh_t02_jaminan_Keterangan" class="t02_jaminan_Keterangan">
+		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Keterangan) ?>',2);"><div id="elh_t02_jaminan_Keterangan" class="t02_jaminan_Keterangan">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->Keterangan->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
@@ -2133,7 +2176,7 @@ $t02_jaminan_list->ListOptions->Render("header", "left");
 	<?php if ($t02_jaminan->SortUrl($t02_jaminan->Atas_Nama) == "") { ?>
 		<th data-name="Atas_Nama"><div id="elh_t02_jaminan_Atas_Nama" class="t02_jaminan_Atas_Nama"><div class="ewTableHeaderCaption"><?php echo $t02_jaminan->Atas_Nama->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Atas_Nama"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Atas_Nama) ?>',1);"><div id="elh_t02_jaminan_Atas_Nama" class="t02_jaminan_Atas_Nama">
+		<th data-name="Atas_Nama"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t02_jaminan->SortUrl($t02_jaminan->Atas_Nama) ?>',2);"><div id="elh_t02_jaminan_Atas_Nama" class="t02_jaminan_Atas_Nama">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t02_jaminan->Atas_Nama->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t02_jaminan->Atas_Nama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t02_jaminan->Atas_Nama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>

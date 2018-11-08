@@ -7,6 +7,12 @@ $t95_logdesc = NULL;
 // Table class for t95_logdesc
 //
 class ct95_logdesc extends cTable {
+	var $AuditTrailOnAdd = TRUE;
+	var $AuditTrailOnEdit = TRUE;
+	var $AuditTrailOnDelete = TRUE;
+	var $AuditTrailOnView = FALSE;
+	var $AuditTrailOnViewData = FALSE;
+	var $AuditTrailOnSearch = FALSE;
 	var $id;
 	var $log_id;
 	var $date_issued;
@@ -34,9 +40,9 @@ class ct95_logdesc extends cTable {
 		$this->ExportPageSize = "a4"; // Page size (PDF only)
 		$this->ExportExcelPageOrientation = ""; // Page orientation (PHPExcel only)
 		$this->ExportExcelPageSize = ""; // Page size (PHPExcel only)
-		$this->DetailAdd = FALSE; // Allow detail add
-		$this->DetailEdit = FALSE; // Allow detail edit
-		$this->DetailView = FALSE; // Allow detail view
+		$this->DetailAdd = TRUE; // Allow detail add
+		$this->DetailEdit = TRUE; // Allow detail edit
+		$this->DetailView = TRUE; // Allow detail view
 		$this->ShowMultipleDetails = FALSE; // Show multiple details
 		$this->GridAddRowCount = 5;
 		$this->AllowAddDeleteRow = ew_AllowAddDeleteRow(); // Allow add/delete row
@@ -79,8 +85,8 @@ class ct95_logdesc extends cTable {
 		return $this->$fldparm->Visible; // Returns original value
 	}
 
-	// Single column sort
-	function UpdateSort(&$ofld) {
+	// Multiple column sort
+	function UpdateSort(&$ofld, $ctrl) {
 		if ($this->CurrentOrder == $ofld->FldName) {
 			$sSortField = $ofld->FldExpression;
 			$sLastSort = $ofld->getSort();
@@ -90,10 +96,68 @@ class ct95_logdesc extends cTable {
 				$sThisSort = ($sLastSort == "ASC") ? "DESC" : "ASC";
 			}
 			$ofld->setSort($sThisSort);
-			$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			if ($ctrl) {
+				$sOrderBy = $this->getSessionOrderBy();
+				if (strpos($sOrderBy, $sSortField . " " . $sLastSort) !== FALSE) {
+					$sOrderBy = str_replace($sSortField . " " . $sLastSort, $sSortField . " " . $sThisSort, $sOrderBy);
+				} else {
+					if ($sOrderBy <> "") $sOrderBy .= ", ";
+					$sOrderBy .= $sSortField . " " . $sThisSort;
+				}
+				$this->setSessionOrderBy($sOrderBy); // Save to Session
+			} else {
+				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
+			}
 		} else {
-			$ofld->setSort("");
+			if (!$ctrl) $ofld->setSort("");
 		}
+	}
+
+	// Current master table name
+	function getCurrentMasterTable() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_MASTER_TABLE];
+	}
+
+	function setCurrentMasterTable($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_MASTER_TABLE] = $v;
+	}
+
+	// Session master WHERE clause
+	function GetMasterFilter() {
+
+		// Master filter
+		$sMasterFilter = "";
+		if ($this->getCurrentMasterTable() == "t94_log") {
+			if ($this->log_id->getSessionValue() <> "")
+				$sMasterFilter .= "`id`=" . ew_QuotedValue($this->log_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $sMasterFilter;
+	}
+
+	// Session detail WHERE clause
+	function GetDetailFilter() {
+
+		// Detail filter
+		$sDetailFilter = "";
+		if ($this->getCurrentMasterTable() == "t94_log") {
+			if ($this->log_id->getSessionValue() <> "")
+				$sDetailFilter .= "`log_id`=" . ew_QuotedValue($this->log_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $sDetailFilter;
+	}
+
+	// Master filter
+	function SqlMasterFilter_t94_log() {
+		return "`id`=@id@";
+	}
+
+	// Detail filter
+	function SqlDetailFilter_t94_log() {
+		return "`log_id`=@log_id@";
 	}
 
 	// Table level SQL
@@ -325,6 +389,8 @@ class ct95_logdesc extends cTable {
 			// Get insert id if necessary
 			$this->id->setDbValue($conn->Insert_ID());
 			$rs['id'] = $this->id->DbValue;
+			if ($this->AuditTrailOnAdd)
+				$this->WriteAuditTrailOnAdd($rs);
 		}
 		return $bInsert;
 	}
@@ -352,6 +418,12 @@ class ct95_logdesc extends cTable {
 	function Update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE) {
 		$conn = &$this->Connection();
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
+		if ($bUpdate && $this->AuditTrailOnEdit) {
+			$rsaudit = $rs;
+			$fldname = 'id';
+			if (!array_key_exists($fldname, $rsaudit)) $rsaudit[$fldname] = $rsold[$fldname];
+			$this->WriteAuditTrailOnEdit($rsold, $rsaudit);
+		}
 		return $bUpdate;
 	}
 
@@ -377,6 +449,8 @@ class ct95_logdesc extends cTable {
 	function Delete(&$rs, $where = "", $curfilter = TRUE) {
 		$conn = &$this->Connection();
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
+		if ($bDelete && $this->AuditTrailOnDelete)
+			$this->WriteAuditTrailOnDelete($rs);
 		return $bDelete;
 	}
 
@@ -466,6 +540,10 @@ class ct95_logdesc extends cTable {
 
 	// Add master url
 	function AddMasterUrl($url) {
+		if ($this->getCurrentMasterTable() == "t94_log" && strpos($url, EW_TABLE_SHOW_MASTER . "=") === FALSE) {
+			$url .= (strpos($url, "?") !== FALSE ? "&" : "?") . EW_TABLE_SHOW_MASTER . "=" . $this->getCurrentMasterTable();
+			$url .= "&fk_id=" . urlencode($this->log_id->CurrentValue);
+		}
 		return $url;
 	}
 
@@ -589,6 +667,26 @@ class ct95_logdesc extends cTable {
 
 		// log_id
 		$this->log_id->ViewValue = $this->log_id->CurrentValue;
+		if (strval($this->log_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->log_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `subj_` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t94_log`";
+		$sWhereWrk = "";
+		$this->log_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->log_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->log_id->ViewValue = $this->log_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->log_id->ViewValue = $this->log_id->CurrentValue;
+			}
+		} else {
+			$this->log_id->ViewValue = NULL;
+		}
 		$this->log_id->ViewCustomAttributes = "";
 
 		// date_issued
@@ -650,8 +748,34 @@ class ct95_logdesc extends cTable {
 		// log_id
 		$this->log_id->EditAttrs["class"] = "form-control";
 		$this->log_id->EditCustomAttributes = "";
+		if ($this->log_id->getSessionValue() <> "") {
+			$this->log_id->CurrentValue = $this->log_id->getSessionValue();
+		$this->log_id->ViewValue = $this->log_id->CurrentValue;
+		if (strval($this->log_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->log_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `subj_` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t94_log`";
+		$sWhereWrk = "";
+		$this->log_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->log_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->log_id->ViewValue = $this->log_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->log_id->ViewValue = $this->log_id->CurrentValue;
+			}
+		} else {
+			$this->log_id->ViewValue = NULL;
+		}
+		$this->log_id->ViewCustomAttributes = "";
+		} else {
 		$this->log_id->EditValue = $this->log_id->CurrentValue;
 		$this->log_id->PlaceHolder = ew_RemoveHtml($this->log_id->FldCaption());
+		}
 
 		// date_issued
 		$this->date_issued->EditAttrs["class"] = "form-control";
@@ -698,7 +822,6 @@ class ct95_logdesc extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->log_id->Exportable) $Doc->ExportCaption($this->log_id);
 					if ($this->date_issued->Exportable) $Doc->ExportCaption($this->date_issued);
 					if ($this->desc_->Exportable) $Doc->ExportCaption($this->desc_);
@@ -707,6 +830,7 @@ class ct95_logdesc extends cTable {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->log_id->Exportable) $Doc->ExportCaption($this->log_id);
 					if ($this->date_issued->Exportable) $Doc->ExportCaption($this->date_issued);
+					if ($this->desc_->Exportable) $Doc->ExportCaption($this->desc_);
 					if ($this->date_solved->Exportable) $Doc->ExportCaption($this->date_solved);
 				}
 				$Doc->EndExportRow();
@@ -739,7 +863,6 @@ class ct95_logdesc extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->log_id->Exportable) $Doc->ExportField($this->log_id);
 						if ($this->date_issued->Exportable) $Doc->ExportField($this->date_issued);
 						if ($this->desc_->Exportable) $Doc->ExportField($this->desc_);
@@ -748,6 +871,7 @@ class ct95_logdesc extends cTable {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->log_id->Exportable) $Doc->ExportField($this->log_id);
 						if ($this->date_issued->Exportable) $Doc->ExportField($this->date_issued);
+						if ($this->desc_->Exportable) $Doc->ExportField($this->desc_);
 						if ($this->date_solved->Exportable) $Doc->ExportField($this->date_solved);
 					}
 					$Doc->EndExportRow();
@@ -787,6 +911,129 @@ class ct95_logdesc extends cTable {
 			return ew_ArrayToJson($rsarr);
 		} else {
 			return FALSE;
+		}
+	}
+
+	// Write Audit Trail start/end for grid update
+	function WriteAuditTrailDummy($typ) {
+		$table = 't95_logdesc';
+		$usr = CurrentUserID();
+		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
+	}
+
+	// Write Audit Trail (add page)
+	function WriteAuditTrailOnAdd(&$rs) {
+		global $Language;
+		if (!$this->AuditTrailOnAdd) return;
+		$table = 't95_logdesc';
+
+		// Get key value
+		$key = "";
+		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rs['id'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$usr = CurrentUserID();
+		foreach (array_keys($rs) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
+					$newvalue = $Language->Phrase("PasswordMask"); // Password Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) {
+					if (EW_AUDIT_TRAIL_TO_DATABASE)
+						$newvalue = $rs[$fldname];
+					else
+						$newvalue = "[MEMO]"; // Memo Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) {
+					$newvalue = "[XML]"; // XML Field
+				} else {
+					$newvalue = $rs[$fldname];
+				}
+				ew_WriteAuditTrail("log", $dt, $id, $usr, "A", $table, $fldname, $key, "", $newvalue);
+			}
+		}
+	}
+
+	// Write Audit Trail (edit page)
+	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
+		global $Language;
+		if (!$this->AuditTrailOnEdit) return;
+		$table = 't95_logdesc';
+
+		// Get key value
+		$key = "";
+		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rsold['id'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$usr = CurrentUserID();
+		foreach (array_keys($rsnew) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && array_key_exists($fldname, $rsold) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldDataType == EW_DATATYPE_DATE) { // DateTime field
+					$modified = (ew_FormatDateTime($rsold[$fldname], 0) <> ew_FormatDateTime($rsnew[$fldname], 0));
+				} else {
+					$modified = !ew_CompareValue($rsold[$fldname], $rsnew[$fldname]);
+				}
+				if ($modified) {
+					if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") { // Password Field
+						$oldvalue = $Language->Phrase("PasswordMask");
+						$newvalue = $Language->Phrase("PasswordMask");
+					} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) { // Memo field
+						if (EW_AUDIT_TRAIL_TO_DATABASE) {
+							$oldvalue = $rsold[$fldname];
+							$newvalue = $rsnew[$fldname];
+						} else {
+							$oldvalue = "[MEMO]";
+							$newvalue = "[MEMO]";
+						}
+					} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) { // XML field
+						$oldvalue = "[XML]";
+						$newvalue = "[XML]";
+					} else {
+						$oldvalue = $rsold[$fldname];
+						$newvalue = $rsnew[$fldname];
+					}
+					ew_WriteAuditTrail("log", $dt, $id, $usr, "U", $table, $fldname, $key, $oldvalue, $newvalue);
+				}
+			}
+		}
+	}
+
+	// Write Audit Trail (delete page)
+	function WriteAuditTrailOnDelete(&$rs) {
+		global $Language;
+		if (!$this->AuditTrailOnDelete) return;
+		$table = 't95_logdesc';
+
+		// Get key value
+		$key = "";
+		if ($key <> "")
+			$key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rs['id'];
+
+		// Write Audit Trail
+		$dt = ew_StdCurrentDateTime();
+		$id = ew_ScriptName();
+		$curUser = CurrentUserID();
+		foreach (array_keys($rs) as $fldname) {
+			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
+				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
+					$oldvalue = $Language->Phrase("PasswordMask"); // Password Field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) {
+					if (EW_AUDIT_TRAIL_TO_DATABASE)
+						$oldvalue = $rs[$fldname];
+					else
+						$oldvalue = "[MEMO]"; // Memo field
+				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) {
+					$oldvalue = "[XML]"; // XML field
+				} else {
+					$oldvalue = $rs[$fldname];
+				}
+				ew_WriteAuditTrail("log", $dt, $id, $curUser, "D", $table, $fldname, $key, $oldvalue, "");
+			}
 		}
 	}
 
