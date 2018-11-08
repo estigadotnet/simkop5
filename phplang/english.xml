@@ -643,6 +643,60 @@
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
     </menu>
+    <menu id="10001">
+      <phrase id="menutext" value="t 01 nasabah" />
+    </menu>
+    <menu id="10002">
+      <phrase id="menutext" value="t 02 jaminan" />
+    </menu>
+    <menu id="10003">
+      <phrase id="menutext" value="t 03 pinjaman" />
+    </menu>
+    <menu id="10004">
+      <phrase id="menutext" value="t 04 pinjamanangsuran" />
+    </menu>
+    <menu id="10005">
+      <phrase id="menutext" value="t 04 pinjamanangsurantemp" />
+    </menu>
+    <menu id="10006">
+      <phrase id="menutext" value="t 05 pinjamanjaminan" />
+    </menu>
+    <menu id="10007">
+      <phrase id="menutext" value="t 06 pinjamantitipan" />
+    </menu>
+    <menu id="10008">
+      <phrase id="menutext" value="t 07 marketing" />
+    </menu>
+    <menu id="10009">
+      <phrase id="menutext" value="t 08 pinjamanpotongan" />
+    </menu>
+    <menu id="10010">
+      <phrase id="menutext" value="t 92 periodeold" />
+    </menu>
+    <menu id="10011">
+      <phrase id="menutext" value="t 93 periode" />
+    </menu>
+    <menu id="10012">
+      <phrase id="menutext" value="t 94 log" />
+    </menu>
+    <menu id="10013">
+      <phrase id="menutext" value="t 95 logdesc" />
+    </menu>
+    <menu id="10014">
+      <phrase id="menutext" value="t 96 employees" />
+    </menu>
+    <menu id="10015">
+      <phrase id="menutext" value="t 97 userlevels" />
+    </menu>
+    <menu id="10016">
+      <phrase id="menutext" value="t 98 userlevelpermissions" />
+    </menu>
+    <menu id="10017">
+      <phrase id="menutext" value="t 99 audittrail" />
+    </menu>
+    <menu id="10018">
+      <phrase id="menutext" value="Pinjaman" />
+    </menu>
     <table id="cf01_home_php">
       <phrase id="tblcaption" value="Home" />
     </table>
