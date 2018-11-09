@@ -333,6 +333,7 @@ $db =& DbHelper();
 	$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
 ?>
 
+
 <!-- periode -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#periode">Periode</a></strong></div>
@@ -350,6 +351,66 @@ $db =& DbHelper();
 		</div>
 	</div>
 </div>
+
+
+<!-- jatuh tempo -->
+<?php
+$q = "
+	select
+		*
+	from
+		t04_pinjamanangsurantemp
+	where 
+		concat(year(Angsuran_Tanggal), right(concat('00',month(Angsuran_Tanggal)),2)) = '".$GLOBALS["Periode"]."' 
+		and Tanggal_Bayar is null";
+$q = "
+	select
+		a.*,
+		b.Kontrak_No,
+		c.Nama
+	from
+		t04_pinjamanangsurantemp a
+		join t03_pinjaman b on a.pinjaman_id = b.id
+		join t01_nasabah c on b.nasabah_id = c.id
+	where 
+		concat(year(Angsuran_Tanggal), right(concat('00',month(Angsuran_Tanggal)),2)) = '".$GLOBALS["Periode"]."' 
+		and Tanggal_Bayar is null
+";
+$r = Conn()->Execute($q);
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#jatuh_tempo">Jatuh Tempo</a></strong></div>
+	<div id="jatuh_tempo" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div>
+				<table class='table table-striped table-hover table-condensed'>
+					<tbody>
+					<tr>
+						<th>No. Kontrak</th>
+						<th>Nasabah</th>
+						<th>Tgl. Jatuh Tempo</th>
+						<th>Angsuran</th>
+					</tr>
+					<?php
+					while (!$r->EOF) {
+					?>
+					<tr>
+						<td><?php echo $r->fields["Kontrak_No"]; ?></td>
+						<td><?php echo $r->fields["Nama"]; ?></td>
+						<td><?php echo date("d-m-Y", strtotime($r->fields["Angsuran_Tanggal"])); ?></td>
+						<td><?php echo number_format($r->fields["Angsuran_Total"], 2, ".", ","); ?></td>
+					</tr>
+					<?php
+						$r->MoveNext();
+					}
+					?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <!-- log -->
 <div class="panel panel-default">
