@@ -1589,6 +1589,31 @@ function Page_Redirecting(&$url) {
 	$url = ".";
 }
 ]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Global" ScriptName="Database_Connecting" ScriptCtrlID="" ScriptL1Key="" ScriptL2Key=""><![CDATA[// Database Connecting event
+function Database_Connecting(&$info) {
+	// Example:
+	//var_dump($info);
+	//if ($info["id"] == "DB" && ew_CurrentUserIP() == "127.0.0.1") { // Testing on local PC
+	//	$info["host"] = "locahost";
+	//	$info["user"] = "root";
+	//	$info["pass"] = "";
+	//}
+
+	if (ew_CurrentUserIP () == "127.0.0.1"  || ew_CurrentUserIP () == ":: 1"  || ew_CurrentHost () == "localhost" ) { // testing on local PC
+		$info["host"] = "localhost";
+		$info["user"] = "root"; // sesuaikan dengan username database di komputer localhost
+		$info["pass"] = "admin"; // sesuaikan dengan password database di komputer localhost
+		$info["db"] = "db_simkop5"; // sesuaikan dengan nama database di komputer localhost
+		$info["port"] = "3306";
+	} elseif (ew_CurrentHost () == "simkop5.nma-indonesia.com") { // setting koneksi database untuk komputer server
+		$info["host"] = "mysql.hostinger.co.id";  // sesuaikan dengan ip address atau hostname komputer server
+		$info["user"] = "u945388674_simk5"; // sesuaikan dengan username database di komputer server
+		$info["pass"] = "PresarioCQ43"; // sesuaikan deengan password database di komputer server
+		$info["db"] = "u945388674_simk5"; // sesuaikan dengan nama database di komputer server
+		$info["port"] = "3306";
+	}
+}
+]]></CustomScript>
   <Menu MenuID="16" MenuText="Home" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="8" MenuSecurity="" MenuUrl="cf01_home.php" MenuCustomUrl="0" MenuLevel="0" MenuShow="1" MenuDisplayOrder="100" />
   <Menu MenuID="3" MenuText="Pinjaman" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="t03_pinjaman" MenuCustomUrl="0" MenuLevel="0" MenuShow="1" MenuDisplayOrder="200" />
   <Menu MenuID="15" MenuText="Rincian Angsuran" MenuParentID="3" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="t04_pinjamanangsurantemp" MenuCustomUrl="0" MenuLevel="1" MenuShow="0" MenuDisplayOrder="100" />
