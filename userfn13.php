@@ -7,7 +7,7 @@ function Page_Loading() {
 	//echo "Page Loading";
 	// simpan data periode berjalan
 
-	$GLOBALS["Periode"] = ew_ExecuteScalar("select Tahun_Bulan from t93_Periode");
+	$GLOBALS["Periode"] = ew_ExecuteScalar("select Tahun_Bulan from t93_periode");
 
 	//$_SESSION["pinjaman_id"] = 0;
 	//echo "0".$GLOBALS["Periode"]; //exit;
