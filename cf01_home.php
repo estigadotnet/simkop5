@@ -334,6 +334,10 @@ $db =& DbHelper();
 ?>
 
 
+<!-- log -->
+<pre><?php $lines=file('log.txt');foreach ($lines as $line_num => $line){echo $line;}?></pre>
+
+
 <!-- periode -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#periode">Periode</a></strong></div>

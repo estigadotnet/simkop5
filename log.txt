@@ -1,0 +1,11 @@
+<strong>----- to do -----</strong>
+
+11:43 AM 11/23/2018
+- simpanan pokok
+- simpanan wajib
+- deposito
+- nasabah deposito
+- lokasi koperasi (cabang / branch office / cabang unit usaha)
+
+
+<strong>----- done -----</strong>
