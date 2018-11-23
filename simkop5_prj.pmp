@@ -1127,7 +1127,7 @@ $db =& DbHelper();
 				<table class='table table-striped table-hover table-condensed'>
 					<tbody>
 					<tr>
-						<td><?php echo "Periode: ".ew_ExecuteScalar("select Bulan from t93_Periode")." - ".ew_ExecuteScalar("select Tahun from t93_Periode"); ?></td>
+						<td><?php echo "Periode: ".ew_ExecuteScalar("select Bulan from t93_periode")." - ".ew_ExecuteScalar("select Tahun from t93_periode"); ?></td>
 					</tr>
 					</tbody>
 				</table>
