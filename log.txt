@@ -6,6 +6,6 @@
 - deposito
 - nasabah deposito
 - lokasi koperasi (cabang / branch office / cabang unit usaha)
-
+- auto-jurnal
 
 <strong>----- done -----</strong>
