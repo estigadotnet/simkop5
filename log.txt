@@ -42,7 +42,9 @@
 
 - SALDO AWAL REKENING
 
-- 
+- NOMOR REKENING : x.xxxx
+
+
 
 
 <font color="red">11:43 AM 11/23/2018</font>
