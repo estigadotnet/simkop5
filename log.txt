@@ -1,5 +1,13 @@
 <strong>----- to do --------------------------------------------------------------------------------</strong>
 
+<font color="red">11:33 AM 11/26/2018</font>
+- tabel rekgroup
+  -- id 
+  -- Kode 
+  -- NamaRekening 
+  -- Posisi 
+  -- Laporan
+
 <font color="red">9:28 AM 11/26/2018</font>
 - jenis pembayaran pinjaman :: - ANGSURAN
                                - BERJANGKA
