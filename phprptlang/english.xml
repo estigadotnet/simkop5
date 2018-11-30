@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/11/23" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/11/30" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -404,6 +404,63 @@
     <menu id="18">
       <phrase id="menutext" value="Pinjaman" />
     </menu>
+    <table id="r01_pinjaman">
+      <phrase id="tblcaption" value="Pinjaman" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="kontrak_no">
+        <phrase id="fldcaption" value="Kontrak No" />
+      </field>
+      <field id="kontrak_tgl">
+        <phrase id="fldcaption" value="Kontrak Tgl" />
+      </field>
+      <field id="nasabah_id">
+        <phrase id="fldcaption" value="nasabah id" />
+      </field>
+      <field id="jaminan_id">
+        <phrase id="fldcaption" value="jaminan id" />
+      </field>
+      <field id="pinjaman">
+        <phrase id="fldcaption" value="Pinjaman" />
+      </field>
+      <field id="angsuran_lama">
+        <phrase id="fldcaption" value="Angsuran Lama" />
+      </field>
+      <field id="angsuran_bunga_prosen">
+        <phrase id="fldcaption" value="Angsuran Bunga Prosen" />
+      </field>
+      <field id="angsuran_denda">
+        <phrase id="fldcaption" value="Angsuran Denda" />
+      </field>
+      <field id="dispensasi_denda">
+        <phrase id="fldcaption" value="Dispensasi Denda" />
+      </field>
+      <field id="angsuran_pokok">
+        <phrase id="fldcaption" value="Angsuran Pokok" />
+      </field>
+      <field id="angsuran_bunga">
+        <phrase id="fldcaption" value="Angsuran Bunga" />
+      </field>
+      <field id="angsuran_total">
+        <phrase id="fldcaption" value="Angsuran Total" />
+      </field>
+      <field id="no_ref">
+        <phrase id="fldcaption" value="No Ref" />
+      </field>
+      <field id="biaya_administrasi">
+        <phrase id="fldcaption" value="Biaya Administrasi" />
+      </field>
+      <field id="biaya_materai">
+        <phrase id="fldcaption" value="Biaya Materai" />
+      </field>
+      <field id="marketing_id">
+        <phrase id="fldcaption" value="marketing id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+    </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="t 01 nasabah" />
       <field id="id">
@@ -867,63 +924,6 @@
       </field>
       <field id="newvalue">
         <phrase id="fldcaption" value="newvalue" />
-      </field>
-    </table>
-    <table id="r01_pinjaman">
-      <phrase id="tblcaption" value="Pinjaman" />
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="kontrak_no">
-        <phrase id="fldcaption" value="Kontrak No" />
-      </field>
-      <field id="kontrak_tgl">
-        <phrase id="fldcaption" value="Kontrak Tgl" />
-      </field>
-      <field id="nasabah_id">
-        <phrase id="fldcaption" value="nasabah id" />
-      </field>
-      <field id="jaminan_id">
-        <phrase id="fldcaption" value="jaminan id" />
-      </field>
-      <field id="pinjaman">
-        <phrase id="fldcaption" value="Pinjaman" />
-      </field>
-      <field id="angsuran_lama">
-        <phrase id="fldcaption" value="Angsuran Lama" />
-      </field>
-      <field id="angsuran_bunga_prosen">
-        <phrase id="fldcaption" value="Angsuran Bunga Prosen" />
-      </field>
-      <field id="angsuran_denda">
-        <phrase id="fldcaption" value="Angsuran Denda" />
-      </field>
-      <field id="dispensasi_denda">
-        <phrase id="fldcaption" value="Dispensasi Denda" />
-      </field>
-      <field id="angsuran_pokok">
-        <phrase id="fldcaption" value="Angsuran Pokok" />
-      </field>
-      <field id="angsuran_bunga">
-        <phrase id="fldcaption" value="Angsuran Bunga" />
-      </field>
-      <field id="angsuran_total">
-        <phrase id="fldcaption" value="Angsuran Total" />
-      </field>
-      <field id="no_ref">
-        <phrase id="fldcaption" value="No Ref" />
-      </field>
-      <field id="biaya_administrasi">
-        <phrase id="fldcaption" value="Biaya Administrasi" />
-      </field>
-      <field id="biaya_materai">
-        <phrase id="fldcaption" value="Biaya Materai" />
-      </field>
-      <field id="marketing_id">
-        <phrase id="fldcaption" value="marketing id" />
-      </field>
-      <field id="periode">
-        <phrase id="fldcaption" value="Periode" />
       </field>
     </table>
   </project>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/11/27" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/11/30" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -619,14 +619,8 @@
     <menu id="35">
       <phrase id="menutext" value="Setup" />
     </menu>
-    <menu id="10051">
-      <phrase id="menutext" value="Rekening" />
-    </menu>
-    <menu id="10020">
-      <phrase id="menutext" value="Rekening - Group" />
-    </menu>
     <menu id="10052">
-      <phrase id="menutext" value="Rekening - Data" />
+      <phrase id="menutext" value="Rekening" />
     </menu>
     <menu id="1">
       <phrase id="menutext" value="Nasabah" />
@@ -994,45 +988,59 @@
         <phrase id="fldcaption" value="Jumlah" />
       </field>
     </table>
-    <table id="t90_rekening">
-      <phrase id="tblcaption" value="Rekening - Data" />
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="group_id">
+    <table id="t91_rekening">
+      <phrase id="tblcaption" value="Rekening" />
+      <field id="group">
         <phrase id="fldcaption" value="Group" />
       </field>
-      <field id="kode">
-        <phrase id="fldcaption" value="Kode" />
-      </field>
-      <field id="namarekening">
-        <phrase id="fldcaption" value="Nama Rekening" />
-      </field>
-    </table>
-    <table id="t91_rekeninggroup">
-      <phrase id="tblcaption" value="Rekening - Group" />
       <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="kode">
         <phrase id="fldcaption" value="Kode" />
       </field>
-      <field id="namagroup">
-        <phrase id="fldcaption" value="Nama Group" />
+      <field id="id1">
+        <phrase id="fldcaption" value="Kode (Head)" />
+      </field>
+      <field id="id2">
+        <phrase id="fldcaption" value="Kode (Detail)" />
+      </field>
+      <field id="parent">
+        <phrase id="fldcaption" value="Head" />
+      </field>
+      <field id="id3">
+        <phrase id="fldcaption" value="Kode" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="Rekening" />
       </field>
       <field id="posisi">
-        <phrase id="fldcaption" value="Posisi" />
-        <phrase id="fldtagvalue1" value="C" />
-        <phrase id="fldtagcaption1" value="Credit" />
-        <phrase id="fldtagvalue2" value="D" />
-        <phrase id="fldtagcaption2" value="Debet" />
+        <phrase id="fldcaption" value="posisi" />
       </field>
       <field id="laporan">
-        <phrase id="fldcaption" value="Laporan" />
-        <phrase id="fldtagvalue1" value="N" />
-        <phrase id="fldtagcaption1" value="Neraca" />
-        <phrase id="fldtagvalue2" value="R" />
-        <phrase id="fldtagcaption2" value="Rugi Laba" />
+        <phrase id="fldcaption" value="laporan" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="tipe">
+        <phrase id="fldcaption" value="Tipe" />
+        <phrase id="fldtagvalue1" value="HEADER" />
+        <phrase id="fldtagcaption1" value="HEAD" />
+        <phrase id="fldtagvalue2" value="DETAIL" />
+        <phrase id="fldtagcaption2" value="DETAIL" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Jenis Rekening" />
+        <phrase id="fldtagvalue1" value="KAS/BANK" />
+        <phrase id="fldtagcaption1" value="KAS / BANK" />
+      </field>
+      <field id="active">
+        <phrase id="fldcaption" value="active" />
+        <phrase id="fldtagvalue1" value="yes" />
+        <phrase id="fldtagcaption1" value="yes" />
+        <phrase id="fldtagvalue2" value="no" />
+        <phrase id="fldtagcaption2" value="no" />
+      </field>
+      <field id="group2">
+        <phrase id="fldcaption" value="group2" />
       </field>
     </table>
     <table id="t92_periodeold">
