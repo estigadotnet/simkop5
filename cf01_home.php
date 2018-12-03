@@ -335,7 +335,16 @@ $db =& DbHelper();
 
 
 <!-- log -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Progress Log</a></strong></div>
+	<div id="log" class="panel-collapse collapse out">
+		<div class="panel-body">
+			<div>
 <pre><?php $lines=file('log.txt');foreach ($lines as $line_num => $line){echo $line;}?></pre>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 <!-- periode -->
@@ -417,14 +426,14 @@ $r = Conn()->Execute($q);
 
 
 <!-- log -->
-<div class="panel panel-default">
+<!--<div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Progress Log</a></strong></div>
 	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
 			<div>
-				<p>&nbsp;</p>
+				<p>&nbsp;</p>-->
 				<!-- to do -->
-				<p><strong>to do</strong></p>
+				<!--<p><strong>to do</strong></p>
 				<?php
 				$q = "
 					select
@@ -483,9 +492,9 @@ $r = Conn()->Execute($q);
 					</tbody>
 				</table>
 
-				<p>&nbsp;</p>
+				<p>&nbsp;</p>-->
 				<!-- done -->
-				<p><strong>done</strong></p>
+				<!--<p><strong>done</strong></p>
 				<?php
 				$q = "
 					select
@@ -540,7 +549,7 @@ $r = Conn()->Execute($q);
 			</div>
 		</div>
 	</div>
-</div>
+</div>-->
 
 <!-- log -->
 <!-- <div class="panel panel-default">

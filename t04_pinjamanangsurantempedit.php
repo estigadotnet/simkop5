@@ -1325,6 +1325,22 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 		//}
 
 		echo "
+	<style>
+	.panel-heading a{
+	  display:block;
+	}
+	.panel-heading a.collapsed {
+	  background: url(http://upload.wikimedia.org/wikipedia/commons/3/36/Vector_skin_right_arrow.png) center right no-repeat;
+	}
+	.panel-heading a {
+	  background: url(http://www.useragentman.com/blog/wp-content/themes/useragentman/images/widgets/downArrow.png) center right no-repeat;
+	}
+	</style>
+	<div class=\"panel panel-default\">
+		<div class=\"panel-heading\"><strong><a class='collapsed' data-toggle=\"collapse\" href=\"#detail\">Detail</a></strong></div>
+		<div id=\"detail\" class=\"panel-collapse collapse out\">
+			<div class=\"panel-body\">
+				<div>
 			<table class=\"table table-bordered table-striped ewViewTable\">
 				<tbody>
 				<tr>
@@ -1368,6 +1384,10 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 				</tr>
 				</tbody>
 			</table>
+				</div>
+			</div>
+		</div>
+	</div>
 		";
 	}
 
