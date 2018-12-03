@@ -655,6 +655,12 @@
     <menu id="9">
       <phrase id="menutext" value="Description" />
     </menu>
+    <menu id="10054">
+      <phrase id="menutext" value="t 91 rekening" />
+    </menu>
+    <menu id="10020">
+      <phrase id="menutext" value="t 90 rektran" />
+    </menu>
     <menu id="10001">
       <phrase id="menutext" value="t 01 nasabah" />
     </menu>

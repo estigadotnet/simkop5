@@ -334,19 +334,6 @@ $db =& DbHelper();
 ?>
 
 
-<!-- log -->
-<div class="panel panel-default">
-	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Progress Log</a></strong></div>
-	<div id="log" class="panel-collapse collapse out">
-		<div class="panel-body">
-			<div>
-<pre><?php $lines=file('log.txt');foreach ($lines as $line_num => $line){echo $line;}?></pre>
-			</div>
-		</div>
-	</div>
-</div>
-
-
 <!-- periode -->
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#periode">Periode</a></strong></div>
@@ -419,6 +406,19 @@ $r = Conn()->Execute($q);
 					?>
 					</tbody>
 				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- log -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#log">Progress Log</a></strong></div>
+	<div id="log" class="panel-collapse collapse out">
+		<div class="panel-body">
+			<div>
+<pre><?php $lines=file('log.txt');foreach ($lines as $line_num => $line){echo $line;}?></pre>
 			</div>
 		</div>
 	</div>
