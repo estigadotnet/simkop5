@@ -353,6 +353,9 @@
     <menu id="19">
       <phrase id="menutext" value="t 91 rekening" />
     </menu>
+    <menu id="20">
+      <phrase id="menutext" value="t 90 rektran" />
+    </menu>
     <menu id="1">
       <phrase id="menutext" value="t 01 nasabah" />
     </menu>
@@ -741,6 +744,21 @@
       </field>
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="t90_rektran">
+      <phrase id="tblcaption" value="t 90 rektran" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="kodetransaksi">
+        <phrase id="fldcaption" value="Kode Transaksi" />
+      </field>
+      <field id="namatransaksi">
+        <phrase id="fldcaption" value="Nama Transaksi" />
+      </field>
+      <field id="koderekening">
+        <phrase id="fldcaption" value="Kode Rekening" />
       </field>
     </table>
     <table id="t91_rekening">
