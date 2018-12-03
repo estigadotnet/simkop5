@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/11/30" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/12/3" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -622,6 +622,9 @@
     <menu id="10052">
       <phrase id="menutext" value="Rekening" />
     </menu>
+    <menu id="10053">
+      <phrase id="menutext" value="Rekening Transaksi" />
+    </menu>
     <menu id="1">
       <phrase id="menutext" value="Nasabah" />
     </menu>
@@ -986,6 +989,21 @@
       </field>
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="t90_rektran">
+      <phrase id="tblcaption" value="Rekening Transaksi" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="kodetransaksi">
+        <phrase id="fldcaption" value="Kode Transaksi" />
+      </field>
+      <field id="namatransaksi">
+        <phrase id="fldcaption" value="Nama Transaksi" />
+      </field>
+      <field id="koderekening">
+        <phrase id="fldcaption" value="Rekening" />
       </field>
     </table>
     <table id="t91_rekening">

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/11/30" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/12/3" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -350,6 +350,9 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="19">
+      <phrase id="menutext" value="t 91 rekening" />
+    </menu>
     <menu id="1">
       <phrase id="menutext" value="t 01 nasabah" />
     </menu>
@@ -738,6 +741,39 @@
       </field>
       <field id="jumlah">
         <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
+    <table id="t91_rekening">
+      <phrase id="tblcaption" value="t 91 rekening" />
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="tipe">
+        <phrase id="fldcaption" value="tipe" />
+      </field>
+      <field id="posisi">
+        <phrase id="fldcaption" value="posisi" />
+      </field>
+      <field id="laporan">
+        <phrase id="fldcaption" value="laporan" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="status" />
+      </field>
+      <field id="parent">
+        <phrase id="fldcaption" value="parent" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="keterangan" />
+      </field>
+      <field id="active">
+        <phrase id="fldcaption" value="active" />
       </field>
     </table>
     <table id="t92_periodeold">

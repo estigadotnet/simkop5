@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t92_periodeoldinfo.php" ?>
+<?php include_once "t90_rektraninfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t92_periodeold_delete = NULL; // Initialize page object first
+$t90_rektran_delete = NULL; // Initialize page object first
 
-class ct92_periodeold_delete extends ct92_periodeold {
+class ct90_rektran_delete extends ct90_rektran {
 
 	// Page ID
 	var $PageID = 'delete';
@@ -25,10 +25,10 @@ class ct92_periodeold_delete extends ct92_periodeold {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't92_periodeold';
+	var $TableName = 't90_rektran';
 
 	// Page object name
-	var $PageObjName = 't92_periodeold_delete';
+	var $PageObjName = 't90_rektran_delete';
 
 	// Page name
 	function PageName() {
@@ -226,10 +226,10 @@ class ct92_periodeold_delete extends ct92_periodeold {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t92_periodeold)
-		if (!isset($GLOBALS["t92_periodeold"]) || get_class($GLOBALS["t92_periodeold"]) == "ct92_periodeold") {
-			$GLOBALS["t92_periodeold"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t92_periodeold"];
+		// Table object (t90_rektran)
+		if (!isset($GLOBALS["t90_rektran"]) || get_class($GLOBALS["t90_rektran"]) == "ct90_rektran") {
+			$GLOBALS["t90_rektran"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t90_rektran"];
 		}
 
 		// Table object (t96_employees)
@@ -241,7 +241,7 @@ class ct92_periodeold_delete extends ct92_periodeold {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't92_periodeold', TRUE);
+			define("EW_TABLE_NAME", 't90_rektran', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -272,7 +272,7 @@ class ct92_periodeold_delete extends ct92_periodeold {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t92_periodeoldlist.php"));
+				$this->Page_Terminate(ew_GetUrl("t90_rektranlist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -282,11 +282,9 @@ class ct92_periodeold_delete extends ct92_periodeold {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->Bulan->SetVisibility();
-		$this->Tahun->SetVisibility();
-		$this->Tahun_Bulan->SetVisibility();
+		$this->KodeTransaksi->SetVisibility();
+		$this->NamaTransaksi->SetVisibility();
+		$this->KodeRekening->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -318,13 +316,13 @@ class ct92_periodeold_delete extends ct92_periodeold {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t92_periodeold;
+		global $EW_EXPORT, $t90_rektran;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t92_periodeold);
+				$doc = new $class($t90_rektran);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -370,10 +368,10 @@ class ct92_periodeold_delete extends ct92_periodeold {
 		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
 		$sFilter = $this->GetKeyFilter();
 		if ($sFilter == "")
-			$this->Page_Terminate("t92_periodeoldlist.php"); // Prevent SQL injection, return to list
+			$this->Page_Terminate("t90_rektranlist.php"); // Prevent SQL injection, return to list
 
 		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in t92_periodeold class, t92_periodeoldinfo.php
+		// SQL constructor in t90_rektran class, t90_rektraninfo.php
 
 		$this->CurrentFilter = $sFilter;
 
@@ -401,7 +399,7 @@ class ct92_periodeold_delete extends ct92_periodeold {
 			if ($this->TotalRecs <= 0) { // No record found, exit
 				if ($this->Recordset)
 					$this->Recordset->Close();
-				$this->Page_Terminate("t92_periodeoldlist.php"); // Return to list
+				$this->Page_Terminate("t90_rektranlist.php"); // Return to list
 			}
 		}
 	}
@@ -462,9 +460,9 @@ class ct92_periodeold_delete extends ct92_periodeold {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Bulan->setDbValue($rs->fields('Bulan'));
-		$this->Tahun->setDbValue($rs->fields('Tahun'));
-		$this->Tahun_Bulan->setDbValue($rs->fields('Tahun_Bulan'));
+		$this->KodeTransaksi->setDbValue($rs->fields('KodeTransaksi'));
+		$this->NamaTransaksi->setDbValue($rs->fields('NamaTransaksi'));
+		$this->KodeRekening->setDbValue($rs->fields('KodeRekening'));
 	}
 
 	// Load DbValue from recordset
@@ -472,9 +470,9 @@ class ct92_periodeold_delete extends ct92_periodeold {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->Bulan->DbValue = $row['Bulan'];
-		$this->Tahun->DbValue = $row['Tahun'];
-		$this->Tahun_Bulan->DbValue = $row['Tahun_Bulan'];
+		$this->KodeTransaksi->DbValue = $row['KodeTransaksi'];
+		$this->NamaTransaksi->DbValue = $row['NamaTransaksi'];
+		$this->KodeRekening->DbValue = $row['KodeRekening'];
 	}
 
 	// Render row values based on field settings
@@ -488,9 +486,9 @@ class ct92_periodeold_delete extends ct92_periodeold {
 
 		// Common render codes for all row types
 		// id
-		// Bulan
-		// Tahun
-		// Tahun_Bulan
+		// KodeTransaksi
+		// NamaTransaksi
+		// KodeRekening
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -498,37 +496,54 @@ class ct92_periodeold_delete extends ct92_periodeold {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Bulan
-		$this->Bulan->ViewValue = $this->Bulan->CurrentValue;
-		$this->Bulan->ViewCustomAttributes = "";
+		// KodeTransaksi
+		$this->KodeTransaksi->ViewValue = $this->KodeTransaksi->CurrentValue;
+		$this->KodeTransaksi->ViewCustomAttributes = "";
 
-		// Tahun
-		$this->Tahun->ViewValue = $this->Tahun->CurrentValue;
-		$this->Tahun->ViewCustomAttributes = "";
+		// NamaTransaksi
+		$this->NamaTransaksi->ViewValue = $this->NamaTransaksi->CurrentValue;
+		$this->NamaTransaksi->ViewCustomAttributes = "";
 
-		// Tahun_Bulan
-		$this->Tahun_Bulan->ViewValue = $this->Tahun_Bulan->CurrentValue;
-		$this->Tahun_Bulan->ViewCustomAttributes = "";
+		// KodeRekening
+		if (strval($this->KodeRekening->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->KodeRekening->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `id`, `id` AS `DispFld`, `rekening` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+		$sWhereWrk = "";
+		$this->KodeRekening->LookupFilters = array();
+		$lookuptblfilter = "`tipe` <> 'GROUP'";
+		ew_AddFilter($sWhereWrk, $lookuptblfilter);
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->KodeRekening, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->KodeRekening->ViewValue = $this->KodeRekening->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->KodeRekening->ViewValue = $this->KodeRekening->CurrentValue;
+			}
+		} else {
+			$this->KodeRekening->ViewValue = NULL;
+		}
+		$this->KodeRekening->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
+			// KodeTransaksi
+			$this->KodeTransaksi->LinkCustomAttributes = "";
+			$this->KodeTransaksi->HrefValue = "";
+			$this->KodeTransaksi->TooltipValue = "";
 
-			// Bulan
-			$this->Bulan->LinkCustomAttributes = "";
-			$this->Bulan->HrefValue = "";
-			$this->Bulan->TooltipValue = "";
+			// NamaTransaksi
+			$this->NamaTransaksi->LinkCustomAttributes = "";
+			$this->NamaTransaksi->HrefValue = "";
+			$this->NamaTransaksi->TooltipValue = "";
 
-			// Tahun
-			$this->Tahun->LinkCustomAttributes = "";
-			$this->Tahun->HrefValue = "";
-			$this->Tahun->TooltipValue = "";
-
-			// Tahun_Bulan
-			$this->Tahun_Bulan->LinkCustomAttributes = "";
-			$this->Tahun_Bulan->HrefValue = "";
-			$this->Tahun_Bulan->TooltipValue = "";
+			// KodeRekening
+			$this->KodeRekening->LinkCustomAttributes = "";
+			$this->KodeRekening->HrefValue = "";
+			$this->KodeRekening->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -627,7 +642,7 @@ class ct92_periodeold_delete extends ct92_periodeold {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t92_periodeoldlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t90_rektranlist.php"), "", $this->TableVar, TRUE);
 		$PageId = "delete";
 		$Breadcrumb->Add("delete", $PageId, $url);
 	}
@@ -713,29 +728,29 @@ class ct92_periodeold_delete extends ct92_periodeold {
 <?php
 
 // Create page object
-if (!isset($t92_periodeold_delete)) $t92_periodeold_delete = new ct92_periodeold_delete();
+if (!isset($t90_rektran_delete)) $t90_rektran_delete = new ct90_rektran_delete();
 
 // Page init
-$t92_periodeold_delete->Page_Init();
+$t90_rektran_delete->Page_Init();
 
 // Page main
-$t92_periodeold_delete->Page_Main();
+$t90_rektran_delete->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t92_periodeold_delete->Page_Render();
+$t90_rektran_delete->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = ft92_periodeolddelete = new ew_Form("ft92_periodeolddelete", "delete");
+var CurrentForm = ft90_rektrandelete = new ew_Form("ft90_rektrandelete", "delete");
 
 // Form_CustomValidate event
-ft92_periodeolddelete.Form_CustomValidate = 
+ft90_rektrandelete.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -744,14 +759,15 @@ ft92_periodeolddelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft92_periodeolddelete.ValidateRequired = true;
+ft90_rektrandelete.ValidateRequired = true;
 <?php } else { ?>
-ft92_periodeolddelete.ValidateRequired = false; 
+ft90_rektrandelete.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft90_rektrandelete.Lists["x_KodeRekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_id","x_rekening","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -762,96 +778,85 @@ ft92_periodeolddelete.ValidateRequired = false;
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $t92_periodeold_delete->ShowPageHeader(); ?>
+<?php $t90_rektran_delete->ShowPageHeader(); ?>
 <?php
-$t92_periodeold_delete->ShowMessage();
+$t90_rektran_delete->ShowMessage();
 ?>
-<form name="ft92_periodeolddelete" id="ft92_periodeolddelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t92_periodeold_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t92_periodeold_delete->Token ?>">
+<form name="ft90_rektrandelete" id="ft90_rektrandelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t90_rektran_delete->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t90_rektran_delete->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t92_periodeold">
+<input type="hidden" name="t" value="t90_rektran">
 <input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($t92_periodeold_delete->RecKeys as $key) { ?>
+<?php foreach ($t90_rektran_delete->RecKeys as $key) { ?>
 <?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
 <input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
 <?php } ?>
 <div class="ewGrid">
 <div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <table class="table ewTable">
-<?php echo $t92_periodeold->TableCustomInnerHtml ?>
+<?php echo $t90_rektran->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t92_periodeold->id->Visible) { // id ?>
-		<th><span id="elh_t92_periodeold_id" class="t92_periodeold_id"><?php echo $t92_periodeold->id->FldCaption() ?></span></th>
+<?php if ($t90_rektran->KodeTransaksi->Visible) { // KodeTransaksi ?>
+		<th><span id="elh_t90_rektran_KodeTransaksi" class="t90_rektran_KodeTransaksi"><?php echo $t90_rektran->KodeTransaksi->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t92_periodeold->Bulan->Visible) { // Bulan ?>
-		<th><span id="elh_t92_periodeold_Bulan" class="t92_periodeold_Bulan"><?php echo $t92_periodeold->Bulan->FldCaption() ?></span></th>
+<?php if ($t90_rektran->NamaTransaksi->Visible) { // NamaTransaksi ?>
+		<th><span id="elh_t90_rektran_NamaTransaksi" class="t90_rektran_NamaTransaksi"><?php echo $t90_rektran->NamaTransaksi->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t92_periodeold->Tahun->Visible) { // Tahun ?>
-		<th><span id="elh_t92_periodeold_Tahun" class="t92_periodeold_Tahun"><?php echo $t92_periodeold->Tahun->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t92_periodeold->Tahun_Bulan->Visible) { // Tahun_Bulan ?>
-		<th><span id="elh_t92_periodeold_Tahun_Bulan" class="t92_periodeold_Tahun_Bulan"><?php echo $t92_periodeold->Tahun_Bulan->FldCaption() ?></span></th>
+<?php if ($t90_rektran->KodeRekening->Visible) { // KodeRekening ?>
+		<th><span id="elh_t90_rektran_KodeRekening" class="t90_rektran_KodeRekening"><?php echo $t90_rektran->KodeRekening->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
 	<tbody>
 <?php
-$t92_periodeold_delete->RecCnt = 0;
+$t90_rektran_delete->RecCnt = 0;
 $i = 0;
-while (!$t92_periodeold_delete->Recordset->EOF) {
-	$t92_periodeold_delete->RecCnt++;
-	$t92_periodeold_delete->RowCnt++;
+while (!$t90_rektran_delete->Recordset->EOF) {
+	$t90_rektran_delete->RecCnt++;
+	$t90_rektran_delete->RowCnt++;
 
 	// Set row properties
-	$t92_periodeold->ResetAttrs();
-	$t92_periodeold->RowType = EW_ROWTYPE_VIEW; // View
+	$t90_rektran->ResetAttrs();
+	$t90_rektran->RowType = EW_ROWTYPE_VIEW; // View
 
 	// Get the field contents
-	$t92_periodeold_delete->LoadRowValues($t92_periodeold_delete->Recordset);
+	$t90_rektran_delete->LoadRowValues($t90_rektran_delete->Recordset);
 
 	// Render row
-	$t92_periodeold_delete->RenderRow();
+	$t90_rektran_delete->RenderRow();
 ?>
-	<tr<?php echo $t92_periodeold->RowAttributes() ?>>
-<?php if ($t92_periodeold->id->Visible) { // id ?>
-		<td<?php echo $t92_periodeold->id->CellAttributes() ?>>
-<span id="el<?php echo $t92_periodeold_delete->RowCnt ?>_t92_periodeold_id" class="t92_periodeold_id">
-<span<?php echo $t92_periodeold->id->ViewAttributes() ?>>
-<?php echo $t92_periodeold->id->ListViewValue() ?></span>
+	<tr<?php echo $t90_rektran->RowAttributes() ?>>
+<?php if ($t90_rektran->KodeTransaksi->Visible) { // KodeTransaksi ?>
+		<td<?php echo $t90_rektran->KodeTransaksi->CellAttributes() ?>>
+<span id="el<?php echo $t90_rektran_delete->RowCnt ?>_t90_rektran_KodeTransaksi" class="t90_rektran_KodeTransaksi">
+<span<?php echo $t90_rektran->KodeTransaksi->ViewAttributes() ?>>
+<?php echo $t90_rektran->KodeTransaksi->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t92_periodeold->Bulan->Visible) { // Bulan ?>
-		<td<?php echo $t92_periodeold->Bulan->CellAttributes() ?>>
-<span id="el<?php echo $t92_periodeold_delete->RowCnt ?>_t92_periodeold_Bulan" class="t92_periodeold_Bulan">
-<span<?php echo $t92_periodeold->Bulan->ViewAttributes() ?>>
-<?php echo $t92_periodeold->Bulan->ListViewValue() ?></span>
+<?php if ($t90_rektran->NamaTransaksi->Visible) { // NamaTransaksi ?>
+		<td<?php echo $t90_rektran->NamaTransaksi->CellAttributes() ?>>
+<span id="el<?php echo $t90_rektran_delete->RowCnt ?>_t90_rektran_NamaTransaksi" class="t90_rektran_NamaTransaksi">
+<span<?php echo $t90_rektran->NamaTransaksi->ViewAttributes() ?>>
+<?php echo $t90_rektran->NamaTransaksi->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t92_periodeold->Tahun->Visible) { // Tahun ?>
-		<td<?php echo $t92_periodeold->Tahun->CellAttributes() ?>>
-<span id="el<?php echo $t92_periodeold_delete->RowCnt ?>_t92_periodeold_Tahun" class="t92_periodeold_Tahun">
-<span<?php echo $t92_periodeold->Tahun->ViewAttributes() ?>>
-<?php echo $t92_periodeold->Tahun->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t92_periodeold->Tahun_Bulan->Visible) { // Tahun_Bulan ?>
-		<td<?php echo $t92_periodeold->Tahun_Bulan->CellAttributes() ?>>
-<span id="el<?php echo $t92_periodeold_delete->RowCnt ?>_t92_periodeold_Tahun_Bulan" class="t92_periodeold_Tahun_Bulan">
-<span<?php echo $t92_periodeold->Tahun_Bulan->ViewAttributes() ?>>
-<?php echo $t92_periodeold->Tahun_Bulan->ListViewValue() ?></span>
+<?php if ($t90_rektran->KodeRekening->Visible) { // KodeRekening ?>
+		<td<?php echo $t90_rektran->KodeRekening->CellAttributes() ?>>
+<span id="el<?php echo $t90_rektran_delete->RowCnt ?>_t90_rektran_KodeRekening" class="t90_rektran_KodeRekening">
+<span<?php echo $t90_rektran->KodeRekening->ViewAttributes() ?>>
+<?php echo $t90_rektran->KodeRekening->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
 	</tr>
 <?php
-	$t92_periodeold_delete->Recordset->MoveNext();
+	$t90_rektran_delete->Recordset->MoveNext();
 }
-$t92_periodeold_delete->Recordset->Close();
+$t90_rektran_delete->Recordset->Close();
 ?>
 </tbody>
 </table>
@@ -859,14 +864,14 @@ $t92_periodeold_delete->Recordset->Close();
 </div>
 <div>
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t92_periodeold_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t90_rektran_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 </div>
 </form>
 <script type="text/javascript">
-ft92_periodeolddelete.Init();
+ft90_rektrandelete.Init();
 </script>
 <?php
-$t92_periodeold_delete->ShowPageFooter();
+$t90_rektran_delete->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -878,5 +883,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t92_periodeold_delete->Page_Terminate();
+$t90_rektran_delete->Page_Terminate();
 ?>

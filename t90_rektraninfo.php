@@ -1,12 +1,12 @@
 <?php
 
 // Global variable for table object
-$t99_audittrail = NULL;
+$t90_rektran = NULL;
 
 //
-// Table class for t99_audittrail
+// Table class for t90_rektran
 //
-class ct99_audittrail extends cTable {
+class ct90_rektran extends cTable {
 	var $AuditTrailOnAdd = TRUE;
 	var $AuditTrailOnEdit = TRUE;
 	var $AuditTrailOnDelete = TRUE;
@@ -14,15 +14,9 @@ class ct99_audittrail extends cTable {
 	var $AuditTrailOnViewData = FALSE;
 	var $AuditTrailOnSearch = FALSE;
 	var $id;
-	var $datetime;
-	var $script;
-	var $user;
-	var $action;
-	var $_table;
-	var $_field;
-	var $keyvalue;
-	var $oldvalue;
-	var $newvalue;
+	var $KodeTransaksi;
+	var $NamaTransaksi;
+	var $KodeRekening;
 
 	//
 	// Table class constructor
@@ -32,12 +26,12 @@ class ct99_audittrail extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 't99_audittrail';
-		$this->TableName = 't99_audittrail';
+		$this->TableVar = 't90_rektran';
+		$this->TableName = 't90_rektran';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t99_audittrail`";
+		$this->UpdateTable = "`t90_rektran`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -55,56 +49,27 @@ class ct99_audittrail extends cTable {
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
 		// id
-		$this->id = new cField('t99_audittrail', 't99_audittrail', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id = new cField('t90_rektran', 't90_rektran', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
 
-		// datetime
-		$this->datetime = new cField('t99_audittrail', 't99_audittrail', 'x_datetime', 'datetime', '`datetime`', ew_CastDateFieldForLike('`datetime`', 0, "DB"), 135, 0, FALSE, '`datetime`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->datetime->Sortable = TRUE; // Allow sort
-		$this->datetime->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
-		$this->fields['datetime'] = &$this->datetime;
+		// KodeTransaksi
+		$this->KodeTransaksi = new cField('t90_rektran', 't90_rektran', 'x_KodeTransaksi', 'KodeTransaksi', '`KodeTransaksi`', '`KodeTransaksi`', 200, -1, FALSE, '`KodeTransaksi`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->KodeTransaksi->Sortable = TRUE; // Allow sort
+		$this->fields['KodeTransaksi'] = &$this->KodeTransaksi;
 
-		// script
-		$this->script = new cField('t99_audittrail', 't99_audittrail', 'x_script', 'script', '`script`', '`script`', 200, -1, FALSE, '`script`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->script->Sortable = TRUE; // Allow sort
-		$this->fields['script'] = &$this->script;
+		// NamaTransaksi
+		$this->NamaTransaksi = new cField('t90_rektran', 't90_rektran', 'x_NamaTransaksi', 'NamaTransaksi', '`NamaTransaksi`', '`NamaTransaksi`', 200, -1, FALSE, '`NamaTransaksi`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->NamaTransaksi->Sortable = TRUE; // Allow sort
+		$this->fields['NamaTransaksi'] = &$this->NamaTransaksi;
 
-		// user
-		$this->user = new cField('t99_audittrail', 't99_audittrail', 'x_user', 'user', '`user`', '`user`', 200, -1, FALSE, '`user`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->user->Sortable = TRUE; // Allow sort
-		$this->fields['user'] = &$this->user;
-
-		// action
-		$this->action = new cField('t99_audittrail', 't99_audittrail', 'x_action', 'action', '`action`', '`action`', 200, -1, FALSE, '`action`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->action->Sortable = TRUE; // Allow sort
-		$this->fields['action'] = &$this->action;
-
-		// table
-		$this->_table = new cField('t99_audittrail', 't99_audittrail', 'x__table', 'table', '`table`', '`table`', 200, -1, FALSE, '`table`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->_table->Sortable = TRUE; // Allow sort
-		$this->fields['table'] = &$this->_table;
-
-		// field
-		$this->_field = new cField('t99_audittrail', 't99_audittrail', 'x__field', 'field', '`field`', '`field`', 200, -1, FALSE, '`field`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->_field->Sortable = TRUE; // Allow sort
-		$this->fields['field'] = &$this->_field;
-
-		// keyvalue
-		$this->keyvalue = new cField('t99_audittrail', 't99_audittrail', 'x_keyvalue', 'keyvalue', '`keyvalue`', '`keyvalue`', 201, -1, FALSE, '`keyvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->keyvalue->Sortable = TRUE; // Allow sort
-		$this->fields['keyvalue'] = &$this->keyvalue;
-
-		// oldvalue
-		$this->oldvalue = new cField('t99_audittrail', 't99_audittrail', 'x_oldvalue', 'oldvalue', '`oldvalue`', '`oldvalue`', 201, -1, FALSE, '`oldvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->oldvalue->Sortable = TRUE; // Allow sort
-		$this->fields['oldvalue'] = &$this->oldvalue;
-
-		// newvalue
-		$this->newvalue = new cField('t99_audittrail', 't99_audittrail', 'x_newvalue', 'newvalue', '`newvalue`', '`newvalue`', 201, -1, FALSE, '`newvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->newvalue->Sortable = TRUE; // Allow sort
-		$this->fields['newvalue'] = &$this->newvalue;
+		// KodeRekening
+		$this->KodeRekening = new cField('t90_rektran', 't90_rektran', 'x_KodeRekening', 'KodeRekening', '`KodeRekening`', '`KodeRekening`', 200, -1, FALSE, '`KodeRekening`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->KodeRekening->Sortable = TRUE; // Allow sort
+		$this->KodeRekening->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->KodeRekening->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
+		$this->fields['KodeRekening'] = &$this->KodeRekening;
 	}
 
 	// Set Field Visibility
@@ -145,7 +110,7 @@ class ct99_audittrail extends cTable {
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t99_audittrail`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t90_rektran`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -213,7 +178,7 @@ class ct99_audittrail extends cTable {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() { // Order By
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`KodeTransaksi` ASC";
 	}
 
 	function SqlOrderBy() { // For backward compatibility
@@ -459,7 +424,7 @@ class ct99_audittrail extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "t99_audittraillist.php";
+			return "t90_rektranlist.php";
 		}
 	}
 
@@ -469,30 +434,30 @@ class ct99_audittrail extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "t99_audittraillist.php";
+		return "t90_rektranlist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("t99_audittrailview.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("t90_rektranview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("t99_audittrailview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("t90_rektranview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "t99_audittrailadd.php?" . $this->UrlParm($parm);
+			$url = "t90_rektranadd.php?" . $this->UrlParm($parm);
 		else
-			$url = "t99_audittrailadd.php";
+			$url = "t90_rektranadd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		$url = $this->KeyUrl("t99_audittrailedit.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("t90_rektranedit.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -504,7 +469,7 @@ class ct99_audittrail extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		$url = $this->KeyUrl("t99_audittrailadd.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("t90_rektranadd.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -516,7 +481,7 @@ class ct99_audittrail extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("t99_audittraildelete.php", $this->UrlParm());
+		return $this->KeyUrl("t90_rektrandelete.php", $this->UrlParm());
 	}
 
 	// Add master url
@@ -618,15 +583,9 @@ class ct99_audittrail extends cTable {
 	// Load row values from recordset
 	function LoadListRowValues(&$rs) {
 		$this->id->setDbValue($rs->fields('id'));
-		$this->datetime->setDbValue($rs->fields('datetime'));
-		$this->script->setDbValue($rs->fields('script'));
-		$this->user->setDbValue($rs->fields('user'));
-		$this->action->setDbValue($rs->fields('action'));
-		$this->_table->setDbValue($rs->fields('table'));
-		$this->_field->setDbValue($rs->fields('field'));
-		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
-		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
-		$this->newvalue->setDbValue($rs->fields('newvalue'));
+		$this->KodeTransaksi->setDbValue($rs->fields('KodeTransaksi'));
+		$this->NamaTransaksi->setDbValue($rs->fields('NamaTransaksi'));
+		$this->KodeRekening->setDbValue($rs->fields('KodeRekening'));
 	}
 
 	// Render list row values
@@ -638,106 +597,67 @@ class ct99_audittrail extends cTable {
 
    // Common render codes
 		// id
-		// datetime
-		// script
-		// user
-		// action
-		// table
-		// field
-		// keyvalue
-		// oldvalue
-		// newvalue
+		// KodeTransaksi
+		// NamaTransaksi
+		// KodeRekening
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// datetime
-		$this->datetime->ViewValue = $this->datetime->CurrentValue;
-		$this->datetime->ViewValue = ew_FormatDateTime($this->datetime->ViewValue, 0);
-		$this->datetime->ViewCustomAttributes = "";
+		// KodeTransaksi
+		$this->KodeTransaksi->ViewValue = $this->KodeTransaksi->CurrentValue;
+		$this->KodeTransaksi->ViewCustomAttributes = "";
 
-		// script
-		$this->script->ViewValue = $this->script->CurrentValue;
-		$this->script->ViewCustomAttributes = "";
+		// NamaTransaksi
+		$this->NamaTransaksi->ViewValue = $this->NamaTransaksi->CurrentValue;
+		$this->NamaTransaksi->ViewCustomAttributes = "";
 
-		// user
-		$this->user->ViewValue = $this->user->CurrentValue;
-		$this->user->ViewCustomAttributes = "";
-
-		// action
-		$this->action->ViewValue = $this->action->CurrentValue;
-		$this->action->ViewCustomAttributes = "";
-
-		// table
-		$this->_table->ViewValue = $this->_table->CurrentValue;
-		$this->_table->ViewCustomAttributes = "";
-
-		// field
-		$this->_field->ViewValue = $this->_field->CurrentValue;
-		$this->_field->ViewCustomAttributes = "";
-
-		// keyvalue
-		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
-		$this->keyvalue->ViewCustomAttributes = "";
-
-		// oldvalue
-		$this->oldvalue->ViewValue = $this->oldvalue->CurrentValue;
-		$this->oldvalue->ViewCustomAttributes = "";
-
-		// newvalue
-		$this->newvalue->ViewValue = $this->newvalue->CurrentValue;
-		$this->newvalue->ViewCustomAttributes = "";
+		// KodeRekening
+		if (strval($this->KodeRekening->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->KodeRekening->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `id`, `id` AS `DispFld`, `rekening` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+		$sWhereWrk = "";
+		$this->KodeRekening->LookupFilters = array();
+		$lookuptblfilter = "`tipe` <> 'GROUP'";
+		ew_AddFilter($sWhereWrk, $lookuptblfilter);
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->KodeRekening, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->KodeRekening->ViewValue = $this->KodeRekening->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->KodeRekening->ViewValue = $this->KodeRekening->CurrentValue;
+			}
+		} else {
+			$this->KodeRekening->ViewValue = NULL;
+		}
+		$this->KodeRekening->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
 		$this->id->TooltipValue = "";
 
-		// datetime
-		$this->datetime->LinkCustomAttributes = "";
-		$this->datetime->HrefValue = "";
-		$this->datetime->TooltipValue = "";
+		// KodeTransaksi
+		$this->KodeTransaksi->LinkCustomAttributes = "";
+		$this->KodeTransaksi->HrefValue = "";
+		$this->KodeTransaksi->TooltipValue = "";
 
-		// script
-		$this->script->LinkCustomAttributes = "";
-		$this->script->HrefValue = "";
-		$this->script->TooltipValue = "";
+		// NamaTransaksi
+		$this->NamaTransaksi->LinkCustomAttributes = "";
+		$this->NamaTransaksi->HrefValue = "";
+		$this->NamaTransaksi->TooltipValue = "";
 
-		// user
-		$this->user->LinkCustomAttributes = "";
-		$this->user->HrefValue = "";
-		$this->user->TooltipValue = "";
-
-		// action
-		$this->action->LinkCustomAttributes = "";
-		$this->action->HrefValue = "";
-		$this->action->TooltipValue = "";
-
-		// table
-		$this->_table->LinkCustomAttributes = "";
-		$this->_table->HrefValue = "";
-		$this->_table->TooltipValue = "";
-
-		// field
-		$this->_field->LinkCustomAttributes = "";
-		$this->_field->HrefValue = "";
-		$this->_field->TooltipValue = "";
-
-		// keyvalue
-		$this->keyvalue->LinkCustomAttributes = "";
-		$this->keyvalue->HrefValue = "";
-		$this->keyvalue->TooltipValue = "";
-
-		// oldvalue
-		$this->oldvalue->LinkCustomAttributes = "";
-		$this->oldvalue->HrefValue = "";
-		$this->oldvalue->TooltipValue = "";
-
-		// newvalue
-		$this->newvalue->LinkCustomAttributes = "";
-		$this->newvalue->HrefValue = "";
-		$this->newvalue->TooltipValue = "";
+		// KodeRekening
+		$this->KodeRekening->LinkCustomAttributes = "";
+		$this->KodeRekening->HrefValue = "";
+		$this->KodeRekening->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -756,59 +676,21 @@ class ct99_audittrail extends cTable {
 		$this->id->EditValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// datetime
-		$this->datetime->EditAttrs["class"] = "form-control";
-		$this->datetime->EditCustomAttributes = "";
-		$this->datetime->EditValue = ew_FormatDateTime($this->datetime->CurrentValue, 8);
-		$this->datetime->PlaceHolder = ew_RemoveHtml($this->datetime->FldCaption());
+		// KodeTransaksi
+		$this->KodeTransaksi->EditAttrs["class"] = "form-control";
+		$this->KodeTransaksi->EditCustomAttributes = "";
+		$this->KodeTransaksi->EditValue = $this->KodeTransaksi->CurrentValue;
+		$this->KodeTransaksi->PlaceHolder = ew_RemoveHtml($this->KodeTransaksi->FldCaption());
 
-		// script
-		$this->script->EditAttrs["class"] = "form-control";
-		$this->script->EditCustomAttributes = "";
-		$this->script->EditValue = $this->script->CurrentValue;
-		$this->script->PlaceHolder = ew_RemoveHtml($this->script->FldCaption());
+		// NamaTransaksi
+		$this->NamaTransaksi->EditAttrs["class"] = "form-control";
+		$this->NamaTransaksi->EditCustomAttributes = "";
+		$this->NamaTransaksi->EditValue = $this->NamaTransaksi->CurrentValue;
+		$this->NamaTransaksi->PlaceHolder = ew_RemoveHtml($this->NamaTransaksi->FldCaption());
 
-		// user
-		$this->user->EditAttrs["class"] = "form-control";
-		$this->user->EditCustomAttributes = "";
-		$this->user->EditValue = $this->user->CurrentValue;
-		$this->user->PlaceHolder = ew_RemoveHtml($this->user->FldCaption());
-
-		// action
-		$this->action->EditAttrs["class"] = "form-control";
-		$this->action->EditCustomAttributes = "";
-		$this->action->EditValue = $this->action->CurrentValue;
-		$this->action->PlaceHolder = ew_RemoveHtml($this->action->FldCaption());
-
-		// table
-		$this->_table->EditAttrs["class"] = "form-control";
-		$this->_table->EditCustomAttributes = "";
-		$this->_table->EditValue = $this->_table->CurrentValue;
-		$this->_table->PlaceHolder = ew_RemoveHtml($this->_table->FldCaption());
-
-		// field
-		$this->_field->EditAttrs["class"] = "form-control";
-		$this->_field->EditCustomAttributes = "";
-		$this->_field->EditValue = $this->_field->CurrentValue;
-		$this->_field->PlaceHolder = ew_RemoveHtml($this->_field->FldCaption());
-
-		// keyvalue
-		$this->keyvalue->EditAttrs["class"] = "form-control";
-		$this->keyvalue->EditCustomAttributes = "";
-		$this->keyvalue->EditValue = $this->keyvalue->CurrentValue;
-		$this->keyvalue->PlaceHolder = ew_RemoveHtml($this->keyvalue->FldCaption());
-
-		// oldvalue
-		$this->oldvalue->EditAttrs["class"] = "form-control";
-		$this->oldvalue->EditCustomAttributes = "";
-		$this->oldvalue->EditValue = $this->oldvalue->CurrentValue;
-		$this->oldvalue->PlaceHolder = ew_RemoveHtml($this->oldvalue->FldCaption());
-
-		// newvalue
-		$this->newvalue->EditAttrs["class"] = "form-control";
-		$this->newvalue->EditCustomAttributes = "";
-		$this->newvalue->EditValue = $this->newvalue->CurrentValue;
-		$this->newvalue->PlaceHolder = ew_RemoveHtml($this->newvalue->FldCaption());
+		// KodeRekening
+		$this->KodeRekening->EditAttrs["class"] = "form-control";
+		$this->KodeRekening->EditCustomAttributes = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -837,23 +719,15 @@ class ct99_audittrail extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->datetime->Exportable) $Doc->ExportCaption($this->datetime);
-					if ($this->script->Exportable) $Doc->ExportCaption($this->script);
-					if ($this->user->Exportable) $Doc->ExportCaption($this->user);
-					if ($this->action->Exportable) $Doc->ExportCaption($this->action);
-					if ($this->_table->Exportable) $Doc->ExportCaption($this->_table);
-					if ($this->_field->Exportable) $Doc->ExportCaption($this->_field);
-					if ($this->keyvalue->Exportable) $Doc->ExportCaption($this->keyvalue);
-					if ($this->oldvalue->Exportable) $Doc->ExportCaption($this->oldvalue);
-					if ($this->newvalue->Exportable) $Doc->ExportCaption($this->newvalue);
+					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
+					if ($this->KodeTransaksi->Exportable) $Doc->ExportCaption($this->KodeTransaksi);
+					if ($this->NamaTransaksi->Exportable) $Doc->ExportCaption($this->NamaTransaksi);
+					if ($this->KodeRekening->Exportable) $Doc->ExportCaption($this->KodeRekening);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->datetime->Exportable) $Doc->ExportCaption($this->datetime);
-					if ($this->script->Exportable) $Doc->ExportCaption($this->script);
-					if ($this->user->Exportable) $Doc->ExportCaption($this->user);
-					if ($this->action->Exportable) $Doc->ExportCaption($this->action);
-					if ($this->_table->Exportable) $Doc->ExportCaption($this->_table);
-					if ($this->_field->Exportable) $Doc->ExportCaption($this->_field);
+					if ($this->KodeTransaksi->Exportable) $Doc->ExportCaption($this->KodeTransaksi);
+					if ($this->NamaTransaksi->Exportable) $Doc->ExportCaption($this->NamaTransaksi);
+					if ($this->KodeRekening->Exportable) $Doc->ExportCaption($this->KodeRekening);
 				}
 				$Doc->EndExportRow();
 			}
@@ -885,23 +759,15 @@ class ct99_audittrail extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->datetime->Exportable) $Doc->ExportField($this->datetime);
-						if ($this->script->Exportable) $Doc->ExportField($this->script);
-						if ($this->user->Exportable) $Doc->ExportField($this->user);
-						if ($this->action->Exportable) $Doc->ExportField($this->action);
-						if ($this->_table->Exportable) $Doc->ExportField($this->_table);
-						if ($this->_field->Exportable) $Doc->ExportField($this->_field);
-						if ($this->keyvalue->Exportable) $Doc->ExportField($this->keyvalue);
-						if ($this->oldvalue->Exportable) $Doc->ExportField($this->oldvalue);
-						if ($this->newvalue->Exportable) $Doc->ExportField($this->newvalue);
+						if ($this->id->Exportable) $Doc->ExportField($this->id);
+						if ($this->KodeTransaksi->Exportable) $Doc->ExportField($this->KodeTransaksi);
+						if ($this->NamaTransaksi->Exportable) $Doc->ExportField($this->NamaTransaksi);
+						if ($this->KodeRekening->Exportable) $Doc->ExportField($this->KodeRekening);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->datetime->Exportable) $Doc->ExportField($this->datetime);
-						if ($this->script->Exportable) $Doc->ExportField($this->script);
-						if ($this->user->Exportable) $Doc->ExportField($this->user);
-						if ($this->action->Exportable) $Doc->ExportField($this->action);
-						if ($this->_table->Exportable) $Doc->ExportField($this->_table);
-						if ($this->_field->Exportable) $Doc->ExportField($this->_field);
+						if ($this->KodeTransaksi->Exportable) $Doc->ExportField($this->KodeTransaksi);
+						if ($this->NamaTransaksi->Exportable) $Doc->ExportField($this->NamaTransaksi);
+						if ($this->KodeRekening->Exportable) $Doc->ExportField($this->KodeRekening);
 					}
 					$Doc->EndExportRow();
 				}
@@ -945,7 +811,7 @@ class ct99_audittrail extends cTable {
 
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
-		$table = 't99_audittrail';
+		$table = 't90_rektran';
 		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -954,7 +820,7 @@ class ct99_audittrail extends cTable {
 	function WriteAuditTrailOnAdd(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnAdd) return;
-		$table = 't99_audittrail';
+		$table = 't90_rektran';
 
 		// Get key value
 		$key = "";
@@ -988,7 +854,7 @@ class ct99_audittrail extends cTable {
 	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
 		global $Language;
 		if (!$this->AuditTrailOnEdit) return;
-		$table = 't99_audittrail';
+		$table = 't90_rektran';
 
 		// Get key value
 		$key = "";
@@ -1035,7 +901,7 @@ class ct99_audittrail extends cTable {
 	function WriteAuditTrailOnDelete(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnDelete) return;
-		$table = 't99_audittrail';
+		$table = 't90_rektran';
 
 		// Get key value
 		$key = "";

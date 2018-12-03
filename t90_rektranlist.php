@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t92_periodeoldinfo.php" ?>
+<?php include_once "t90_rektraninfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t92_periodeold_list = NULL; // Initialize page object first
+$t90_rektran_list = NULL; // Initialize page object first
 
-class ct92_periodeold_list extends ct92_periodeold {
+class ct90_rektran_list extends ct90_rektran {
 
 	// Page ID
 	var $PageID = 'list';
@@ -25,13 +25,13 @@ class ct92_periodeold_list extends ct92_periodeold {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't92_periodeold';
+	var $TableName = 't90_rektran';
 
 	// Page object name
-	var $PageObjName = 't92_periodeold_list';
+	var $PageObjName = 't90_rektran_list';
 
 	// Grid form hidden field names
-	var $FormName = 'ft92_periodeoldlist';
+	var $FormName = 'ft90_rektranlist';
 	var $FormActionName = 'k_action';
 	var $FormKeyName = 'k_key';
 	var $FormOldKeyName = 'k_oldkey';
@@ -266,10 +266,10 @@ class ct92_periodeold_list extends ct92_periodeold {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t92_periodeold)
-		if (!isset($GLOBALS["t92_periodeold"]) || get_class($GLOBALS["t92_periodeold"]) == "ct92_periodeold") {
-			$GLOBALS["t92_periodeold"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t92_periodeold"];
+		// Table object (t90_rektran)
+		if (!isset($GLOBALS["t90_rektran"]) || get_class($GLOBALS["t90_rektran"]) == "ct90_rektran") {
+			$GLOBALS["t90_rektran"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t90_rektran"];
 		}
 
 		// Initialize URLs
@@ -280,12 +280,12 @@ class ct92_periodeold_list extends ct92_periodeold {
 		$this->ExportXmlUrl = $this->PageUrl() . "export=xml";
 		$this->ExportCsvUrl = $this->PageUrl() . "export=csv";
 		$this->ExportPdfUrl = $this->PageUrl() . "export=pdf";
-		$this->AddUrl = "t92_periodeoldadd.php";
+		$this->AddUrl = "t90_rektranadd.php";
 		$this->InlineAddUrl = $this->PageUrl() . "a=add";
 		$this->GridAddUrl = $this->PageUrl() . "a=gridadd";
 		$this->GridEditUrl = $this->PageUrl() . "a=gridedit";
-		$this->MultiDeleteUrl = "t92_periodeolddelete.php";
-		$this->MultiUpdateUrl = "t92_periodeoldupdate.php";
+		$this->MultiDeleteUrl = "t90_rektrandelete.php";
+		$this->MultiUpdateUrl = "t90_rektranupdate.php";
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -296,7 +296,7 @@ class ct92_periodeold_list extends ct92_periodeold {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't92_periodeold', TRUE);
+			define("EW_TABLE_NAME", 't90_rektran', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -333,7 +333,7 @@ class ct92_periodeold_list extends ct92_periodeold {
 		// Filter options
 		$this->FilterOptions = new cListOptions();
 		$this->FilterOptions->Tag = "div";
-		$this->FilterOptions->TagClassName = "ewFilterOption ft92_periodeoldlistsrch";
+		$this->FilterOptions->TagClassName = "ewFilterOption ft90_rektranlistsrch";
 
 		// List actions
 		$this->ListActions = new cListActions();
@@ -370,11 +370,9 @@ class ct92_periodeold_list extends ct92_periodeold {
 
 		// Set up list options
 		$this->SetupListOptions();
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->Bulan->SetVisibility();
-		$this->Tahun->SetVisibility();
-		$this->Tahun_Bulan->SetVisibility();
+		$this->KodeTransaksi->SetVisibility();
+		$this->NamaTransaksi->SetVisibility();
+		$this->KodeRekening->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -435,13 +433,13 @@ class ct92_periodeold_list extends ct92_periodeold {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t92_periodeold;
+		global $EW_EXPORT, $t90_rektran;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t92_periodeold);
+				$doc = new $class($t90_rektran);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -557,28 +555,8 @@ class ct92_periodeold_list extends ct92_periodeold {
 					$option->HideAllOptions();
 			}
 
-			// Get default search criteria
-			ew_AddFilter($this->DefaultSearchWhere, $this->BasicSearchWhere(TRUE));
-
-			// Get basic search values
-			$this->LoadBasicSearchValues();
-
-			// Process filter list
-			$this->ProcessFilterList();
-
-			// Restore search parms from Session if not searching / reset / export
-			if (($this->Export <> "" || $this->Command <> "search" && $this->Command <> "reset" && $this->Command <> "resetall") && $this->CheckSearchParms())
-				$this->RestoreSearchParms();
-
-			// Call Recordset SearchValidated event
-			$this->Recordset_SearchValidated();
-
 			// Set up sorting order
 			$this->SetUpSortOrder();
-
-			// Get basic search criteria
-			if ($gsSearchError == "")
-				$sSrchBasic = $this->BasicSearchWhere();
 		}
 
 		// Restore display records
@@ -590,31 +568,6 @@ class ct92_periodeold_list extends ct92_periodeold {
 
 		// Load Sorting Order
 		$this->LoadSortOrder();
-
-		// Load search default if no existing search criteria
-		if (!$this->CheckSearchParms()) {
-
-			// Load basic search from default
-			$this->BasicSearch->LoadDefault();
-			if ($this->BasicSearch->Keyword != "")
-				$sSrchBasic = $this->BasicSearchWhere();
-		}
-
-		// Build search criteria
-		ew_AddFilter($this->SearchWhere, $sSrchAdvanced);
-		ew_AddFilter($this->SearchWhere, $sSrchBasic);
-
-		// Call Recordset_Searching event
-		$this->Recordset_Searching($this->SearchWhere);
-
-		// Save search criteria
-		if ($this->Command == "search" && !$this->RestoreSearch) {
-			$this->setSearchWhere($this->SearchWhere); // Save to Session
-			$this->StartRec = 1; // Reset start record counter
-			$this->setStartRecordNumber($this->StartRec);
-		} else {
-			$this->SearchWhere = $this->getSearchWhere();
-		}
 
 		// Build filter
 		$sFilter = "";
@@ -680,264 +633,6 @@ class ct92_periodeold_list extends ct92_periodeold {
 		return TRUE;
 	}
 
-	// Get list of filters
-	function GetFilterList() {
-		global $UserProfile;
-
-		// Load server side filters
-		if (EW_SEARCH_FILTER_OPTION == "Server") {
-			$sSavedFilterList = isset($UserProfile) ? $UserProfile->GetSearchFilters(CurrentUserName(), "ft92_periodeoldlistsrch") : "";
-		} else {
-			$sSavedFilterList = "";
-		}
-
-		// Initialize
-		$sFilterList = "";
-		$sFilterList = ew_Concat($sFilterList, $this->id->AdvancedSearch->ToJSON(), ","); // Field id
-		$sFilterList = ew_Concat($sFilterList, $this->Bulan->AdvancedSearch->ToJSON(), ","); // Field Bulan
-		$sFilterList = ew_Concat($sFilterList, $this->Tahun->AdvancedSearch->ToJSON(), ","); // Field Tahun
-		$sFilterList = ew_Concat($sFilterList, $this->Tahun_Bulan->AdvancedSearch->ToJSON(), ","); // Field Tahun_Bulan
-		if ($this->BasicSearch->Keyword <> "") {
-			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
-			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
-		}
-		$sFilterList = preg_replace('/,$/', "", $sFilterList);
-
-		// Return filter list in json
-		if ($sFilterList <> "")
-			$sFilterList = "\"data\":{" . $sFilterList . "}";
-		if ($sSavedFilterList <> "") {
-			if ($sFilterList <> "")
-				$sFilterList .= ",";
-			$sFilterList .= "\"filters\":" . $sSavedFilterList;
-		}
-		return ($sFilterList <> "") ? "{" . $sFilterList . "}" : "null";
-	}
-
-	// Process filter list
-	function ProcessFilterList() {
-		global $UserProfile;
-		if (@$_POST["ajax"] == "savefilters") { // Save filter request (Ajax)
-			$filters = ew_StripSlashes(@$_POST["filters"]);
-			$UserProfile->SetSearchFilters(CurrentUserName(), "ft92_periodeoldlistsrch", $filters);
-
-			// Clean output buffer
-			if (!EW_DEBUG_ENABLED && ob_get_length())
-				ob_end_clean();
-			echo ew_ArrayToJson(array(array("success" => TRUE))); // Success
-			$this->Page_Terminate();
-			exit();
-		} elseif (@$_POST["cmd"] == "resetfilter") {
-			$this->RestoreFilterList();
-		}
-	}
-
-	// Restore list of filters
-	function RestoreFilterList() {
-
-		// Return if not reset filter
-		if (@$_POST["cmd"] <> "resetfilter")
-			return FALSE;
-		$filter = json_decode(ew_StripSlashes(@$_POST["filter"]), TRUE);
-		$this->Command = "search";
-
-		// Field id
-		$this->id->AdvancedSearch->SearchValue = @$filter["x_id"];
-		$this->id->AdvancedSearch->SearchOperator = @$filter["z_id"];
-		$this->id->AdvancedSearch->SearchCondition = @$filter["v_id"];
-		$this->id->AdvancedSearch->SearchValue2 = @$filter["y_id"];
-		$this->id->AdvancedSearch->SearchOperator2 = @$filter["w_id"];
-		$this->id->AdvancedSearch->Save();
-
-		// Field Bulan
-		$this->Bulan->AdvancedSearch->SearchValue = @$filter["x_Bulan"];
-		$this->Bulan->AdvancedSearch->SearchOperator = @$filter["z_Bulan"];
-		$this->Bulan->AdvancedSearch->SearchCondition = @$filter["v_Bulan"];
-		$this->Bulan->AdvancedSearch->SearchValue2 = @$filter["y_Bulan"];
-		$this->Bulan->AdvancedSearch->SearchOperator2 = @$filter["w_Bulan"];
-		$this->Bulan->AdvancedSearch->Save();
-
-		// Field Tahun
-		$this->Tahun->AdvancedSearch->SearchValue = @$filter["x_Tahun"];
-		$this->Tahun->AdvancedSearch->SearchOperator = @$filter["z_Tahun"];
-		$this->Tahun->AdvancedSearch->SearchCondition = @$filter["v_Tahun"];
-		$this->Tahun->AdvancedSearch->SearchValue2 = @$filter["y_Tahun"];
-		$this->Tahun->AdvancedSearch->SearchOperator2 = @$filter["w_Tahun"];
-		$this->Tahun->AdvancedSearch->Save();
-
-		// Field Tahun_Bulan
-		$this->Tahun_Bulan->AdvancedSearch->SearchValue = @$filter["x_Tahun_Bulan"];
-		$this->Tahun_Bulan->AdvancedSearch->SearchOperator = @$filter["z_Tahun_Bulan"];
-		$this->Tahun_Bulan->AdvancedSearch->SearchCondition = @$filter["v_Tahun_Bulan"];
-		$this->Tahun_Bulan->AdvancedSearch->SearchValue2 = @$filter["y_Tahun_Bulan"];
-		$this->Tahun_Bulan->AdvancedSearch->SearchOperator2 = @$filter["w_Tahun_Bulan"];
-		$this->Tahun_Bulan->AdvancedSearch->Save();
-		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
-		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
-	}
-
-	// Return basic search SQL
-	function BasicSearchSQL($arKeywords, $type) {
-		$sWhere = "";
-		$this->BuildBasicSearchSQL($sWhere, $this->Tahun_Bulan, $arKeywords, $type);
-		return $sWhere;
-	}
-
-	// Build basic search SQL
-	function BuildBasicSearchSQL(&$Where, &$Fld, $arKeywords, $type) {
-		global $EW_BASIC_SEARCH_IGNORE_PATTERN;
-		$sDefCond = ($type == "OR") ? "OR" : "AND";
-		$arSQL = array(); // Array for SQL parts
-		$arCond = array(); // Array for search conditions
-		$cnt = count($arKeywords);
-		$j = 0; // Number of SQL parts
-		for ($i = 0; $i < $cnt; $i++) {
-			$Keyword = $arKeywords[$i];
-			$Keyword = trim($Keyword);
-			if ($EW_BASIC_SEARCH_IGNORE_PATTERN <> "") {
-				$Keyword = preg_replace($EW_BASIC_SEARCH_IGNORE_PATTERN, "\\", $Keyword);
-				$ar = explode("\\", $Keyword);
-			} else {
-				$ar = array($Keyword);
-			}
-			foreach ($ar as $Keyword) {
-				if ($Keyword <> "") {
-					$sWrk = "";
-					if ($Keyword == "OR" && $type == "") {
-						if ($j > 0)
-							$arCond[$j-1] = "OR";
-					} elseif ($Keyword == EW_NULL_VALUE) {
-						$sWrk = $Fld->FldExpression . " IS NULL";
-					} elseif ($Keyword == EW_NOT_NULL_VALUE) {
-						$sWrk = $Fld->FldExpression . " IS NOT NULL";
-					} elseif ($Fld->FldIsVirtual) {
-						$sWrk = $Fld->FldVirtualExpression . ew_Like(ew_QuotedValue("%" . $Keyword . "%", EW_DATATYPE_STRING, $this->DBID), $this->DBID);
-					} elseif ($Fld->FldDataType != EW_DATATYPE_NUMBER || is_numeric($Keyword)) {
-						$sWrk = $Fld->FldBasicSearchExpression . ew_Like(ew_QuotedValue("%" . $Keyword . "%", EW_DATATYPE_STRING, $this->DBID), $this->DBID);
-					}
-					if ($sWrk <> "") {
-						$arSQL[$j] = $sWrk;
-						$arCond[$j] = $sDefCond;
-						$j += 1;
-					}
-				}
-			}
-		}
-		$cnt = count($arSQL);
-		$bQuoted = FALSE;
-		$sSql = "";
-		if ($cnt > 0) {
-			for ($i = 0; $i < $cnt-1; $i++) {
-				if ($arCond[$i] == "OR") {
-					if (!$bQuoted) $sSql .= "(";
-					$bQuoted = TRUE;
-				}
-				$sSql .= $arSQL[$i];
-				if ($bQuoted && $arCond[$i] <> "OR") {
-					$sSql .= ")";
-					$bQuoted = FALSE;
-				}
-				$sSql .= " " . $arCond[$i] . " ";
-			}
-			$sSql .= $arSQL[$cnt-1];
-			if ($bQuoted)
-				$sSql .= ")";
-		}
-		if ($sSql <> "") {
-			if ($Where <> "") $Where .= " OR ";
-			$Where .=  "(" . $sSql . ")";
-		}
-	}
-
-	// Return basic search WHERE clause based on search keyword and type
-	function BasicSearchWhere($Default = FALSE) {
-		global $Security;
-		$sSearchStr = "";
-		if (!$Security->CanSearch()) return "";
-		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
-		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
-		if ($sSearchKeyword <> "") {
-			$sSearch = trim($sSearchKeyword);
-			if ($sSearchType <> "=") {
-				$ar = array();
-
-				// Match quoted keywords (i.e.: "...")
-				if (preg_match_all('/"([^"]*)"/i', $sSearch, $matches, PREG_SET_ORDER)) {
-					foreach ($matches as $match) {
-						$p = strpos($sSearch, $match[0]);
-						$str = substr($sSearch, 0, $p);
-						$sSearch = substr($sSearch, $p + strlen($match[0]));
-						if (strlen(trim($str)) > 0)
-							$ar = array_merge($ar, explode(" ", trim($str)));
-						$ar[] = $match[1]; // Save quoted keyword
-					}
-				}
-
-				// Match individual keywords
-				if (strlen(trim($sSearch)) > 0)
-					$ar = array_merge($ar, explode(" ", trim($sSearch)));
-
-				// Search keyword in any fields
-				if (($sSearchType == "OR" || $sSearchType == "AND") && $this->BasicSearch->BasicSearchAnyFields) {
-					foreach ($ar as $sKeyword) {
-						if ($sKeyword <> "") {
-							if ($sSearchStr <> "") $sSearchStr .= " " . $sSearchType . " ";
-							$sSearchStr .= "(" . $this->BasicSearchSQL(array($sKeyword), $sSearchType) . ")";
-						}
-					}
-				} else {
-					$sSearchStr = $this->BasicSearchSQL($ar, $sSearchType);
-				}
-			} else {
-				$sSearchStr = $this->BasicSearchSQL(array($sSearch), $sSearchType);
-			}
-			if (!$Default) $this->Command = "search";
-		}
-		if (!$Default && $this->Command == "search") {
-			$this->BasicSearch->setKeyword($sSearchKeyword);
-			$this->BasicSearch->setType($sSearchType);
-		}
-		return $sSearchStr;
-	}
-
-	// Check if search parm exists
-	function CheckSearchParms() {
-
-		// Check basic search
-		if ($this->BasicSearch->IssetSession())
-			return TRUE;
-		return FALSE;
-	}
-
-	// Clear all search parameters
-	function ResetSearchParms() {
-
-		// Clear search WHERE clause
-		$this->SearchWhere = "";
-		$this->setSearchWhere($this->SearchWhere);
-
-		// Clear basic search parameters
-		$this->ResetBasicSearchParms();
-	}
-
-	// Load advanced search default values
-	function LoadAdvancedSearchDefault() {
-		return FALSE;
-	}
-
-	// Clear all basic search parameters
-	function ResetBasicSearchParms() {
-		$this->BasicSearch->UnsetSession();
-	}
-
-	// Restore all search parameters
-	function RestoreSearchParms() {
-		$this->RestoreSearch = TRUE;
-
-		// Restore basic search values
-		$this->BasicSearch->Load();
-	}
-
 	// Set up sort parameters
 	function SetUpSortOrder() {
 
@@ -948,10 +643,9 @@ class ct92_periodeold_list extends ct92_periodeold {
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id, $bCtrl); // id
-			$this->UpdateSort($this->Bulan, $bCtrl); // Bulan
-			$this->UpdateSort($this->Tahun, $bCtrl); // Tahun
-			$this->UpdateSort($this->Tahun_Bulan, $bCtrl); // Tahun_Bulan
+			$this->UpdateSort($this->KodeTransaksi, $bCtrl); // KodeTransaksi
+			$this->UpdateSort($this->NamaTransaksi, $bCtrl); // NamaTransaksi
+			$this->UpdateSort($this->KodeRekening, $bCtrl); // KodeRekening
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -963,6 +657,7 @@ class ct92_periodeold_list extends ct92_periodeold {
 			if ($this->getSqlOrderBy() <> "") {
 				$sOrderBy = $this->getSqlOrderBy();
 				$this->setSessionOrderBy($sOrderBy);
+				$this->KodeTransaksi->setSort("ASC");
 			}
 		}
 	}
@@ -976,18 +671,13 @@ class ct92_periodeold_list extends ct92_periodeold {
 		// Check if reset command
 		if (substr($this->Command,0,5) == "reset") {
 
-			// Reset search criteria
-			if ($this->Command == "reset" || $this->Command == "resetall")
-				$this->ResetSearchParms();
-
 			// Reset sorting order
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->id->setSort("");
-				$this->Bulan->setSort("");
-				$this->Tahun->setSort("");
-				$this->Tahun_Bulan->setSort("");
+				$this->KodeTransaksi->setSort("");
+				$this->NamaTransaksi->setSort("");
+				$this->KodeRekening->setSort("");
 			}
 
 			// Reset start position
@@ -1006,22 +696,10 @@ class ct92_periodeold_list extends ct92_periodeold {
 		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
-		// "view"
-		$item = &$this->ListOptions->Add("view");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = $Security->CanView();
-		$item->OnLeft = TRUE;
-
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
 		$item->Visible = $Security->CanEdit();
-		$item->OnLeft = TRUE;
-
-		// "copy"
-		$item = &$this->ListOptions->Add("copy");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = $Security->CanAdd();
 		$item->OnLeft = TRUE;
 
 		// "delete"
@@ -1068,29 +746,11 @@ class ct92_periodeold_list extends ct92_periodeold {
 		global $Security, $Language, $objForm;
 		$this->ListOptions->LoadDefault();
 
-		// "view"
-		$oListOpt = &$this->ListOptions->Items["view"];
-		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if ($Security->CanView()) {
-			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
-		} else {
-			$oListOpt->Body = "";
-		}
-
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
 		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
-		} else {
-			$oListOpt->Body = "";
-		}
-
-		// "copy"
-		$oListOpt = &$this->ListOptions->Items["copy"];
-		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if ($Security->CanAdd()) {
-			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
 		}
@@ -1169,11 +829,11 @@ class ct92_periodeold_list extends ct92_periodeold {
 
 		// Filter button
 		$item = &$this->FilterOptions->Add("savecurrentfilter");
-		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"ft92_periodeoldlistsrch\" href=\"#\">" . $Language->Phrase("SaveCurrentFilter") . "</a>";
-		$item->Visible = TRUE;
+		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"ft90_rektranlistsrch\" href=\"#\">" . $Language->Phrase("SaveCurrentFilter") . "</a>";
+		$item->Visible = FALSE;
 		$item = &$this->FilterOptions->Add("deletefilter");
-		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"ft92_periodeoldlistsrch\" href=\"#\">" . $Language->Phrase("DeleteFilter") . "</a>";
-		$item->Visible = TRUE;
+		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"ft90_rektranlistsrch\" href=\"#\">" . $Language->Phrase("DeleteFilter") . "</a>";
+		$item->Visible = FALSE;
 		$this->FilterOptions->UseDropDownButton = TRUE;
 		$this->FilterOptions->UseButtonGroup = !$this->FilterOptions->UseDropDownButton;
 		$this->FilterOptions->DropDownButtonPhrase = $Language->Phrase("Filters");
@@ -1196,7 +856,7 @@ class ct92_periodeold_list extends ct92_periodeold {
 					$item = &$option->Add("custom_" . $listaction->Action);
 					$caption = $listaction->Caption;
 					$icon = ($listaction->Icon <> "") ? "<span class=\"" . ew_HtmlEncode($listaction->Icon) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\"></span> " : $caption;
-					$item->Body = "<a class=\"ewAction ewListAction\" title=\"" . ew_HtmlEncode($caption) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\" href=\"\" onclick=\"ew_SubmitAction(event,jQuery.extend({f:document.ft92_periodeoldlist}," . $listaction->ToJson(TRUE) . "));return false;\">" . $icon . "</a>";
+					$item->Body = "<a class=\"ewAction ewListAction\" title=\"" . ew_HtmlEncode($caption) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\" href=\"\" onclick=\"ew_SubmitAction(event,jQuery.extend({f:document.ft90_rektranlist}," . $listaction->ToJson(TRUE) . "));return false;\">" . $icon . "</a>";
 					$item->Visible = $listaction->Allow;
 				}
 			}
@@ -1297,17 +957,6 @@ class ct92_periodeold_list extends ct92_periodeold {
 		$this->SearchOptions->Tag = "div";
 		$this->SearchOptions->TagClassName = "ewSearchOption";
 
-		// Search button
-		$item = &$this->SearchOptions->Add("searchtoggle");
-		$SearchToggleClass = ($this->SearchWhere <> "") ? " active" : " active";
-		$item->Body = "<button type=\"button\" class=\"btn btn-default ewSearchToggle" . $SearchToggleClass . "\" title=\"" . $Language->Phrase("SearchPanel") . "\" data-caption=\"" . $Language->Phrase("SearchPanel") . "\" data-toggle=\"button\" data-form=\"ft92_periodeoldlistsrch\">" . $Language->Phrase("SearchBtn") . "</button>";
-		$item->Visible = TRUE;
-
-		// Show all button
-		$item = &$this->SearchOptions->Add("showall");
-		$item->Body = "<a class=\"btn btn-default ewShowAll\" title=\"" . $Language->Phrase("ShowAll") . "\" data-caption=\"" . $Language->Phrase("ShowAll") . "\" href=\"" . $this->PageUrl() . "cmd=reset\">" . $Language->Phrase("ShowAllBtn") . "</a>";
-		$item->Visible = ($this->SearchWhere <> $this->DefaultSearchWhere && $this->SearchWhere <> "0=101");
-
 		// Button group for search
 		$this->SearchOptions->UseDropDownButton = FALSE;
 		$this->SearchOptions->UseImageAndText = TRUE;
@@ -1373,13 +1022,6 @@ class ct92_periodeold_list extends ct92_periodeold {
 		}
 	}
 
-	// Load basic search values
-	function LoadBasicSearchValues() {
-		$this->BasicSearch->Keyword = @$_GET[EW_TABLE_BASIC_SEARCH];
-		if ($this->BasicSearch->Keyword <> "") $this->Command = "search";
-		$this->BasicSearch->Type = @$_GET[EW_TABLE_BASIC_SEARCH_TYPE];
-	}
-
 	// Load recordset
 	function LoadRecordset($offset = -1, $rowcnt = -1) {
 
@@ -1436,9 +1078,9 @@ class ct92_periodeold_list extends ct92_periodeold {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Bulan->setDbValue($rs->fields('Bulan'));
-		$this->Tahun->setDbValue($rs->fields('Tahun'));
-		$this->Tahun_Bulan->setDbValue($rs->fields('Tahun_Bulan'));
+		$this->KodeTransaksi->setDbValue($rs->fields('KodeTransaksi'));
+		$this->NamaTransaksi->setDbValue($rs->fields('NamaTransaksi'));
+		$this->KodeRekening->setDbValue($rs->fields('KodeRekening'));
 	}
 
 	// Load DbValue from recordset
@@ -1446,9 +1088,9 @@ class ct92_periodeold_list extends ct92_periodeold {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->Bulan->DbValue = $row['Bulan'];
-		$this->Tahun->DbValue = $row['Tahun'];
-		$this->Tahun_Bulan->DbValue = $row['Tahun_Bulan'];
+		$this->KodeTransaksi->DbValue = $row['KodeTransaksi'];
+		$this->NamaTransaksi->DbValue = $row['NamaTransaksi'];
+		$this->KodeRekening->DbValue = $row['KodeRekening'];
 	}
 
 	// Load old record
@@ -1491,9 +1133,9 @@ class ct92_periodeold_list extends ct92_periodeold {
 
 		// Common render codes for all row types
 		// id
-		// Bulan
-		// Tahun
-		// Tahun_Bulan
+		// KodeTransaksi
+		// NamaTransaksi
+		// KodeRekening
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1501,37 +1143,54 @@ class ct92_periodeold_list extends ct92_periodeold {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Bulan
-		$this->Bulan->ViewValue = $this->Bulan->CurrentValue;
-		$this->Bulan->ViewCustomAttributes = "";
+		// KodeTransaksi
+		$this->KodeTransaksi->ViewValue = $this->KodeTransaksi->CurrentValue;
+		$this->KodeTransaksi->ViewCustomAttributes = "";
 
-		// Tahun
-		$this->Tahun->ViewValue = $this->Tahun->CurrentValue;
-		$this->Tahun->ViewCustomAttributes = "";
+		// NamaTransaksi
+		$this->NamaTransaksi->ViewValue = $this->NamaTransaksi->CurrentValue;
+		$this->NamaTransaksi->ViewCustomAttributes = "";
 
-		// Tahun_Bulan
-		$this->Tahun_Bulan->ViewValue = $this->Tahun_Bulan->CurrentValue;
-		$this->Tahun_Bulan->ViewCustomAttributes = "";
+		// KodeRekening
+		if (strval($this->KodeRekening->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->KodeRekening->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `id`, `id` AS `DispFld`, `rekening` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+		$sWhereWrk = "";
+		$this->KodeRekening->LookupFilters = array();
+		$lookuptblfilter = "`tipe` <> 'GROUP'";
+		ew_AddFilter($sWhereWrk, $lookuptblfilter);
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->KodeRekening, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->KodeRekening->ViewValue = $this->KodeRekening->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->KodeRekening->ViewValue = $this->KodeRekening->CurrentValue;
+			}
+		} else {
+			$this->KodeRekening->ViewValue = NULL;
+		}
+		$this->KodeRekening->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
+			// KodeTransaksi
+			$this->KodeTransaksi->LinkCustomAttributes = "";
+			$this->KodeTransaksi->HrefValue = "";
+			$this->KodeTransaksi->TooltipValue = "";
 
-			// Bulan
-			$this->Bulan->LinkCustomAttributes = "";
-			$this->Bulan->HrefValue = "";
-			$this->Bulan->TooltipValue = "";
+			// NamaTransaksi
+			$this->NamaTransaksi->LinkCustomAttributes = "";
+			$this->NamaTransaksi->HrefValue = "";
+			$this->NamaTransaksi->TooltipValue = "";
 
-			// Tahun
-			$this->Tahun->LinkCustomAttributes = "";
-			$this->Tahun->HrefValue = "";
-			$this->Tahun->TooltipValue = "";
-
-			// Tahun_Bulan
-			$this->Tahun_Bulan->LinkCustomAttributes = "";
-			$this->Tahun_Bulan->HrefValue = "";
-			$this->Tahun_Bulan->TooltipValue = "";
+			// KodeRekening
+			$this->KodeRekening->LinkCustomAttributes = "";
+			$this->KodeRekening->HrefValue = "";
+			$this->KodeRekening->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1688,30 +1347,30 @@ class ct92_periodeold_list extends ct92_periodeold {
 <?php
 
 // Create page object
-if (!isset($t92_periodeold_list)) $t92_periodeold_list = new ct92_periodeold_list();
+if (!isset($t90_rektran_list)) $t90_rektran_list = new ct90_rektran_list();
 
 // Page init
-$t92_periodeold_list->Page_Init();
+$t90_rektran_list->Page_Init();
 
 // Page main
-$t92_periodeold_list->Page_Main();
+$t90_rektran_list->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t92_periodeold_list->Page_Render();
+$t90_rektran_list->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "list";
-var CurrentForm = ft92_periodeoldlist = new ew_Form("ft92_periodeoldlist", "list");
-ft92_periodeoldlist.FormKeyCountName = '<?php echo $t92_periodeold_list->FormKeyCountName ?>';
+var CurrentForm = ft90_rektranlist = new ew_Form("ft90_rektranlist", "list");
+ft90_rektranlist.FormKeyCountName = '<?php echo $t90_rektran_list->FormKeyCountName ?>';
 
 // Form_CustomValidate event
-ft92_periodeoldlist.Form_CustomValidate = 
+ft90_rektranlist.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -1720,15 +1379,15 @@ ft92_periodeoldlist.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft92_periodeoldlist.ValidateRequired = true;
+ft90_rektranlist.ValidateRequired = true;
 <?php } else { ?>
-ft92_periodeoldlist.ValidateRequired = false; 
+ft90_rektranlist.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft90_rektranlist.Lists["x_KodeRekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_id","x_rekening","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
 
-var CurrentSearchForm = ft92_periodeoldlistsrch = new ew_Form("ft92_periodeoldlistsrch");
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -1736,259 +1395,200 @@ var CurrentSearchForm = ft92_periodeoldlistsrch = new ew_Form("ft92_periodeoldli
 </script>
 <div class="ewToolbar">
 <?php $Breadcrumb->Render(); ?>
-<?php if ($t92_periodeold_list->TotalRecs > 0 && $t92_periodeold_list->ExportOptions->Visible()) { ?>
-<?php $t92_periodeold_list->ExportOptions->Render("body") ?>
-<?php } ?>
-<?php if ($t92_periodeold_list->SearchOptions->Visible()) { ?>
-<?php $t92_periodeold_list->SearchOptions->Render("body") ?>
-<?php } ?>
-<?php if ($t92_periodeold_list->FilterOptions->Visible()) { ?>
-<?php $t92_periodeold_list->FilterOptions->Render("body") ?>
+<?php if ($t90_rektran_list->TotalRecs > 0 && $t90_rektran_list->ExportOptions->Visible()) { ?>
+<?php $t90_rektran_list->ExportOptions->Render("body") ?>
 <?php } ?>
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
 <?php
-	$bSelectLimit = $t92_periodeold_list->UseSelectLimit;
+	$bSelectLimit = $t90_rektran_list->UseSelectLimit;
 	if ($bSelectLimit) {
-		if ($t92_periodeold_list->TotalRecs <= 0)
-			$t92_periodeold_list->TotalRecs = $t92_periodeold->SelectRecordCount();
+		if ($t90_rektran_list->TotalRecs <= 0)
+			$t90_rektran_list->TotalRecs = $t90_rektran->SelectRecordCount();
 	} else {
-		if (!$t92_periodeold_list->Recordset && ($t92_periodeold_list->Recordset = $t92_periodeold_list->LoadRecordset()))
-			$t92_periodeold_list->TotalRecs = $t92_periodeold_list->Recordset->RecordCount();
+		if (!$t90_rektran_list->Recordset && ($t90_rektran_list->Recordset = $t90_rektran_list->LoadRecordset()))
+			$t90_rektran_list->TotalRecs = $t90_rektran_list->Recordset->RecordCount();
 	}
-	$t92_periodeold_list->StartRec = 1;
-	if ($t92_periodeold_list->DisplayRecs <= 0 || ($t92_periodeold->Export <> "" && $t92_periodeold->ExportAll)) // Display all records
-		$t92_periodeold_list->DisplayRecs = $t92_periodeold_list->TotalRecs;
-	if (!($t92_periodeold->Export <> "" && $t92_periodeold->ExportAll))
-		$t92_periodeold_list->SetUpStartRec(); // Set up start record position
+	$t90_rektran_list->StartRec = 1;
+	if ($t90_rektran_list->DisplayRecs <= 0 || ($t90_rektran->Export <> "" && $t90_rektran->ExportAll)) // Display all records
+		$t90_rektran_list->DisplayRecs = $t90_rektran_list->TotalRecs;
+	if (!($t90_rektran->Export <> "" && $t90_rektran->ExportAll))
+		$t90_rektran_list->SetUpStartRec(); // Set up start record position
 	if ($bSelectLimit)
-		$t92_periodeold_list->Recordset = $t92_periodeold_list->LoadRecordset($t92_periodeold_list->StartRec-1, $t92_periodeold_list->DisplayRecs);
+		$t90_rektran_list->Recordset = $t90_rektran_list->LoadRecordset($t90_rektran_list->StartRec-1, $t90_rektran_list->DisplayRecs);
 
 	// Set no record found message
-	if ($t92_periodeold->CurrentAction == "" && $t92_periodeold_list->TotalRecs == 0) {
+	if ($t90_rektran->CurrentAction == "" && $t90_rektran_list->TotalRecs == 0) {
 		if (!$Security->CanList())
-			$t92_periodeold_list->setWarningMessage(ew_DeniedMsg());
-		if ($t92_periodeold_list->SearchWhere == "0=101")
-			$t92_periodeold_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
+			$t90_rektran_list->setWarningMessage(ew_DeniedMsg());
+		if ($t90_rektran_list->SearchWhere == "0=101")
+			$t90_rektran_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
-			$t92_periodeold_list->setWarningMessage($Language->Phrase("NoRecord"));
+			$t90_rektran_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
-
-	// Audit trail on search
-	if ($t92_periodeold_list->AuditTrailOnSearch && $t92_periodeold_list->Command == "search" && !$t92_periodeold_list->RestoreSearch) {
-		$searchparm = ew_ServerVar("QUERY_STRING");
-		$searchsql = $t92_periodeold_list->getSessionWhere();
-		$t92_periodeold_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
-	}
-$t92_periodeold_list->RenderOtherOptions();
+$t90_rektran_list->RenderOtherOptions();
 ?>
-<?php if ($Security->CanSearch()) { ?>
-<?php if ($t92_periodeold->Export == "" && $t92_periodeold->CurrentAction == "") { ?>
-<form name="ft92_periodeoldlistsrch" id="ft92_periodeoldlistsrch" class="form-inline ewForm" action="<?php echo ew_CurrentPage() ?>">
-<?php $SearchPanelClass = ($t92_periodeold_list->SearchWhere <> "") ? " in" : " in"; ?>
-<div id="ft92_periodeoldlistsrch_SearchPanel" class="ewSearchPanel collapse<?php echo $SearchPanelClass ?>">
-<input type="hidden" name="cmd" value="search">
-<input type="hidden" name="t" value="t92_periodeold">
-	<div class="ewBasicSearch">
-<div id="xsr_1" class="ewRow">
-	<div class="ewQuickSearch input-group">
-	<input type="text" name="<?php echo EW_TABLE_BASIC_SEARCH ?>" id="<?php echo EW_TABLE_BASIC_SEARCH ?>" class="form-control" value="<?php echo ew_HtmlEncode($t92_periodeold_list->BasicSearch->getKeyword()) ?>" placeholder="<?php echo ew_HtmlEncode($Language->Phrase("Search")) ?>">
-	<input type="hidden" name="<?php echo EW_TABLE_BASIC_SEARCH_TYPE ?>" id="<?php echo EW_TABLE_BASIC_SEARCH_TYPE ?>" value="<?php echo ew_HtmlEncode($t92_periodeold_list->BasicSearch->getType()) ?>">
-	<div class="input-group-btn">
-		<button type="button" data-toggle="dropdown" class="btn btn-default"><span id="searchtype"><?php echo $t92_periodeold_list->BasicSearch->getTypeNameShort() ?></span><span class="caret"></span></button>
-		<ul class="dropdown-menu pull-right" role="menu">
-			<li<?php if ($t92_periodeold_list->BasicSearch->getType() == "") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this)"><?php echo $Language->Phrase("QuickSearchAuto") ?></a></li>
-			<li<?php if ($t92_periodeold_list->BasicSearch->getType() == "=") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'=')"><?php echo $Language->Phrase("QuickSearchExact") ?></a></li>
-			<li<?php if ($t92_periodeold_list->BasicSearch->getType() == "AND") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'AND')"><?php echo $Language->Phrase("QuickSearchAll") ?></a></li>
-			<li<?php if ($t92_periodeold_list->BasicSearch->getType() == "OR") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'OR')"><?php echo $Language->Phrase("QuickSearchAny") ?></a></li>
-		</ul>
-	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("QuickSearchBtn") ?></button>
-	</div>
-	</div>
-</div>
-	</div>
-</div>
-</form>
-<?php } ?>
-<?php } ?>
-<?php $t92_periodeold_list->ShowPageHeader(); ?>
+<?php $t90_rektran_list->ShowPageHeader(); ?>
 <?php
-$t92_periodeold_list->ShowMessage();
+$t90_rektran_list->ShowMessage();
 ?>
-<?php if ($t92_periodeold_list->TotalRecs > 0 || $t92_periodeold->CurrentAction <> "") { ?>
-<div class="panel panel-default ewGrid t92_periodeold">
-<form name="ft92_periodeoldlist" id="ft92_periodeoldlist" class="form-inline ewForm ewListForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t92_periodeold_list->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t92_periodeold_list->Token ?>">
+<?php if ($t90_rektran_list->TotalRecs > 0 || $t90_rektran->CurrentAction <> "") { ?>
+<div class="panel panel-default ewGrid t90_rektran">
+<form name="ft90_rektranlist" id="ft90_rektranlist" class="form-inline ewForm ewListForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t90_rektran_list->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t90_rektran_list->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t92_periodeold">
-<div id="gmp_t92_periodeold" class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
-<?php if ($t92_periodeold_list->TotalRecs > 0 || $t92_periodeold->CurrentAction == "gridedit") { ?>
-<table id="tbl_t92_periodeoldlist" class="table ewTable">
-<?php echo $t92_periodeold->TableCustomInnerHtml ?>
+<input type="hidden" name="t" value="t90_rektran">
+<div id="gmp_t90_rektran" class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
+<?php if ($t90_rektran_list->TotalRecs > 0 || $t90_rektran->CurrentAction == "gridedit") { ?>
+<table id="tbl_t90_rektranlist" class="table ewTable">
+<?php echo $t90_rektran->TableCustomInnerHtml ?>
 <thead><!-- Table header -->
 	<tr class="ewTableHeader">
 <?php
 
 // Header row
-$t92_periodeold_list->RowType = EW_ROWTYPE_HEADER;
+$t90_rektran_list->RowType = EW_ROWTYPE_HEADER;
 
 // Render list options
-$t92_periodeold_list->RenderListOptions();
+$t90_rektran_list->RenderListOptions();
 
 // Render list options (header, left)
-$t92_periodeold_list->ListOptions->Render("header", "left");
+$t90_rektran_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t92_periodeold->id->Visible) { // id ?>
-	<?php if ($t92_periodeold->SortUrl($t92_periodeold->id) == "") { ?>
-		<th data-name="id"><div id="elh_t92_periodeold_id" class="t92_periodeold_id"><div class="ewTableHeaderCaption"><?php echo $t92_periodeold->id->FldCaption() ?></div></div></th>
+<?php if ($t90_rektran->KodeTransaksi->Visible) { // KodeTransaksi ?>
+	<?php if ($t90_rektran->SortUrl($t90_rektran->KodeTransaksi) == "") { ?>
+		<th data-name="KodeTransaksi"><div id="elh_t90_rektran_KodeTransaksi" class="t90_rektran_KodeTransaksi"><div class="ewTableHeaderCaption"><?php echo $t90_rektran->KodeTransaksi->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t92_periodeold->SortUrl($t92_periodeold->id) ?>',2);"><div id="elh_t92_periodeold_id" class="t92_periodeold_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t92_periodeold->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t92_periodeold->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t92_periodeold->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="KodeTransaksi"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t90_rektran->SortUrl($t90_rektran->KodeTransaksi) ?>',2);"><div id="elh_t90_rektran_KodeTransaksi" class="t90_rektran_KodeTransaksi">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t90_rektran->KodeTransaksi->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t90_rektran->KodeTransaksi->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t90_rektran->KodeTransaksi->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t92_periodeold->Bulan->Visible) { // Bulan ?>
-	<?php if ($t92_periodeold->SortUrl($t92_periodeold->Bulan) == "") { ?>
-		<th data-name="Bulan"><div id="elh_t92_periodeold_Bulan" class="t92_periodeold_Bulan"><div class="ewTableHeaderCaption"><?php echo $t92_periodeold->Bulan->FldCaption() ?></div></div></th>
+<?php if ($t90_rektran->NamaTransaksi->Visible) { // NamaTransaksi ?>
+	<?php if ($t90_rektran->SortUrl($t90_rektran->NamaTransaksi) == "") { ?>
+		<th data-name="NamaTransaksi"><div id="elh_t90_rektran_NamaTransaksi" class="t90_rektran_NamaTransaksi"><div class="ewTableHeaderCaption"><?php echo $t90_rektran->NamaTransaksi->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Bulan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t92_periodeold->SortUrl($t92_periodeold->Bulan) ?>',2);"><div id="elh_t92_periodeold_Bulan" class="t92_periodeold_Bulan">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t92_periodeold->Bulan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t92_periodeold->Bulan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t92_periodeold->Bulan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="NamaTransaksi"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t90_rektran->SortUrl($t90_rektran->NamaTransaksi) ?>',2);"><div id="elh_t90_rektran_NamaTransaksi" class="t90_rektran_NamaTransaksi">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t90_rektran->NamaTransaksi->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t90_rektran->NamaTransaksi->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t90_rektran->NamaTransaksi->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t92_periodeold->Tahun->Visible) { // Tahun ?>
-	<?php if ($t92_periodeold->SortUrl($t92_periodeold->Tahun) == "") { ?>
-		<th data-name="Tahun"><div id="elh_t92_periodeold_Tahun" class="t92_periodeold_Tahun"><div class="ewTableHeaderCaption"><?php echo $t92_periodeold->Tahun->FldCaption() ?></div></div></th>
+<?php if ($t90_rektran->KodeRekening->Visible) { // KodeRekening ?>
+	<?php if ($t90_rektran->SortUrl($t90_rektran->KodeRekening) == "") { ?>
+		<th data-name="KodeRekening"><div id="elh_t90_rektran_KodeRekening" class="t90_rektran_KodeRekening"><div class="ewTableHeaderCaption"><?php echo $t90_rektran->KodeRekening->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Tahun"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t92_periodeold->SortUrl($t92_periodeold->Tahun) ?>',2);"><div id="elh_t92_periodeold_Tahun" class="t92_periodeold_Tahun">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t92_periodeold->Tahun->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t92_periodeold->Tahun->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t92_periodeold->Tahun->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t92_periodeold->Tahun_Bulan->Visible) { // Tahun_Bulan ?>
-	<?php if ($t92_periodeold->SortUrl($t92_periodeold->Tahun_Bulan) == "") { ?>
-		<th data-name="Tahun_Bulan"><div id="elh_t92_periodeold_Tahun_Bulan" class="t92_periodeold_Tahun_Bulan"><div class="ewTableHeaderCaption"><?php echo $t92_periodeold->Tahun_Bulan->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Tahun_Bulan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t92_periodeold->SortUrl($t92_periodeold->Tahun_Bulan) ?>',2);"><div id="elh_t92_periodeold_Tahun_Bulan" class="t92_periodeold_Tahun_Bulan">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t92_periodeold->Tahun_Bulan->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t92_periodeold->Tahun_Bulan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t92_periodeold->Tahun_Bulan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="KodeRekening"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t90_rektran->SortUrl($t90_rektran->KodeRekening) ?>',2);"><div id="elh_t90_rektran_KodeRekening" class="t90_rektran_KodeRekening">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t90_rektran->KodeRekening->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t90_rektran->KodeRekening->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t90_rektran->KodeRekening->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
 <?php
 
 // Render list options (header, right)
-$t92_periodeold_list->ListOptions->Render("header", "right");
+$t90_rektran_list->ListOptions->Render("header", "right");
 ?>
 	</tr>
 </thead>
 <tbody>
 <?php
-if ($t92_periodeold->ExportAll && $t92_periodeold->Export <> "") {
-	$t92_periodeold_list->StopRec = $t92_periodeold_list->TotalRecs;
+if ($t90_rektran->ExportAll && $t90_rektran->Export <> "") {
+	$t90_rektran_list->StopRec = $t90_rektran_list->TotalRecs;
 } else {
 
 	// Set the last record to display
-	if ($t92_periodeold_list->TotalRecs > $t92_periodeold_list->StartRec + $t92_periodeold_list->DisplayRecs - 1)
-		$t92_periodeold_list->StopRec = $t92_periodeold_list->StartRec + $t92_periodeold_list->DisplayRecs - 1;
+	if ($t90_rektran_list->TotalRecs > $t90_rektran_list->StartRec + $t90_rektran_list->DisplayRecs - 1)
+		$t90_rektran_list->StopRec = $t90_rektran_list->StartRec + $t90_rektran_list->DisplayRecs - 1;
 	else
-		$t92_periodeold_list->StopRec = $t92_periodeold_list->TotalRecs;
+		$t90_rektran_list->StopRec = $t90_rektran_list->TotalRecs;
 }
-$t92_periodeold_list->RecCnt = $t92_periodeold_list->StartRec - 1;
-if ($t92_periodeold_list->Recordset && !$t92_periodeold_list->Recordset->EOF) {
-	$t92_periodeold_list->Recordset->MoveFirst();
-	$bSelectLimit = $t92_periodeold_list->UseSelectLimit;
-	if (!$bSelectLimit && $t92_periodeold_list->StartRec > 1)
-		$t92_periodeold_list->Recordset->Move($t92_periodeold_list->StartRec - 1);
-} elseif (!$t92_periodeold->AllowAddDeleteRow && $t92_periodeold_list->StopRec == 0) {
-	$t92_periodeold_list->StopRec = $t92_periodeold->GridAddRowCount;
+$t90_rektran_list->RecCnt = $t90_rektran_list->StartRec - 1;
+if ($t90_rektran_list->Recordset && !$t90_rektran_list->Recordset->EOF) {
+	$t90_rektran_list->Recordset->MoveFirst();
+	$bSelectLimit = $t90_rektran_list->UseSelectLimit;
+	if (!$bSelectLimit && $t90_rektran_list->StartRec > 1)
+		$t90_rektran_list->Recordset->Move($t90_rektran_list->StartRec - 1);
+} elseif (!$t90_rektran->AllowAddDeleteRow && $t90_rektran_list->StopRec == 0) {
+	$t90_rektran_list->StopRec = $t90_rektran->GridAddRowCount;
 }
 
 // Initialize aggregate
-$t92_periodeold->RowType = EW_ROWTYPE_AGGREGATEINIT;
-$t92_periodeold->ResetAttrs();
-$t92_periodeold_list->RenderRow();
-while ($t92_periodeold_list->RecCnt < $t92_periodeold_list->StopRec) {
-	$t92_periodeold_list->RecCnt++;
-	if (intval($t92_periodeold_list->RecCnt) >= intval($t92_periodeold_list->StartRec)) {
-		$t92_periodeold_list->RowCnt++;
+$t90_rektran->RowType = EW_ROWTYPE_AGGREGATEINIT;
+$t90_rektran->ResetAttrs();
+$t90_rektran_list->RenderRow();
+while ($t90_rektran_list->RecCnt < $t90_rektran_list->StopRec) {
+	$t90_rektran_list->RecCnt++;
+	if (intval($t90_rektran_list->RecCnt) >= intval($t90_rektran_list->StartRec)) {
+		$t90_rektran_list->RowCnt++;
 
 		// Set up key count
-		$t92_periodeold_list->KeyCount = $t92_periodeold_list->RowIndex;
+		$t90_rektran_list->KeyCount = $t90_rektran_list->RowIndex;
 
 		// Init row class and style
-		$t92_periodeold->ResetAttrs();
-		$t92_periodeold->CssClass = "";
-		if ($t92_periodeold->CurrentAction == "gridadd") {
+		$t90_rektran->ResetAttrs();
+		$t90_rektran->CssClass = "";
+		if ($t90_rektran->CurrentAction == "gridadd") {
 		} else {
-			$t92_periodeold_list->LoadRowValues($t92_periodeold_list->Recordset); // Load row values
+			$t90_rektran_list->LoadRowValues($t90_rektran_list->Recordset); // Load row values
 		}
-		$t92_periodeold->RowType = EW_ROWTYPE_VIEW; // Render view
+		$t90_rektran->RowType = EW_ROWTYPE_VIEW; // Render view
 
 		// Set up row id / data-rowindex
-		$t92_periodeold->RowAttrs = array_merge($t92_periodeold->RowAttrs, array('data-rowindex'=>$t92_periodeold_list->RowCnt, 'id'=>'r' . $t92_periodeold_list->RowCnt . '_t92_periodeold', 'data-rowtype'=>$t92_periodeold->RowType));
+		$t90_rektran->RowAttrs = array_merge($t90_rektran->RowAttrs, array('data-rowindex'=>$t90_rektran_list->RowCnt, 'id'=>'r' . $t90_rektran_list->RowCnt . '_t90_rektran', 'data-rowtype'=>$t90_rektran->RowType));
 
 		// Render row
-		$t92_periodeold_list->RenderRow();
+		$t90_rektran_list->RenderRow();
 
 		// Render list options
-		$t92_periodeold_list->RenderListOptions();
+		$t90_rektran_list->RenderListOptions();
 ?>
-	<tr<?php echo $t92_periodeold->RowAttributes() ?>>
+	<tr<?php echo $t90_rektran->RowAttributes() ?>>
 <?php
 
 // Render list options (body, left)
-$t92_periodeold_list->ListOptions->Render("body", "left", $t92_periodeold_list->RowCnt);
+$t90_rektran_list->ListOptions->Render("body", "left", $t90_rektran_list->RowCnt);
 ?>
-	<?php if ($t92_periodeold->id->Visible) { // id ?>
-		<td data-name="id"<?php echo $t92_periodeold->id->CellAttributes() ?>>
-<span id="el<?php echo $t92_periodeold_list->RowCnt ?>_t92_periodeold_id" class="t92_periodeold_id">
-<span<?php echo $t92_periodeold->id->ViewAttributes() ?>>
-<?php echo $t92_periodeold->id->ListViewValue() ?></span>
+	<?php if ($t90_rektran->KodeTransaksi->Visible) { // KodeTransaksi ?>
+		<td data-name="KodeTransaksi"<?php echo $t90_rektran->KodeTransaksi->CellAttributes() ?>>
+<span id="el<?php echo $t90_rektran_list->RowCnt ?>_t90_rektran_KodeTransaksi" class="t90_rektran_KodeTransaksi">
+<span<?php echo $t90_rektran->KodeTransaksi->ViewAttributes() ?>>
+<?php echo $t90_rektran->KodeTransaksi->ListViewValue() ?></span>
 </span>
-<a id="<?php echo $t92_periodeold_list->PageObjName . "_row_" . $t92_periodeold_list->RowCnt ?>"></a></td>
+<a id="<?php echo $t90_rektran_list->PageObjName . "_row_" . $t90_rektran_list->RowCnt ?>"></a></td>
 	<?php } ?>
-	<?php if ($t92_periodeold->Bulan->Visible) { // Bulan ?>
-		<td data-name="Bulan"<?php echo $t92_periodeold->Bulan->CellAttributes() ?>>
-<span id="el<?php echo $t92_periodeold_list->RowCnt ?>_t92_periodeold_Bulan" class="t92_periodeold_Bulan">
-<span<?php echo $t92_periodeold->Bulan->ViewAttributes() ?>>
-<?php echo $t92_periodeold->Bulan->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t92_periodeold->Tahun->Visible) { // Tahun ?>
-		<td data-name="Tahun"<?php echo $t92_periodeold->Tahun->CellAttributes() ?>>
-<span id="el<?php echo $t92_periodeold_list->RowCnt ?>_t92_periodeold_Tahun" class="t92_periodeold_Tahun">
-<span<?php echo $t92_periodeold->Tahun->ViewAttributes() ?>>
-<?php echo $t92_periodeold->Tahun->ListViewValue() ?></span>
+	<?php if ($t90_rektran->NamaTransaksi->Visible) { // NamaTransaksi ?>
+		<td data-name="NamaTransaksi"<?php echo $t90_rektran->NamaTransaksi->CellAttributes() ?>>
+<span id="el<?php echo $t90_rektran_list->RowCnt ?>_t90_rektran_NamaTransaksi" class="t90_rektran_NamaTransaksi">
+<span<?php echo $t90_rektran->NamaTransaksi->ViewAttributes() ?>>
+<?php echo $t90_rektran->NamaTransaksi->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t92_periodeold->Tahun_Bulan->Visible) { // Tahun_Bulan ?>
-		<td data-name="Tahun_Bulan"<?php echo $t92_periodeold->Tahun_Bulan->CellAttributes() ?>>
-<span id="el<?php echo $t92_periodeold_list->RowCnt ?>_t92_periodeold_Tahun_Bulan" class="t92_periodeold_Tahun_Bulan">
-<span<?php echo $t92_periodeold->Tahun_Bulan->ViewAttributes() ?>>
-<?php echo $t92_periodeold->Tahun_Bulan->ListViewValue() ?></span>
+	<?php if ($t90_rektran->KodeRekening->Visible) { // KodeRekening ?>
+		<td data-name="KodeRekening"<?php echo $t90_rektran->KodeRekening->CellAttributes() ?>>
+<span id="el<?php echo $t90_rektran_list->RowCnt ?>_t90_rektran_KodeRekening" class="t90_rektran_KodeRekening">
+<span<?php echo $t90_rektran->KodeRekening->ViewAttributes() ?>>
+<?php echo $t90_rektran->KodeRekening->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
 <?php
 
 // Render list options (body, right)
-$t92_periodeold_list->ListOptions->Render("body", "right", $t92_periodeold_list->RowCnt);
+$t90_rektran_list->ListOptions->Render("body", "right", $t90_rektran_list->RowCnt);
 ?>
 	</tr>
 <?php
 	}
-	if ($t92_periodeold->CurrentAction <> "gridadd")
-		$t92_periodeold_list->Recordset->MoveNext();
+	if ($t90_rektran->CurrentAction <> "gridadd")
+		$t90_rektran_list->Recordset->MoveNext();
 }
 ?>
 </tbody>
 </table>
 <?php } ?>
-<?php if ($t92_periodeold->CurrentAction == "") { ?>
+<?php if ($t90_rektran->CurrentAction == "") { ?>
 <input type="hidden" name="a_list" id="a_list" value="">
 <?php } ?>
 </div>
@@ -1996,60 +1596,60 @@ $t92_periodeold_list->ListOptions->Render("body", "right", $t92_periodeold_list-
 <?php
 
 // Close recordset
-if ($t92_periodeold_list->Recordset)
-	$t92_periodeold_list->Recordset->Close();
+if ($t90_rektran_list->Recordset)
+	$t90_rektran_list->Recordset->Close();
 ?>
 <div class="panel-footer ewGridLowerPanel">
-<?php if ($t92_periodeold->CurrentAction <> "gridadd" && $t92_periodeold->CurrentAction <> "gridedit") { ?>
+<?php if ($t90_rektran->CurrentAction <> "gridadd" && $t90_rektran->CurrentAction <> "gridedit") { ?>
 <form name="ewPagerForm" class="ewForm form-inline ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
-<?php if (!isset($t92_periodeold_list->Pager)) $t92_periodeold_list->Pager = new cPrevNextPager($t92_periodeold_list->StartRec, $t92_periodeold_list->DisplayRecs, $t92_periodeold_list->TotalRecs) ?>
-<?php if ($t92_periodeold_list->Pager->RecordCount > 0 && $t92_periodeold_list->Pager->Visible) { ?>
+<?php if (!isset($t90_rektran_list->Pager)) $t90_rektran_list->Pager = new cPrevNextPager($t90_rektran_list->StartRec, $t90_rektran_list->DisplayRecs, $t90_rektran_list->TotalRecs) ?>
+<?php if ($t90_rektran_list->Pager->RecordCount > 0 && $t90_rektran_list->Pager->Visible) { ?>
 <div class="ewPager">
 <span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
 <div class="ewPrevNext"><div class="input-group">
 <div class="input-group-btn">
 <!--first page button-->
-	<?php if ($t92_periodeold_list->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t92_periodeold_list->PageUrl() ?>start=<?php echo $t92_periodeold_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php if ($t90_rektran_list->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t90_rektran_list->PageUrl() ?>start=<?php echo $t90_rektran_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
 	<?php } ?>
 <!--previous page button-->
-	<?php if ($t92_periodeold_list->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t92_periodeold_list->PageUrl() ?>start=<?php echo $t92_periodeold_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php if ($t90_rektran_list->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t90_rektran_list->PageUrl() ?>start=<?php echo $t90_rektran_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
 	<?php } ?>
 </div>
 <!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t92_periodeold_list->Pager->CurrentPage ?>">
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t90_rektran_list->Pager->CurrentPage ?>">
 <div class="input-group-btn">
 <!--next page button-->
-	<?php if ($t92_periodeold_list->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t92_periodeold_list->PageUrl() ?>start=<?php echo $t92_periodeold_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php if ($t90_rektran_list->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t90_rektran_list->PageUrl() ?>start=<?php echo $t90_rektran_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
 	<?php } ?>
 <!--last page button-->
-	<?php if ($t92_periodeold_list->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t92_periodeold_list->PageUrl() ?>start=<?php echo $t92_periodeold_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php if ($t90_rektran_list->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t90_rektran_list->PageUrl() ?>start=<?php echo $t90_rektran_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
 	<?php } ?>
 </div>
 </div>
 </div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t92_periodeold_list->Pager->PageCount ?></span>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t90_rektran_list->Pager->PageCount ?></span>
 </div>
 <div class="ewPager ewRec">
-	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $t92_periodeold_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $t92_periodeold_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $t92_periodeold_list->Pager->RecordCount ?></span>
+	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $t90_rektran_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $t90_rektran_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $t90_rektran_list->Pager->RecordCount ?></span>
 </div>
 <?php } ?>
 </form>
 <?php } ?>
 <div class="ewListOtherOptions">
 <?php
-	foreach ($t92_periodeold_list->OtherOptions as &$option)
+	foreach ($t90_rektran_list->OtherOptions as &$option)
 		$option->Render("body", "bottom");
 ?>
 </div>
@@ -2057,10 +1657,10 @@ if ($t92_periodeold_list->Recordset)
 </div>
 </div>
 <?php } ?>
-<?php if ($t92_periodeold_list->TotalRecs == 0 && $t92_periodeold->CurrentAction == "") { // Show other options ?>
+<?php if ($t90_rektran_list->TotalRecs == 0 && $t90_rektran->CurrentAction == "") { // Show other options ?>
 <div class="ewListOtherOptions">
 <?php
-	foreach ($t92_periodeold_list->OtherOptions as &$option) {
+	foreach ($t90_rektran_list->OtherOptions as &$option) {
 		$option->ButtonClass = "";
 		$option->Render("body", "");
 	}
@@ -2069,12 +1669,10 @@ if ($t92_periodeold_list->Recordset)
 <div class="clearfix"></div>
 <?php } ?>
 <script type="text/javascript">
-ft92_periodeoldlistsrch.FilterList = <?php echo $t92_periodeold_list->GetFilterList() ?>;
-ft92_periodeoldlistsrch.Init();
-ft92_periodeoldlist.Init();
+ft90_rektranlist.Init();
 </script>
 <?php
-$t92_periodeold_list->ShowPageFooter();
+$t90_rektran_list->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -2086,5 +1684,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t92_periodeold_list->Page_Terminate();
+$t90_rektran_list->Page_Terminate();
 ?>

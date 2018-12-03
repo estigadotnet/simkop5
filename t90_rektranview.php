@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t99_audittrailinfo.php" ?>
+<?php include_once "t90_rektraninfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t99_audittrail_view = NULL; // Initialize page object first
+$t90_rektran_view = NULL; // Initialize page object first
 
-class ct99_audittrail_view extends ct99_audittrail {
+class ct90_rektran_view extends ct90_rektran {
 
 	// Page ID
 	var $PageID = 'view';
@@ -25,10 +25,10 @@ class ct99_audittrail_view extends ct99_audittrail {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't99_audittrail';
+	var $TableName = 't90_rektran';
 
 	// Page object name
-	var $PageObjName = 't99_audittrail_view';
+	var $PageObjName = 't90_rektran_view';
 
 	// Page name
 	function PageName() {
@@ -258,10 +258,10 @@ class ct99_audittrail_view extends ct99_audittrail {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t99_audittrail)
-		if (!isset($GLOBALS["t99_audittrail"]) || get_class($GLOBALS["t99_audittrail"]) == "ct99_audittrail") {
-			$GLOBALS["t99_audittrail"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t99_audittrail"];
+		// Table object (t90_rektran)
+		if (!isset($GLOBALS["t90_rektran"]) || get_class($GLOBALS["t90_rektran"]) == "ct90_rektran") {
+			$GLOBALS["t90_rektran"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t90_rektran"];
 		}
 		$KeyUrl = "";
 		if (@$_GET["id"] <> "") {
@@ -285,7 +285,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't99_audittrail', TRUE);
+			define("EW_TABLE_NAME", 't90_rektran', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -329,7 +329,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t99_audittraillist.php"));
+				$this->Page_Terminate(ew_GetUrl("t90_rektranlist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -339,15 +339,11 @@ class ct99_audittrail_view extends ct99_audittrail {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->datetime->SetVisibility();
-		$this->script->SetVisibility();
-		$this->user->SetVisibility();
-		$this->action->SetVisibility();
-		$this->_table->SetVisibility();
-		$this->_field->SetVisibility();
-		$this->keyvalue->SetVisibility();
-		$this->oldvalue->SetVisibility();
-		$this->newvalue->SetVisibility();
+		$this->id->SetVisibility();
+		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
+		$this->KodeTransaksi->SetVisibility();
+		$this->NamaTransaksi->SetVisibility();
+		$this->KodeRekening->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -379,13 +375,13 @@ class ct99_audittrail_view extends ct99_audittrail {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t99_audittrail;
+		global $EW_EXPORT, $t90_rektran;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t99_audittrail);
+				$doc = new $class($t90_rektran);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -451,7 +447,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$sReturnUrl = "t99_audittraillist.php"; // Return to list
+				$sReturnUrl = "t90_rektranlist.php"; // Return to list
 			}
 
 			// Get action
@@ -461,11 +457,11 @@ class ct99_audittrail_view extends ct99_audittrail {
 					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$sReturnUrl = "t99_audittraillist.php"; // No matching record, return to list
+						$sReturnUrl = "t90_rektranlist.php"; // No matching record, return to list
 					}
 			}
 		} else {
-			$sReturnUrl = "t99_audittraillist.php"; // Not page request, return to list
+			$sReturnUrl = "t90_rektranlist.php"; // Not page request, return to list
 		}
 		if ($sReturnUrl <> "")
 			$this->Page_Terminate($sReturnUrl);
@@ -597,17 +593,10 @@ class ct99_audittrail_view extends ct99_audittrail {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
-		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->datetime->setDbValue($rs->fields('datetime'));
-		$this->script->setDbValue($rs->fields('script'));
-		$this->user->setDbValue($rs->fields('user'));
-		$this->action->setDbValue($rs->fields('action'));
-		$this->_table->setDbValue($rs->fields('table'));
-		$this->_field->setDbValue($rs->fields('field'));
-		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
-		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
-		$this->newvalue->setDbValue($rs->fields('newvalue'));
+		$this->KodeTransaksi->setDbValue($rs->fields('KodeTransaksi'));
+		$this->NamaTransaksi->setDbValue($rs->fields('NamaTransaksi'));
+		$this->KodeRekening->setDbValue($rs->fields('KodeRekening'));
 	}
 
 	// Load DbValue from recordset
@@ -615,15 +604,9 @@ class ct99_audittrail_view extends ct99_audittrail {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->datetime->DbValue = $row['datetime'];
-		$this->script->DbValue = $row['script'];
-		$this->user->DbValue = $row['user'];
-		$this->action->DbValue = $row['action'];
-		$this->_table->DbValue = $row['table'];
-		$this->_field->DbValue = $row['field'];
-		$this->keyvalue->DbValue = $row['keyvalue'];
-		$this->oldvalue->DbValue = $row['oldvalue'];
-		$this->newvalue->DbValue = $row['newvalue'];
+		$this->KodeTransaksi->DbValue = $row['KodeTransaksi'];
+		$this->NamaTransaksi->DbValue = $row['NamaTransaksi'];
+		$this->KodeRekening->DbValue = $row['KodeRekening'];
 	}
 
 	// Render row values based on field settings
@@ -643,15 +626,9 @@ class ct99_audittrail_view extends ct99_audittrail {
 
 		// Common render codes for all row types
 		// id
-		// datetime
-		// script
-		// user
-		// action
-		// table
-		// field
-		// keyvalue
-		// oldvalue
-		// newvalue
+		// KodeTransaksi
+		// NamaTransaksi
+		// KodeRekening
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -659,87 +636,58 @@ class ct99_audittrail_view extends ct99_audittrail {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// datetime
-		$this->datetime->ViewValue = $this->datetime->CurrentValue;
-		$this->datetime->ViewValue = ew_FormatDateTime($this->datetime->ViewValue, 0);
-		$this->datetime->ViewCustomAttributes = "";
+		// KodeTransaksi
+		$this->KodeTransaksi->ViewValue = $this->KodeTransaksi->CurrentValue;
+		$this->KodeTransaksi->ViewCustomAttributes = "";
 
-		// script
-		$this->script->ViewValue = $this->script->CurrentValue;
-		$this->script->ViewCustomAttributes = "";
+		// NamaTransaksi
+		$this->NamaTransaksi->ViewValue = $this->NamaTransaksi->CurrentValue;
+		$this->NamaTransaksi->ViewCustomAttributes = "";
 
-		// user
-		$this->user->ViewValue = $this->user->CurrentValue;
-		$this->user->ViewCustomAttributes = "";
+		// KodeRekening
+		if (strval($this->KodeRekening->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->KodeRekening->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `id`, `rekening` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+		$sWhereWrk = "";
+		$this->KodeRekening->LookupFilters = array();
+		$lookuptblfilter = "`tipe` <> 'GROUP'";
+		ew_AddFilter($sWhereWrk, $lookuptblfilter);
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->KodeRekening, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->KodeRekening->ViewValue = $this->KodeRekening->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->KodeRekening->ViewValue = $this->KodeRekening->CurrentValue;
+			}
+		} else {
+			$this->KodeRekening->ViewValue = NULL;
+		}
+		$this->KodeRekening->ViewCustomAttributes = "";
 
-		// action
-		$this->action->ViewValue = $this->action->CurrentValue;
-		$this->action->ViewCustomAttributes = "";
+			// id
+			$this->id->LinkCustomAttributes = "";
+			$this->id->HrefValue = "";
+			$this->id->TooltipValue = "";
 
-		// table
-		$this->_table->ViewValue = $this->_table->CurrentValue;
-		$this->_table->ViewCustomAttributes = "";
+			// KodeTransaksi
+			$this->KodeTransaksi->LinkCustomAttributes = "";
+			$this->KodeTransaksi->HrefValue = "";
+			$this->KodeTransaksi->TooltipValue = "";
 
-		// field
-		$this->_field->ViewValue = $this->_field->CurrentValue;
-		$this->_field->ViewCustomAttributes = "";
+			// NamaTransaksi
+			$this->NamaTransaksi->LinkCustomAttributes = "";
+			$this->NamaTransaksi->HrefValue = "";
+			$this->NamaTransaksi->TooltipValue = "";
 
-		// keyvalue
-		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
-		$this->keyvalue->ViewCustomAttributes = "";
-
-		// oldvalue
-		$this->oldvalue->ViewValue = $this->oldvalue->CurrentValue;
-		$this->oldvalue->ViewCustomAttributes = "";
-
-		// newvalue
-		$this->newvalue->ViewValue = $this->newvalue->CurrentValue;
-		$this->newvalue->ViewCustomAttributes = "";
-
-			// datetime
-			$this->datetime->LinkCustomAttributes = "";
-			$this->datetime->HrefValue = "";
-			$this->datetime->TooltipValue = "";
-
-			// script
-			$this->script->LinkCustomAttributes = "";
-			$this->script->HrefValue = "";
-			$this->script->TooltipValue = "";
-
-			// user
-			$this->user->LinkCustomAttributes = "";
-			$this->user->HrefValue = "";
-			$this->user->TooltipValue = "";
-
-			// action
-			$this->action->LinkCustomAttributes = "";
-			$this->action->HrefValue = "";
-			$this->action->TooltipValue = "";
-
-			// table
-			$this->_table->LinkCustomAttributes = "";
-			$this->_table->HrefValue = "";
-			$this->_table->TooltipValue = "";
-
-			// field
-			$this->_field->LinkCustomAttributes = "";
-			$this->_field->HrefValue = "";
-			$this->_field->TooltipValue = "";
-
-			// keyvalue
-			$this->keyvalue->LinkCustomAttributes = "";
-			$this->keyvalue->HrefValue = "";
-			$this->keyvalue->TooltipValue = "";
-
-			// oldvalue
-			$this->oldvalue->LinkCustomAttributes = "";
-			$this->oldvalue->HrefValue = "";
-			$this->oldvalue->TooltipValue = "";
-
-			// newvalue
-			$this->newvalue->LinkCustomAttributes = "";
-			$this->newvalue->HrefValue = "";
-			$this->newvalue->TooltipValue = "";
+			// KodeRekening
+			$this->KodeRekening->LinkCustomAttributes = "";
+			$this->KodeRekening->HrefValue = "";
+			$this->KodeRekening->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -752,7 +700,7 @@ class ct99_audittrail_view extends ct99_audittrail {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t99_audittraillist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t90_rektranlist.php"), "", $this->TableVar, TRUE);
 		$PageId = "view";
 		$Breadcrumb->Add("view", $PageId, $url);
 	}
@@ -864,29 +812,29 @@ class ct99_audittrail_view extends ct99_audittrail {
 <?php
 
 // Create page object
-if (!isset($t99_audittrail_view)) $t99_audittrail_view = new ct99_audittrail_view();
+if (!isset($t90_rektran_view)) $t90_rektran_view = new ct90_rektran_view();
 
 // Page init
-$t99_audittrail_view->Page_Init();
+$t90_rektran_view->Page_Init();
 
 // Page main
-$t99_audittrail_view->Page_Main();
+$t90_rektran_view->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t99_audittrail_view->Page_Render();
+$t90_rektran_view->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "view";
-var CurrentForm = ft99_audittrailview = new ew_Form("ft99_audittrailview", "view");
+var CurrentForm = ft90_rektranview = new ew_Form("ft90_rektranview", "view");
 
 // Form_CustomValidate event
-ft99_audittrailview.Form_CustomValidate = 
+ft90_rektranview.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -895,141 +843,87 @@ ft99_audittrailview.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft99_audittrailview.ValidateRequired = true;
+ft90_rektranview.ValidateRequired = true;
 <?php } else { ?>
-ft99_audittrailview.ValidateRequired = false; 
+ft90_rektranview.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft90_rektranview.Lists["x_KodeRekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_rekening","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
 // Write your client script here, no need to add script tags.
 </script>
 <div class="ewToolbar">
-<?php if (!$t99_audittrail_view->IsModal) { ?>
+<?php if (!$t90_rektran_view->IsModal) { ?>
 <?php $Breadcrumb->Render(); ?>
 <?php } ?>
-<?php $t99_audittrail_view->ExportOptions->Render("body") ?>
+<?php $t90_rektran_view->ExportOptions->Render("body") ?>
 <?php
-	foreach ($t99_audittrail_view->OtherOptions as &$option)
+	foreach ($t90_rektran_view->OtherOptions as &$option)
 		$option->Render("body");
 ?>
-<?php if (!$t99_audittrail_view->IsModal) { ?>
+<?php if (!$t90_rektran_view->IsModal) { ?>
 <?php echo $Language->SelectionForm(); ?>
 <?php } ?>
 <div class="clearfix"></div>
 </div>
-<?php $t99_audittrail_view->ShowPageHeader(); ?>
+<?php $t90_rektran_view->ShowPageHeader(); ?>
 <?php
-$t99_audittrail_view->ShowMessage();
+$t90_rektran_view->ShowMessage();
 ?>
-<form name="ft99_audittrailview" id="ft99_audittrailview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t99_audittrail_view->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t99_audittrail_view->Token ?>">
+<form name="ft90_rektranview" id="ft90_rektranview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t90_rektran_view->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t90_rektran_view->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t99_audittrail">
-<?php if ($t99_audittrail_view->IsModal) { ?>
+<input type="hidden" name="t" value="t90_rektran">
+<?php if ($t90_rektran_view->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t99_audittrail->datetime->Visible) { // datetime ?>
-	<tr id="r_datetime">
-		<td><span id="elh_t99_audittrail_datetime"><?php echo $t99_audittrail->datetime->FldCaption() ?></span></td>
-		<td data-name="datetime"<?php echo $t99_audittrail->datetime->CellAttributes() ?>>
-<span id="el_t99_audittrail_datetime">
-<span<?php echo $t99_audittrail->datetime->ViewAttributes() ?>>
-<?php echo $t99_audittrail->datetime->ViewValue ?></span>
+<?php if ($t90_rektran->id->Visible) { // id ?>
+	<tr id="r_id">
+		<td><span id="elh_t90_rektran_id"><?php echo $t90_rektran->id->FldCaption() ?></span></td>
+		<td data-name="id"<?php echo $t90_rektran->id->CellAttributes() ?>>
+<span id="el_t90_rektran_id">
+<span<?php echo $t90_rektran->id->ViewAttributes() ?>>
+<?php echo $t90_rektran->id->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t99_audittrail->script->Visible) { // script ?>
-	<tr id="r_script">
-		<td><span id="elh_t99_audittrail_script"><?php echo $t99_audittrail->script->FldCaption() ?></span></td>
-		<td data-name="script"<?php echo $t99_audittrail->script->CellAttributes() ?>>
-<span id="el_t99_audittrail_script">
-<span<?php echo $t99_audittrail->script->ViewAttributes() ?>>
-<?php echo $t99_audittrail->script->ViewValue ?></span>
+<?php if ($t90_rektran->KodeTransaksi->Visible) { // KodeTransaksi ?>
+	<tr id="r_KodeTransaksi">
+		<td><span id="elh_t90_rektran_KodeTransaksi"><?php echo $t90_rektran->KodeTransaksi->FldCaption() ?></span></td>
+		<td data-name="KodeTransaksi"<?php echo $t90_rektran->KodeTransaksi->CellAttributes() ?>>
+<span id="el_t90_rektran_KodeTransaksi">
+<span<?php echo $t90_rektran->KodeTransaksi->ViewAttributes() ?>>
+<?php echo $t90_rektran->KodeTransaksi->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t99_audittrail->user->Visible) { // user ?>
-	<tr id="r_user">
-		<td><span id="elh_t99_audittrail_user"><?php echo $t99_audittrail->user->FldCaption() ?></span></td>
-		<td data-name="user"<?php echo $t99_audittrail->user->CellAttributes() ?>>
-<span id="el_t99_audittrail_user">
-<span<?php echo $t99_audittrail->user->ViewAttributes() ?>>
-<?php echo $t99_audittrail->user->ViewValue ?></span>
+<?php if ($t90_rektran->NamaTransaksi->Visible) { // NamaTransaksi ?>
+	<tr id="r_NamaTransaksi">
+		<td><span id="elh_t90_rektran_NamaTransaksi"><?php echo $t90_rektran->NamaTransaksi->FldCaption() ?></span></td>
+		<td data-name="NamaTransaksi"<?php echo $t90_rektran->NamaTransaksi->CellAttributes() ?>>
+<span id="el_t90_rektran_NamaTransaksi">
+<span<?php echo $t90_rektran->NamaTransaksi->ViewAttributes() ?>>
+<?php echo $t90_rektran->NamaTransaksi->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t99_audittrail->action->Visible) { // action ?>
-	<tr id="r_action">
-		<td><span id="elh_t99_audittrail_action"><?php echo $t99_audittrail->action->FldCaption() ?></span></td>
-		<td data-name="action"<?php echo $t99_audittrail->action->CellAttributes() ?>>
-<span id="el_t99_audittrail_action">
-<span<?php echo $t99_audittrail->action->ViewAttributes() ?>>
-<?php echo $t99_audittrail->action->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t99_audittrail->_table->Visible) { // table ?>
-	<tr id="r__table">
-		<td><span id="elh_t99_audittrail__table"><?php echo $t99_audittrail->_table->FldCaption() ?></span></td>
-		<td data-name="_table"<?php echo $t99_audittrail->_table->CellAttributes() ?>>
-<span id="el_t99_audittrail__table">
-<span<?php echo $t99_audittrail->_table->ViewAttributes() ?>>
-<?php echo $t99_audittrail->_table->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t99_audittrail->_field->Visible) { // field ?>
-	<tr id="r__field">
-		<td><span id="elh_t99_audittrail__field"><?php echo $t99_audittrail->_field->FldCaption() ?></span></td>
-		<td data-name="_field"<?php echo $t99_audittrail->_field->CellAttributes() ?>>
-<span id="el_t99_audittrail__field">
-<span<?php echo $t99_audittrail->_field->ViewAttributes() ?>>
-<?php echo $t99_audittrail->_field->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t99_audittrail->keyvalue->Visible) { // keyvalue ?>
-	<tr id="r_keyvalue">
-		<td><span id="elh_t99_audittrail_keyvalue"><?php echo $t99_audittrail->keyvalue->FldCaption() ?></span></td>
-		<td data-name="keyvalue"<?php echo $t99_audittrail->keyvalue->CellAttributes() ?>>
-<span id="el_t99_audittrail_keyvalue">
-<span<?php echo $t99_audittrail->keyvalue->ViewAttributes() ?>>
-<?php echo $t99_audittrail->keyvalue->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t99_audittrail->oldvalue->Visible) { // oldvalue ?>
-	<tr id="r_oldvalue">
-		<td><span id="elh_t99_audittrail_oldvalue"><?php echo $t99_audittrail->oldvalue->FldCaption() ?></span></td>
-		<td data-name="oldvalue"<?php echo $t99_audittrail->oldvalue->CellAttributes() ?>>
-<span id="el_t99_audittrail_oldvalue">
-<span<?php echo $t99_audittrail->oldvalue->ViewAttributes() ?>>
-<?php echo $t99_audittrail->oldvalue->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t99_audittrail->newvalue->Visible) { // newvalue ?>
-	<tr id="r_newvalue">
-		<td><span id="elh_t99_audittrail_newvalue"><?php echo $t99_audittrail->newvalue->FldCaption() ?></span></td>
-		<td data-name="newvalue"<?php echo $t99_audittrail->newvalue->CellAttributes() ?>>
-<span id="el_t99_audittrail_newvalue">
-<span<?php echo $t99_audittrail->newvalue->ViewAttributes() ?>>
-<?php echo $t99_audittrail->newvalue->ViewValue ?></span>
+<?php if ($t90_rektran->KodeRekening->Visible) { // KodeRekening ?>
+	<tr id="r_KodeRekening">
+		<td><span id="elh_t90_rektran_KodeRekening"><?php echo $t90_rektran->KodeRekening->FldCaption() ?></span></td>
+		<td data-name="KodeRekening"<?php echo $t90_rektran->KodeRekening->CellAttributes() ?>>
+<span id="el_t90_rektran_KodeRekening">
+<span<?php echo $t90_rektran->KodeRekening->ViewAttributes() ?>>
+<?php echo $t90_rektran->KodeRekening->ViewValue ?></span>
 </span>
 </td>
 	</tr>
@@ -1037,10 +931,10 @@ $t99_audittrail_view->ShowMessage();
 </table>
 </form>
 <script type="text/javascript">
-ft99_audittrailview.Init();
+ft90_rektranview.Init();
 </script>
 <?php
-$t99_audittrail_view->ShowPageFooter();
+$t90_rektran_view->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1052,5 +946,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t99_audittrail_view->Page_Terminate();
+$t90_rektran_view->Page_Terminate();
 ?>
