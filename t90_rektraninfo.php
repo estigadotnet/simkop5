@@ -680,13 +680,13 @@ class ct90_rektran extends cTable {
 		$this->KodeTransaksi->EditAttrs["class"] = "form-control";
 		$this->KodeTransaksi->EditCustomAttributes = "";
 		$this->KodeTransaksi->EditValue = $this->KodeTransaksi->CurrentValue;
-		$this->KodeTransaksi->PlaceHolder = ew_RemoveHtml($this->KodeTransaksi->FldCaption());
+		$this->KodeTransaksi->ViewCustomAttributes = "";
 
 		// NamaTransaksi
 		$this->NamaTransaksi->EditAttrs["class"] = "form-control";
 		$this->NamaTransaksi->EditCustomAttributes = "";
 		$this->NamaTransaksi->EditValue = $this->NamaTransaksi->CurrentValue;
-		$this->NamaTransaksi->PlaceHolder = ew_RemoveHtml($this->NamaTransaksi->FldCaption());
+		$this->NamaTransaksi->ViewCustomAttributes = "";
 
 		// KodeRekening
 		$this->KodeRekening->EditAttrs["class"] = "form-control";

@@ -637,14 +637,14 @@ class ct90_rektran_edit extends ct90_rektran {
 			// KodeTransaksi
 			$this->KodeTransaksi->EditAttrs["class"] = "form-control";
 			$this->KodeTransaksi->EditCustomAttributes = "";
-			$this->KodeTransaksi->EditValue = ew_HtmlEncode($this->KodeTransaksi->CurrentValue);
-			$this->KodeTransaksi->PlaceHolder = ew_RemoveHtml($this->KodeTransaksi->FldCaption());
+			$this->KodeTransaksi->EditValue = $this->KodeTransaksi->CurrentValue;
+			$this->KodeTransaksi->ViewCustomAttributes = "";
 
 			// NamaTransaksi
 			$this->NamaTransaksi->EditAttrs["class"] = "form-control";
 			$this->NamaTransaksi->EditCustomAttributes = "";
-			$this->NamaTransaksi->EditValue = ew_HtmlEncode($this->NamaTransaksi->CurrentValue);
-			$this->NamaTransaksi->PlaceHolder = ew_RemoveHtml($this->NamaTransaksi->FldCaption());
+			$this->NamaTransaksi->EditValue = $this->NamaTransaksi->CurrentValue;
+			$this->NamaTransaksi->ViewCustomAttributes = "";
 
 			// KodeRekening
 			$this->KodeRekening->EditAttrs["class"] = "form-control";
@@ -672,10 +672,12 @@ class ct90_rektran_edit extends ct90_rektran {
 
 			$this->KodeTransaksi->LinkCustomAttributes = "";
 			$this->KodeTransaksi->HrefValue = "";
+			$this->KodeTransaksi->TooltipValue = "";
 
 			// NamaTransaksi
 			$this->NamaTransaksi->LinkCustomAttributes = "";
 			$this->NamaTransaksi->HrefValue = "";
+			$this->NamaTransaksi->TooltipValue = "";
 
 			// KodeRekening
 			$this->KodeRekening->LinkCustomAttributes = "";
@@ -702,12 +704,6 @@ class ct90_rektran_edit extends ct90_rektran {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->KodeTransaksi->FldIsDetailKey && !is_null($this->KodeTransaksi->FormValue) && $this->KodeTransaksi->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->KodeTransaksi->FldCaption(), $this->KodeTransaksi->ReqErrMsg));
-		}
-		if (!$this->NamaTransaksi->FldIsDetailKey && !is_null($this->NamaTransaksi->FormValue) && $this->NamaTransaksi->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->NamaTransaksi->FldCaption(), $this->NamaTransaksi->ReqErrMsg));
-		}
 		if (!$this->KodeRekening->FldIsDetailKey && !is_null($this->KodeRekening->FormValue) && $this->KodeRekening->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->KodeRekening->FldCaption(), $this->KodeRekening->ReqErrMsg));
 		}
@@ -746,12 +742,6 @@ class ct90_rektran_edit extends ct90_rektran {
 			$rsold = &$rs->fields;
 			$this->LoadDbValues($rsold);
 			$rsnew = array();
-
-			// KodeTransaksi
-			$this->KodeTransaksi->SetDbValueDef($rsnew, $this->KodeTransaksi->CurrentValue, "", $this->KodeTransaksi->ReadOnly);
-
-			// NamaTransaksi
-			$this->NamaTransaksi->SetDbValueDef($rsnew, $this->NamaTransaksi->CurrentValue, "", $this->NamaTransaksi->ReadOnly);
 
 			// KodeRekening
 			$this->KodeRekening->SetDbValueDef($rsnew, $this->KodeRekening->CurrentValue, "", $this->KodeRekening->ReadOnly);
@@ -936,12 +926,6 @@ ft90_rektranedit.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
-			elm = this.GetElements("x" + infix + "_KodeTransaksi");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t90_rektran->KodeTransaksi->FldCaption(), $t90_rektran->KodeTransaksi->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_NamaTransaksi");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t90_rektran->NamaTransaksi->FldCaption(), $t90_rektran->NamaTransaksi->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_KodeRekening");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t90_rektran->KodeRekening->FldCaption(), $t90_rektran->KodeRekening->ReqErrMsg)) ?>");
@@ -1009,21 +993,25 @@ $t90_rektran_edit->ShowMessage();
 <div>
 <?php if ($t90_rektran->KodeTransaksi->Visible) { // KodeTransaksi ?>
 	<div id="r_KodeTransaksi" class="form-group">
-		<label id="elh_t90_rektran_KodeTransaksi" for="x_KodeTransaksi" class="col-sm-2 control-label ewLabel"><?php echo $t90_rektran->KodeTransaksi->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t90_rektran_KodeTransaksi" for="x_KodeTransaksi" class="col-sm-2 control-label ewLabel"><?php echo $t90_rektran->KodeTransaksi->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t90_rektran->KodeTransaksi->CellAttributes() ?>>
 <span id="el_t90_rektran_KodeTransaksi">
-<input type="text" data-table="t90_rektran" data-field="x_KodeTransaksi" name="x_KodeTransaksi" id="x_KodeTransaksi" size="30" maxlength="35" placeholder="<?php echo ew_HtmlEncode($t90_rektran->KodeTransaksi->getPlaceHolder()) ?>" value="<?php echo $t90_rektran->KodeTransaksi->EditValue ?>"<?php echo $t90_rektran->KodeTransaksi->EditAttributes() ?>>
+<span<?php echo $t90_rektran->KodeTransaksi->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t90_rektran->KodeTransaksi->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t90_rektran" data-field="x_KodeTransaksi" name="x_KodeTransaksi" id="x_KodeTransaksi" value="<?php echo ew_HtmlEncode($t90_rektran->KodeTransaksi->CurrentValue) ?>">
 <?php echo $t90_rektran->KodeTransaksi->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 <?php if ($t90_rektran->NamaTransaksi->Visible) { // NamaTransaksi ?>
 	<div id="r_NamaTransaksi" class="form-group">
-		<label id="elh_t90_rektran_NamaTransaksi" for="x_NamaTransaksi" class="col-sm-2 control-label ewLabel"><?php echo $t90_rektran->NamaTransaksi->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t90_rektran_NamaTransaksi" for="x_NamaTransaksi" class="col-sm-2 control-label ewLabel"><?php echo $t90_rektran->NamaTransaksi->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t90_rektran->NamaTransaksi->CellAttributes() ?>>
 <span id="el_t90_rektran_NamaTransaksi">
-<input type="text" data-table="t90_rektran" data-field="x_NamaTransaksi" name="x_NamaTransaksi" id="x_NamaTransaksi" size="30" maxlength="100" placeholder="<?php echo ew_HtmlEncode($t90_rektran->NamaTransaksi->getPlaceHolder()) ?>" value="<?php echo $t90_rektran->NamaTransaksi->EditValue ?>"<?php echo $t90_rektran->NamaTransaksi->EditAttributes() ?>>
+<span<?php echo $t90_rektran->NamaTransaksi->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t90_rektran->NamaTransaksi->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t90_rektran" data-field="x_NamaTransaksi" name="x_NamaTransaksi" id="x_NamaTransaksi" value="<?php echo ew_HtmlEncode($t90_rektran->NamaTransaksi->CurrentValue) ?>">
 <?php echo $t90_rektran->NamaTransaksi->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
