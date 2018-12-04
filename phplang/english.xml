@@ -616,6 +616,9 @@
     <menu id="10055">
       <phrase id="menutext" value="Jurnal Transaksi" />
     </menu>
+    <menu id="10022">
+      <phrase id="menutext" value="Jurnal Transaksi" />
+    </menu>
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
     </menu>
@@ -657,6 +660,9 @@
     </menu>
     <menu id="9">
       <phrase id="menutext" value="Description" />
+    </menu>
+    <menu id="10021">
+      <phrase id="menutext" value="t 09 jurnaltransaksi" />
     </menu>
     <menu id="10054">
       <phrase id="menutext" value="t 91 rekening" />

@@ -30,6 +30,7 @@ function Page_Unloaded() {
 function f_simpan_jurnal_transaksi($rsnew) {
 	$rekdebet  = ew_ExecuteScalar("select KodeRekening from t90_rektran where KodeTransaksi = '00'");
 	$rekkredit = ew_ExecuteScalar("select KodeRekening from t90_rektran where KodeTransaksi = '10'");
+	$biaya = $rsnew["Biaya_Administrasi"] + $rsnew["Biaya_Materai"];
 	$q = "
 		insert into t09_jurnaltransaksi (
 		pinjaman_id,
@@ -37,6 +38,7 @@ function f_simpan_jurnal_transaksi($rsnew) {
 		periode,
 		model,
 		rekening,
+		credit,
 		pinjaman_,
 		biaya_,
 		keterangan
@@ -47,10 +49,11 @@ function f_simpan_jurnal_transaksi($rsnew) {
 		'".$rekdebet."',
 		'".$rekkredit."',
 		".$rsnew["Pinjaman"].",
-		".$rsnew["Biaya_Administrasi"] + $rsnew["Biaya_Materai"].",
+		".$rsnew["Pinjaman"].",
+		".$biaya.",
 		'Pinjaman Kontrak No. ".$rsnew["Kontrak_No"]."'
 		)
-	";
+	"; //echo $q; exit;
 	Conn()->Execute($q);
 }
 
