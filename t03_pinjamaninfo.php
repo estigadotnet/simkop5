@@ -1563,6 +1563,7 @@ class ct03_pinjaman extends cTable {
 
 		//echo "Row Inserted"
 		f_create_rincian_angsuran($rsnew);
+		f_simpan_jurnal_transaksi($rsnew);
 	}
 
 	// Row Updating event

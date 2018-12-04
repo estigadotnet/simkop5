@@ -27,6 +27,33 @@ function Page_Unloaded() {
 	//echo "Page Unloaded";
 }
 
+function f_simpan_jurnal_transaksi($rsnew) {
+	$rekdebet  = ew_ExecuteScalar("select KodeRekening from t90_rektran where KodeTransaksi = '00'");
+	$rekkredit = ew_ExecuteScalar("select KodeRekening from t90_rektran where KodeTransaksi = '10'");
+	$q = "
+		insert into t09_jurnaltransaksi (
+		pinjaman_id,
+		tanggal,
+		periode,
+		model,
+		rekening,
+		pinjaman_,
+		biaya_,
+		keterangan
+		) values (
+		".$rsnew["id"].",
+		'".date("Y-m-d H:i:s")."',
+		'".$rsnew["Periode"]."',
+		'".$rekdebet."',
+		'".$rekkredit."',
+		".$rsnew["Pinjaman"].",
+		".$rsnew["Biaya_Administrasi"] + $rsnew["Biaya_Materai"].",
+		'Pinjaman Kontrak No. ".$rsnew["Kontrak_No"]."'
+		)
+	";
+	Conn()->Execute($q);
+}
+
 function f_update_saldo_titipan($pinjaman_id) { // -----------------------------------------
 	$q = "select * from t06_pinjamantitipan where pinjaman_id = ".$pinjaman_id."
 		order by id";
