@@ -288,6 +288,8 @@ class cdefault {
 			$this->Page_Terminate("t07_marketinglist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't08_pinjamanpotongan'))
 			$this->Page_Terminate("t08_pinjamanpotonganlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't89_rektran'))
+			$this->Page_Terminate("t89_rektranlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't90_rektran'))
 			$this->Page_Terminate("t90_rektranlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't91_rekening'))
