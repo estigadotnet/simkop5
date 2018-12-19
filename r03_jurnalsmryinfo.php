@@ -13,6 +13,7 @@ class crr03_jurnal extends crTableBase {
 	var $Periode;
 	var $Tanggal;
 	var $Rekening;
+	var $RekeningNama;
 	var $Keterangan;
 	var $Debet;
 	var $Kredit;
@@ -69,6 +70,14 @@ class crr03_jurnal extends crTableBase {
 		$this->Rekening->DateFilter = "";
 		$this->Rekening->SqlSelect = "";
 		$this->Rekening->SqlOrderBy = "";
+
+		// RekeningNama
+		$this->RekeningNama = new crField('r03_jurnal', 'r03_jurnal', 'x_RekeningNama', 'RekeningNama', '`RekeningNama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->RekeningNama->Sortable = TRUE; // Allow sort
+		$this->fields['RekeningNama'] = &$this->RekeningNama;
+		$this->RekeningNama->DateFilter = "";
+		$this->RekeningNama->SqlSelect = "";
+		$this->RekeningNama->SqlOrderBy = "";
 
 		// Keterangan
 		$this->Keterangan = new crField('r03_jurnal', 'r03_jurnal', 'x_Keterangan', 'Keterangan', '`Keterangan`', 200, EWR_DATATYPE_STRING, -1);
@@ -189,7 +198,7 @@ class crr03_jurnal extends crTableBase {
 	var $_SqlSelect = "";
 
 	function getSqlSelect() {
-		return ($this->_SqlSelect <> "") ? $this->_SqlSelect : "SELECT * FROM " . $this->getSqlFrom();
+		return ($this->_SqlSelect <> "") ? $this->_SqlSelect : "SELECT *, (select rekening from t91_rekening where id = Rekening) AS `RekeningNama` FROM " . $this->getSqlFrom();
 	}
 
 	function SqlSelect() { // For backward compatibility

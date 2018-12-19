@@ -890,7 +890,10 @@
         <phrase id="fldcaption" value="Nomor Transaksi" />
       </field>
       <field id="rekening">
-        <phrase id="fldcaption" value="Rekening" />
+        <phrase id="fldcaption" value="No. Rekening" />
+      </field>
+      <field id="rekeningnama">
+        <phrase id="fldcaption" value="Nama Rekening" />
       </field>
       <field id="debet">
         <phrase id="fldcaption" value="Debet" />
@@ -1166,7 +1169,10 @@
         <phrase id="fldcaption" value="Tanggal" />
       </field>
       <field id="rekening">
-        <phrase id="fldcaption" value="Rekening" />
+        <phrase id="fldcaption" value="No. Rekening" />
+      </field>
+      <field id="rekeningnama">
+        <phrase id="fldcaption" value="Nama Rekening" />
       </field>
       <field id="keterangan">
         <phrase id="fldcaption" value="Keterangan" />
