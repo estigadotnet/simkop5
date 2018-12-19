@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2018/12/19" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2018/12/20" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -361,6 +361,9 @@
     </menu>
     <menu id="26">
       <phrase id="menutext" value="Buku Besar" />
+    </menu>
+    <menu id="27">
+      <phrase id="menutext" value="v 01 labarugi" />
     </menu>
     <menu id="19">
       <phrase id="menutext" value="t 91 rekening" />
@@ -1218,6 +1221,30 @@
       </field>
       <field id="nomortransaksi">
         <phrase id="fldcaption" value="Nomor Transaksi" />
+      </field>
+    </table>
+    <table id="v01_labarugi">
+      <phrase id="tblcaption" value="v 01 labarugi" />
+      <field id="idhead">
+        <phrase id="fldcaption" value="idhead" />
+      </field>
+      <field id="rekeninghead">
+        <phrase id="fldcaption" value="rekeninghead" />
+      </field>
+      <field id="iddetail">
+        <phrase id="fldcaption" value="iddetail" />
+      </field>
+      <field id="rekeningdetail">
+        <phrase id="fldcaption" value="rekeningdetail" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
       </field>
     </table>
   </project>
