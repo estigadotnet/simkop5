@@ -66,25 +66,25 @@ class crr04_bukubesar extends crTableBase {
 		// Rekening
 		$this->Rekening = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Rekening', 'Rekening', '`Rekening`', 200, EWR_DATATYPE_STRING, -1);
 		$this->Rekening->Sortable = TRUE; // Allow sort
-		$this->Rekening->GroupingFieldId = 2;
-		$this->Rekening->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
-		$this->Rekening->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
 		$this->fields['Rekening'] = &$this->Rekening;
 		$this->Rekening->DateFilter = "";
 		$this->Rekening->SqlSelect = "";
 		$this->Rekening->SqlOrderBy = "";
-		$this->Rekening->FldGroupByType = "";
-		$this->Rekening->FldGroupInt = "0";
-		$this->Rekening->FldGroupSql = "";
 
 		// RekeningNama
 		$this->RekeningNama = new crField('r04_bukubesar', 'r04_bukubesar', 'x_RekeningNama', 'RekeningNama', '(select rekening from t91_rekening where t91_rekening.id = t10_jurnal.Rekening)', 200, EWR_DATATYPE_STRING, -1);
 		$this->RekeningNama->FldIsCustom = TRUE; // Custom field
 		$this->RekeningNama->Sortable = TRUE; // Allow sort
+		$this->RekeningNama->GroupingFieldId = 2;
+		$this->RekeningNama->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
+		$this->RekeningNama->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
 		$this->fields['RekeningNama'] = &$this->RekeningNama;
 		$this->RekeningNama->DateFilter = "";
 		$this->RekeningNama->SqlSelect = "";
 		$this->RekeningNama->SqlOrderBy = "";
+		$this->RekeningNama->FldGroupByType = "";
+		$this->RekeningNama->FldGroupInt = "0";
+		$this->RekeningNama->FldGroupSql = "";
 
 		// Keterangan
 		$this->Keterangan = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Keterangan', 'Keterangan', '`Keterangan`', 200, EWR_DATATYPE_STRING, -1);
@@ -266,7 +266,7 @@ class crr04_bukubesar extends crTableBase {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() {
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`Periode` ASC, `Rekening` ASC";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`Periode` ASC, (select rekening from t91_rekening where t91_rekening.id = t10_jurnal.Rekening) ASC";
 	}
 
 	function SqlOrderBy() { // For backward compatibility
