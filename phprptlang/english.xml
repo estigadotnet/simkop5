@@ -1159,17 +1159,17 @@
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
-      <field id="tanggal">
-        <phrase id="fldcaption" value="Tanggal" />
-      </field>
       <field id="periode">
         <phrase id="fldcaption" value="Periode" />
       </field>
-      <field id="nomortransaksi">
-        <phrase id="fldcaption" value="Nomor Transaksi" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
       </field>
       <field id="rekening">
         <phrase id="fldcaption" value="Rekening" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
       </field>
       <field id="debet">
         <phrase id="fldcaption" value="Debet" />
@@ -1177,8 +1177,8 @@
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
       </field>
-      <field id="keterangan">
-        <phrase id="fldcaption" value="Keterangan" />
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
       </field>
     </table>
   </project>
