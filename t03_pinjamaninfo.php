@@ -1563,7 +1563,63 @@ class ct03_pinjaman extends cTable {
 
 		//echo "Row Inserted"
 		f_create_rincian_angsuran($rsnew);
-		f_simpan_jurnal_transaksi($rsnew);
+
+		//f_simpan_jurnal_transaksi($rsnew);
+		//f_buat_jurnal($rsnew);
+		// kodetransaksi = 01
+
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '01'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '01'");
+		f_buatjurnal(
+			$rsnew["Periode"],
+			$rsnew["Kontrak_No"],
+			$rekdebet,
+			$rsnew["Pinjaman"],
+			0,
+			"Pinjaman No. Kontrak ".$rsnew["Kontrak_No"]);
+		f_buatjurnal(
+			$rsnew["Periode"],
+			$rsnew["Kontrak_No"],
+			$rekkredit,
+			0,
+			$rsnew["Pinjaman"],
+			"Pinjaman No. Kontrak ".$rsnew["Kontrak_No"]);
+
+		// kodetransaksi = 02
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '02'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '02'");
+		f_buatjurnal(
+			$rsnew["Periode"],
+			$rsnew["Kontrak_No"],
+			$rekdebet,
+			$rsnew["Biaya_Administrasi"],
+			0,
+			"Biaya Administrasi Pinjaman No. Kontrak ".$rsnew["Kontrak_No"]);
+		f_buatjurnal(
+			$rsnew["Periode"],
+			$rsnew["Kontrak_No"],
+			$rekkredit,
+			0,
+			$rsnew["Biaya_Administrasi"],
+			"Biaya Administrasi Pinjaman No. Kontrak ".$rsnew["Kontrak_No"]);
+
+		// kodetransaksi = 03
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '03'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '03'");
+		f_buatjurnal(
+			$rsnew["Periode"],
+			$rsnew["Kontrak_No"],
+			$rekdebet,
+			$rsnew["Biaya_Materai"],
+			0,
+			"Biaya Materai Pinjaman No. Kontrak ".$rsnew["Kontrak_No"]);
+		f_buatjurnal(
+			$rsnew["Periode"],
+			$rsnew["Kontrak_No"],
+			$rekkredit,
+			0,
+			$rsnew["Biaya_Materai"],
+			"Biaya Materai Pinjaman No. Kontrak ".$rsnew["Kontrak_No"]);
 	}
 
 	// Row Updating event
@@ -1593,11 +1649,38 @@ class ct03_pinjaman extends cTable {
 		$rsupdate["Pinjaman"] = ($rsold["Pinjaman"] <> $rsnew["Pinjaman"]) ? $rsnew["Pinjaman"] : $rsold["Pinjaman"];
 		$rsupdate["Angsuran_Lama"] = ($rsold["Angsuran_Lama"] <> $rsnew["Angsuran_Lama"]) ? $rsnew["Angsuran_Lama"] : $rsold["Angsuran_Lama"];
 		$rsupdate["Angsuran_Lama"] = ($rsold["Angsuran_Lama"] <> $rsnew["Angsuran_Lama"]) ? $rsnew["Angsuran_Lama"] : $rsold["Angsuran_Lama"];
+		$rsupdate["Biaya_Administrasi"] = ($rsold["Biaya_Administrasi"] <> $rsnew["Biaya_Administrasi"]) ? $rsnew["Biaya_Administrasi"] : $rsold["Biaya_Administrasi"];
+		$rsupdate["Biaya_Materai"] = ($rsold["Biaya_Materai"] <> $rsnew["Biaya_Materai"]) ? $rsnew["Biaya_Materai"] : $rsold["Biaya_Materai"];
+		$rsupdate["Kontrak_No"] = ($rsold["Kontrak_No"] <> $rsnew["Kontrak_No"]) ? $rsnew["Kontrak_No"] : $rsold["Kontrak_No"];
 
 		//$rsnew["Alamat"] = ($rsold["Alamat"] <> $rsnew["Alamat"]) ? $rsnew["Alamat"] : $rsold["Alamat"];
 		//f_create_rincian_angsuran($rsnew);
 
 		f_create_rincian_angsuran($rsupdate);
+
+		// kodetransaksi = 01
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '01'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '01'");
+		f_hapusjurnal($rsold["Periode"], $rsold["Kontrak_No"], $rekdebet, "Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsupdate["Kontrak_No"], $rekdebet, $rsupdate["Pinjaman"], 0, "Pinjaman No. Kontrak ".$rsupdate["Kontrak_No"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["Kontrak_No"], $rekkredit, "Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsupdate["Kontrak_No"], $rekkredit, 0, $rsupdate["Pinjaman"], "Pinjaman No. Kontrak ".$rsupdate["Kontrak_No"]);
+
+		// kodetransaksi = 02
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '02'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '02'");
+		f_hapusjurnal($rsold["Periode"], $rsold["Kontrak_No"], $rekdebet, "Biaya Administrasi Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsupdate["Kontrak_No"], $rekdebet, $rsupdate["Biaya_Administrasi"], 0, "Biaya Administrasi Pinjaman No. Kontrak ".$rsupdate["Kontrak_No"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["Kontrak_No"], $rekkredit, "Biaya Administrasi Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsupdate["Kontrak_No"], $rekkredit, 0, $rsupdate["Biaya_Administrasi"], "Biaya Administrasi Pinjaman No. Kontrak ".$rsupdate["Kontrak_No"]);
+
+		// kodetransaksi = 03
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '03'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '03'");
+		f_hapusjurnal($rsold["Periode"], $rsold["Kontrak_No"], $rekdebet, "Biaya Materai Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsupdate["Kontrak_No"], $rekdebet, $rsupdate["Biaya_Materai"], 0, "Biaya Materai Pinjaman No. Kontrak ".$rsupdate["Kontrak_No"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["Kontrak_No"], $rekkredit, "Biaya Materai Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsupdate["Kontrak_No"], $rekkredit, 0, $rsupdate["Biaya_Materai"], "Biaya Materai Pinjaman No. Kontrak ".$rsupdate["Kontrak_No"]);
 	}
 
 	// Row Update Conflict event

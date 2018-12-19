@@ -27,6 +27,85 @@ function Page_Unloaded() {
 	//echo "Page Unloaded";
 }
 
+function f_hapusjurnal($Periode, $NomorTransaksi, $Rekening, $Keterangan) {
+	$q = "
+		delete from t10_jurnal where
+			Periode = '".$Periode."' and
+			NomorTransaksi = '".$NomorTransaksi."' and
+			Rekening = '".$Rekening."' and
+			Keterangan = '".$Keterangan."'
+		";
+	Conn()->Execute($q);
+}
+
+function f_buatjurnal($Periode, $NomorTransaksi, $Rekening, $Debet, $Kredit, $Keterangan) {
+	$q = "
+		insert into t10_jurnal (
+			Tanggal,
+			Periode,
+			NomorTransaksi,
+			Rekening,
+			Debet,
+			Kredit,
+			Keterangan
+		) values (
+			'".date("Y-m-d")."',
+			'".$Periode."',
+			'".$NomorTransaksi."',
+			'".$Rekening."',
+			".$Debet.",
+			".$Kredit.",
+			'".$Keterangan."'
+		)
+	";
+	Conn()->Execute($q);
+}
+
+function f_buat_jurnal_manual($rsnew) {
+	$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '01'");
+	$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '01'");
+	$q = "
+		insert into t10_jurnal (
+			Tanggal,
+			Periode,
+			NomorTransaksi,
+			Rekening,
+			Debet,
+			Kredit,
+			Keterangan
+		) values (
+			'".date("Y-m-d")."',
+			'".$rsnew["Periode"]."',
+			'".$rsnew["Kontrak_No"]."',
+			'".$rekdebet."',
+			".$rsnew["Pinjaman"].",
+			0,
+			'Pinjaman No. Kontrak ".$rsnew["Kontrak_No"]."'
+		)
+	";
+	Conn()->Execute($q);
+	$q = "
+		insert into t10_jurnal (
+			Tanggal,
+			Periode,
+			NomorTransaksi,
+			Rekening,
+			Debet,
+			Kredit,
+			Keterangan
+		) values (
+			'".date("Y-m-d")."',
+			'".$rsnew["Periode"]."',
+			'".$rsnew["Kontrak_No"]."',
+			'".$rekkredit."',
+			0,
+			".$rsnew["Pinjaman"].",
+			'Pinjaman No. Kontrak ".$rsnew["Kontrak_No"]."'
+		)
+	";
+	Conn()->Execute($q);
+}
+
 function f_simpan_jurnal_transaksi($rsnew) {
 	$rekdebet  = ew_ExecuteScalar("select KodeRekening from t90_rektran where KodeTransaksi = '00'");
 	$rekkredit = ew_ExecuteScalar("select KodeRekening from t90_rektran where KodeTransaksi = '10'");
