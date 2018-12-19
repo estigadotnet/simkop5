@@ -359,6 +359,9 @@
     <menu id="25">
       <phrase id="menutext" value="Jurnal" />
     </menu>
+    <menu id="26">
+      <phrase id="menutext" value="Buku Besar" />
+    </menu>
     <menu id="19">
       <phrase id="menutext" value="t 91 rekening" />
     </menu>
@@ -1159,6 +1162,36 @@
     </table>
     <table id="r03_jurnal">
       <phrase id="tblcaption" value="Jurnal" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="No. Rekening" />
+      </field>
+      <field id="rekeningnama">
+        <phrase id="fldcaption" value="Nama Rekening" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
+      </field>
+    </table>
+    <table id="r04_bukubesar">
+      <phrase id="tblcaption" value="Buku Besar" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>

@@ -10,6 +10,7 @@ $RootMenu->AddMenuItem(17, "mi_cf02_tutupbuku_php", $Language->MenuPhrase("17", 
 $RootMenu->AddMenuItem(10019, "mci_List", $Language->MenuPhrase("10019", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10018, "mri_r015fpinjaman", $Language->MenuPhrase("10018", "MenuText"), "r01_pinjamansmry.php", 10019, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r01_pinjaman'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10025, "mri_r035fjurnal", $Language->MenuPhrase("10025", "MenuText"), "r03_jurnalsmry.php", 10019, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r03_jurnal'), FALSE, FALSE);
+$RootMenu->AddMenuItem(10026, "mri_r045fbukubesar", $Language->MenuPhrase("10026", "MenuText"), "r04_bukubesarsmry.php", 10019, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r04_bukubesar'), FALSE, FALSE);
 $RootMenu->AddMenuItem(36, "mi_t99_audittrail", $Language->MenuPhrase("36", "MenuText"), "t99_audittraillist.php", 10019, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t99_audittrail'), FALSE, FALSE);
 $RootMenu->AddMenuItem(35, "mci_Setup", $Language->MenuPhrase("35", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10052, "mi_t91_rekening", $Language->MenuPhrase("10052", "MenuText"), "t91_rekeninglist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t91_rekening'), FALSE, FALSE);

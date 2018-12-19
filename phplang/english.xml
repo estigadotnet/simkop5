@@ -619,8 +619,8 @@
     <menu id="10025">
       <phrase id="menutext" value="Jurnal" />
     </menu>
-    <menu id="10022">
-      <phrase id="menutext" value="Jurnal Transaksi" />
+    <menu id="10026">
+      <phrase id="menutext" value="Buku Besar" />
     </menu>
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
@@ -681,6 +681,9 @@
     </menu>
     <menu id="10021">
       <phrase id="menutext" value="t 09 jurnaltransaksi" />
+    </menu>
+    <menu id="10022">
+      <phrase id="menutext" value="Jurnal Transaksi" />
     </menu>
     <menu id="10001">
       <phrase id="menutext" value="t 01 nasabah" />

@@ -1,12 +1,12 @@
 <?php
 
 // Global variable for table object
-$r03_jurnal = NULL;
+$r04_bukubesar = NULL;
 
 //
-// Table class for r03_jurnal
+// Table class for r04_bukubesar
 //
-class crr03_jurnal extends crTableBase {
+class crr04_bukubesar extends crTableBase {
 	var $ShowGroupHeaderAsRow = FALSE;
 	var $ShowCompactSummaryFooter = TRUE;
 	var $id;
@@ -24,15 +24,15 @@ class crr03_jurnal extends crTableBase {
 	//
 	function __construct() {
 		global $ReportLanguage, $gsLanguage;
-		$this->TableVar = 'r03_jurnal';
-		$this->TableName = 'r03_jurnal';
+		$this->TableVar = 'r04_bukubesar';
+		$this->TableName = 'r04_bukubesar';
 		$this->TableType = 'REPORT';
 		$this->DBID = 'DB';
 		$this->ExportAll = FALSE;
 		$this->ExportPageBreakCount = 0;
 
 		// id
-		$this->id = new crField('r03_jurnal', 'r03_jurnal', 'x_id', 'id', '`id`', 3, EWR_DATATYPE_NUMBER, -1);
+		$this->id = new crField('r04_bukubesar', 'r04_bukubesar', 'x_id', 'id', '`id`', 3, EWR_DATATYPE_NUMBER, -1);
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
@@ -41,7 +41,7 @@ class crr03_jurnal extends crTableBase {
 		$this->id->SqlOrderBy = "";
 
 		// Periode
-		$this->Periode = new crField('r03_jurnal', 'r03_jurnal', 'x_Periode', 'Periode', '`Periode`', 200, EWR_DATATYPE_STRING, -1);
+		$this->Periode = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Periode', 'Periode', '`Periode`', 200, EWR_DATATYPE_STRING, -1);
 		$this->Periode->Sortable = TRUE; // Allow sort
 		$this->Periode->GroupingFieldId = 1;
 		$this->Periode->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
@@ -55,24 +55,31 @@ class crr03_jurnal extends crTableBase {
 		$this->Periode->FldGroupSql = "";
 
 		// Tanggal
-		$this->Tanggal = new crField('r03_jurnal', 'r03_jurnal', 'x_Tanggal', 'Tanggal', '`Tanggal`', 133, EWR_DATATYPE_DATE, 7);
+		$this->Tanggal = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Tanggal', 'Tanggal', '`Tanggal`', 133, EWR_DATATYPE_DATE, 0);
 		$this->Tanggal->Sortable = TRUE; // Allow sort
-		$this->Tanggal->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectField");
+		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_FORMAT"], $ReportLanguage->Phrase("IncorrectDate"));
 		$this->fields['Tanggal'] = &$this->Tanggal;
 		$this->Tanggal->DateFilter = "";
 		$this->Tanggal->SqlSelect = "";
 		$this->Tanggal->SqlOrderBy = "";
 
 		// Rekening
-		$this->Rekening = new crField('r03_jurnal', 'r03_jurnal', 'x_Rekening', 'Rekening', '`Rekening`', 200, EWR_DATATYPE_STRING, -1);
+		$this->Rekening = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Rekening', 'Rekening', '`Rekening`', 200, EWR_DATATYPE_STRING, -1);
 		$this->Rekening->Sortable = TRUE; // Allow sort
+		$this->Rekening->GroupingFieldId = 2;
+		$this->Rekening->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
+		$this->Rekening->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
 		$this->fields['Rekening'] = &$this->Rekening;
 		$this->Rekening->DateFilter = "";
 		$this->Rekening->SqlSelect = "";
 		$this->Rekening->SqlOrderBy = "";
+		$this->Rekening->FldGroupByType = "";
+		$this->Rekening->FldGroupInt = "0";
+		$this->Rekening->FldGroupSql = "";
 
 		// RekeningNama
-		$this->RekeningNama = new crField('r03_jurnal', 'r03_jurnal', 'x_RekeningNama', 'RekeningNama', '`RekeningNama`', 200, EWR_DATATYPE_STRING, -1);
+		$this->RekeningNama = new crField('r04_bukubesar', 'r04_bukubesar', 'x_RekeningNama', 'RekeningNama', '(select rekening from t91_rekening where t91_rekening.id = t10_jurnal.Rekening)', 200, EWR_DATATYPE_STRING, -1);
+		$this->RekeningNama->FldIsCustom = TRUE; // Custom field
 		$this->RekeningNama->Sortable = TRUE; // Allow sort
 		$this->fields['RekeningNama'] = &$this->RekeningNama;
 		$this->RekeningNama->DateFilter = "";
@@ -80,7 +87,7 @@ class crr03_jurnal extends crTableBase {
 		$this->RekeningNama->SqlOrderBy = "";
 
 		// Keterangan
-		$this->Keterangan = new crField('r03_jurnal', 'r03_jurnal', 'x_Keterangan', 'Keterangan', '`Keterangan`', 200, EWR_DATATYPE_STRING, -1);
+		$this->Keterangan = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Keterangan', 'Keterangan', '`Keterangan`', 200, EWR_DATATYPE_STRING, -1);
 		$this->Keterangan->Sortable = TRUE; // Allow sort
 		$this->fields['Keterangan'] = &$this->Keterangan;
 		$this->Keterangan->DateFilter = "";
@@ -88,7 +95,7 @@ class crr03_jurnal extends crTableBase {
 		$this->Keterangan->SqlOrderBy = "";
 
 		// Debet
-		$this->Debet = new crField('r03_jurnal', 'r03_jurnal', 'x_Debet', 'Debet', '`Debet`', 4, EWR_DATATYPE_NUMBER, -1);
+		$this->Debet = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Debet', 'Debet', '`Debet`', 4, EWR_DATATYPE_NUMBER, -1);
 		$this->Debet->Sortable = TRUE; // Allow sort
 		$this->Debet->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
 		$this->fields['Debet'] = &$this->Debet;
@@ -97,7 +104,7 @@ class crr03_jurnal extends crTableBase {
 		$this->Debet->SqlOrderBy = "";
 
 		// Kredit
-		$this->Kredit = new crField('r03_jurnal', 'r03_jurnal', 'x_Kredit', 'Kredit', '`Kredit`', 4, EWR_DATATYPE_NUMBER, -1);
+		$this->Kredit = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Kredit', 'Kredit', '`Kredit`', 4, EWR_DATATYPE_NUMBER, -1);
 		$this->Kredit->Sortable = TRUE; // Allow sort
 		$this->Kredit->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
 		$this->fields['Kredit'] = &$this->Kredit;
@@ -106,7 +113,7 @@ class crr03_jurnal extends crTableBase {
 		$this->Kredit->SqlOrderBy = "";
 
 		// NomorTransaksi
-		$this->NomorTransaksi = new crField('r03_jurnal', 'r03_jurnal', 'x_NomorTransaksi', 'NomorTransaksi', '`NomorTransaksi`', 200, EWR_DATATYPE_STRING, -1);
+		$this->NomorTransaksi = new crField('r04_bukubesar', 'r04_bukubesar', 'x_NomorTransaksi', 'NomorTransaksi', '`NomorTransaksi`', 200, EWR_DATATYPE_STRING, -1);
 		$this->NomorTransaksi->Sortable = TRUE; // Allow sort
 		$this->fields['NomorTransaksi'] = &$this->NomorTransaksi;
 		$this->NomorTransaksi->DateFilter = "";
@@ -259,7 +266,7 @@ class crr03_jurnal extends crTableBase {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() {
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`Periode` ASC";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`Periode` ASC, `Rekening` ASC";
 	}
 
 	function SqlOrderBy() { // For backward compatibility

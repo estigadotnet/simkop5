@@ -6,16 +6,16 @@ ob_start();
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "phprptinc/ewmysql.php") ?>
 <?php include_once "phprptinc/ewrfn10.php" ?>
 <?php include_once "phprptinc/ewrusrfn10.php" ?>
-<?php include_once "r03_jurnalsmryinfo.php" ?>
+<?php include_once "r04_bukubesarsmryinfo.php" ?>
 <?php
 
 //
 // Page class
 //
 
-$r03_jurnal_summary = NULL; // Initialize page object first
+$r04_bukubesar_summary = NULL; // Initialize page object first
 
-class crr03_jurnal_summary extends crr03_jurnal {
+class crr04_bukubesar_summary extends crr04_bukubesar {
 
 	// Page ID
 	var $PageID = 'summary';
@@ -24,7 +24,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 	var $ProjectID = "{34C67914-04B8-4CBF-A6F8-355DA216289E}";
 
 	// Page object name
-	var $PageObjName = 'r03_jurnal_summary';
+	var $PageObjName = 'r04_bukubesar_summary';
 
 	// Page name
 	function PageName() {
@@ -203,10 +203,10 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (r03_jurnal)
-		if (!isset($GLOBALS["r03_jurnal"])) {
-			$GLOBALS["r03_jurnal"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["r03_jurnal"];
+		// Table object (r04_bukubesar)
+		if (!isset($GLOBALS["r04_bukubesar"])) {
+			$GLOBALS["r04_bukubesar"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["r04_bukubesar"];
 		}
 
 		// Initialize URLs
@@ -221,7 +221,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 
 		// Table name (for backward compatibility)
 		if (!defined("EWR_TABLE_NAME"))
-			define("EWR_TABLE_NAME", 'r03_jurnal', TRUE);
+			define("EWR_TABLE_NAME", 'r04_bukubesar', TRUE);
 
 		// Start timer
 		$GLOBALS["gsTimer"] = new crTimer();
@@ -248,7 +248,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		// Filter options
 		$this->FilterOptions = new crListOptions();
 		$this->FilterOptions->Tag = "div";
-		$this->FilterOptions->TagClassName = "ewFilterOption fr03_jurnalsummary";
+		$this->FilterOptions->TagClassName = "ewFilterOption fr04_bukubesarsummary";
 
 		// Generate report options
 		$this->GenerateOptions = new crListOptions();
@@ -267,7 +267,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		$Security = new crAdvancedSecurity();
 		if (!$Security->IsLoggedIn()) $Security->AutoLogin(); // Auto login
 		$Security->TablePermission_Loading();
-		$Security->LoadCurrentUserLevel($this->ProjectID . 'r03_jurnal');
+		$Security->LoadCurrentUserLevel($this->ProjectID . 'r04_bukubesar');
 		$Security->TablePermission_Loaded();
 		if (!$Security->CanList()) {
 			$Security->SaveLastUrl();
@@ -353,7 +353,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		// Export to Email
 		$item = &$this->ExportOptions->Add("email");
 		$url = $this->PageUrl() . "export=email";
-		$item->Body = "<a title=\"" . ewr_HtmlEncode($ReportLanguage->Phrase("ExportToEmail", TRUE)) . "\" data-caption=\"" . ewr_HtmlEncode($ReportLanguage->Phrase("ExportToEmail", TRUE)) . "\" id=\"emf_r03_jurnal\" href=\"javascript:void(0);\" onclick=\"ewr_EmailDialogShow({lnk:'emf_r03_jurnal',hdr:ewLanguage.Phrase('ExportToEmail'),url:'$url',exportid:'$exportid',el:this});\">" . $ReportLanguage->Phrase("ExportToEmail") . "</a>";
+		$item->Body = "<a title=\"" . ewr_HtmlEncode($ReportLanguage->Phrase("ExportToEmail", TRUE)) . "\" data-caption=\"" . ewr_HtmlEncode($ReportLanguage->Phrase("ExportToEmail", TRUE)) . "\" id=\"emf_r04_bukubesar\" href=\"javascript:void(0);\" onclick=\"ewr_EmailDialogShow({lnk:'emf_r04_bukubesar',hdr:ewLanguage.Phrase('ExportToEmail'),url:'$url',exportid:'$exportid',el:this});\">" . $ReportLanguage->Phrase("ExportToEmail") . "</a>";
 		$item->Visible = TRUE;
 		$ReportTypes["email"] = $item->Visible ? $ReportLanguage->Phrase("ReportFormEmail") : "";
 		$ReportOptions["ReportTypes"] = $ReportTypes;
@@ -371,10 +371,10 @@ class crr03_jurnal_summary extends crr03_jurnal {
 
 		// Filter button
 		$item = &$this->FilterOptions->Add("savecurrentfilter");
-		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"fr03_jurnalsummary\" href=\"#\">" . $ReportLanguage->Phrase("SaveCurrentFilter") . "</a>";
+		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"fr04_bukubesarsummary\" href=\"#\">" . $ReportLanguage->Phrase("SaveCurrentFilter") . "</a>";
 		$item->Visible = TRUE;
 		$item = &$this->FilterOptions->Add("deletefilter");
-		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"fr03_jurnalsummary\" href=\"#\">" . $ReportLanguage->Phrase("DeleteFilter") . "</a>";
+		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"fr04_bukubesarsummary\" href=\"#\">" . $ReportLanguage->Phrase("DeleteFilter") . "</a>";
 		$item->Visible = TRUE;
 		$this->FilterOptions->UseDropDownButton = TRUE;
 		$this->FilterOptions->UseButtonGroup = !$this->FilterOptions->UseDropDownButton; // v8
@@ -408,7 +408,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		// Filter panel button
 		$item = &$this->SearchOptions->Add("searchtoggle");
 		$SearchToggleClass = $this->FilterApplied ? " active" : " active";
-		$item->Body = "<button type=\"button\" class=\"btn btn-default ewSearchToggle" . $SearchToggleClass . "\" title=\"" . $ReportLanguage->Phrase("SearchBtn", TRUE) . "\" data-caption=\"" . $ReportLanguage->Phrase("SearchBtn", TRUE) . "\" data-toggle=\"button\" data-form=\"fr03_jurnalsummary\">" . $ReportLanguage->Phrase("SearchBtn") . "</button>";
+		$item->Body = "<button type=\"button\" class=\"btn btn-default ewSearchToggle" . $SearchToggleClass . "\" title=\"" . $ReportLanguage->Phrase("SearchBtn", TRUE) . "\" data-caption=\"" . $ReportLanguage->Phrase("SearchBtn", TRUE) . "\" data-toggle=\"button\" data-form=\"fr04_bukubesarsummary\">" . $ReportLanguage->Phrase("SearchBtn") . "</button>";
 		$item->Visible = TRUE;
 
 		// Reset filter
@@ -538,7 +538,6 @@ class crr03_jurnal_summary extends crr03_jurnal {
 
 		// Set field visibility for detail fields
 		$this->Tanggal->SetVisibility();
-		$this->Rekening->SetVisibility();
 		$this->RekeningNama->SetVisibility();
 		$this->Keterangan->SetVisibility();
 		$this->Debet->SetVisibility();
@@ -548,8 +547,8 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		// 1st dimension = no of groups (level 0 used for grand total)
 		// 2nd dimension = no of fields
 
-		$nDtls = 7;
-		$nGrps = 2;
+		$nDtls = 6;
+		$nGrps = 3;
 		$this->Val = &ewr_InitArray($nDtls, 0);
 		$this->Cnt = &ewr_Init2DArray($nGrps, $nDtls, 0);
 		$this->Smry = &ewr_Init2DArray($nGrps, $nDtls, 0);
@@ -561,7 +560,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		$this->GrandMx = &ewr_InitArray($nDtls, NULL);
 
 		// Set up array if accumulation required: array(Accum, SkipNullOrZero)
-		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(TRUE,FALSE), array(TRUE,FALSE));
+		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(TRUE,FALSE), array(TRUE,FALSE));
 
 		// Set up groups per page dynamically
 		$this->SetUpDisplayGrps();
@@ -674,11 +673,19 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		$cnt = 0;
 		foreach ($this->DetailRows as $row) {
 			$wrkPeriode = $row["Periode"];
+			$wrkRekening = $row["Rekening"];
 			if ($lvl >= 1) {
 				$val = $curValue ? $this->Periode->CurrentValue : $this->Periode->OldValue;
 				$grpval = $curValue ? $this->Periode->GroupValue() : $this->Periode->GroupOldValue();
 				if (is_null($val) && !is_null($wrkPeriode) || !is_null($val) && is_null($wrkPeriode) ||
 					$grpval <> $this->Periode->getGroupValueBase($wrkPeriode))
+				continue;
+			}
+			if ($lvl >= 2) {
+				$val = $curValue ? $this->Rekening->CurrentValue : $this->Rekening->OldValue;
+				$grpval = $curValue ? $this->Rekening->GroupValue() : $this->Rekening->GroupOldValue();
+				if (is_null($val) && !is_null($wrkRekening) || !is_null($val) && is_null($wrkRekening) ||
+					$grpval <> $this->Rekening->getGroupValueBase($wrkRekening))
 				continue;
 			}
 			$cnt++;
@@ -693,6 +700,10 @@ class crr03_jurnal_summary extends crr03_jurnal {
 				return (is_null($this->Periode->CurrentValue) && !is_null($this->Periode->OldValue)) ||
 					(!is_null($this->Periode->CurrentValue) && is_null($this->Periode->OldValue)) ||
 					($this->Periode->GroupValue() <> $this->Periode->GroupOldValue());
+			case 2:
+				return (is_null($this->Rekening->CurrentValue) && !is_null($this->Rekening->OldValue)) ||
+					(!is_null($this->Rekening->CurrentValue) && is_null($this->Rekening->OldValue)) ||
+					($this->Rekening->GroupValue() <> $this->Rekening->GroupOldValue()) || $this->ChkLvlBreak(1); // Recurse upper level
 		}
 	}
 
@@ -876,11 +887,10 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			$this->Kredit->setDbValue($rs->fields('Kredit'));
 			$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
 			$this->Val[1] = $this->Tanggal->CurrentValue;
-			$this->Val[2] = $this->Rekening->CurrentValue;
-			$this->Val[3] = $this->RekeningNama->CurrentValue;
-			$this->Val[4] = $this->Keterangan->CurrentValue;
-			$this->Val[5] = $this->Debet->CurrentValue;
-			$this->Val[6] = $this->Kredit->CurrentValue;
+			$this->Val[2] = $this->RekeningNama->CurrentValue;
+			$this->Val[3] = $this->Keterangan->CurrentValue;
+			$this->Val[4] = $this->Debet->CurrentValue;
+			$this->Val[5] = $this->Kredit->CurrentValue;
 		} else {
 			$this->id->setDbValue("");
 			$this->Periode->setDbValue("");
@@ -1067,10 +1077,9 @@ class crr03_jurnal_summary extends crr03_jurnal {
 				$this->GrandCnt[2] = $this->TotCount;
 				$this->GrandCnt[3] = $this->TotCount;
 				$this->GrandCnt[4] = $this->TotCount;
+				$this->GrandSmry[4] = $rsagg->fields("sum_debet");
 				$this->GrandCnt[5] = $this->TotCount;
-				$this->GrandSmry[5] = $rsagg->fields("sum_debet");
-				$this->GrandCnt[6] = $this->TotCount;
-				$this->GrandSmry[6] = $rsagg->fields("sum_kredit");
+				$this->GrandSmry[5] = $rsagg->fields("sum_kredit");
 				$rsagg->Close();
 				$bGotSummary = TRUE;
 			}
@@ -1101,6 +1110,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		if ($this->RowType == EWR_ROWTYPE_TOTAL && !($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER)) { // Summary row
 			ewr_PrependClass($this->RowAttrs["class"], ($this->RowTotalType == EWR_ROWTOTAL_PAGE || $this->RowTotalType == EWR_ROWTOTAL_GRAND) ? "ewRptGrpAggregate" : "ewRptGrpSummary" . $this->RowGroupLevel); // Set up row class
 			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP) $this->RowAttrs["data-group"] = $this->Periode->GroupOldValue(); // Set up group attribute
+			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowGroupLevel >= 2) $this->RowAttrs["data-group-2"] = $this->Rekening->GroupOldValue(); // Set up group attribute 2
 
 			// Periode
 			$this->Periode->GroupViewValue = $this->Periode->GroupOldValue();
@@ -1110,26 +1120,32 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			$this->Periode->GroupSummaryValue = $this->Periode->GroupViewValue;
 			$this->Periode->GroupSummaryViewValue = ($this->Periode->GroupSummaryOldValue <> $this->Periode->GroupSummaryValue) ? $this->Periode->GroupSummaryValue : "&nbsp;";
 
+			// Rekening
+			$this->Rekening->GroupViewValue = $this->Rekening->GroupOldValue();
+			$this->Rekening->CellAttrs["class"] = ($this->RowGroupLevel == 2) ? "ewRptGrpSummary2" : "ewRptGrpField2";
+			$this->Rekening->GroupViewValue = ewr_DisplayGroupValue($this->Rekening, $this->Rekening->GroupViewValue);
+			$this->Rekening->GroupSummaryOldValue = $this->Rekening->GroupSummaryValue;
+			$this->Rekening->GroupSummaryValue = $this->Rekening->GroupViewValue;
+			$this->Rekening->GroupSummaryViewValue = ($this->Rekening->GroupSummaryOldValue <> $this->Rekening->GroupSummaryValue) ? $this->Rekening->GroupSummaryValue : "&nbsp;";
+
 			// Debet
 			$this->Debet->SumViewValue = $this->Debet->SumValue;
-			$this->Debet->SumViewValue = ewr_FormatNumber($this->Debet->SumViewValue, 2, -2, -2, -2);
-			$this->Debet->CellAttrs["style"] = "text-align:right;";
+			$this->Debet->SumViewValue = ewr_FormatNumber($this->Debet->SumViewValue, $this->Debet->DefaultDecimalPrecision, -1, 0, 0);
 			$this->Debet->CellAttrs["class"] = ($this->RowTotalType == EWR_ROWTOTAL_PAGE || $this->RowTotalType == EWR_ROWTOTAL_GRAND) ? "ewRptGrpAggregate" : "ewRptGrpSummary" . $this->RowGroupLevel;
 
 			// Kredit
 			$this->Kredit->SumViewValue = $this->Kredit->SumValue;
-			$this->Kredit->SumViewValue = ewr_FormatNumber($this->Kredit->SumViewValue, 2, -2, -2, -2);
-			$this->Kredit->CellAttrs["style"] = "text-align:right;";
+			$this->Kredit->SumViewValue = ewr_FormatNumber($this->Kredit->SumViewValue, $this->Kredit->DefaultDecimalPrecision, -1, 0, 0);
 			$this->Kredit->CellAttrs["class"] = ($this->RowTotalType == EWR_ROWTOTAL_PAGE || $this->RowTotalType == EWR_ROWTOTAL_GRAND) ? "ewRptGrpAggregate" : "ewRptGrpSummary" . $this->RowGroupLevel;
 
 			// Periode
 			$this->Periode->HrefValue = "";
 
-			// Tanggal
-			$this->Tanggal->HrefValue = "";
-
 			// Rekening
 			$this->Rekening->HrefValue = "";
+
+			// Tanggal
+			$this->Tanggal->HrefValue = "";
 
 			// RekeningNama
 			$this->RekeningNama->HrefValue = "";
@@ -1145,8 +1161,10 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		} else {
 			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER) {
 			$this->RowAttrs["data-group"] = $this->Periode->GroupValue(); // Set up group attribute
+			if ($this->RowGroupLevel >= 2) $this->RowAttrs["data-group-2"] = $this->Rekening->GroupValue(); // Set up group attribute 2
 			} else {
 			$this->RowAttrs["data-group"] = $this->Periode->GroupValue(); // Set up group attribute
+			$this->RowAttrs["data-group-2"] = $this->Rekening->GroupValue(); // Set up group attribute 2
 			}
 
 			// Periode
@@ -1156,14 +1174,17 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			if ($this->Periode->GroupValue() == $this->Periode->GroupOldValue() && !$this->ChkLvlBreak(1))
 				$this->Periode->GroupViewValue = "&nbsp;";
 
+			// Rekening
+			$this->Rekening->GroupViewValue = $this->Rekening->GroupValue();
+			$this->Rekening->CellAttrs["class"] = "ewRptGrpField2";
+			$this->Rekening->GroupViewValue = ewr_DisplayGroupValue($this->Rekening, $this->Rekening->GroupViewValue);
+			if ($this->Rekening->GroupValue() == $this->Rekening->GroupOldValue() && !$this->ChkLvlBreak(2))
+				$this->Rekening->GroupViewValue = "&nbsp;";
+
 			// Tanggal
 			$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-			$this->Tanggal->ViewValue = ewr_FormatDateTime($this->Tanggal->ViewValue, 7);
+			$this->Tanggal->ViewValue = ewr_FormatDateTime($this->Tanggal->ViewValue, 0);
 			$this->Tanggal->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
-
-			// Rekening
-			$this->Rekening->ViewValue = $this->Rekening->CurrentValue;
-			$this->Rekening->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 
 			// RekeningNama
 			$this->RekeningNama->ViewValue = $this->RekeningNama->CurrentValue;
@@ -1175,24 +1196,22 @@ class crr03_jurnal_summary extends crr03_jurnal {
 
 			// Debet
 			$this->Debet->ViewValue = $this->Debet->CurrentValue;
-			$this->Debet->ViewValue = ewr_FormatNumber($this->Debet->ViewValue, 2, -2, -2, -2);
+			$this->Debet->ViewValue = ewr_FormatNumber($this->Debet->ViewValue, $this->Debet->DefaultDecimalPrecision, -1, 0, 0);
 			$this->Debet->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
-			$this->Debet->CellAttrs["style"] = "text-align:right;";
 
 			// Kredit
 			$this->Kredit->ViewValue = $this->Kredit->CurrentValue;
-			$this->Kredit->ViewValue = ewr_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
+			$this->Kredit->ViewValue = ewr_FormatNumber($this->Kredit->ViewValue, $this->Kredit->DefaultDecimalPrecision, -1, 0, 0);
 			$this->Kredit->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
-			$this->Kredit->CellAttrs["style"] = "text-align:right;";
 
 			// Periode
 			$this->Periode->HrefValue = "";
 
-			// Tanggal
-			$this->Tanggal->HrefValue = "";
-
 			// Rekening
 			$this->Rekening->HrefValue = "";
+
+			// Tanggal
+			$this->Tanggal->HrefValue = "";
 
 			// RekeningNama
 			$this->RekeningNama->HrefValue = "";
@@ -1218,6 +1237,15 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			$HrefValue = &$this->Periode->HrefValue;
 			$LinkAttrs = &$this->Periode->LinkAttrs;
 			$this->Cell_Rendered($this->Periode, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
+
+			// Rekening
+			$CurrentValue = $this->Rekening->GroupViewValue;
+			$ViewValue = &$this->Rekening->GroupViewValue;
+			$ViewAttrs = &$this->Rekening->ViewAttrs;
+			$CellAttrs = &$this->Rekening->CellAttrs;
+			$HrefValue = &$this->Rekening->HrefValue;
+			$LinkAttrs = &$this->Rekening->LinkAttrs;
+			$this->Cell_Rendered($this->Rekening, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 
 			// Debet
 			$CurrentValue = $this->Debet->SumValue;
@@ -1247,6 +1275,15 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			$LinkAttrs = &$this->Periode->LinkAttrs;
 			$this->Cell_Rendered($this->Periode, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 
+			// Rekening
+			$CurrentValue = $this->Rekening->GroupValue();
+			$ViewValue = &$this->Rekening->GroupViewValue;
+			$ViewAttrs = &$this->Rekening->ViewAttrs;
+			$CellAttrs = &$this->Rekening->CellAttrs;
+			$HrefValue = &$this->Rekening->HrefValue;
+			$LinkAttrs = &$this->Rekening->LinkAttrs;
+			$this->Cell_Rendered($this->Rekening, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
+
 			// Tanggal
 			$CurrentValue = $this->Tanggal->CurrentValue;
 			$ViewValue = &$this->Tanggal->ViewValue;
@@ -1255,15 +1292,6 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			$HrefValue = &$this->Tanggal->HrefValue;
 			$LinkAttrs = &$this->Tanggal->LinkAttrs;
 			$this->Cell_Rendered($this->Tanggal, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
-
-			// Rekening
-			$CurrentValue = $this->Rekening->CurrentValue;
-			$ViewValue = &$this->Rekening->ViewValue;
-			$ViewAttrs = &$this->Rekening->ViewAttrs;
-			$CellAttrs = &$this->Rekening->CellAttrs;
-			$HrefValue = &$this->Rekening->HrefValue;
-			$LinkAttrs = &$this->Rekening->LinkAttrs;
-			$this->Cell_Rendered($this->Rekening, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 
 			// RekeningNama
 			$CurrentValue = $this->RekeningNama->CurrentValue;
@@ -1313,8 +1341,8 @@ class crr03_jurnal_summary extends crr03_jurnal {
 		$this->SubGrpColumnCount = 0;
 		$this->DtlColumnCount = 0;
 		if ($this->Periode->Visible) $this->GrpColumnCount += 1;
+		if ($this->Rekening->Visible) { $this->GrpColumnCount += 1; $this->SubGrpColumnCount += 1; }
 		if ($this->Tanggal->Visible) $this->DtlColumnCount += 1;
-		if ($this->Rekening->Visible) $this->DtlColumnCount += 1;
 		if ($this->RekeningNama->Visible) $this->DtlColumnCount += 1;
 		if ($this->Keterangan->Visible) $this->DtlColumnCount += 1;
 		if ($this->Debet->Visible) $this->DtlColumnCount += 1;
@@ -1369,7 +1397,7 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			// Field Periode
 			if ($this->GetDropDownValue($this->Periode)) {
 				$bSetupFilter = TRUE;
-			} elseif ($this->Periode->DropDownValue <> EWR_INIT_VALUE && !isset($_SESSION['sv_r03_jurnal_Periode'])) {
+			} elseif ($this->Periode->DropDownValue <> EWR_INIT_VALUE && !isset($_SESSION['sv_r04_bukubesar_Periode'])) {
 				$bSetupFilter = TRUE;
 			}
 			if (!$this->ValidateForm()) {
@@ -1597,18 +1625,18 @@ class crr03_jurnal_summary extends crr03_jurnal {
 	// Get dropdown value from session
 	function GetSessionDropDownValue(&$fld) {
 		$parm = substr($fld->FldVar, 2);
-		$this->GetSessionValue($fld->DropDownValue, 'sv_r03_jurnal_' . $parm);
-		$this->GetSessionValue($fld->SearchOperator, 'so_r03_jurnal_' . $parm);
+		$this->GetSessionValue($fld->DropDownValue, 'sv_r04_bukubesar_' . $parm);
+		$this->GetSessionValue($fld->SearchOperator, 'so_r04_bukubesar_' . $parm);
 	}
 
 	// Get filter values from session
 	function GetSessionFilterValues(&$fld) {
 		$parm = substr($fld->FldVar, 2);
-		$this->GetSessionValue($fld->SearchValue, 'sv_r03_jurnal_' . $parm);
-		$this->GetSessionValue($fld->SearchOperator, 'so_r03_jurnal_' . $parm);
-		$this->GetSessionValue($fld->SearchCondition, 'sc_r03_jurnal_' . $parm);
-		$this->GetSessionValue($fld->SearchValue2, 'sv2_r03_jurnal_' . $parm);
-		$this->GetSessionValue($fld->SearchOperator2, 'so2_r03_jurnal_' . $parm);
+		$this->GetSessionValue($fld->SearchValue, 'sv_r04_bukubesar_' . $parm);
+		$this->GetSessionValue($fld->SearchOperator, 'so_r04_bukubesar_' . $parm);
+		$this->GetSessionValue($fld->SearchCondition, 'sc_r04_bukubesar_' . $parm);
+		$this->GetSessionValue($fld->SearchValue2, 'sv2_r04_bukubesar_' . $parm);
+		$this->GetSessionValue($fld->SearchOperator2, 'so2_r04_bukubesar_' . $parm);
 	}
 
 	// Get value from session
@@ -1619,17 +1647,17 @@ class crr03_jurnal_summary extends crr03_jurnal {
 
 	// Set dropdown value to session
 	function SetSessionDropDownValue($sv, $so, $parm) {
-		$_SESSION['sv_r03_jurnal_' . $parm] = $sv;
-		$_SESSION['so_r03_jurnal_' . $parm] = $so;
+		$_SESSION['sv_r04_bukubesar_' . $parm] = $sv;
+		$_SESSION['so_r04_bukubesar_' . $parm] = $so;
 	}
 
 	// Set filter values to session
 	function SetSessionFilterValues($sv1, $so1, $sc, $sv2, $so2, $parm) {
-		$_SESSION['sv_r03_jurnal_' . $parm] = $sv1;
-		$_SESSION['so_r03_jurnal_' . $parm] = $so1;
-		$_SESSION['sc_r03_jurnal_' . $parm] = $sc;
-		$_SESSION['sv2_r03_jurnal_' . $parm] = $sv2;
-		$_SESSION['so2_r03_jurnal_' . $parm] = $so2;
+		$_SESSION['sv_r04_bukubesar_' . $parm] = $sv1;
+		$_SESSION['so_r04_bukubesar_' . $parm] = $so1;
+		$_SESSION['sc_r04_bukubesar_' . $parm] = $sc;
+		$_SESSION['sv2_r04_bukubesar_' . $parm] = $sv2;
+		$_SESSION['so2_r04_bukubesar_' . $parm] = $so2;
 	}
 
 	// Check if has Session filter values
@@ -1679,17 +1707,17 @@ class crr03_jurnal_summary extends crr03_jurnal {
 
 	// Clear selection stored in session
 	function ClearSessionSelection($parm) {
-		$_SESSION["sel_r03_jurnal_$parm"] = "";
-		$_SESSION["rf_r03_jurnal_$parm"] = "";
-		$_SESSION["rt_r03_jurnal_$parm"] = "";
+		$_SESSION["sel_r04_bukubesar_$parm"] = "";
+		$_SESSION["rf_r04_bukubesar_$parm"] = "";
+		$_SESSION["rt_r04_bukubesar_$parm"] = "";
 	}
 
 	// Load selection from session
 	function LoadSelectionFromSession($parm) {
 		$fld = &$this->FieldByParm($parm);
-		$fld->SelectionList = @$_SESSION["sel_r03_jurnal_$parm"];
-		$fld->RangeFrom = @$_SESSION["rf_r03_jurnal_$parm"];
-		$fld->RangeTo = @$_SESSION["rt_r03_jurnal_$parm"];
+		$fld->SelectionList = @$_SESSION["sel_r04_bukubesar_$parm"];
+		$fld->RangeFrom = @$_SESSION["rf_r04_bukubesar_$parm"];
+		$fld->RangeTo = @$_SESSION["rt_r04_bukubesar_$parm"];
 	}
 
 	// Load default value for filters
@@ -1842,8 +1870,8 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			$this->setOrderBy("");
 			$this->setStartGroup(1);
 			$this->Periode->setSort("");
-			$this->Tanggal->setSort("");
 			$this->Rekening->setSort("");
+			$this->Tanggal->setSort("");
 			$this->RekeningNama->setSort("");
 			$this->Keterangan->setSort("");
 			$this->Debet->setSort("");
@@ -1854,8 +1882,8 @@ class crr03_jurnal_summary extends crr03_jurnal {
 			$this->CurrentOrder = $orderBy;
 			$this->CurrentOrderType = $orderType;
 			$this->UpdateSort($this->Periode, $bCtrl); // Periode
-			$this->UpdateSort($this->Tanggal, $bCtrl); // Tanggal
 			$this->UpdateSort($this->Rekening, $bCtrl); // Rekening
+			$this->UpdateSort($this->Tanggal, $bCtrl); // Tanggal
 			$this->UpdateSort($this->RekeningNama, $bCtrl); // RekeningNama
 			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
 			$this->UpdateSort($this->Debet, $bCtrl); // Debet
@@ -2134,9 +2162,9 @@ class crr03_jurnal_summary extends crr03_jurnal {
 <?php
 
 // Create page object
-if (!isset($r03_jurnal_summary)) $r03_jurnal_summary = new crr03_jurnal_summary();
+if (!isset($r04_bukubesar_summary)) $r04_bukubesar_summary = new crr04_bukubesar_summary();
 if (isset($Page)) $OldPage = $Page;
-$Page = &$r03_jurnal_summary;
+$Page = &$r04_bukubesar_summary;
 
 // Page init
 $Page->Page_Init();
@@ -2156,21 +2184,21 @@ $Page->Page_Render();
 <script type="text/javascript">
 
 // Create page object
-var r03_jurnal_summary = new ewr_Page("r03_jurnal_summary");
+var r04_bukubesar_summary = new ewr_Page("r04_bukubesar_summary");
 
 // Page properties
-r03_jurnal_summary.PageID = "summary"; // Page ID
-var EWR_PAGE_ID = r03_jurnal_summary.PageID;
+r04_bukubesar_summary.PageID = "summary"; // Page ID
+var EWR_PAGE_ID = r04_bukubesar_summary.PageID;
 
 // Extend page with Chart_Rendering function
-r03_jurnal_summary.Chart_Rendering = 
+r04_bukubesar_summary.Chart_Rendering = 
  function(chart, chartid) { // DO NOT CHANGE THIS LINE!
 
  	//alert(chartid);
  }
 
 // Extend page with Chart_Rendered function
-r03_jurnal_summary.Chart_Rendered = 
+r04_bukubesar_summary.Chart_Rendered = 
  function(chart, chartid) { // DO NOT CHANGE THIS LINE!
 
  	//alert(chartid);
@@ -2181,10 +2209,10 @@ r03_jurnal_summary.Chart_Rendered =
 <script type="text/javascript">
 
 // Form object
-var CurrentForm = fr03_jurnalsummary = new ewr_Form("fr03_jurnalsummary");
+var CurrentForm = fr04_bukubesarsummary = new ewr_Form("fr04_bukubesarsummary");
 
 // Validate method
-fr03_jurnalsummary.Validate = function() {
+fr04_bukubesarsummary.Validate = function() {
 	if (!this.ValidateRequired)
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
@@ -2196,20 +2224,20 @@ fr03_jurnalsummary.Validate = function() {
 }
 
 // Form_CustomValidate method
-fr03_jurnalsummary.Form_CustomValidate = 
+fr04_bukubesarsummary.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid.
  	return true;
  }
 <?php if (EWR_CLIENT_VALIDATE) { ?>
-fr03_jurnalsummary.ValidateRequired = true; // Uses JavaScript validation
+fr04_bukubesarsummary.ValidateRequired = true; // Uses JavaScript validation
 <?php } else { ?>
-fr03_jurnalsummary.ValidateRequired = false; // No JavaScript validation
+fr04_bukubesarsummary.ValidateRequired = false; // No JavaScript validation
 <?php } ?>
 
 // Use Ajax
-fr03_jurnalsummary.Lists["sv_Periode"] = {"LinkField":"sv_Periode","Ajax":true,"DisplayFields":["sv_Periode","","",""],"ParentFields":[],"FilterFields":[],"Options":[],"Template":""};
+fr04_bukubesarsummary.Lists["sv_Periode"] = {"LinkField":"sv_Periode","Ajax":true,"DisplayFields":["sv_Periode","","",""],"ParentFields":[],"FilterFields":[],"Options":[],"Template":""};
 </script>
 <?php } ?>
 <?php if ($Page->Export == "" && !$Page->DrillDown) { ?>
@@ -2268,9 +2296,9 @@ if (!$Page->DrillDownInPanel) {
 <?php } ?>
 <?php if ($Page->Export == "" && !$Page->DrillDown) { ?>
 <!-- Search form (begin) -->
-<form name="fr03_jurnalsummary" id="fr03_jurnalsummary" class="form-inline ewForm ewExtFilterForm" action="<?php echo ewr_CurrentPage() ?>">
+<form name="fr04_bukubesarsummary" id="fr04_bukubesarsummary" class="form-inline ewForm ewExtFilterForm" action="<?php echo ewr_CurrentPage() ?>">
 <?php $SearchPanelClass = ($Page->Filter <> "") ? " in" : " in"; ?>
-<div id="fr03_jurnalsummary_SearchPanel" class="ewSearchPanel collapse<?php echo $SearchPanelClass ?>">
+<div id="fr04_bukubesarsummary_SearchPanel" class="ewSearchPanel collapse<?php echo $SearchPanelClass ?>">
 <input type="hidden" name="cmd" value="search">
 <div id="r_1" class="ewRow">
 <div id="c_Periode" class="ewCell form-group">
@@ -2278,7 +2306,7 @@ if (!$Page->DrillDownInPanel) {
 	<span class="ewSearchField">
 <?php $Page->Periode->EditAttrs["onchange"] = "ewrForms(this).Submit(); " . @$Page->Periode->EditAttrs["onchange"]; ?>
 <?php ewr_PrependClass($Page->Periode->EditAttrs["class"], "form-control"); ?>
-<select data-table="r03_jurnal" data-field="x_Periode" data-value-separator="<?php echo ewr_HtmlEncode(is_array($Page->Periode->DisplayValueSeparator) ? json_encode($Page->Periode->DisplayValueSeparator) : $Page->Periode->DisplayValueSeparator) ?>" id="sv_Periode" name="sv_Periode"<?php echo $Page->Periode->EditAttributes() ?>>
+<select data-table="r04_bukubesar" data-field="x_Periode" data-value-separator="<?php echo ewr_HtmlEncode(is_array($Page->Periode->DisplayValueSeparator) ? json_encode($Page->Periode->DisplayValueSeparator) : $Page->Periode->DisplayValueSeparator) ?>" id="sv_Periode" name="sv_Periode"<?php echo $Page->Periode->EditAttributes() ?>>
 <option value=""><?php echo $ReportLanguage->Phrase("PleaseSelect") ?></option>
 <?php
 	$cntf = is_array($Page->Periode->AdvancedFilters) ? count($Page->Periode->AdvancedFilters) : 0;
@@ -2311,8 +2339,8 @@ if (!$Page->DrillDownInPanel) {
 </div>
 </form>
 <script type="text/javascript">
-fr03_jurnalsummary.Init();
-fr03_jurnalsummary.FilterList = <?php echo $Page->GetFilterList() ?>;
+fr04_bukubesarsummary.Init();
+fr04_bukubesarsummary.FilterList = <?php echo $Page->GetFilterList() ?>;
 </script>
 <!-- Search form (end) -->
 <?php } ?>
@@ -2337,6 +2365,7 @@ $Page->RecIndex = 0;
 // Get first row
 if ($Page->TotalGrps > 0) {
 	$Page->GetGrpRow(1);
+	$Page->GrpCounter[0] = 1;
 	$Page->GrpCount = 1;
 }
 $Page->GrpIdx = ewr_InitArray($Page->StopGrp - $Page->StartGrp + 1, -1);
@@ -2355,14 +2384,14 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 <?php if ($Page->Export == "" && !($Page->DrillDown && $Page->TotalGrps > 0)) { ?>
 <div class="panel-footer ewGridLowerPanel">
-<?php include "r03_jurnalsmrypager.php" ?>
+<?php include "r04_bukubesarsmrypager.php" ?>
 <div class="clearfix"></div>
 </div>
 <?php } ?>
 <?php if ($Page->Export <> "pdf") { ?>
 </div>
 <?php } ?>
-<span data-class="tpb<?php echo $Page->GrpCount-1 ?>_r03_jurnal"><?php echo $Page->PageBreakContent ?></span>
+<span data-class="tpb<?php echo $Page->GrpCount-1 ?>_r04_bukubesar"><?php echo $Page->PageBreakContent ?></span>
 <?php } ?>
 <?php if ($Page->Export <> "pdf") { ?>
 <?php if ($Page->Export == "word" || $Page->Export == "excel") { ?>
@@ -2384,15 +2413,15 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 	<td data-field="Periode">&nbsp;</td>
 	<?php } else { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Periode"><div class="r03_jurnal_Periode"><span class="ewTableHeaderCaption"><?php echo $Page->Periode->FldCaption() ?></span></div></td>
+	<td data-field="Periode"><div class="r04_bukubesar_Periode"><span class="ewTableHeaderCaption"><?php echo $Page->Periode->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="Periode">
 <?php if ($Page->SortUrl($Page->Periode) == "") { ?>
-		<div class="ewTableHeaderBtn r03_jurnal_Periode">
+		<div class="ewTableHeaderBtn r04_bukubesar_Periode">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Periode->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer r03_jurnal_Periode" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Periode) ?>',2);">
+		<div class="ewTableHeaderBtn ewPointer r04_bukubesar_Periode" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Periode) ?>',2);">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Periode->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Periode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Periode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
@@ -2401,17 +2430,39 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 	<?php } ?>
 <?php } ?>
+<?php if ($Page->Rekening->Visible) { ?>
+	<?php if ($Page->Rekening->ShowGroupHeaderAsRow) { ?>
+	<td data-field="Rekening">&nbsp;</td>
+	<?php } else { ?>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+	<td data-field="Rekening"><div class="r04_bukubesar_Rekening"><span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span></div></td>
+<?php } else { ?>
+	<td data-field="Rekening">
+<?php if ($Page->SortUrl($Page->Rekening) == "") { ?>
+		<div class="ewTableHeaderBtn r04_bukubesar_Rekening">
+			<span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span>
+		</div>
+<?php } else { ?>
+		<div class="ewTableHeaderBtn ewPointer r04_bukubesar_Rekening" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Rekening) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->Rekening->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Rekening->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</div>
+<?php } ?>
+	</td>
+<?php } ?>
+	<?php } ?>
+<?php } ?>
 <?php if ($Page->Tanggal->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Tanggal"><div class="r03_jurnal_Tanggal"><span class="ewTableHeaderCaption"><?php echo $Page->Tanggal->FldCaption() ?></span></div></td>
+	<td data-field="Tanggal"><div class="r04_bukubesar_Tanggal"><span class="ewTableHeaderCaption"><?php echo $Page->Tanggal->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="Tanggal">
 <?php if ($Page->SortUrl($Page->Tanggal) == "") { ?>
-		<div class="ewTableHeaderBtn r03_jurnal_Tanggal">
+		<div class="ewTableHeaderBtn r04_bukubesar_Tanggal">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Tanggal->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer r03_jurnal_Tanggal" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Tanggal) ?>',2);">
+		<div class="ewTableHeaderBtn ewPointer r04_bukubesar_Tanggal" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Tanggal) ?>',2);">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Tanggal->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Tanggal->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Tanggal->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
@@ -2419,35 +2470,17 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 	</td>
 <?php } ?>
 <?php } ?>
-<?php if ($Page->Rekening->Visible) { ?>
-<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Rekening"><div class="r03_jurnal_Rekening"><span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span></div></td>
-<?php } else { ?>
-	<td data-field="Rekening">
-<?php if ($Page->SortUrl($Page->Rekening) == "") { ?>
-		<div class="ewTableHeaderBtn r03_jurnal_Rekening">
-			<span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span>
-		</div>
-<?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer r03_jurnal_Rekening" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Rekening) ?>',2);">
-			<span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span>
-			<span class="ewTableHeaderSort"><?php if ($Page->Rekening->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Rekening->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
-		</div>
-<?php } ?>
-	</td>
-<?php } ?>
-<?php } ?>
 <?php if ($Page->RekeningNama->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="RekeningNama"><div class="r03_jurnal_RekeningNama"><span class="ewTableHeaderCaption"><?php echo $Page->RekeningNama->FldCaption() ?></span></div></td>
+	<td data-field="RekeningNama"><div class="r04_bukubesar_RekeningNama"><span class="ewTableHeaderCaption"><?php echo $Page->RekeningNama->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="RekeningNama">
 <?php if ($Page->SortUrl($Page->RekeningNama) == "") { ?>
-		<div class="ewTableHeaderBtn r03_jurnal_RekeningNama">
+		<div class="ewTableHeaderBtn r04_bukubesar_RekeningNama">
 			<span class="ewTableHeaderCaption"><?php echo $Page->RekeningNama->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer r03_jurnal_RekeningNama" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->RekeningNama) ?>',2);">
+		<div class="ewTableHeaderBtn ewPointer r04_bukubesar_RekeningNama" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->RekeningNama) ?>',2);">
 			<span class="ewTableHeaderCaption"><?php echo $Page->RekeningNama->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->RekeningNama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->RekeningNama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
@@ -2457,15 +2490,15 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 <?php if ($Page->Keterangan->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Keterangan"><div class="r03_jurnal_Keterangan"><span class="ewTableHeaderCaption"><?php echo $Page->Keterangan->FldCaption() ?></span></div></td>
+	<td data-field="Keterangan"><div class="r04_bukubesar_Keterangan"><span class="ewTableHeaderCaption"><?php echo $Page->Keterangan->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="Keterangan">
 <?php if ($Page->SortUrl($Page->Keterangan) == "") { ?>
-		<div class="ewTableHeaderBtn r03_jurnal_Keterangan">
+		<div class="ewTableHeaderBtn r04_bukubesar_Keterangan">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Keterangan->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer r03_jurnal_Keterangan" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Keterangan) ?>',2);">
+		<div class="ewTableHeaderBtn ewPointer r04_bukubesar_Keterangan" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Keterangan) ?>',2);">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Keterangan->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
@@ -2475,15 +2508,15 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 <?php if ($Page->Debet->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Debet"><div class="r03_jurnal_Debet" style="text-align: right;"><span class="ewTableHeaderCaption"><?php echo $Page->Debet->FldCaption() ?></span></div></td>
+	<td data-field="Debet"><div class="r04_bukubesar_Debet"><span class="ewTableHeaderCaption"><?php echo $Page->Debet->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="Debet">
 <?php if ($Page->SortUrl($Page->Debet) == "") { ?>
-		<div class="ewTableHeaderBtn r03_jurnal_Debet" style="text-align: right;">
+		<div class="ewTableHeaderBtn r04_bukubesar_Debet">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Debet->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer r03_jurnal_Debet" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Debet) ?>',2);" style="text-align: right;">
+		<div class="ewTableHeaderBtn ewPointer r04_bukubesar_Debet" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Debet) ?>',2);">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Debet->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Debet->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Debet->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
@@ -2493,15 +2526,15 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 <?php if ($Page->Kredit->Visible) { ?>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-	<td data-field="Kredit"><div class="r03_jurnal_Kredit" style="text-align: right;"><span class="ewTableHeaderCaption"><?php echo $Page->Kredit->FldCaption() ?></span></div></td>
+	<td data-field="Kredit"><div class="r04_bukubesar_Kredit"><span class="ewTableHeaderCaption"><?php echo $Page->Kredit->FldCaption() ?></span></div></td>
 <?php } else { ?>
 	<td data-field="Kredit">
 <?php if ($Page->SortUrl($Page->Kredit) == "") { ?>
-		<div class="ewTableHeaderBtn r03_jurnal_Kredit" style="text-align: right;">
+		<div class="ewTableHeaderBtn r04_bukubesar_Kredit">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Kredit->FldCaption() ?></span>
 		</div>
 <?php } else { ?>
-		<div class="ewTableHeaderBtn ewPointer r03_jurnal_Kredit" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Kredit) ?>',2);" style="text-align: right;">
+		<div class="ewTableHeaderBtn ewPointer r04_bukubesar_Kredit" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Kredit) ?>',2);">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Kredit->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Kredit->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Kredit->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</div>
@@ -2528,7 +2561,7 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 	$rsdtlcnt = ($rs) ? $rs->RecordCount() : 0;
 	if ($rsdtlcnt > 0)
 		$Page->GetRow(1);
-	$Page->GrpIdx[$Page->GrpCount] = $rsdtlcnt;
+	$Page->GrpIdx[$Page->GrpCount] = array(-1);
 	while ($rs && !$rs->EOF) { // Loop detail records
 		$Page->RecCount++;
 		$Page->RecIndex++;
@@ -2551,22 +2584,62 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 		<td data-field="Periode" colspan="<?php echo ($Page->GrpColumnCount + $Page->DtlColumnCount - 1) ?>"<?php echo $Page->Periode->CellAttributes() ?>>
 <?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
-		<span class="ewSummaryCaption r03_jurnal_Periode"><span class="ewTableHeaderCaption"><?php echo $Page->Periode->FldCaption() ?></span></span>
+		<span class="ewSummaryCaption r04_bukubesar_Periode"><span class="ewTableHeaderCaption"><?php echo $Page->Periode->FldCaption() ?></span></span>
 <?php } else { ?>
 	<?php if ($Page->SortUrl($Page->Periode) == "") { ?>
-		<span class="ewSummaryCaption r03_jurnal_Periode">
+		<span class="ewSummaryCaption r04_bukubesar_Periode">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Periode->FldCaption() ?></span>
 		</span>
 	<?php } else { ?>
-		<span class="ewTableHeaderBtn ewPointer ewSummaryCaption r03_jurnal_Periode" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Periode) ?>',2);">
+		<span class="ewTableHeaderBtn ewPointer ewSummaryCaption r04_bukubesar_Periode" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Periode) ?>',2);">
 			<span class="ewTableHeaderCaption"><?php echo $Page->Periode->FldCaption() ?></span>
 			<span class="ewTableHeaderSort"><?php if ($Page->Periode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Periode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
 		</span>
 	<?php } ?>
 <?php } ?>
 		<?php echo $ReportLanguage->Phrase("SummaryColon") ?>
-<span data-class="tpx<?php echo $Page->GrpCount ?>_r03_jurnal_Periode"<?php echo $Page->Periode->ViewAttributes() ?>><?php echo $Page->Periode->GroupViewValue ?></span>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_r04_bukubesar_Periode"<?php echo $Page->Periode->ViewAttributes() ?>><?php echo $Page->Periode->GroupViewValue ?></span>
 		<span class="ewSummaryCount">(<span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->Periode->Count,0,-2,-2,-2) ?></span>)</span>
+		</td>
+	</tr>
+<?php } ?>
+<?php if ($Page->Rekening->Visible && $Page->ChkLvlBreak(2) && $Page->Rekening->ShowGroupHeaderAsRow) { ?>
+<?php
+
+		// Render header row
+		$Page->ResetAttrs();
+		$Page->RowType = EWR_ROWTYPE_TOTAL;
+		$Page->RowTotalType = EWR_ROWTOTAL_GROUP;
+		$Page->RowTotalSubType = EWR_ROWTOTAL_HEADER;
+		$Page->RowGroupLevel = 2;
+		$Page->Rekening->Count = $Page->GetSummaryCount(2);
+		$Page->RenderRow();
+?>
+	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->Periode->Visible) { ?>
+		<td data-field="Periode"<?php echo $Page->Periode->CellAttributes(); ?>></td>
+<?php } ?>
+<?php if ($Page->Rekening->Visible) { ?>
+		<td data-field="Rekening"<?php echo $Page->Rekening->CellAttributes(); ?>><span class="ewGroupToggle icon-collapse"></span></td>
+<?php } ?>
+		<td data-field="Rekening" colspan="<?php echo ($Page->GrpColumnCount + $Page->DtlColumnCount - 2) ?>"<?php echo $Page->Rekening->CellAttributes() ?>>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+		<span class="ewSummaryCaption r04_bukubesar_Rekening"><span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span></span>
+<?php } else { ?>
+	<?php if ($Page->SortUrl($Page->Rekening) == "") { ?>
+		<span class="ewSummaryCaption r04_bukubesar_Rekening">
+			<span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span>
+		</span>
+	<?php } else { ?>
+		<span class="ewTableHeaderBtn ewPointer ewSummaryCaption r04_bukubesar_Rekening" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Rekening) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->Rekening->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->Rekening->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Rekening->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</span>
+	<?php } ?>
+<?php } ?>
+		<?php echo $ReportLanguage->Phrase("SummaryColon") ?>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_r04_bukubesar_Rekening"<?php echo $Page->Rekening->ViewAttributes() ?>><?php echo $Page->Rekening->GroupViewValue ?></span>
+		<span class="ewSummaryCount">(<span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->Rekening->Count,0,-2,-2,-2) ?></span>)</span>
 		</td>
 	</tr>
 <?php } ?>
@@ -2583,32 +2656,36 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 		<td data-field="Periode"<?php echo $Page->Periode->CellAttributes(); ?>>&nbsp;</td>
 	<?php } else { ?>
 		<td data-field="Periode"<?php echo $Page->Periode->CellAttributes(); ?>>
-<span data-class="tpx<?php echo $Page->GrpCount ?>_r03_jurnal_Periode"<?php echo $Page->Periode->ViewAttributes() ?>><?php echo $Page->Periode->GroupViewValue ?></span></td>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_r04_bukubesar_Periode"<?php echo $Page->Periode->ViewAttributes() ?>><?php echo $Page->Periode->GroupViewValue ?></span></td>
+	<?php } ?>
+<?php } ?>
+<?php if ($Page->Rekening->Visible) { ?>
+	<?php if ($Page->Rekening->ShowGroupHeaderAsRow) { ?>
+		<td data-field="Rekening"<?php echo $Page->Rekening->CellAttributes(); ?>>&nbsp;</td>
+	<?php } else { ?>
+		<td data-field="Rekening"<?php echo $Page->Rekening->CellAttributes(); ?>>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_r04_bukubesar_Rekening"<?php echo $Page->Rekening->ViewAttributes() ?>><?php echo $Page->Rekening->GroupViewValue ?></span></td>
 	<?php } ?>
 <?php } ?>
 <?php if ($Page->Tanggal->Visible) { ?>
 		<td data-field="Tanggal"<?php echo $Page->Tanggal->CellAttributes() ?>>
-<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->RecCount ?>_r03_jurnal_Tanggal"<?php echo $Page->Tanggal->ViewAttributes() ?>><?php echo $Page->Tanggal->ListViewValue() ?></span></td>
-<?php } ?>
-<?php if ($Page->Rekening->Visible) { ?>
-		<td data-field="Rekening"<?php echo $Page->Rekening->CellAttributes() ?>>
-<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->RecCount ?>_r03_jurnal_Rekening"<?php echo $Page->Rekening->ViewAttributes() ?>><?php echo $Page->Rekening->ListViewValue() ?></span></td>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_<?php echo $Page->RecCount ?>_r04_bukubesar_Tanggal"<?php echo $Page->Tanggal->ViewAttributes() ?>><?php echo $Page->Tanggal->ListViewValue() ?></span></td>
 <?php } ?>
 <?php if ($Page->RekeningNama->Visible) { ?>
 		<td data-field="RekeningNama"<?php echo $Page->RekeningNama->CellAttributes() ?>>
-<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->RecCount ?>_r03_jurnal_RekeningNama"<?php echo $Page->RekeningNama->ViewAttributes() ?>><?php echo $Page->RekeningNama->ListViewValue() ?></span></td>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_<?php echo $Page->RecCount ?>_r04_bukubesar_RekeningNama"<?php echo $Page->RekeningNama->ViewAttributes() ?>><?php echo $Page->RekeningNama->ListViewValue() ?></span></td>
 <?php } ?>
 <?php if ($Page->Keterangan->Visible) { ?>
 		<td data-field="Keterangan"<?php echo $Page->Keterangan->CellAttributes() ?>>
-<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->RecCount ?>_r03_jurnal_Keterangan"<?php echo $Page->Keterangan->ViewAttributes() ?>><?php echo $Page->Keterangan->ListViewValue() ?></span></td>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_<?php echo $Page->RecCount ?>_r04_bukubesar_Keterangan"<?php echo $Page->Keterangan->ViewAttributes() ?>><?php echo $Page->Keterangan->ListViewValue() ?></span></td>
 <?php } ?>
 <?php if ($Page->Debet->Visible) { ?>
 		<td data-field="Debet"<?php echo $Page->Debet->CellAttributes() ?>>
-<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->RecCount ?>_r03_jurnal_Debet"<?php echo $Page->Debet->ViewAttributes() ?>><?php echo $Page->Debet->ListViewValue() ?></span></td>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_<?php echo $Page->RecCount ?>_r04_bukubesar_Debet"<?php echo $Page->Debet->ViewAttributes() ?>><?php echo $Page->Debet->ListViewValue() ?></span></td>
 <?php } ?>
 <?php if ($Page->Kredit->Visible) { ?>
 		<td data-field="Kredit"<?php echo $Page->Kredit->CellAttributes() ?>>
-<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->RecCount ?>_r03_jurnal_Kredit"<?php echo $Page->Kredit->ViewAttributes() ?>><?php echo $Page->Kredit->ListViewValue() ?></span></td>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_<?php echo $Page->RecCount ?>_r04_bukubesar_Kredit"<?php echo $Page->Kredit->ViewAttributes() ?>><?php echo $Page->Kredit->ListViewValue() ?></span></td>
 <?php } ?>
 	</tr>
 <?php
@@ -2620,6 +2697,111 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 		$Page->GetRow(2);
 
 		// Show Footers
+?>
+<?php
+		if ($Page->ChkLvlBreak(2)) {
+			$cnt = count(@$Page->GrpIdx[$Page->GrpCount]);
+			$Page->GrpIdx[$Page->GrpCount][$cnt] = $Page->RecCount;
+		}
+		if ($Page->ChkLvlBreak(2) && $Page->Rekening->Visible) {
+?>
+<?php
+			$Page->Periode->Count = $Page->GetSummaryCount(1, FALSE);
+			$Page->Rekening->Count = $Page->GetSummaryCount(2, FALSE);
+			$Page->Debet->Count = $Page->Cnt[2][4];
+			$Page->Debet->SumValue = $Page->Smry[2][4]; // Load SUM
+			$Page->Kredit->Count = $Page->Cnt[2][5];
+			$Page->Kredit->SumValue = $Page->Smry[2][5]; // Load SUM
+			$Page->ResetAttrs();
+			$Page->RowType = EWR_ROWTYPE_TOTAL;
+			$Page->RowTotalType = EWR_ROWTOTAL_GROUP;
+			$Page->RowTotalSubType = EWR_ROWTOTAL_FOOTER;
+			$Page->RowGroupLevel = 2;
+			$Page->RenderRow();
+?>
+<?php if ($Page->Rekening->ShowCompactSummaryFooter) { ?>
+	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->Periode->Visible) { ?>
+		<td data-field="Periode"<?php echo $Page->Periode->CellAttributes() ?>>
+	<?php if ($Page->Periode->ShowGroupHeaderAsRow) { ?>
+		&nbsp;
+	<?php } elseif ($Page->RowGroupLevel <> 1) { ?>
+		&nbsp;
+	<?php } else { ?>
+		<span class="ewSummaryCount"><span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->Periode->Count,0,-2,-2,-2) ?></span></span>
+	<?php } ?>
+		</td>
+<?php } ?>
+<?php if ($Page->Rekening->Visible) { ?>
+		<td data-field="Rekening"<?php echo $Page->Rekening->CellAttributes() ?>>
+	<?php if ($Page->Rekening->ShowGroupHeaderAsRow) { ?>
+		&nbsp;
+	<?php } elseif ($Page->RowGroupLevel <> 2) { ?>
+		&nbsp;
+	<?php } else { ?>
+		<span class="ewSummaryCount"><span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->Rekening->Count,0,-2,-2,-2) ?></span></span>
+	<?php } ?>
+		</td>
+<?php } ?>
+<?php if ($Page->Tanggal->Visible) { ?>
+		<td data-field="Tanggal"<?php echo $Page->Rekening->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->RekeningNama->Visible) { ?>
+		<td data-field="RekeningNama"<?php echo $Page->Rekening->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->Keterangan->Visible) { ?>
+		<td data-field="Keterangan"<?php echo $Page->Rekening->CellAttributes() ?>></td>
+<?php } ?>
+<?php if ($Page->Debet->Visible) { ?>
+		<td data-field="Debet"<?php echo $Page->Rekening->CellAttributes() ?>><span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptSum") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><span data-class="tpgs<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_r04_bukubesar_Debet"<?php echo $Page->Debet->ViewAttributes() ?>><?php echo $Page->Debet->SumViewValue ?></span></span></td>
+<?php } ?>
+<?php if ($Page->Kredit->Visible) { ?>
+		<td data-field="Kredit"<?php echo $Page->Rekening->CellAttributes() ?>><span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptSum") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><span data-class="tpgs<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_r04_bukubesar_Kredit"<?php echo $Page->Kredit->ViewAttributes() ?>><?php echo $Page->Kredit->SumViewValue ?></span></span></td>
+<?php } ?>
+	</tr>
+<?php } else { ?>
+	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->Periode->Visible) { ?>
+		<td data-field="Periode"<?php echo $Page->Periode->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->SubGrpColumnCount + $Page->DtlColumnCount > 0) { ?>
+		<td colspan="<?php echo ($Page->SubGrpColumnCount + $Page->DtlColumnCount) ?>"<?php echo $Page->Kredit->CellAttributes() ?>><?php echo str_replace(array("%v", "%c"), array($Page->Rekening->GroupViewValue, $Page->Rekening->FldCaption()), $ReportLanguage->Phrase("RptSumHead")) ?> <span class="ewDirLtr">(<?php echo ewr_FormatNumber($Page->Cnt[2][0],0,-2,-2,-2) ?><?php echo $ReportLanguage->Phrase("RptDtlRec") ?>)</span></td>
+<?php } ?>
+	</tr>
+	<tr<?php echo $Page->RowAttributes(); ?>>
+<?php if ($Page->Periode->Visible) { ?>
+		<td data-field="Periode"<?php echo $Page->Periode->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->GrpColumnCount > 0) { ?>
+		<td colspan="<?php echo ($Page->GrpColumnCount - 1) ?>"<?php echo $Page->Rekening->CellAttributes() ?>><?php echo $ReportLanguage->Phrase("RptSum") ?></td>
+<?php } ?>
+<?php if ($Page->Tanggal->Visible) { ?>
+		<td data-field="Tanggal"<?php echo $Page->Rekening->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->RekeningNama->Visible) { ?>
+		<td data-field="RekeningNama"<?php echo $Page->Rekening->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->Keterangan->Visible) { ?>
+		<td data-field="Keterangan"<?php echo $Page->Rekening->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->Debet->Visible) { ?>
+		<td data-field="Debet"<?php echo $Page->Kredit->CellAttributes() ?>>
+<span data-class="tpgs<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_r04_bukubesar_Debet"<?php echo $Page->Debet->ViewAttributes() ?>><?php echo $Page->Debet->SumViewValue ?></span></td>
+<?php } ?>
+<?php if ($Page->Kredit->Visible) { ?>
+		<td data-field="Kredit"<?php echo $Page->Kredit->CellAttributes() ?>>
+<span data-class="tpgs<?php echo $Page->GrpCount ?>_<?php echo $Page->GrpCounter[0] ?>_r04_bukubesar_Kredit"<?php echo $Page->Kredit->ViewAttributes() ?>><?php echo $Page->Kredit->SumViewValue ?></span></td>
+<?php } ?>
+	</tr>
+<?php } ?>
+<?php
+
+			// Reset level 2 summary
+			$Page->ResetLevelSummary(2);
+		} // End show footer check
+		if ($Page->ChkLvlBreak(2)) {
+			$Page->GrpCounter[0]++;
+		}
 ?>
 <?php
 	} // End detail records loop
@@ -2637,6 +2819,7 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 	if ($Page->ShowHeader)
 		$Page->Page_Breaking($Page->ShowHeader, $Page->PageBreakContent);
 	$Page->GrpCount++;
+	$Page->GrpCounter[0] = 1;
 
 	// Handle EOF
 	if (!$rsgrp || $rsgrp->EOF)
@@ -2647,10 +2830,10 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 </tbody>
 <tfoot>
 <?php
-	$Page->Debet->Count = $Page->GrandCnt[5];
-	$Page->Debet->SumValue = $Page->GrandSmry[5]; // Load SUM
-	$Page->Kredit->Count = $Page->GrandCnt[6];
-	$Page->Kredit->SumValue = $Page->GrandSmry[6]; // Load SUM
+	$Page->Debet->Count = $Page->GrandCnt[4];
+	$Page->Debet->SumValue = $Page->GrandSmry[4]; // Load SUM
+	$Page->Kredit->Count = $Page->GrandCnt[5];
+	$Page->Kredit->SumValue = $Page->GrandSmry[5]; // Load SUM
 	$Page->ResetAttrs();
 	$Page->RowType = EWR_ROWTYPE_TOTAL;
 	$Page->RowTotalType = EWR_ROWTOTAL_GRAND;
@@ -2658,7 +2841,7 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 	$Page->RowAttrs["class"] = "ewRptGrandSummary";
 	$Page->RenderRow();
 ?>
-<?php if ($Page->Periode->ShowCompactSummaryFooter) { ?>
+<?php if ($Page->Rekening->ShowCompactSummaryFooter) { ?>
 	<tr<?php echo $Page->RowAttributes() ?>><td colspan="<?php echo ($Page->GrpColumnCount + $Page->DtlColumnCount) ?>"><?php echo $ReportLanguage->Phrase("RptGrandSummary") ?> (<span class="ewAggregateCaption"><?php echo $ReportLanguage->Phrase("RptCnt") ?></span><?php echo $ReportLanguage->Phrase("AggregateEqual") ?><span class="ewAggregateValue"><?php echo ewr_FormatNumber($Page->TotCount,0,-2,-2,-2) ?></span>)</td></tr>
 	<tr<?php echo $Page->RowAttributes() ?>>
 <?php if ($Page->GrpColumnCount > 0) { ?>
@@ -2667,9 +2850,6 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php if ($Page->Tanggal->Visible) { ?>
 		<td data-field="Tanggal"<?php echo $Page->Tanggal->CellAttributes() ?>></td>
 <?php } ?>
-<?php if ($Page->Rekening->Visible) { ?>
-		<td data-field="Rekening"<?php echo $Page->Rekening->CellAttributes() ?>></td>
-<?php } ?>
 <?php if ($Page->RekeningNama->Visible) { ?>
 		<td data-field="RekeningNama"<?php echo $Page->RekeningNama->CellAttributes() ?>></td>
 <?php } ?>
@@ -2677,10 +2857,10 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 		<td data-field="Keterangan"<?php echo $Page->Keterangan->CellAttributes() ?>></td>
 <?php } ?>
 <?php if ($Page->Debet->Visible) { ?>
-		<td data-field="Debet"<?php echo $Page->Debet->CellAttributes() ?>><?php echo $ReportLanguage->Phrase("RptSum") ?>=<span data-class="tpts_r03_jurnal_Debet"<?php echo $Page->Debet->ViewAttributes() ?>><?php echo $Page->Debet->SumViewValue ?></span></td>
+		<td data-field="Debet"<?php echo $Page->Debet->CellAttributes() ?>><?php echo $ReportLanguage->Phrase("RptSum") ?>=<span data-class="tpts_r04_bukubesar_Debet"<?php echo $Page->Debet->ViewAttributes() ?>><?php echo $Page->Debet->SumViewValue ?></span></td>
 <?php } ?>
 <?php if ($Page->Kredit->Visible) { ?>
-		<td data-field="Kredit"<?php echo $Page->Kredit->CellAttributes() ?>><?php echo $ReportLanguage->Phrase("RptSum") ?>=<span data-class="tpts_r03_jurnal_Kredit"<?php echo $Page->Kredit->ViewAttributes() ?>><?php echo $Page->Kredit->SumViewValue ?></span></td>
+		<td data-field="Kredit"<?php echo $Page->Kredit->CellAttributes() ?>><?php echo $ReportLanguage->Phrase("RptSum") ?>=<span data-class="tpts_r04_bukubesar_Kredit"<?php echo $Page->Kredit->ViewAttributes() ?>><?php echo $Page->Kredit->SumViewValue ?></span></td>
 <?php } ?>
 	</tr>
 <?php } else { ?>
@@ -2692,9 +2872,6 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php if ($Page->Tanggal->Visible) { ?>
 		<td data-field="Tanggal"<?php echo $Page->Tanggal->CellAttributes() ?>>&nbsp;</td>
 <?php } ?>
-<?php if ($Page->Rekening->Visible) { ?>
-		<td data-field="Rekening"<?php echo $Page->Rekening->CellAttributes() ?>>&nbsp;</td>
-<?php } ?>
 <?php if ($Page->RekeningNama->Visible) { ?>
 		<td data-field="RekeningNama"<?php echo $Page->RekeningNama->CellAttributes() ?>>&nbsp;</td>
 <?php } ?>
@@ -2703,11 +2880,11 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 <?php if ($Page->Debet->Visible) { ?>
 		<td data-field="Debet"<?php echo $Page->Debet->CellAttributes() ?>>
-<span data-class="tpts_r03_jurnal_Debet"<?php echo $Page->Debet->ViewAttributes() ?>><?php echo $Page->Debet->SumViewValue ?></span></td>
+<span data-class="tpts_r04_bukubesar_Debet"<?php echo $Page->Debet->ViewAttributes() ?>><?php echo $Page->Debet->SumViewValue ?></span></td>
 <?php } ?>
 <?php if ($Page->Kredit->Visible) { ?>
 		<td data-field="Kredit"<?php echo $Page->Kredit->CellAttributes() ?>>
-<span data-class="tpts_r03_jurnal_Kredit"<?php echo $Page->Kredit->ViewAttributes() ?>><?php echo $Page->Kredit->SumViewValue ?></span></td>
+<span data-class="tpts_r04_bukubesar_Kredit"<?php echo $Page->Kredit->ViewAttributes() ?>><?php echo $Page->Kredit->SumViewValue ?></span></td>
 <?php } ?>
 	</tr>
 <?php } ?>
@@ -2733,7 +2910,7 @@ while ($rsgrp && !$rsgrp->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page-
 <?php } ?>
 <?php if ($Page->Export == "" && !($Page->DrillDown && $Page->TotalGrps > 0)) { ?>
 <div class="panel-footer ewGridLowerPanel">
-<?php include "r03_jurnalsmrypager.php" ?>
+<?php include "r04_bukubesarsmrypager.php" ?>
 <div class="clearfix"></div>
 </div>
 <?php } ?>
