@@ -583,6 +583,9 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="10162">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
     <menu id="10160">
       <phrase id="menutext" value="Main Menu" />
     </menu>
@@ -1135,6 +1138,12 @@
       <field id="keterangan">
         <phrase id="fldcaption" value="Keterangan" />
       </field>
+    </table>
+    <table id="t87_neraca">
+      <phrase id="tblcaption" value="Neraca" />
+      <field id="field01" />
+      <field id="field02" />
+      <field id="field03" />
     </table>
     <table id="t88_labarugi">
       <phrase id="tblcaption" value="Laba Rugi" />
