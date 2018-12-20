@@ -412,7 +412,7 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 	var $SelectedCount = 0;
 	var $SelectedIndex = 0;
 	var $ShowOtherOptions = FALSE;
-	var $DisplayRecs = 20;
+	var $DisplayRecs = 100;
 	var $StartRec;
 	var $StopRec;
 	var $TotalRecs = 0;
@@ -461,6 +461,9 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 		$this->Command = strtolower(@$_GET["cmd"]);
 		if ($this->IsPageRequest()) { // Validate request
 
+			// Set up records per page
+			$this->SetUpDisplayRecs();
+
 			// Handle reset command
 			$this->ResetCmd();
 
@@ -491,7 +494,7 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 		if ($this->getRecordsPerPage() <> "") {
 			$this->DisplayRecs = $this->getRecordsPerPage(); // Restore from Session
 		} else {
-			$this->DisplayRecs = 20; // Load default
+			$this->DisplayRecs = 100; // Load default
 		}
 
 		// Load Sorting Order
@@ -537,6 +540,27 @@ class ct04_pinjamanangsurantemp_grid extends ct04_pinjamanangsurantemp {
 				if ($this->Recordset = $this->LoadRecordset())
 					$this->TotalRecs = $this->Recordset->RecordCount();
 			}
+		}
+	}
+
+	// Set up number of records displayed per page
+	function SetUpDisplayRecs() {
+		$sWrk = @$_GET[EW_TABLE_REC_PER_PAGE];
+		if ($sWrk <> "") {
+			if (is_numeric($sWrk)) {
+				$this->DisplayRecs = intval($sWrk);
+			} else {
+				if (strtolower($sWrk) == "all") { // Display all records
+					$this->DisplayRecs = -1;
+				} else {
+					$this->DisplayRecs = 100; // Non-numeric, load default
+				}
+			}
+			$this->setRecordsPerPage($this->DisplayRecs); // Save to Session
+
+			// Reset start position
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
 		}
 	}
 

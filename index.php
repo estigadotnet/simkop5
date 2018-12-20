@@ -270,6 +270,10 @@ class cdefault {
 		$this->Page_Terminate("cf01_home.php"); // Exit and go to default page
 		if ($Security->AllowList(CurrentProjectID() . 'cf02_tutupbuku.php'))
 			$this->Page_Terminate("cf02_tutupbuku.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf03_labarugi.php'))
+			$this->Page_Terminate("cf03_labarugi.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf04_neraca.php'))
+			$this->Page_Terminate("cf04_neraca.php");
 		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
 			$this->Page_Terminate("t01_nasabahlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))
@@ -288,6 +292,10 @@ class cdefault {
 			$this->Page_Terminate("t07_marketinglist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't08_pinjamanpotongan'))
 			$this->Page_Terminate("t08_pinjamanpotonganlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't10_jurnal'))
+			$this->Page_Terminate("t10_jurnallist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't88_labarugi'))
+			$this->Page_Terminate("t88_labarugilist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't89_rektran'))
 			$this->Page_Terminate("t89_rektranlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't90_rektran'))
@@ -310,8 +318,6 @@ class cdefault {
 			$this->Page_Terminate("t98_userlevelpermissionslist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
 			$this->Page_Terminate("t99_audittraillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf03_labarugi.php'))
-			$this->Page_Terminate("cf03_labarugi.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {

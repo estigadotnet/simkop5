@@ -47,7 +47,7 @@ class ct06_pinjamantitipan extends cTable {
 		$this->DetailEdit = FALSE; // Allow detail edit
 		$this->DetailView = FALSE; // Allow detail view
 		$this->ShowMultipleDetails = FALSE; // Show multiple details
-		$this->GridAddRowCount = 5;
+		$this->GridAddRowCount = 2;
 		$this->AllowAddDeleteRow = ew_AllowAddDeleteRow(); // Allow add/delete row
 		$this->UserIDAllowSecurity = 0; // User ID Allow
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
@@ -1140,6 +1140,13 @@ class ct06_pinjamantitipan extends cTable {
 
 		//echo "Row Inserted"
 		f_update_saldo_titipan($_SESSION["pinjaman_id"]);
+		$Kontrak_No = ew_ExecuteScalar("select Kontrak_No from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");
+
+		// kodetransaksi = 07
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '07'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '07'");
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No, $rekdebet, $rsnew["Masuk"], 0, "Titipan Masuk Angsuran ke ".$rsnew["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No, $rekkredit, 0, $rsnew["Masuk"], "Titipan Masuk Angsuran ke ".$rsnew["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
 	}
 
 	// Row Updating event
@@ -1156,6 +1163,17 @@ class ct06_pinjamantitipan extends cTable {
 
 		//echo "Row Updated";
 		f_update_saldo_titipan($_SESSION["pinjaman_id"]);
+		$Kontrak_No = ew_ExecuteScalar("select Kontrak_No from t03_pinjaman where id = ".$_SESSION["pinjaman_id"]."");
+		$rsupdate["Masuk"] = ($rsold["Masuk"] <> $rsnew["Masuk"]) ? $rsnew["Masuk"] : $rsold["Masuk"];
+		$rsupdate["Angsuran_Ke"] = ($rsold["Angsuran_Ke"] <> $rsnew["Angsuran_Ke"]) ? $rsnew["Angsuran_Ke"] : $rsold["Angsuran_Ke"];
+
+		// kodetransaksi = 07
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '07'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '07'");
+		f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No, $rekdebet, "Titipan Masuk Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No, $rekdebet, $rsupdate["Masuk"], 0, "Titipan Masuk Angsuran ke ".$rsupdate["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No, $rekkredit, "Titipan Masuk Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No, $rekkredit, 0, $rsupdate["Masuk"], "Titipan Masuk Angsuran ke ".$rsupdate["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
 	}
 
 	// Row Update Conflict event

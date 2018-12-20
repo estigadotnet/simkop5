@@ -56,6 +56,7 @@
 <option value="10"<?php if ($Page->DisplayGrps == 10) echo " selected" ?>>10</option>
 <option value="20"<?php if ($Page->DisplayGrps == 20) echo " selected" ?>>20</option>
 <option value="50"<?php if ($Page->DisplayGrps == 50) echo " selected" ?>>50</option>
+<option value="100"<?php if ($Page->DisplayGrps == 100) echo " selected" ?>>100</option>
 <option value="ALL"<?php if ($Page->getGroupPerPage() == -1) echo " selected" ?>><?php echo $ReportLanguage->Phrase("AllRecords") ?></option>
 </select>
 </div>

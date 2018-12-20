@@ -55,9 +55,9 @@ class crr04_bukubesar extends crTableBase {
 		$this->Periode->FldGroupSql = "";
 
 		// Tanggal
-		$this->Tanggal = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Tanggal', 'Tanggal', '`Tanggal`', 133, EWR_DATATYPE_DATE, 0);
+		$this->Tanggal = new crField('r04_bukubesar', 'r04_bukubesar', 'x_Tanggal', 'Tanggal', '`Tanggal`', 133, EWR_DATATYPE_DATE, 7);
 		$this->Tanggal->Sortable = TRUE; // Allow sort
-		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EWR_DATE_FORMAT"], $ReportLanguage->Phrase("IncorrectDate"));
+		$this->Tanggal->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectField");
 		$this->fields['Tanggal'] = &$this->Tanggal;
 		$this->Tanggal->DateFilter = "";
 		$this->Tanggal->SqlSelect = "";

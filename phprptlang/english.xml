@@ -350,6 +350,12 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="29">
+      <phrase id="menutext" value="t 88 labarugi" />
+    </menu>
+    <menu id="28">
+      <phrase id="menutext" value="Laba Rugi 2" />
+    </menu>
     <menu id="23">
       <phrase id="menutext" value="t 89 rektran" />
     </menu>
@@ -431,6 +437,9 @@
     <menu id="18">
       <phrase id="menutext" value="Pinjaman" />
     </menu>
+    <table id="cfr01_labarugi_php">
+      <phrase id="tblcaption" value="Laba Rugi 2" />
+    </table>
     <table id="r01_pinjaman">
       <phrase id="tblcaption" value="Pinjaman" />
       <field id="id">
@@ -543,6 +552,66 @@
       </field>
       <field id="active">
         <phrase id="fldcaption" value="active" />
+      </field>
+    </table>
+    <table id="r03_jurnal">
+      <phrase id="tblcaption" value="Jurnal" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="No. Transaksi" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="No. Rekening" />
+      </field>
+      <field id="rekeningnama">
+        <phrase id="fldcaption" value="Nama Rekening" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="r04_bukubesar">
+      <phrase id="tblcaption" value="Buku Besar" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="No. Rekening" />
+      </field>
+      <field id="rekeningnama">
+        <phrase id="fldcaption" value="Nama Rekening" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
       </field>
     </table>
     <table id="t01_nasabah">
@@ -911,6 +980,18 @@
         <phrase id="fldcaption" value="Keterangan" />
       </field>
     </table>
+    <table id="t88_labarugi">
+      <phrase id="tblcaption" value="t 88 labarugi" />
+      <field id="field01">
+        <phrase id="fldcaption" value="field 01" />
+      </field>
+      <field id="field02">
+        <phrase id="fldcaption" value="field 02" />
+      </field>
+      <field id="field03">
+        <phrase id="fldcaption" value="field 03" />
+      </field>
+    </table>
     <table id="t89_rektran">
       <phrase id="tblcaption" value="t 89 rektran" />
       <field id="id">
@@ -1161,66 +1242,6 @@
       </field>
       <field id="newvalue">
         <phrase id="fldcaption" value="newvalue" />
-      </field>
-    </table>
-    <table id="r03_jurnal">
-      <phrase id="tblcaption" value="Jurnal" />
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="periode">
-        <phrase id="fldcaption" value="Periode" />
-      </field>
-      <field id="tanggal">
-        <phrase id="fldcaption" value="Tanggal" />
-      </field>
-      <field id="rekening">
-        <phrase id="fldcaption" value="No. Rekening" />
-      </field>
-      <field id="rekeningnama">
-        <phrase id="fldcaption" value="Nama Rekening" />
-      </field>
-      <field id="keterangan">
-        <phrase id="fldcaption" value="Keterangan" />
-      </field>
-      <field id="debet">
-        <phrase id="fldcaption" value="Debet" />
-      </field>
-      <field id="kredit">
-        <phrase id="fldcaption" value="Kredit" />
-      </field>
-      <field id="nomortransaksi">
-        <phrase id="fldcaption" value="Nomor Transaksi" />
-      </field>
-    </table>
-    <table id="r04_bukubesar">
-      <phrase id="tblcaption" value="Buku Besar" />
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="periode">
-        <phrase id="fldcaption" value="Periode" />
-      </field>
-      <field id="tanggal">
-        <phrase id="fldcaption" value="Tanggal" />
-      </field>
-      <field id="rekening">
-        <phrase id="fldcaption" value="No. Rekening" />
-      </field>
-      <field id="rekeningnama">
-        <phrase id="fldcaption" value="Nama Rekening" />
-      </field>
-      <field id="keterangan">
-        <phrase id="fldcaption" value="Keterangan" />
-      </field>
-      <field id="debet">
-        <phrase id="fldcaption" value="Debet" />
-      </field>
-      <field id="kredit">
-        <phrase id="fldcaption" value="Kredit" />
-      </field>
-      <field id="nomortransaksi">
-        <phrase id="fldcaption" value="Nomor Transaksi" />
       </field>
     </table>
     <table id="v01_labarugi">

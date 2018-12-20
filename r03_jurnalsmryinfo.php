@@ -12,12 +12,12 @@ class crr03_jurnal extends crTableBase {
 	var $id;
 	var $Periode;
 	var $Tanggal;
+	var $NomorTransaksi;
 	var $Rekening;
 	var $RekeningNama;
 	var $Keterangan;
 	var $Debet;
 	var $Kredit;
-	var $NomorTransaksi;
 
 	//
 	// Table class constructor
@@ -63,6 +63,14 @@ class crr03_jurnal extends crTableBase {
 		$this->Tanggal->SqlSelect = "";
 		$this->Tanggal->SqlOrderBy = "";
 
+		// NomorTransaksi
+		$this->NomorTransaksi = new crField('r03_jurnal', 'r03_jurnal', 'x_NomorTransaksi', 'NomorTransaksi', '`NomorTransaksi`', 200, EWR_DATATYPE_STRING, -1);
+		$this->NomorTransaksi->Sortable = TRUE; // Allow sort
+		$this->fields['NomorTransaksi'] = &$this->NomorTransaksi;
+		$this->NomorTransaksi->DateFilter = "";
+		$this->NomorTransaksi->SqlSelect = "";
+		$this->NomorTransaksi->SqlOrderBy = "";
+
 		// Rekening
 		$this->Rekening = new crField('r03_jurnal', 'r03_jurnal', 'x_Rekening', 'Rekening', '`Rekening`', 200, EWR_DATATYPE_STRING, -1);
 		$this->Rekening->Sortable = TRUE; // Allow sort
@@ -104,14 +112,6 @@ class crr03_jurnal extends crTableBase {
 		$this->Kredit->DateFilter = "";
 		$this->Kredit->SqlSelect = "";
 		$this->Kredit->SqlOrderBy = "";
-
-		// NomorTransaksi
-		$this->NomorTransaksi = new crField('r03_jurnal', 'r03_jurnal', 'x_NomorTransaksi', 'NomorTransaksi', '`NomorTransaksi`', 200, EWR_DATATYPE_STRING, -1);
-		$this->NomorTransaksi->Sortable = TRUE; // Allow sort
-		$this->fields['NomorTransaksi'] = &$this->NomorTransaksi;
-		$this->NomorTransaksi->DateFilter = "";
-		$this->NomorTransaksi->SqlSelect = "";
-		$this->NomorTransaksi->SqlOrderBy = "";
 	}
 
 	// Set Field Visibility

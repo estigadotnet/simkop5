@@ -1,12 +1,12 @@
 <?php
 
 // Global variable for table object
-$t94_log = NULL;
+$t10_jurnal = NULL;
 
 //
-// Table class for t94_log
+// Table class for t10_jurnal
 //
-class ct94_log extends cTable {
+class ct10_jurnal extends cTable {
 	var $AuditTrailOnAdd = TRUE;
 	var $AuditTrailOnEdit = TRUE;
 	var $AuditTrailOnDelete = TRUE;
@@ -14,8 +14,13 @@ class ct94_log extends cTable {
 	var $AuditTrailOnViewData = FALSE;
 	var $AuditTrailOnSearch = FALSE;
 	var $id;
-	var $index_;
-	var $subj_;
+	var $Tanggal;
+	var $Periode;
+	var $NomorTransaksi;
+	var $Rekening;
+	var $Debet;
+	var $Kredit;
+	var $Keterangan;
 
 	//
 	// Table class constructor
@@ -25,12 +30,12 @@ class ct94_log extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 't94_log';
-		$this->TableName = 't94_log';
+		$this->TableVar = 't10_jurnal';
+		$this->TableName = 't10_jurnal';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t94_log`";
+		$this->UpdateTable = "`t10_jurnal`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -48,21 +53,50 @@ class ct94_log extends cTable {
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
 		// id
-		$this->id = new cField('t94_log', 't94_log', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id = new cField('t10_jurnal', 't10_jurnal', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
 
-		// index_
-		$this->index_ = new cField('t94_log', 't94_log', 'x_index_', 'index_', '`index_`', '`index_`', 16, -1, FALSE, '`index_`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->index_->Sortable = TRUE; // Allow sort
-		$this->index_->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['index_'] = &$this->index_;
+		// Tanggal
+		$this->Tanggal = new cField('t10_jurnal', 't10_jurnal', 'x_Tanggal', 'Tanggal', '`Tanggal`', ew_CastDateFieldForLike('`Tanggal`', 7, "DB"), 133, 7, FALSE, '`Tanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Tanggal->Sortable = TRUE; // Allow sort
+		$this->Tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
+		$this->fields['Tanggal'] = &$this->Tanggal;
 
-		// subj_
-		$this->subj_ = new cField('t94_log', 't94_log', 'x_subj_', 'subj_', '`subj_`', '`subj_`', 200, -1, FALSE, '`subj_`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->subj_->Sortable = TRUE; // Allow sort
-		$this->fields['subj_'] = &$this->subj_;
+		// Periode
+		$this->Periode = new cField('t10_jurnal', 't10_jurnal', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Periode->Sortable = TRUE; // Allow sort
+		$this->fields['Periode'] = &$this->Periode;
+
+		// NomorTransaksi
+		$this->NomorTransaksi = new cField('t10_jurnal', 't10_jurnal', 'x_NomorTransaksi', 'NomorTransaksi', '`NomorTransaksi`', '`NomorTransaksi`', 200, -1, FALSE, '`NomorTransaksi`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->NomorTransaksi->Sortable = TRUE; // Allow sort
+		$this->fields['NomorTransaksi'] = &$this->NomorTransaksi;
+
+		// Rekening
+		$this->Rekening = new cField('t10_jurnal', 't10_jurnal', 'x_Rekening', 'Rekening', '`Rekening`', '`Rekening`', 200, -1, FALSE, '`Rekening`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->Rekening->Sortable = TRUE; // Allow sort
+		$this->Rekening->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->Rekening->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
+		$this->fields['Rekening'] = &$this->Rekening;
+
+		// Debet
+		$this->Debet = new cField('t10_jurnal', 't10_jurnal', 'x_Debet', 'Debet', '`Debet`', '`Debet`', 4, -1, FALSE, '`Debet`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Debet->Sortable = TRUE; // Allow sort
+		$this->Debet->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Debet'] = &$this->Debet;
+
+		// Kredit
+		$this->Kredit = new cField('t10_jurnal', 't10_jurnal', 'x_Kredit', 'Kredit', '`Kredit`', '`Kredit`', 4, -1, FALSE, '`Kredit`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Kredit->Sortable = TRUE; // Allow sort
+		$this->Kredit->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Kredit'] = &$this->Kredit;
+
+		// Keterangan
+		$this->Keterangan = new cField('t10_jurnal', 't10_jurnal', 'x_Keterangan', 'Keterangan', '`Keterangan`', '`Keterangan`', 200, -1, FALSE, '`Keterangan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Keterangan->Sortable = TRUE; // Allow sort
+		$this->fields['Keterangan'] = &$this->Keterangan;
 	}
 
 	// Set Field Visibility
@@ -99,35 +133,11 @@ class ct94_log extends cTable {
 		}
 	}
 
-	// Current detail table name
-	function getCurrentDetailTable() {
-		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE];
-	}
-
-	function setCurrentDetailTable($v) {
-		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE] = $v;
-	}
-
-	// Get detail url
-	function GetDetailUrl() {
-
-		// Detail url
-		$sDetailUrl = "";
-		if ($this->getCurrentDetailTable() == "t95_logdesc") {
-			$sDetailUrl = $GLOBALS["t95_logdesc"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
-			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
-		}
-		if ($sDetailUrl == "") {
-			$sDetailUrl = "t94_loglist.php";
-		}
-		return $sDetailUrl;
-	}
-
 	// Table level SQL
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t94_log`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t10_jurnal`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -195,7 +205,7 @@ class ct94_log extends cTable {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() { // Order By
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`index_` ASC";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "";
 	}
 
 	function SqlOrderBy() { // For backward compatibility
@@ -380,26 +390,6 @@ class ct94_log extends cTable {
 	// Update
 	function Update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE) {
 		$conn = &$this->Connection();
-
-		// Cascade Update detail table 't95_logdesc'
-		$bCascadeUpdate = FALSE;
-		$rscascade = array();
-		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'log_id'
-			$bCascadeUpdate = TRUE;
-			$rscascade['log_id'] = $rs['id']; 
-		}
-		if ($bCascadeUpdate) {
-			if (!isset($GLOBALS["t95_logdesc"])) $GLOBALS["t95_logdesc"] = new ct95_logdesc();
-			$rswrk = $GLOBALS["t95_logdesc"]->LoadRs("`log_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
-			while ($rswrk && !$rswrk->EOF) {
-				$rskey = array();
-				$fldname = 'id';
-				$rskey[$fldname] = $rswrk->fields[$fldname];
-				$bUpdate = $GLOBALS["t95_logdesc"]->Update($rscascade, $rskey, $rswrk->fields);
-				if (!$bUpdate) return FALSE;
-				$rswrk->MoveNext();
-			}
-		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
@@ -431,14 +421,6 @@ class ct94_log extends cTable {
 	// Delete
 	function Delete(&$rs, $where = "", $curfilter = TRUE) {
 		$conn = &$this->Connection();
-
-		// Cascade delete detail table 't95_logdesc'
-		if (!isset($GLOBALS["t95_logdesc"])) $GLOBALS["t95_logdesc"] = new ct95_logdesc();
-		$rscascade = $GLOBALS["t95_logdesc"]->LoadRs("`log_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
-		while ($rscascade && !$rscascade->EOF) {
-			$GLOBALS["t95_logdesc"]->Delete($rscascade->fields);
-			$rscascade->MoveNext();
-		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
 		if ($bDelete && $this->AuditTrailOnDelete)
 			$this->WriteAuditTrailOnDelete($rs);
@@ -469,7 +451,7 @@ class ct94_log extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "t94_loglist.php";
+			return "t10_jurnallist.php";
 		}
 	}
 
@@ -479,33 +461,30 @@ class ct94_log extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "t94_loglist.php";
+		return "t10_jurnallist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("t94_logview.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("t10_jurnalview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("t94_logview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("t10_jurnalview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "t94_logadd.php?" . $this->UrlParm($parm);
+			$url = "t10_jurnaladd.php?" . $this->UrlParm($parm);
 		else
-			$url = "t94_logadd.php";
+			$url = "t10_jurnaladd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		if ($parm <> "")
-			$url = $this->KeyUrl("t94_logedit.php", $this->UrlParm($parm));
-		else
-			$url = $this->KeyUrl("t94_logedit.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+		$url = $this->KeyUrl("t10_jurnaledit.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -517,10 +496,7 @@ class ct94_log extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		if ($parm <> "")
-			$url = $this->KeyUrl("t94_logadd.php", $this->UrlParm($parm));
-		else
-			$url = $this->KeyUrl("t94_logadd.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+		$url = $this->KeyUrl("t10_jurnaladd.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -532,7 +508,7 @@ class ct94_log extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("t94_logdelete.php", $this->UrlParm());
+		return $this->KeyUrl("t10_jurnaldelete.php", $this->UrlParm());
 	}
 
 	// Add master url
@@ -634,8 +610,13 @@ class ct94_log extends cTable {
 	// Load row values from recordset
 	function LoadListRowValues(&$rs) {
 		$this->id->setDbValue($rs->fields('id'));
-		$this->index_->setDbValue($rs->fields('index_'));
-		$this->subj_->setDbValue($rs->fields('subj_'));
+		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
+		$this->Rekening->setDbValue($rs->fields('Rekening'));
+		$this->Debet->setDbValue($rs->fields('Debet'));
+		$this->Kredit->setDbValue($rs->fields('Kredit'));
+		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 	}
 
 	// Render list row values
@@ -647,35 +628,129 @@ class ct94_log extends cTable {
 
    // Common render codes
 		// id
-		// index_
-		// subj_
+		// Tanggal
+		// Periode
+		// NomorTransaksi
+		// Rekening
+		// Debet
+		// Kredit
+		// Keterangan
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// index_
-		$this->index_->ViewValue = $this->index_->CurrentValue;
-		$this->index_->ViewCustomAttributes = "";
+		// Tanggal
+		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
+		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
+		$this->Tanggal->ViewCustomAttributes = "";
 
-		// subj_
-		$this->subj_->ViewValue = $this->subj_->CurrentValue;
-		$this->subj_->ViewCustomAttributes = "";
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
+		// NomorTransaksi
+		$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
+		if (strval($this->NomorTransaksi->CurrentValue) <> "") {
+			$sFilterWrk = "`NomorTransaksi`" . ew_SearchString("=", $this->NomorTransaksi->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `NomorTransaksi`, `NomorTransaksi` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t10_jurnal`";
+		$sWhereWrk = "";
+		$this->NomorTransaksi->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->NomorTransaksi, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
+			}
+		} else {
+			$this->NomorTransaksi->ViewValue = NULL;
+		}
+		$this->NomorTransaksi->ViewCustomAttributes = "";
+
+		// Rekening
+		if (strval($this->Rekening->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Rekening->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `id`, `rekening` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+		$sWhereWrk = "";
+		$this->Rekening->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->Rekening, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->Rekening->ViewValue = $this->Rekening->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->Rekening->ViewValue = $this->Rekening->CurrentValue;
+			}
+		} else {
+			$this->Rekening->ViewValue = NULL;
+		}
+		$this->Rekening->ViewCustomAttributes = "";
+
+		// Debet
+		$this->Debet->ViewValue = $this->Debet->CurrentValue;
+		$this->Debet->ViewValue = ew_FormatNumber($this->Debet->ViewValue, 2, -2, -2, -2);
+		$this->Debet->CellCssStyle .= "text-align: right;";
+		$this->Debet->ViewCustomAttributes = "";
+
+		// Kredit
+		$this->Kredit->ViewValue = $this->Kredit->CurrentValue;
+		$this->Kredit->ViewValue = ew_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
+		$this->Kredit->CellCssStyle .= "text-align: right;";
+		$this->Kredit->ViewCustomAttributes = "";
+
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
 		$this->id->TooltipValue = "";
 
-		// index_
-		$this->index_->LinkCustomAttributes = "";
-		$this->index_->HrefValue = "";
-		$this->index_->TooltipValue = "";
+		// Tanggal
+		$this->Tanggal->LinkCustomAttributes = "";
+		$this->Tanggal->HrefValue = "";
+		$this->Tanggal->TooltipValue = "";
 
-		// subj_
-		$this->subj_->LinkCustomAttributes = "";
-		$this->subj_->HrefValue = "";
-		$this->subj_->TooltipValue = "";
+		// Periode
+		$this->Periode->LinkCustomAttributes = "";
+		$this->Periode->HrefValue = "";
+		$this->Periode->TooltipValue = "";
+
+		// NomorTransaksi
+		$this->NomorTransaksi->LinkCustomAttributes = "";
+		$this->NomorTransaksi->HrefValue = "";
+		$this->NomorTransaksi->TooltipValue = "";
+
+		// Rekening
+		$this->Rekening->LinkCustomAttributes = "";
+		$this->Rekening->HrefValue = "";
+		$this->Rekening->TooltipValue = "";
+
+		// Debet
+		$this->Debet->LinkCustomAttributes = "";
+		$this->Debet->HrefValue = "";
+		$this->Debet->TooltipValue = "";
+
+		// Kredit
+		$this->Kredit->LinkCustomAttributes = "";
+		$this->Kredit->HrefValue = "";
+		$this->Kredit->TooltipValue = "";
+
+		// Keterangan
+		$this->Keterangan->LinkCustomAttributes = "";
+		$this->Keterangan->HrefValue = "";
+		$this->Keterangan->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -694,17 +769,47 @@ class ct94_log extends cTable {
 		$this->id->EditValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// index_
-		$this->index_->EditAttrs["class"] = "form-control";
-		$this->index_->EditCustomAttributes = "";
-		$this->index_->EditValue = $this->index_->CurrentValue;
-		$this->index_->PlaceHolder = ew_RemoveHtml($this->index_->FldCaption());
+		// Tanggal
+		$this->Tanggal->EditAttrs["class"] = "form-control";
+		$this->Tanggal->EditCustomAttributes = "";
+		$this->Tanggal->EditValue = ew_FormatDateTime($this->Tanggal->CurrentValue, 7);
+		$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
-		// subj_
-		$this->subj_->EditAttrs["class"] = "form-control";
-		$this->subj_->EditCustomAttributes = "";
-		$this->subj_->EditValue = $this->subj_->CurrentValue;
-		$this->subj_->PlaceHolder = ew_RemoveHtml($this->subj_->FldCaption());
+		// Periode
+		$this->Periode->EditAttrs["class"] = "form-control";
+		$this->Periode->EditCustomAttributes = "";
+		$this->Periode->EditValue = $this->Periode->CurrentValue;
+		$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
+
+		// NomorTransaksi
+		$this->NomorTransaksi->EditAttrs["class"] = "form-control";
+		$this->NomorTransaksi->EditCustomAttributes = "";
+		$this->NomorTransaksi->EditValue = $this->NomorTransaksi->CurrentValue;
+		$this->NomorTransaksi->PlaceHolder = ew_RemoveHtml($this->NomorTransaksi->FldCaption());
+
+		// Rekening
+		$this->Rekening->EditAttrs["class"] = "form-control";
+		$this->Rekening->EditCustomAttributes = "";
+
+		// Debet
+		$this->Debet->EditAttrs["class"] = "form-control";
+		$this->Debet->EditCustomAttributes = "";
+		$this->Debet->EditValue = $this->Debet->CurrentValue;
+		$this->Debet->PlaceHolder = ew_RemoveHtml($this->Debet->FldCaption());
+		if (strval($this->Debet->EditValue) <> "" && is_numeric($this->Debet->EditValue)) $this->Debet->EditValue = ew_FormatNumber($this->Debet->EditValue, -2, -2, -2, -2);
+
+		// Kredit
+		$this->Kredit->EditAttrs["class"] = "form-control";
+		$this->Kredit->EditCustomAttributes = "";
+		$this->Kredit->EditValue = $this->Kredit->CurrentValue;
+		$this->Kredit->PlaceHolder = ew_RemoveHtml($this->Kredit->FldCaption());
+		if (strval($this->Kredit->EditValue) <> "" && is_numeric($this->Kredit->EditValue)) $this->Kredit->EditValue = ew_FormatNumber($this->Kredit->EditValue, -2, -2, -2, -2);
+
+		// Keterangan
+		$this->Keterangan->EditAttrs["class"] = "form-control";
+		$this->Keterangan->EditCustomAttributes = "";
+		$this->Keterangan->EditValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -733,12 +838,23 @@ class ct94_log extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->index_->Exportable) $Doc->ExportCaption($this->index_);
-					if ($this->subj_->Exportable) $Doc->ExportCaption($this->subj_);
+					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
+					if ($this->Tanggal->Exportable) $Doc->ExportCaption($this->Tanggal);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
+					if ($this->NomorTransaksi->Exportable) $Doc->ExportCaption($this->NomorTransaksi);
+					if ($this->Rekening->Exportable) $Doc->ExportCaption($this->Rekening);
+					if ($this->Debet->Exportable) $Doc->ExportCaption($this->Debet);
+					if ($this->Kredit->Exportable) $Doc->ExportCaption($this->Kredit);
+					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->index_->Exportable) $Doc->ExportCaption($this->index_);
-					if ($this->subj_->Exportable) $Doc->ExportCaption($this->subj_);
+					if ($this->Tanggal->Exportable) $Doc->ExportCaption($this->Tanggal);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
+					if ($this->NomorTransaksi->Exportable) $Doc->ExportCaption($this->NomorTransaksi);
+					if ($this->Rekening->Exportable) $Doc->ExportCaption($this->Rekening);
+					if ($this->Debet->Exportable) $Doc->ExportCaption($this->Debet);
+					if ($this->Kredit->Exportable) $Doc->ExportCaption($this->Kredit);
+					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
 				}
 				$Doc->EndExportRow();
 			}
@@ -770,12 +886,23 @@ class ct94_log extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->index_->Exportable) $Doc->ExportField($this->index_);
-						if ($this->subj_->Exportable) $Doc->ExportField($this->subj_);
+						if ($this->id->Exportable) $Doc->ExportField($this->id);
+						if ($this->Tanggal->Exportable) $Doc->ExportField($this->Tanggal);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
+						if ($this->NomorTransaksi->Exportable) $Doc->ExportField($this->NomorTransaksi);
+						if ($this->Rekening->Exportable) $Doc->ExportField($this->Rekening);
+						if ($this->Debet->Exportable) $Doc->ExportField($this->Debet);
+						if ($this->Kredit->Exportable) $Doc->ExportField($this->Kredit);
+						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->index_->Exportable) $Doc->ExportField($this->index_);
-						if ($this->subj_->Exportable) $Doc->ExportField($this->subj_);
+						if ($this->Tanggal->Exportable) $Doc->ExportField($this->Tanggal);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
+						if ($this->NomorTransaksi->Exportable) $Doc->ExportField($this->NomorTransaksi);
+						if ($this->Rekening->Exportable) $Doc->ExportField($this->Rekening);
+						if ($this->Debet->Exportable) $Doc->ExportField($this->Debet);
+						if ($this->Kredit->Exportable) $Doc->ExportField($this->Kredit);
+						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
 					}
 					$Doc->EndExportRow();
 				}
@@ -819,7 +946,7 @@ class ct94_log extends cTable {
 
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
-		$table = 't94_log';
+		$table = 't10_jurnal';
 		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -828,7 +955,7 @@ class ct94_log extends cTable {
 	function WriteAuditTrailOnAdd(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnAdd) return;
-		$table = 't94_log';
+		$table = 't10_jurnal';
 
 		// Get key value
 		$key = "";
@@ -862,7 +989,7 @@ class ct94_log extends cTable {
 	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
 		global $Language;
 		if (!$this->AuditTrailOnEdit) return;
-		$table = 't94_log';
+		$table = 't10_jurnal';
 
 		// Get key value
 		$key = "";
@@ -909,7 +1036,7 @@ class ct94_log extends cTable {
 	function WriteAuditTrailOnDelete(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnDelete) return;
-		$table = 't94_log';
+		$table = 't10_jurnal';
 
 		// Get key value
 		$key = "";
@@ -985,6 +1112,7 @@ class ct94_log extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		$rsnew["Periode"] = $GLOBALS["Periode"];
 		return TRUE;
 	}
 

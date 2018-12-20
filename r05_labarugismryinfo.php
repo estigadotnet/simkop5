@@ -7,15 +7,11 @@ $r05_labarugi = NULL;
 // Table class for r05_labarugi
 //
 class crr05_labarugi extends crTableBase {
-	var $ShowGroupHeaderAsRow = TRUE;
+	var $ShowGroupHeaderAsRow = FALSE;
 	var $ShowCompactSummaryFooter = TRUE;
-	var $idhead;
-	var $rekeninghead;
-	var $iddetail;
-	var $rekeningdetail;
-	var $debet;
-	var $kredit;
-	var $periode;
+	var $field01;
+	var $field02;
+	var $field03;
 
 	//
 	// Table class constructor
@@ -29,81 +25,30 @@ class crr05_labarugi extends crTableBase {
 		$this->ExportAll = FALSE;
 		$this->ExportPageBreakCount = 0;
 
-		// idhead
-		$this->idhead = new crField('r05_labarugi', 'r05_labarugi', 'x_idhead', 'idhead', '`idhead`', 200, EWR_DATATYPE_STRING, -1);
-		$this->idhead->Sortable = TRUE; // Allow sort
-		$this->fields['idhead'] = &$this->idhead;
-		$this->idhead->DateFilter = "";
-		$this->idhead->SqlSelect = "";
-		$this->idhead->SqlOrderBy = "";
+		// field01
+		$this->field01 = new crField('r05_labarugi', 'r05_labarugi', 'x_field01', 'field01', '`field01`', 200, EWR_DATATYPE_STRING, -1);
+		$this->field01->Sortable = TRUE; // Allow sort
+		$this->fields['field01'] = &$this->field01;
+		$this->field01->DateFilter = "";
+		$this->field01->SqlSelect = "";
+		$this->field01->SqlOrderBy = "";
 
-		// rekeninghead
-		$this->rekeninghead = new crField('r05_labarugi', 'r05_labarugi', 'x_rekeninghead', 'rekeninghead', '`rekeninghead`', 200, EWR_DATATYPE_STRING, -1);
-		$this->rekeninghead->Sortable = TRUE; // Allow sort
-		$this->rekeninghead->GroupingFieldId = 2;
-		$this->rekeninghead->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
-		$this->rekeninghead->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
-		$this->fields['rekeninghead'] = &$this->rekeninghead;
-		$this->rekeninghead->DateFilter = "";
-		$this->rekeninghead->SqlSelect = "";
-		$this->rekeninghead->SqlOrderBy = "";
-		$this->rekeninghead->FldGroupByType = "";
-		$this->rekeninghead->FldGroupInt = "0";
-		$this->rekeninghead->FldGroupSql = "";
+		// field02
+		$this->field02 = new crField('r05_labarugi', 'r05_labarugi', 'x_field02', 'field02', '`field02`', 200, EWR_DATATYPE_STRING, -1);
+		$this->field02->Sortable = TRUE; // Allow sort
+		$this->fields['field02'] = &$this->field02;
+		$this->field02->DateFilter = "";
+		$this->field02->SqlSelect = "";
+		$this->field02->SqlOrderBy = "";
 
-		// iddetail
-		$this->iddetail = new crField('r05_labarugi', 'r05_labarugi', 'x_iddetail', 'iddetail', '`iddetail`', 200, EWR_DATATYPE_STRING, -1);
-		$this->iddetail->Sortable = TRUE; // Allow sort
-		$this->fields['iddetail'] = &$this->iddetail;
-		$this->iddetail->DateFilter = "";
-		$this->iddetail->SqlSelect = "";
-		$this->iddetail->SqlOrderBy = "";
-
-		// rekeningdetail
-		$this->rekeningdetail = new crField('r05_labarugi', 'r05_labarugi', 'x_rekeningdetail', 'rekeningdetail', '`rekeningdetail`', 200, EWR_DATATYPE_STRING, -1);
-		$this->rekeningdetail->Sortable = TRUE; // Allow sort
-		$this->rekeningdetail->GroupingFieldId = 3;
-		$this->rekeningdetail->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
-		$this->rekeningdetail->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
-		$this->fields['rekeningdetail'] = &$this->rekeningdetail;
-		$this->rekeningdetail->DateFilter = "";
-		$this->rekeningdetail->SqlSelect = "";
-		$this->rekeningdetail->SqlOrderBy = "";
-		$this->rekeningdetail->FldGroupByType = "";
-		$this->rekeningdetail->FldGroupInt = "0";
-		$this->rekeningdetail->FldGroupSql = "";
-
-		// debet
-		$this->debet = new crField('r05_labarugi', 'r05_labarugi', 'x_debet', 'debet', '`debet`', 4, EWR_DATATYPE_NUMBER, -1);
-		$this->debet->Sortable = TRUE; // Allow sort
-		$this->debet->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
-		$this->fields['debet'] = &$this->debet;
-		$this->debet->DateFilter = "";
-		$this->debet->SqlSelect = "";
-		$this->debet->SqlOrderBy = "";
-
-		// kredit
-		$this->kredit = new crField('r05_labarugi', 'r05_labarugi', 'x_kredit', 'kredit', '`kredit`', 4, EWR_DATATYPE_NUMBER, -1);
-		$this->kredit->Sortable = TRUE; // Allow sort
-		$this->kredit->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
-		$this->fields['kredit'] = &$this->kredit;
-		$this->kredit->DateFilter = "";
-		$this->kredit->SqlSelect = "";
-		$this->kredit->SqlOrderBy = "";
-
-		// periode
-		$this->periode = new crField('r05_labarugi', 'r05_labarugi', 'x_periode', 'periode', '`periode`', 200, EWR_DATATYPE_STRING, -1);
-		$this->periode->Sortable = TRUE; // Allow sort
-		$this->periode->GroupingFieldId = 1;
-		$this->periode->ShowGroupHeaderAsRow = $this->ShowGroupHeaderAsRow;
-		$this->periode->ShowCompactSummaryFooter = $this->ShowCompactSummaryFooter;
-		$this->fields['periode'] = &$this->periode;
-		$this->periode->DateFilter = "";
-		$this->periode->SqlSelect = "";
-		$this->periode->SqlOrderBy = "";
-		$this->periode->FldGroupByType = "";
-		$this->periode->FldGroupInt = "0";
-		$this->periode->FldGroupSql = "";
+		// field03
+		$this->field03 = new crField('r05_labarugi', 'r05_labarugi', 'x_field03', 'field03', '`field03`', 200, EWR_DATATYPE_STRING, -1);
+		$this->field03->Sortable = TRUE; // Allow sort
+		$this->field03->FldDefaultErrMsg = $ReportLanguage->Phrase("IncorrectFloat");
+		$this->fields['field03'] = &$this->field03;
+		$this->field03->DateFilter = "";
+		$this->field03->SqlSelect = "";
+		$this->field03->SqlOrderBy = "";
 	}
 
 	// Set Field Visibility
@@ -175,7 +120,7 @@ class crr05_labarugi extends crTableBase {
 	var $_SqlFrom = "";
 
 	function getSqlFrom() {
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`v01_labarugi`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t88_labarugi`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -251,7 +196,7 @@ class crr05_labarugi extends crTableBase {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() {
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`periode` ASC, `rekeninghead` ASC, `rekeningdetail` ASC";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "";
 	}
 
 	function SqlOrderBy() { // For backward compatibility
@@ -268,7 +213,7 @@ class crr05_labarugi extends crTableBase {
 	var $_SqlFirstGroupField = "";
 
 	function getSqlFirstGroupField() {
-		return ($this->_SqlFirstGroupField <> "") ? $this->_SqlFirstGroupField : "`periode`";
+		return ($this->_SqlFirstGroupField <> "") ? $this->_SqlFirstGroupField : "";
 	}
 
 	function SqlFirstGroupField() { // For backward compatibility
@@ -298,7 +243,7 @@ class crr05_labarugi extends crTableBase {
 	var $_SqlOrderByGroup = "";
 
 	function getSqlOrderByGroup() {
-		return ($this->_SqlOrderByGroup <> "") ? $this->_SqlOrderByGroup : "`periode` ASC";
+		return ($this->_SqlOrderByGroup <> "") ? $this->_SqlOrderByGroup : "";
 	}
 
 	function SqlOrderByGroup() { // For backward compatibility
@@ -313,7 +258,7 @@ class crr05_labarugi extends crTableBase {
 	var $_SqlSelectAgg = "";
 
 	function getSqlSelectAgg() {
-		return ($this->_SqlSelectAgg <> "") ? $this->_SqlSelectAgg : "SELECT SUM(`debet`) AS `sum_debet`, SUM(`kredit`) AS `sum_kredit` FROM " . $this->getSqlFrom();
+		return ($this->_SqlSelectAgg <> "") ? $this->_SqlSelectAgg : "SELECT * FROM " . $this->getSqlFrom();
 	}
 
 	function SqlSelectAgg() { // For backward compatibility

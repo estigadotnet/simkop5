@@ -34,8 +34,8 @@ function f_hapusjurnal($Periode, $NomorTransaksi, $Rekening, $Keterangan) {
 			NomorTransaksi = '".$NomorTransaksi."' and
 			Rekening = '".$Rekening."' and
 			Keterangan = '".$Keterangan."'
-		";
-	Conn()->Execute($q);
+		"; //echo $q; //exit;
+	Conn()->Execute($q); 
 }
 
 function f_buatjurnal($Periode, $NomorTransaksi, $Rekening, $Debet, $Kredit, $Keterangan) {
@@ -57,7 +57,7 @@ function f_buatjurnal($Periode, $NomorTransaksi, $Rekening, $Debet, $Kredit, $Ke
 			".$Kredit.",
 			'".$Keterangan."'
 		)
-	";
+	"; //echo $q; exit;
 	Conn()->Execute($q);
 }
 

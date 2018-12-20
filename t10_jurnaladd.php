@@ -5,8 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t06_pinjamantitipaninfo.php" ?>
-<?php include_once "t03_pinjamaninfo.php" ?>
+<?php include_once "t10_jurnalinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -15,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t06_pinjamantitipan_add = NULL; // Initialize page object first
+$t10_jurnal_add = NULL; // Initialize page object first
 
-class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
+class ct10_jurnal_add extends ct10_jurnal {
 
 	// Page ID
 	var $PageID = 'add';
@@ -26,10 +25,10 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't06_pinjamantitipan';
+	var $TableName = 't10_jurnal';
 
 	// Page object name
-	var $PageObjName = 't06_pinjamantitipan_add';
+	var $PageObjName = 't10_jurnal_add';
 
 	// Page name
 	function PageName() {
@@ -227,14 +226,11 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t06_pinjamantitipan)
-		if (!isset($GLOBALS["t06_pinjamantitipan"]) || get_class($GLOBALS["t06_pinjamantitipan"]) == "ct06_pinjamantitipan") {
-			$GLOBALS["t06_pinjamantitipan"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t06_pinjamantitipan"];
+		// Table object (t10_jurnal)
+		if (!isset($GLOBALS["t10_jurnal"]) || get_class($GLOBALS["t10_jurnal"]) == "ct10_jurnal") {
+			$GLOBALS["t10_jurnal"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t10_jurnal"];
 		}
-
-		// Table object (t03_pinjaman)
-		if (!isset($GLOBALS['t03_pinjaman'])) $GLOBALS['t03_pinjaman'] = new ct03_pinjaman();
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -245,7 +241,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't06_pinjamantitipan', TRUE);
+			define("EW_TABLE_NAME", 't10_jurnal', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -276,7 +272,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t06_pinjamantitipanlist.php"));
+				$this->Page_Terminate(ew_GetUrl("t10_jurnallist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -290,8 +286,11 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 		$this->Tanggal->SetVisibility();
+		$this->NomorTransaksi->SetVisibility();
+		$this->Rekening->SetVisibility();
+		$this->Debet->SetVisibility();
+		$this->Kredit->SetVisibility();
 		$this->Keterangan->SetVisibility();
-		$this->Masuk->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -337,13 +336,13 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t06_pinjamantitipan;
+		global $EW_EXPORT, $t10_jurnal;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t06_pinjamantitipan);
+				$doc = new $class($t10_jurnal);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -395,9 +394,6 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
 
-		// Set up master/detail parameters
-		$this->SetUpMasterParms();
-
 		// Process form if post back
 		if (@$_POST["a_add"] <> "") {
 			$this->CurrentAction = $_POST["a_add"]; // Get form action
@@ -444,7 +440,7 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 			case "C": // Copy an existing record
 				if (!$this->LoadRow()) { // Load record based on key
 					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
-					$this->Page_Terminate("t06_pinjamantitipanlist.php"); // No matching record, return to list
+					$this->Page_Terminate("t10_jurnallist.php"); // No matching record, return to list
 				}
 				break;
 			case "A": // Add new record
@@ -453,9 +449,9 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 					if ($this->getSuccessMessage() == "")
 						$this->setSuccessMessage($Language->Phrase("AddSuccess")); // Set up success message
 					$sReturnUrl = $this->getReturnUrl();
-					if (ew_GetPageName($sReturnUrl) == "t06_pinjamantitipanlist.php")
+					if (ew_GetPageName($sReturnUrl) == "t10_jurnallist.php")
 						$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
-					elseif (ew_GetPageName($sReturnUrl) == "t06_pinjamantitipanview.php")
+					elseif (ew_GetPageName($sReturnUrl) == "t10_jurnalview.php")
 						$sReturnUrl = $this->GetViewUrl(); // View page, return to view page with keyurl directly
 					$this->Page_Terminate($sReturnUrl); // Clean up and return
 				} else {
@@ -483,9 +479,16 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 	function LoadDefaultValues() {
 		$this->Tanggal->CurrentValue = NULL;
 		$this->Tanggal->OldValue = $this->Tanggal->CurrentValue;
+		$this->NomorTransaksi->CurrentValue = NULL;
+		$this->NomorTransaksi->OldValue = $this->NomorTransaksi->CurrentValue;
+		$this->Rekening->CurrentValue = NULL;
+		$this->Rekening->OldValue = $this->Rekening->CurrentValue;
+		$this->Debet->CurrentValue = NULL;
+		$this->Debet->OldValue = $this->Debet->CurrentValue;
+		$this->Kredit->CurrentValue = NULL;
+		$this->Kredit->OldValue = $this->Kredit->CurrentValue;
 		$this->Keterangan->CurrentValue = NULL;
 		$this->Keterangan->OldValue = $this->Keterangan->CurrentValue;
-		$this->Masuk->CurrentValue = 0.00;
 	}
 
 	// Load form values
@@ -497,11 +500,20 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 			$this->Tanggal->setFormValue($objForm->GetValue("x_Tanggal"));
 			$this->Tanggal->CurrentValue = ew_UnFormatDateTime($this->Tanggal->CurrentValue, 7);
 		}
+		if (!$this->NomorTransaksi->FldIsDetailKey) {
+			$this->NomorTransaksi->setFormValue($objForm->GetValue("x_NomorTransaksi"));
+		}
+		if (!$this->Rekening->FldIsDetailKey) {
+			$this->Rekening->setFormValue($objForm->GetValue("x_Rekening"));
+		}
+		if (!$this->Debet->FldIsDetailKey) {
+			$this->Debet->setFormValue($objForm->GetValue("x_Debet"));
+		}
+		if (!$this->Kredit->FldIsDetailKey) {
+			$this->Kredit->setFormValue($objForm->GetValue("x_Kredit"));
+		}
 		if (!$this->Keterangan->FldIsDetailKey) {
 			$this->Keterangan->setFormValue($objForm->GetValue("x_Keterangan"));
-		}
-		if (!$this->Masuk->FldIsDetailKey) {
-			$this->Masuk->setFormValue($objForm->GetValue("x_Masuk"));
 		}
 	}
 
@@ -511,8 +523,11 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$this->LoadOldRecord();
 		$this->Tanggal->CurrentValue = $this->Tanggal->FormValue;
 		$this->Tanggal->CurrentValue = ew_UnFormatDateTime($this->Tanggal->CurrentValue, 7);
+		$this->NomorTransaksi->CurrentValue = $this->NomorTransaksi->FormValue;
+		$this->Rekening->CurrentValue = $this->Rekening->FormValue;
+		$this->Debet->CurrentValue = $this->Debet->FormValue;
+		$this->Kredit->CurrentValue = $this->Kredit->FormValue;
 		$this->Keterangan->CurrentValue = $this->Keterangan->FormValue;
-		$this->Masuk->CurrentValue = $this->Masuk->FormValue;
 	}
 
 	// Load row based on key values
@@ -545,13 +560,13 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->pinjaman_id->setDbValue($rs->fields('pinjaman_id'));
 		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
+		$this->Rekening->setDbValue($rs->fields('Rekening'));
+		$this->Debet->setDbValue($rs->fields('Debet'));
+		$this->Kredit->setDbValue($rs->fields('Kredit'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
-		$this->Masuk->setDbValue($rs->fields('Masuk'));
-		$this->Keluar->setDbValue($rs->fields('Keluar'));
-		$this->Sisa->setDbValue($rs->fields('Sisa'));
-		$this->Angsuran_Ke->setDbValue($rs->fields('Angsuran_Ke'));
 	}
 
 	// Load DbValue from recordset
@@ -559,13 +574,13 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->pinjaman_id->DbValue = $row['pinjaman_id'];
 		$this->Tanggal->DbValue = $row['Tanggal'];
+		$this->Periode->DbValue = $row['Periode'];
+		$this->NomorTransaksi->DbValue = $row['NomorTransaksi'];
+		$this->Rekening->DbValue = $row['Rekening'];
+		$this->Debet->DbValue = $row['Debet'];
+		$this->Kredit->DbValue = $row['Kredit'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
-		$this->Masuk->DbValue = $row['Masuk'];
-		$this->Keluar->DbValue = $row['Keluar'];
-		$this->Sisa->DbValue = $row['Sisa'];
-		$this->Angsuran_Ke->DbValue = $row['Angsuran_Ke'];
 	}
 
 	// Load old record
@@ -598,21 +613,25 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		// Initialize URLs
 		// Convert decimal values if posted back
 
-		if ($this->Masuk->FormValue == $this->Masuk->CurrentValue && is_numeric(ew_StrToFloat($this->Masuk->CurrentValue)))
-			$this->Masuk->CurrentValue = ew_StrToFloat($this->Masuk->CurrentValue);
+		if ($this->Debet->FormValue == $this->Debet->CurrentValue && is_numeric(ew_StrToFloat($this->Debet->CurrentValue)))
+			$this->Debet->CurrentValue = ew_StrToFloat($this->Debet->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Kredit->FormValue == $this->Kredit->CurrentValue && is_numeric(ew_StrToFloat($this->Kredit->CurrentValue)))
+			$this->Kredit->CurrentValue = ew_StrToFloat($this->Kredit->CurrentValue);
 
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// pinjaman_id
 		// Tanggal
+		// Periode
+		// NomorTransaksi
+		// Rekening
+		// Debet
+		// Kredit
 		// Keterangan
-		// Masuk
-		// Keluar
-		// Sisa
-		// Angsuran_Ke
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -620,62 +639,173 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// pinjaman_id
-		$this->pinjaman_id->ViewValue = $this->pinjaman_id->CurrentValue;
-		$this->pinjaman_id->ViewCustomAttributes = "";
-
 		// Tanggal
 		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
 		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
 		$this->Tanggal->ViewCustomAttributes = "";
 
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
+		// NomorTransaksi
+		$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
+		if (strval($this->NomorTransaksi->CurrentValue) <> "") {
+			$sFilterWrk = "`NomorTransaksi`" . ew_SearchString("=", $this->NomorTransaksi->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `NomorTransaksi`, `NomorTransaksi` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t10_jurnal`";
+		$sWhereWrk = "";
+		$this->NomorTransaksi->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->NomorTransaksi, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
+			}
+		} else {
+			$this->NomorTransaksi->ViewValue = NULL;
+		}
+		$this->NomorTransaksi->ViewCustomAttributes = "";
+
+		// Rekening
+		if (strval($this->Rekening->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Rekening->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `id`, `rekening` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+		$sWhereWrk = "";
+		$this->Rekening->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->Rekening, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->Rekening->ViewValue = $this->Rekening->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->Rekening->ViewValue = $this->Rekening->CurrentValue;
+			}
+		} else {
+			$this->Rekening->ViewValue = NULL;
+		}
+		$this->Rekening->ViewCustomAttributes = "";
+
+		// Debet
+		$this->Debet->ViewValue = $this->Debet->CurrentValue;
+		$this->Debet->ViewValue = ew_FormatNumber($this->Debet->ViewValue, 2, -2, -2, -2);
+		$this->Debet->CellCssStyle .= "text-align: right;";
+		$this->Debet->ViewCustomAttributes = "";
+
+		// Kredit
+		$this->Kredit->ViewValue = $this->Kredit->CurrentValue;
+		$this->Kredit->ViewValue = ew_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
+		$this->Kredit->CellCssStyle .= "text-align: right;";
+		$this->Kredit->ViewCustomAttributes = "";
+
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
-
-		// Masuk
-		$this->Masuk->ViewValue = $this->Masuk->CurrentValue;
-		$this->Masuk->ViewValue = ew_FormatNumber($this->Masuk->ViewValue, 2, -2, -2, -2);
-		$this->Masuk->CellCssStyle .= "text-align: right;";
-		$this->Masuk->ViewCustomAttributes = "";
-
-		// Keluar
-		$this->Keluar->ViewValue = $this->Keluar->CurrentValue;
-		$this->Keluar->ViewValue = ew_FormatNumber($this->Keluar->ViewValue, 2, -2, -2, -2);
-		$this->Keluar->CellCssStyle .= "text-align: right;";
-		$this->Keluar->ViewCustomAttributes = "";
-
-		// Sisa
-		$this->Sisa->ViewValue = $this->Sisa->CurrentValue;
-		$this->Sisa->ViewValue = ew_FormatNumber($this->Sisa->ViewValue, 2, -2, -2, -2);
-		$this->Sisa->CellCssStyle .= "text-align: right;";
-		$this->Sisa->ViewCustomAttributes = "";
-
-		// Angsuran_Ke
-		$this->Angsuran_Ke->ViewValue = $this->Angsuran_Ke->CurrentValue;
-		$this->Angsuran_Ke->ViewCustomAttributes = "";
 
 			// Tanggal
 			$this->Tanggal->LinkCustomAttributes = "";
 			$this->Tanggal->HrefValue = "";
 			$this->Tanggal->TooltipValue = "";
 
+			// NomorTransaksi
+			$this->NomorTransaksi->LinkCustomAttributes = "";
+			$this->NomorTransaksi->HrefValue = "";
+			$this->NomorTransaksi->TooltipValue = "";
+
+			// Rekening
+			$this->Rekening->LinkCustomAttributes = "";
+			$this->Rekening->HrefValue = "";
+			$this->Rekening->TooltipValue = "";
+
+			// Debet
+			$this->Debet->LinkCustomAttributes = "";
+			$this->Debet->HrefValue = "";
+			$this->Debet->TooltipValue = "";
+
+			// Kredit
+			$this->Kredit->LinkCustomAttributes = "";
+			$this->Kredit->HrefValue = "";
+			$this->Kredit->TooltipValue = "";
+
 			// Keterangan
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
-
-			// Masuk
-			$this->Masuk->LinkCustomAttributes = "";
-			$this->Masuk->HrefValue = "";
-			$this->Masuk->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// Tanggal
 			$this->Tanggal->EditAttrs["class"] = "form-control";
-			$this->Tanggal->EditCustomAttributes = "style='width: 115px;'";
+			$this->Tanggal->EditCustomAttributes = "";
 			$this->Tanggal->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Tanggal->CurrentValue, 7));
 			$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
+
+			// NomorTransaksi
+			$this->NomorTransaksi->EditAttrs["class"] = "form-control";
+			$this->NomorTransaksi->EditCustomAttributes = "";
+			$this->NomorTransaksi->EditValue = ew_HtmlEncode($this->NomorTransaksi->CurrentValue);
+			if (strval($this->NomorTransaksi->CurrentValue) <> "") {
+				$sFilterWrk = "`NomorTransaksi`" . ew_SearchString("=", $this->NomorTransaksi->CurrentValue, EW_DATATYPE_STRING, "");
+			$sSqlWrk = "SELECT `NomorTransaksi`, `NomorTransaksi` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t10_jurnal`";
+			$sWhereWrk = "";
+			$this->NomorTransaksi->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->NomorTransaksi, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+					$this->NomorTransaksi->EditValue = $this->NomorTransaksi->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->NomorTransaksi->EditValue = ew_HtmlEncode($this->NomorTransaksi->CurrentValue);
+				}
+			} else {
+				$this->NomorTransaksi->EditValue = NULL;
+			}
+			$this->NomorTransaksi->PlaceHolder = ew_RemoveHtml($this->NomorTransaksi->FldCaption());
+
+			// Rekening
+			$this->Rekening->EditAttrs["class"] = "form-control";
+			$this->Rekening->EditCustomAttributes = "";
+			if (trim(strval($this->Rekening->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->Rekening->CurrentValue, EW_DATATYPE_STRING, "");
+			}
+			$sSqlWrk = "SELECT `id`, `rekening` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t91_rekening`";
+			$sWhereWrk = "";
+			$this->Rekening->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->Rekening, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->Rekening->EditValue = $arwrk;
+
+			// Debet
+			$this->Debet->EditAttrs["class"] = "form-control";
+			$this->Debet->EditCustomAttributes = "";
+			$this->Debet->EditValue = ew_HtmlEncode($this->Debet->CurrentValue);
+			$this->Debet->PlaceHolder = ew_RemoveHtml($this->Debet->FldCaption());
+			if (strval($this->Debet->EditValue) <> "" && is_numeric($this->Debet->EditValue)) $this->Debet->EditValue = ew_FormatNumber($this->Debet->EditValue, -2, -2, -2, -2);
+
+			// Kredit
+			$this->Kredit->EditAttrs["class"] = "form-control";
+			$this->Kredit->EditCustomAttributes = "";
+			$this->Kredit->EditValue = ew_HtmlEncode($this->Kredit->CurrentValue);
+			$this->Kredit->PlaceHolder = ew_RemoveHtml($this->Kredit->FldCaption());
+			if (strval($this->Kredit->EditValue) <> "" && is_numeric($this->Kredit->EditValue)) $this->Kredit->EditValue = ew_FormatNumber($this->Kredit->EditValue, -2, -2, -2, -2);
 
 			// Keterangan
 			$this->Keterangan->EditAttrs["class"] = "form-control";
@@ -683,26 +813,31 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->CurrentValue);
 			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
 
-			// Masuk
-			$this->Masuk->EditAttrs["class"] = "form-control";
-			$this->Masuk->EditCustomAttributes = "";
-			$this->Masuk->EditValue = ew_HtmlEncode($this->Masuk->CurrentValue);
-			$this->Masuk->PlaceHolder = ew_RemoveHtml($this->Masuk->FldCaption());
-			if (strval($this->Masuk->EditValue) <> "" && is_numeric($this->Masuk->EditValue)) $this->Masuk->EditValue = ew_FormatNumber($this->Masuk->EditValue, -2, -2, -2, -2);
-
 			// Add refer script
 			// Tanggal
 
 			$this->Tanggal->LinkCustomAttributes = "";
 			$this->Tanggal->HrefValue = "";
 
+			// NomorTransaksi
+			$this->NomorTransaksi->LinkCustomAttributes = "";
+			$this->NomorTransaksi->HrefValue = "";
+
+			// Rekening
+			$this->Rekening->LinkCustomAttributes = "";
+			$this->Rekening->HrefValue = "";
+
+			// Debet
+			$this->Debet->LinkCustomAttributes = "";
+			$this->Debet->HrefValue = "";
+
+			// Kredit
+			$this->Kredit->LinkCustomAttributes = "";
+			$this->Kredit->HrefValue = "";
+
 			// Keterangan
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
-
-			// Masuk
-			$this->Masuk->LinkCustomAttributes = "";
-			$this->Masuk->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -731,11 +866,26 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		if (!ew_CheckEuroDate($this->Tanggal->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Tanggal->FldErrMsg());
 		}
-		if (!$this->Masuk->FldIsDetailKey && !is_null($this->Masuk->FormValue) && $this->Masuk->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Masuk->FldCaption(), $this->Masuk->ReqErrMsg));
+		if (!$this->NomorTransaksi->FldIsDetailKey && !is_null($this->NomorTransaksi->FormValue) && $this->NomorTransaksi->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->NomorTransaksi->FldCaption(), $this->NomorTransaksi->ReqErrMsg));
 		}
-		if (!ew_CheckNumber($this->Masuk->FormValue)) {
-			ew_AddMessage($gsFormError, $this->Masuk->FldErrMsg());
+		if (!$this->Rekening->FldIsDetailKey && !is_null($this->Rekening->FormValue) && $this->Rekening->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Rekening->FldCaption(), $this->Rekening->ReqErrMsg));
+		}
+		if (!$this->Debet->FldIsDetailKey && !is_null($this->Debet->FormValue) && $this->Debet->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Debet->FldCaption(), $this->Debet->ReqErrMsg));
+		}
+		if (!ew_CheckNumber($this->Debet->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Debet->FldErrMsg());
+		}
+		if (!$this->Kredit->FldIsDetailKey && !is_null($this->Kredit->FormValue) && $this->Kredit->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Kredit->FldCaption(), $this->Kredit->ReqErrMsg));
+		}
+		if (!ew_CheckNumber($this->Kredit->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Kredit->FldErrMsg());
+		}
+		if (!$this->Keterangan->FldIsDetailKey && !is_null($this->Keterangan->FormValue) && $this->Keterangan->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Keterangan->FldCaption(), $this->Keterangan->ReqErrMsg));
 		}
 
 		// Return validate result
@@ -753,26 +903,6 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 	// Add record
 	function AddRow($rsold = NULL) {
 		global $Language, $Security;
-
-		// Check referential integrity for master table 't03_pinjaman'
-		$bValidMasterRecord = TRUE;
-		$sMasterFilter = $this->SqlMasterFilter_t03_pinjaman();
-		if ($this->pinjaman_id->getSessionValue() <> "") {
-			$sMasterFilter = str_replace("@id@", ew_AdjustSql($this->pinjaman_id->getSessionValue(), "DB"), $sMasterFilter);
-		} else {
-			$bValidMasterRecord = FALSE;
-		}
-		if ($bValidMasterRecord) {
-			if (!isset($GLOBALS["t03_pinjaman"])) $GLOBALS["t03_pinjaman"] = new ct03_pinjaman();
-			$rsmaster = $GLOBALS["t03_pinjaman"]->LoadRs($sMasterFilter);
-			$bValidMasterRecord = ($rsmaster && !$rsmaster->EOF);
-			$rsmaster->Close();
-		}
-		if (!$bValidMasterRecord) {
-			$sRelatedRecordMsg = str_replace("%t", "t03_pinjaman", $Language->Phrase("RelatedRecordRequired"));
-			$this->setFailureMessage($sRelatedRecordMsg);
-			return FALSE;
-		}
 		$conn = &$this->Connection();
 
 		// Load db values from rsold
@@ -784,16 +914,20 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		// Tanggal
 		$this->Tanggal->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Tanggal->CurrentValue, 7), ew_CurrentDate(), FALSE);
 
+		// NomorTransaksi
+		$this->NomorTransaksi->SetDbValueDef($rsnew, $this->NomorTransaksi->CurrentValue, "", FALSE);
+
+		// Rekening
+		$this->Rekening->SetDbValueDef($rsnew, $this->Rekening->CurrentValue, "", FALSE);
+
+		// Debet
+		$this->Debet->SetDbValueDef($rsnew, $this->Debet->CurrentValue, 0, FALSE);
+
+		// Kredit
+		$this->Kredit->SetDbValueDef($rsnew, $this->Kredit->CurrentValue, 0, FALSE);
+
 		// Keterangan
-		$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, NULL, FALSE);
-
-		// Masuk
-		$this->Masuk->SetDbValueDef($rsnew, $this->Masuk->CurrentValue, 0, strval($this->Masuk->CurrentValue) == "");
-
-		// pinjaman_id
-		if ($this->pinjaman_id->getSessionValue() <> "") {
-			$rsnew['pinjaman_id'] = $this->pinjaman_id->getSessionValue();
-		}
+		$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, "", FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -825,72 +959,12 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		return $AddRow;
 	}
 
-	// Set up master/detail based on QueryString
-	function SetUpMasterParms() {
-		$bValidMaster = FALSE;
-
-		// Get the keys for master table
-		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
-			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
-			if ($sMasterTblVar == "") {
-				$bValidMaster = TRUE;
-				$this->DbMasterFilter = "";
-				$this->DbDetailFilter = "";
-			}
-			if ($sMasterTblVar == "t03_pinjaman") {
-				$bValidMaster = TRUE;
-				if (@$_GET["fk_id"] <> "") {
-					$GLOBALS["t03_pinjaman"]->id->setQueryStringValue($_GET["fk_id"]);
-					$this->pinjaman_id->setQueryStringValue($GLOBALS["t03_pinjaman"]->id->QueryStringValue);
-					$this->pinjaman_id->setSessionValue($this->pinjaman_id->QueryStringValue);
-					if (!is_numeric($GLOBALS["t03_pinjaman"]->id->QueryStringValue)) $bValidMaster = FALSE;
-				} else {
-					$bValidMaster = FALSE;
-				}
-			}
-		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
-			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
-			if ($sMasterTblVar == "") {
-				$bValidMaster = TRUE;
-				$this->DbMasterFilter = "";
-				$this->DbDetailFilter = "";
-			}
-			if ($sMasterTblVar == "t03_pinjaman") {
-				$bValidMaster = TRUE;
-				if (@$_POST["fk_id"] <> "") {
-					$GLOBALS["t03_pinjaman"]->id->setFormValue($_POST["fk_id"]);
-					$this->pinjaman_id->setFormValue($GLOBALS["t03_pinjaman"]->id->FormValue);
-					$this->pinjaman_id->setSessionValue($this->pinjaman_id->FormValue);
-					if (!is_numeric($GLOBALS["t03_pinjaman"]->id->FormValue)) $bValidMaster = FALSE;
-				} else {
-					$bValidMaster = FALSE;
-				}
-			}
-		}
-		if ($bValidMaster) {
-
-			// Save current master table
-			$this->setCurrentMasterTable($sMasterTblVar);
-
-			// Reset start record counter (new master key)
-			$this->StartRec = 1;
-			$this->setStartRecordNumber($this->StartRec);
-
-			// Clear previous master key from Session
-			if ($sMasterTblVar <> "t03_pinjaman") {
-				if ($this->pinjaman_id->CurrentValue == "") $this->pinjaman_id->setSessionValue("");
-			}
-		}
-		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
-		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
-	}
-
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t06_pinjamantitipanlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t10_jurnallist.php"), "", $this->TableVar, TRUE);
 		$PageId = ($this->CurrentAction == "C") ? "Copy" : "Add";
 		$Breadcrumb->Add("add", $PageId, $url);
 	}
@@ -900,6 +974,30 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_NomorTransaksi":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `NomorTransaksi` AS `LinkFld`, `NomorTransaksi` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t10_jurnal`";
+			$sWhereWrk = "{filter}";
+			$this->NomorTransaksi->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`NomorTransaksi` = {filter_value}', "t0" => "200", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->NomorTransaksi, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
+		case "x_Rekening":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `rekening` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+			$sWhereWrk = "";
+			$this->Rekening->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "200", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->Rekening, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -908,6 +1006,19 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
+		case "x_NomorTransaksi":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `NomorTransaksi`, `NomorTransaksi` AS `DispFld` FROM `t10_jurnal`";
+			$sWhereWrk = "`NomorTransaksi` LIKE '{query_value}%'";
+			$this->NomorTransaksi->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->NomorTransaksi, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " LIMIT " . EW_AUTO_SUGGEST_MAX_ENTRIES;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 		}
 	}
 
@@ -983,29 +1094,29 @@ class ct06_pinjamantitipan_add extends ct06_pinjamantitipan {
 <?php
 
 // Create page object
-if (!isset($t06_pinjamantitipan_add)) $t06_pinjamantitipan_add = new ct06_pinjamantitipan_add();
+if (!isset($t10_jurnal_add)) $t10_jurnal_add = new ct10_jurnal_add();
 
 // Page init
-$t06_pinjamantitipan_add->Page_Init();
+$t10_jurnal_add->Page_Init();
 
 // Page main
-$t06_pinjamantitipan_add->Page_Main();
+$t10_jurnal_add->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t06_pinjamantitipan_add->Page_Render();
+$t10_jurnal_add->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "add";
-var CurrentForm = ft06_pinjamantitipanadd = new ew_Form("ft06_pinjamantitipanadd", "add");
+var CurrentForm = ft10_jurnaladd = new ew_Form("ft10_jurnaladd", "add");
 
 // Validate form
-ft06_pinjamantitipanadd.Validate = function() {
+ft10_jurnaladd.Validate = function() {
 	if (!this.ValidateRequired)
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
@@ -1021,16 +1132,31 @@ ft06_pinjamantitipanadd.Validate = function() {
 		$fobj.data("rowindex", infix);
 			elm = this.GetElements("x" + infix + "_Tanggal");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pinjamantitipan->Tanggal->FldCaption(), $t06_pinjamantitipan->Tanggal->ReqErrMsg)) ?>");
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->Tanggal->FldCaption(), $t10_jurnal->Tanggal->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Tanggal");
 			if (elm && !ew_CheckEuroDate(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->Tanggal->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Masuk");
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t10_jurnal->Tanggal->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_NomorTransaksi");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t06_pinjamantitipan->Masuk->FldCaption(), $t06_pinjamantitipan->Masuk->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Masuk");
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->NomorTransaksi->FldCaption(), $t10_jurnal->NomorTransaksi->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Rekening");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->Rekening->FldCaption(), $t10_jurnal->Rekening->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Debet");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->Debet->FldCaption(), $t10_jurnal->Debet->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Debet");
 			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t06_pinjamantitipan->Masuk->FldErrMsg()) ?>");
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t10_jurnal->Debet->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Kredit");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->Kredit->FldCaption(), $t10_jurnal->Kredit->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Kredit");
+			if (elm && !ew_CheckNumber(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t10_jurnal->Kredit->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Keterangan");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->Keterangan->FldCaption(), $t10_jurnal->Keterangan->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1049,7 +1175,7 @@ ft06_pinjamantitipanadd.Validate = function() {
 }
 
 // Form_CustomValidate event
-ft06_pinjamantitipanadd.Form_CustomValidate = 
+ft10_jurnaladd.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -1058,97 +1184,137 @@ ft06_pinjamantitipanadd.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft06_pinjamantitipanadd.ValidateRequired = true;
+ft10_jurnaladd.ValidateRequired = true;
 <?php } else { ?>
-ft06_pinjamantitipanadd.ValidateRequired = false; 
+ft10_jurnaladd.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft10_jurnaladd.Lists["x_NomorTransaksi"] = {"LinkField":"x_NomorTransaksi","Ajax":true,"AutoFill":false,"DisplayFields":["x_NomorTransaksi","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t10_jurnal"};
+ft10_jurnaladd.Lists["x_Rekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_rekening","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
 // Write your client script here, no need to add script tags.
 </script>
-<?php if (!$t06_pinjamantitipan_add->IsModal) { ?>
+<?php if (!$t10_jurnal_add->IsModal) { ?>
 <div class="ewToolbar">
 <?php $Breadcrumb->Render(); ?>
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
 <?php } ?>
-<?php $t06_pinjamantitipan_add->ShowPageHeader(); ?>
+<?php $t10_jurnal_add->ShowPageHeader(); ?>
 <?php
-$t06_pinjamantitipan_add->ShowMessage();
+$t10_jurnal_add->ShowMessage();
 ?>
-<form name="ft06_pinjamantitipanadd" id="ft06_pinjamantitipanadd" class="<?php echo $t06_pinjamantitipan_add->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t06_pinjamantitipan_add->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t06_pinjamantitipan_add->Token ?>">
+<form name="ft10_jurnaladd" id="ft10_jurnaladd" class="<?php echo $t10_jurnal_add->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t10_jurnal_add->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t10_jurnal_add->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t06_pinjamantitipan">
+<input type="hidden" name="t" value="t10_jurnal">
 <input type="hidden" name="a_add" id="a_add" value="A">
-<?php if ($t06_pinjamantitipan_add->IsModal) { ?>
+<?php if ($t10_jurnal_add->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
-<?php if ($t06_pinjamantitipan->getCurrentMasterTable() == "t03_pinjaman") { ?>
-<input type="hidden" name="<?php echo EW_TABLE_SHOW_MASTER ?>" value="t03_pinjaman">
-<input type="hidden" name="fk_id" value="<?php echo $t06_pinjamantitipan->pinjaman_id->getSessionValue() ?>">
-<?php } ?>
 <div>
-<?php if ($t06_pinjamantitipan->Tanggal->Visible) { // Tanggal ?>
+<?php if ($t10_jurnal->Tanggal->Visible) { // Tanggal ?>
 	<div id="r_Tanggal" class="form-group">
-		<label id="elh_t06_pinjamantitipan_Tanggal" for="x_Tanggal" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->Tanggal->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t06_pinjamantitipan->Tanggal->CellAttributes() ?>>
-<span id="el_t06_pinjamantitipan_Tanggal">
-<input type="text" data-table="t06_pinjamantitipan" data-field="x_Tanggal" data-format="7" name="x_Tanggal" id="x_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->Tanggal->EditValue ?>"<?php echo $t06_pinjamantitipan->Tanggal->EditAttributes() ?>>
-<?php if (!$t06_pinjamantitipan->Tanggal->ReadOnly && !$t06_pinjamantitipan->Tanggal->Disabled && !isset($t06_pinjamantitipan->Tanggal->EditAttrs["readonly"]) && !isset($t06_pinjamantitipan->Tanggal->EditAttrs["disabled"])) { ?>
+		<label id="elh_t10_jurnal_Tanggal" for="x_Tanggal" class="col-sm-2 control-label ewLabel"><?php echo $t10_jurnal->Tanggal->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t10_jurnal->Tanggal->CellAttributes() ?>>
+<span id="el_t10_jurnal_Tanggal">
+<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x_Tanggal" id="x_Tanggal" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
+<?php if (!$t10_jurnal->Tanggal->ReadOnly && !$t10_jurnal->Tanggal->Disabled && !isset($t10_jurnal->Tanggal->EditAttrs["readonly"]) && !isset($t10_jurnal->Tanggal->EditAttrs["disabled"])) { ?>
 <script type="text/javascript">
-ew_CreateCalendar("ft06_pinjamantitipanadd", "x_Tanggal", 7);
+ew_CreateCalendar("ft10_jurnaladd", "x_Tanggal", 7);
 </script>
 <?php } ?>
 </span>
-<?php echo $t06_pinjamantitipan->Tanggal->CustomMsg ?></div></div>
+<?php echo $t10_jurnal->Tanggal->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
-<?php if ($t06_pinjamantitipan->Keterangan->Visible) { // Keterangan ?>
+<?php if ($t10_jurnal->NomorTransaksi->Visible) { // NomorTransaksi ?>
+	<div id="r_NomorTransaksi" class="form-group">
+		<label id="elh_t10_jurnal_NomorTransaksi" class="col-sm-2 control-label ewLabel"><?php echo $t10_jurnal->NomorTransaksi->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t10_jurnal->NomorTransaksi->CellAttributes() ?>>
+<span id="el_t10_jurnal_NomorTransaksi">
+<?php
+$wrkonchange = trim(" " . @$t10_jurnal->NomorTransaksi->EditAttrs["onchange"]);
+if ($wrkonchange <> "") $wrkonchange = " onchange=\"" . ew_JsEncode2($wrkonchange) . "\"";
+$t10_jurnal->NomorTransaksi->EditAttrs["onchange"] = "";
+?>
+<span id="as_x_NomorTransaksi" style="white-space: nowrap; z-index: 8960">
+	<input type="text" name="sv_x_NomorTransaksi" id="sv_x_NomorTransaksi" value="<?php echo $t10_jurnal->NomorTransaksi->EditValue ?>" size="10" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->NomorTransaksi->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t10_jurnal->NomorTransaksi->getPlaceHolder()) ?>"<?php echo $t10_jurnal->NomorTransaksi->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t10_jurnal" data-field="x_NomorTransaksi" data-value-separator="<?php echo $t10_jurnal->NomorTransaksi->DisplayValueSeparatorAttribute() ?>" name="x_NomorTransaksi" id="x_NomorTransaksi" value="<?php echo ew_HtmlEncode($t10_jurnal->NomorTransaksi->CurrentValue) ?>"<?php echo $wrkonchange ?>>
+<input type="hidden" name="q_x_NomorTransaksi" id="q_x_NomorTransaksi" value="<?php echo $t10_jurnal->NomorTransaksi->LookupFilterQuery(true) ?>">
+<script type="text/javascript">
+ft10_jurnaladd.CreateAutoSuggest({"id":"x_NomorTransaksi","forceSelect":false});
+</script>
+</span>
+<?php echo $t10_jurnal->NomorTransaksi->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t10_jurnal->Rekening->Visible) { // Rekening ?>
+	<div id="r_Rekening" class="form-group">
+		<label id="elh_t10_jurnal_Rekening" for="x_Rekening" class="col-sm-2 control-label ewLabel"><?php echo $t10_jurnal->Rekening->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t10_jurnal->Rekening->CellAttributes() ?>>
+<span id="el_t10_jurnal_Rekening">
+<select data-table="t10_jurnal" data-field="x_Rekening" data-value-separator="<?php echo $t10_jurnal->Rekening->DisplayValueSeparatorAttribute() ?>" id="x_Rekening" name="x_Rekening"<?php echo $t10_jurnal->Rekening->EditAttributes() ?>>
+<?php echo $t10_jurnal->Rekening->SelectOptionListHtml("x_Rekening") ?>
+</select>
+<input type="hidden" name="s_x_Rekening" id="s_x_Rekening" value="<?php echo $t10_jurnal->Rekening->LookupFilterQuery() ?>">
+</span>
+<?php echo $t10_jurnal->Rekening->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t10_jurnal->Debet->Visible) { // Debet ?>
+	<div id="r_Debet" class="form-group">
+		<label id="elh_t10_jurnal_Debet" for="x_Debet" class="col-sm-2 control-label ewLabel"><?php echo $t10_jurnal->Debet->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t10_jurnal->Debet->CellAttributes() ?>>
+<span id="el_t10_jurnal_Debet">
+<input type="text" data-table="t10_jurnal" data-field="x_Debet" name="x_Debet" id="x_Debet" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Debet->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Debet->EditValue ?>"<?php echo $t10_jurnal->Debet->EditAttributes() ?>>
+</span>
+<?php echo $t10_jurnal->Debet->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t10_jurnal->Kredit->Visible) { // Kredit ?>
+	<div id="r_Kredit" class="form-group">
+		<label id="elh_t10_jurnal_Kredit" for="x_Kredit" class="col-sm-2 control-label ewLabel"><?php echo $t10_jurnal->Kredit->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t10_jurnal->Kredit->CellAttributes() ?>>
+<span id="el_t10_jurnal_Kredit">
+<input type="text" data-table="t10_jurnal" data-field="x_Kredit" name="x_Kredit" id="x_Kredit" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Kredit->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Kredit->EditValue ?>"<?php echo $t10_jurnal->Kredit->EditAttributes() ?>>
+</span>
+<?php echo $t10_jurnal->Kredit->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
 	<div id="r_Keterangan" class="form-group">
-		<label id="elh_t06_pinjamantitipan_Keterangan" for="x_Keterangan" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->Keterangan->FldCaption() ?></label>
-		<div class="col-sm-10"><div<?php echo $t06_pinjamantitipan->Keterangan->CellAttributes() ?>>
-<span id="el_t06_pinjamantitipan_Keterangan">
-<textarea data-table="t06_pinjamantitipan" data-field="x_Keterangan" name="x_Keterangan" id="x_Keterangan" cols="15" rows="2" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Keterangan->getPlaceHolder()) ?>"<?php echo $t06_pinjamantitipan->Keterangan->EditAttributes() ?>><?php echo $t06_pinjamantitipan->Keterangan->EditValue ?></textarea>
+		<label id="elh_t10_jurnal_Keterangan" for="x_Keterangan" class="col-sm-2 control-label ewLabel"><?php echo $t10_jurnal->Keterangan->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t10_jurnal->Keterangan->CellAttributes() ?>>
+<span id="el_t10_jurnal_Keterangan">
+<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x_Keterangan" id="x_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
 </span>
-<?php echo $t06_pinjamantitipan->Keterangan->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t06_pinjamantitipan->Masuk->Visible) { // Masuk ?>
-	<div id="r_Masuk" class="form-group">
-		<label id="elh_t06_pinjamantitipan_Masuk" for="x_Masuk" class="col-sm-2 control-label ewLabel"><?php echo $t06_pinjamantitipan->Masuk->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t06_pinjamantitipan->Masuk->CellAttributes() ?>>
-<span id="el_t06_pinjamantitipan_Masuk">
-<input type="text" data-table="t06_pinjamantitipan" data-field="x_Masuk" name="x_Masuk" id="x_Masuk" size="10" placeholder="<?php echo ew_HtmlEncode($t06_pinjamantitipan->Masuk->getPlaceHolder()) ?>" value="<?php echo $t06_pinjamantitipan->Masuk->EditValue ?>"<?php echo $t06_pinjamantitipan->Masuk->EditAttributes() ?>>
-</span>
-<?php echo $t06_pinjamantitipan->Masuk->CustomMsg ?></div></div>
+<?php echo $t10_jurnal->Keterangan->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>
-<?php if (strval($t06_pinjamantitipan->pinjaman_id->getSessionValue()) <> "") { ?>
-<input type="hidden" name="x_pinjaman_id" id="x_pinjaman_id" value="<?php echo ew_HtmlEncode(strval($t06_pinjamantitipan->pinjaman_id->getSessionValue())) ?>">
-<?php } ?>
-<?php if (!$t06_pinjamantitipan_add->IsModal) { ?>
+<?php if (!$t10_jurnal_add->IsModal) { ?>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("AddBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t06_pinjamantitipan_add->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t10_jurnal_add->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div>
 </div>
 <?php } ?>
 </form>
 <script type="text/javascript">
-ft06_pinjamantitipanadd.Init();
+ft10_jurnaladd.Init();
 </script>
 <?php
-$t06_pinjamantitipan_add->ShowPageFooter();
+$t10_jurnal_add->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1160,5 +1326,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t06_pinjamantitipan_add->Page_Terminate();
+$t10_jurnal_add->Page_Terminate();
 ?>

@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$cf03_labarugi_php = NULL; // Initialize page object first
+$cf04_neraca_php = NULL; // Initialize page object first
 
-class ccf03_labarugi_php {
+class ccf04_neraca_php {
 
 	// Page ID
 	var $PageID = 'custom';
@@ -25,10 +25,10 @@ class ccf03_labarugi_php {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 'cf03_labarugi.php';
+	var $TableName = 'cf04_neraca.php';
 
 	// Page object name
-	var $PageObjName = 'cf03_labarugi_php';
+	var $PageObjName = 'cf04_neraca_php';
 
 	// Page name
 	function PageName() {
@@ -195,7 +195,7 @@ class ccf03_labarugi_php {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'cf03_labarugi.php', TRUE);
+			define("EW_TABLE_NAME", 'cf04_neraca.php', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -284,7 +284,7 @@ class ccf03_labarugi_php {
 		global $Breadcrumb;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("custom", "cf03_labarugi_php", $url, "", "cf03_labarugi_php", TRUE);
+		$Breadcrumb->Add("custom", "cf04_neraca_php", $url, "", "cf04_neraca_php", TRUE);
 	}
 }
 ?>
@@ -292,13 +292,13 @@ class ccf03_labarugi_php {
 <?php
 
 // Create page object
-if (!isset($cf03_labarugi_php)) $cf03_labarugi_php = new ccf03_labarugi_php();
+if (!isset($cf04_neraca_php)) $cf04_neraca_php = new ccf04_neraca_php();
 
 // Page init
-$cf03_labarugi_php->Page_Init();
+$cf04_neraca_php->Page_Init();
 
 // Page main
-$cf03_labarugi_php->Page_Main();
+$cf04_neraca_php->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
@@ -357,7 +357,7 @@ $rdet4 = Conn()->Execute($q);
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('<strong>".$r->fields["rekening"]."</strong>', '', '')"; Conn()->Execute($q);?>
+					<?php   $q = "insert into";?>
 					<?php   $r->MoveNext(); ?>
 					<?php } ?>
 
@@ -376,7 +376,6 @@ $rdet4 = Conn()->Execute($q);
 						<td><?php echo $rdet->fields["rekening"]; ?></td>
 						<td align="right"><?php echo number_format($nilai, 2); ?></td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('".$rdet->fields["id"]."', '".$rdet->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);?>
 					<?php   $rdet->MoveNext(); ?>
 					<?php } ?>
 
@@ -388,7 +387,6 @@ $rdet4 = Conn()->Execute($q);
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('<strong>".$r2->fields["rekening"]."</strong>', '', '')"; Conn()->Execute($q);?>
 					<?php   $r2->MoveNext(); ?>
 					<?php } ?>
 
@@ -406,7 +404,6 @@ $rdet4 = Conn()->Execute($q);
 						<td><?php echo $rdet2->fields["rekening"]; ?></td>
 						<td align="right"><?php echo number_format($nilai, 2); ?></td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('".$rdet2->fields["id"]."', '".$rdet2->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);?>
 					<?php   $rdet2->MoveNext(); ?>
 					<?php } ?>
 
@@ -415,14 +412,12 @@ $rdet4 = Conn()->Execute($q);
 						<td>&nbsp;</td>
 						<td align="right"><strong><?php echo number_format($mtotal, 2); ?></strong></td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal, 2)."</strong>')"; Conn()->Execute($q);?>
 
 					<tr>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '')"; Conn()->Execute($q);?>
 
 					<!-- id 4 -->
 					<?php while (!$r3->EOF) { ?>
@@ -431,7 +426,6 @@ $rdet4 = Conn()->Execute($q);
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('<strong>".$r3->fields["rekening"]."</strong>', '', '')"; Conn()->Execute($q);?>
 					<?php   $r3->MoveNext(); ?>
 					<?php } ?>
 
@@ -450,7 +444,6 @@ $rdet4 = Conn()->Execute($q);
 						<td><?php echo $rdet3->fields["rekening"]; ?></td>
 						<td align="right"><?php echo number_format($nilai, 2); ?></td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('".$rdet3->fields["id"]."', '".$rdet3->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);?>
 					<?php   $rdet3->MoveNext(); ?>
 					<?php } ?>
 
@@ -462,7 +455,6 @@ $rdet4 = Conn()->Execute($q);
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('<strong>".$r4->fields["rekening"]."</strong>', '', '')"; Conn()->Execute($q);?>
 					<?php   $r4->MoveNext(); ?>
 					<?php } ?>
 
@@ -480,7 +472,6 @@ $rdet4 = Conn()->Execute($q);
 						<td><?php echo $rdet4->fields["rekening"]; ?></td>
 						<td align="right"><?php echo number_format($nilai, 2); ?></td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('".$rdet4->fields["id"]."', '".$rdet4->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);?>
 					<?php   $rdet4->MoveNext(); ?>
 					<?php } ?>
 
@@ -489,21 +480,18 @@ $rdet4 = Conn()->Execute($q);
 						<td>&nbsp;</td>
 						<td align="right"><strong><?php echo number_format($mtotal2, 2); ?></strong></td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);?>
 
 					<tr>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '')"; Conn()->Execute($q);?>
 
 					<tr>
 						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 						<td align="right"><strong><?php echo number_format($mtotal - $mtotal2, 2); ?></strong></td>
 					</tr>
-					<?php   $q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>')"; Conn()->Execute($q);?>
 
 					<tr>
 						<td>&nbsp;</td>
@@ -518,10 +506,9 @@ $rdet4 = Conn()->Execute($q);
 	</div>
 </div>
 
-<?php //header("Location: r05_labarugismry.php"); ?>
-<?php header("Location: t88_labarugilist.php"); ?>
+
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
-$cf03_labarugi_php->Page_Terminate();
+$cf04_neraca_php->Page_Terminate();
 ?>

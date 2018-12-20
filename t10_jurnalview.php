@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t89_rektraninfo.php" ?>
+<?php include_once "t10_jurnalinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t89_rektran_view = NULL; // Initialize page object first
+$t10_jurnal_view = NULL; // Initialize page object first
 
-class ct89_rektran_view extends ct89_rektran {
+class ct10_jurnal_view extends ct10_jurnal {
 
 	// Page ID
 	var $PageID = 'view';
@@ -25,10 +25,10 @@ class ct89_rektran_view extends ct89_rektran {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't89_rektran';
+	var $TableName = 't10_jurnal';
 
 	// Page object name
-	var $PageObjName = 't89_rektran_view';
+	var $PageObjName = 't10_jurnal_view';
 
 	// Page name
 	function PageName() {
@@ -258,10 +258,10 @@ class ct89_rektran_view extends ct89_rektran {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t89_rektran)
-		if (!isset($GLOBALS["t89_rektran"]) || get_class($GLOBALS["t89_rektran"]) == "ct89_rektran") {
-			$GLOBALS["t89_rektran"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t89_rektran"];
+		// Table object (t10_jurnal)
+		if (!isset($GLOBALS["t10_jurnal"]) || get_class($GLOBALS["t10_jurnal"]) == "ct10_jurnal") {
+			$GLOBALS["t10_jurnal"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t10_jurnal"];
 		}
 		$KeyUrl = "";
 		if (@$_GET["id"] <> "") {
@@ -285,7 +285,7 @@ class ct89_rektran_view extends ct89_rektran {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't89_rektran', TRUE);
+			define("EW_TABLE_NAME", 't10_jurnal', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -329,7 +329,7 @@ class ct89_rektran_view extends ct89_rektran {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t89_rektranlist.php"));
+				$this->Page_Terminate(ew_GetUrl("t10_jurnallist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -339,10 +339,15 @@ class ct89_rektran_view extends ct89_rektran {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->KodeTransaksi->SetVisibility();
-		$this->JenisTransaksi->SetVisibility();
-		$this->DebetRekening->SetVisibility();
-		$this->KreditRekening->SetVisibility();
+		$this->id->SetVisibility();
+		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
+		$this->Tanggal->SetVisibility();
+		$this->Periode->SetVisibility();
+		$this->NomorTransaksi->SetVisibility();
+		$this->Rekening->SetVisibility();
+		$this->Debet->SetVisibility();
+		$this->Kredit->SetVisibility();
+		$this->Keterangan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -374,13 +379,13 @@ class ct89_rektran_view extends ct89_rektran {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t89_rektran;
+		global $EW_EXPORT, $t10_jurnal;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t89_rektran);
+				$doc = new $class($t10_jurnal);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -446,7 +451,7 @@ class ct89_rektran_view extends ct89_rektran {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$sReturnUrl = "t89_rektranlist.php"; // Return to list
+				$sReturnUrl = "t10_jurnallist.php"; // Return to list
 			}
 
 			// Get action
@@ -456,11 +461,11 @@ class ct89_rektran_view extends ct89_rektran {
 					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$sReturnUrl = "t89_rektranlist.php"; // No matching record, return to list
+						$sReturnUrl = "t10_jurnallist.php"; // No matching record, return to list
 					}
 			}
 		} else {
-			$sReturnUrl = "t89_rektranlist.php"; // Not page request, return to list
+			$sReturnUrl = "t10_jurnallist.php"; // Not page request, return to list
 		}
 		if ($sReturnUrl <> "")
 			$this->Page_Terminate($sReturnUrl);
@@ -489,15 +494,6 @@ class ct89_rektran_view extends ct89_rektran {
 		else
 			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
 		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
-
-		// Edit
-		$item = &$option->Add("edit");
-		$editcaption = ew_HtmlTitle($Language->Phrase("ViewPageEditLink"));
-		if ($this->IsModal) // Modal
-			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->EditUrl) . "',caption:'" . $editcaption . "'});\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
-		$item->Visible = ($this->EditUrl <> "" && $Security->CanEdit());
 
 		// Copy
 		$item = &$option->Add("copy");
@@ -594,10 +590,13 @@ class ct89_rektran_view extends ct89_rektran {
 		$this->Row_Selected($row);
 		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->KodeTransaksi->setDbValue($rs->fields('KodeTransaksi'));
-		$this->JenisTransaksi->setDbValue($rs->fields('JenisTransaksi'));
-		$this->DebetRekening->setDbValue($rs->fields('DebetRekening'));
-		$this->KreditRekening->setDbValue($rs->fields('KreditRekening'));
+		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
+		$this->Rekening->setDbValue($rs->fields('Rekening'));
+		$this->Debet->setDbValue($rs->fields('Debet'));
+		$this->Kredit->setDbValue($rs->fields('Kredit'));
+		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 	}
 
 	// Load DbValue from recordset
@@ -605,10 +604,13 @@ class ct89_rektran_view extends ct89_rektran {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->KodeTransaksi->DbValue = $row['KodeTransaksi'];
-		$this->JenisTransaksi->DbValue = $row['JenisTransaksi'];
-		$this->DebetRekening->DbValue = $row['DebetRekening'];
-		$this->KreditRekening->DbValue = $row['KreditRekening'];
+		$this->Tanggal->DbValue = $row['Tanggal'];
+		$this->Periode->DbValue = $row['Periode'];
+		$this->NomorTransaksi->DbValue = $row['NomorTransaksi'];
+		$this->Rekening->DbValue = $row['Rekening'];
+		$this->Debet->DbValue = $row['Debet'];
+		$this->Kredit->DbValue = $row['Kredit'];
+		$this->Keterangan->DbValue = $row['Keterangan'];
 	}
 
 	// Render row values based on field settings
@@ -623,15 +625,26 @@ class ct89_rektran_view extends ct89_rektran {
 		$this->ListUrl = $this->GetListUrl();
 		$this->SetupOtherOptions();
 
+		// Convert decimal values if posted back
+		if ($this->Debet->FormValue == $this->Debet->CurrentValue && is_numeric(ew_StrToFloat($this->Debet->CurrentValue)))
+			$this->Debet->CurrentValue = ew_StrToFloat($this->Debet->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Kredit->FormValue == $this->Kredit->CurrentValue && is_numeric(ew_StrToFloat($this->Kredit->CurrentValue)))
+			$this->Kredit->CurrentValue = ew_StrToFloat($this->Kredit->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// KodeTransaksi
-		// JenisTransaksi
-		// DebetRekening
-		// KreditRekening
+		// Tanggal
+		// Periode
+		// NomorTransaksi
+		// Rekening
+		// Debet
+		// Kredit
+		// Keterangan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -639,81 +652,117 @@ class ct89_rektran_view extends ct89_rektran {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// KodeTransaksi
-		$this->KodeTransaksi->ViewValue = $this->KodeTransaksi->CurrentValue;
-		$this->KodeTransaksi->ViewCustomAttributes = "";
+		// Tanggal
+		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
+		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
+		$this->Tanggal->ViewCustomAttributes = "";
 
-		// JenisTransaksi
-		$this->JenisTransaksi->ViewValue = $this->JenisTransaksi->CurrentValue;
-		$this->JenisTransaksi->ViewCustomAttributes = "";
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
-		// DebetRekening
-		if (strval($this->DebetRekening->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->DebetRekening->CurrentValue, EW_DATATYPE_STRING, "");
-		$sSqlWrk = "SELECT `id`, `id` AS `DispFld`, `rekening` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+		// NomorTransaksi
+		$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
+		if (strval($this->NomorTransaksi->CurrentValue) <> "") {
+			$sFilterWrk = "`NomorTransaksi`" . ew_SearchString("=", $this->NomorTransaksi->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `NomorTransaksi`, `NomorTransaksi` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t10_jurnal`";
 		$sWhereWrk = "";
-		$this->DebetRekening->LookupFilters = array();
+		$this->NomorTransaksi->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->DebetRekening, $sWhereWrk); // Call Lookup selecting
+		$this->Lookup_Selecting($this->NomorTransaksi, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
 			$rswrk = Conn()->Execute($sSqlWrk);
 			if ($rswrk && !$rswrk->EOF) { // Lookup values found
 				$arwrk = array();
 				$arwrk[1] = $rswrk->fields('DispFld');
-				$arwrk[2] = $rswrk->fields('Disp2Fld');
-				$this->DebetRekening->ViewValue = $this->DebetRekening->DisplayValue($arwrk);
+				$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->DisplayValue($arwrk);
 				$rswrk->Close();
 			} else {
-				$this->DebetRekening->ViewValue = $this->DebetRekening->CurrentValue;
+				$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
 			}
 		} else {
-			$this->DebetRekening->ViewValue = NULL;
+			$this->NomorTransaksi->ViewValue = NULL;
 		}
-		$this->DebetRekening->ViewCustomAttributes = "";
+		$this->NomorTransaksi->ViewCustomAttributes = "";
 
-		// KreditRekening
-		if (strval($this->KreditRekening->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->KreditRekening->CurrentValue, EW_DATATYPE_STRING, "");
-		$sSqlWrk = "SELECT `id`, `id` AS `DispFld`, `rekening` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
+		// Rekening
+		if (strval($this->Rekening->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Rekening->CurrentValue, EW_DATATYPE_STRING, "");
+		$sSqlWrk = "SELECT `id`, `rekening` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
 		$sWhereWrk = "";
-		$this->KreditRekening->LookupFilters = array();
+		$this->Rekening->LookupFilters = array();
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->KreditRekening, $sWhereWrk); // Call Lookup selecting
+		$this->Lookup_Selecting($this->Rekening, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
 			$rswrk = Conn()->Execute($sSqlWrk);
 			if ($rswrk && !$rswrk->EOF) { // Lookup values found
 				$arwrk = array();
 				$arwrk[1] = $rswrk->fields('DispFld');
-				$arwrk[2] = $rswrk->fields('Disp2Fld');
-				$this->KreditRekening->ViewValue = $this->KreditRekening->DisplayValue($arwrk);
+				$this->Rekening->ViewValue = $this->Rekening->DisplayValue($arwrk);
 				$rswrk->Close();
 			} else {
-				$this->KreditRekening->ViewValue = $this->KreditRekening->CurrentValue;
+				$this->Rekening->ViewValue = $this->Rekening->CurrentValue;
 			}
 		} else {
-			$this->KreditRekening->ViewValue = NULL;
+			$this->Rekening->ViewValue = NULL;
 		}
-		$this->KreditRekening->ViewCustomAttributes = "";
+		$this->Rekening->ViewCustomAttributes = "";
 
-			// KodeTransaksi
-			$this->KodeTransaksi->LinkCustomAttributes = "";
-			$this->KodeTransaksi->HrefValue = "";
-			$this->KodeTransaksi->TooltipValue = "";
+		// Debet
+		$this->Debet->ViewValue = $this->Debet->CurrentValue;
+		$this->Debet->ViewValue = ew_FormatNumber($this->Debet->ViewValue, 2, -2, -2, -2);
+		$this->Debet->CellCssStyle .= "text-align: right;";
+		$this->Debet->ViewCustomAttributes = "";
 
-			// JenisTransaksi
-			$this->JenisTransaksi->LinkCustomAttributes = "";
-			$this->JenisTransaksi->HrefValue = "";
-			$this->JenisTransaksi->TooltipValue = "";
+		// Kredit
+		$this->Kredit->ViewValue = $this->Kredit->CurrentValue;
+		$this->Kredit->ViewValue = ew_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
+		$this->Kredit->CellCssStyle .= "text-align: right;";
+		$this->Kredit->ViewCustomAttributes = "";
 
-			// DebetRekening
-			$this->DebetRekening->LinkCustomAttributes = "";
-			$this->DebetRekening->HrefValue = "";
-			$this->DebetRekening->TooltipValue = "";
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
 
-			// KreditRekening
-			$this->KreditRekening->LinkCustomAttributes = "";
-			$this->KreditRekening->HrefValue = "";
-			$this->KreditRekening->TooltipValue = "";
+			// id
+			$this->id->LinkCustomAttributes = "";
+			$this->id->HrefValue = "";
+			$this->id->TooltipValue = "";
+
+			// Tanggal
+			$this->Tanggal->LinkCustomAttributes = "";
+			$this->Tanggal->HrefValue = "";
+			$this->Tanggal->TooltipValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
+
+			// NomorTransaksi
+			$this->NomorTransaksi->LinkCustomAttributes = "";
+			$this->NomorTransaksi->HrefValue = "";
+			$this->NomorTransaksi->TooltipValue = "";
+
+			// Rekening
+			$this->Rekening->LinkCustomAttributes = "";
+			$this->Rekening->HrefValue = "";
+			$this->Rekening->TooltipValue = "";
+
+			// Debet
+			$this->Debet->LinkCustomAttributes = "";
+			$this->Debet->HrefValue = "";
+			$this->Debet->TooltipValue = "";
+
+			// Kredit
+			$this->Kredit->LinkCustomAttributes = "";
+			$this->Kredit->HrefValue = "";
+			$this->Kredit->TooltipValue = "";
+
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
+			$this->Keterangan->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -726,7 +775,7 @@ class ct89_rektran_view extends ct89_rektran {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t89_rektranlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t10_jurnallist.php"), "", $this->TableVar, TRUE);
 		$PageId = "view";
 		$Breadcrumb->Add("view", $PageId, $url);
 	}
@@ -838,29 +887,29 @@ class ct89_rektran_view extends ct89_rektran {
 <?php
 
 // Create page object
-if (!isset($t89_rektran_view)) $t89_rektran_view = new ct89_rektran_view();
+if (!isset($t10_jurnal_view)) $t10_jurnal_view = new ct10_jurnal_view();
 
 // Page init
-$t89_rektran_view->Page_Init();
+$t10_jurnal_view->Page_Init();
 
 // Page main
-$t89_rektran_view->Page_Main();
+$t10_jurnal_view->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t89_rektran_view->Page_Render();
+$t10_jurnal_view->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "view";
-var CurrentForm = ft89_rektranview = new ew_Form("ft89_rektranview", "view");
+var CurrentForm = ft10_jurnalview = new ew_Form("ft10_jurnalview", "view");
 
 // Form_CustomValidate event
-ft89_rektranview.Form_CustomValidate = 
+ft10_jurnalview.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -869,14 +918,14 @@ ft89_rektranview.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft89_rektranview.ValidateRequired = true;
+ft10_jurnalview.ValidateRequired = true;
 <?php } else { ?>
-ft89_rektranview.ValidateRequired = false; 
+ft10_jurnalview.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-ft89_rektranview.Lists["x_DebetRekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_id","x_rekening","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
-ft89_rektranview.Lists["x_KreditRekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_id","x_rekening","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
+ft10_jurnalview.Lists["x_NomorTransaksi"] = {"LinkField":"x_NomorTransaksi","Ajax":true,"AutoFill":false,"DisplayFields":["x_NomorTransaksi","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t10_jurnal"};
+ft10_jurnalview.Lists["x_Rekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_rekening","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
 
 // Form object for search
 </script>
@@ -885,72 +934,116 @@ ft89_rektranview.Lists["x_KreditRekening"] = {"LinkField":"x_id","Ajax":true,"Au
 // Write your client script here, no need to add script tags.
 </script>
 <div class="ewToolbar">
-<?php if (!$t89_rektran_view->IsModal) { ?>
+<?php if (!$t10_jurnal_view->IsModal) { ?>
 <?php $Breadcrumb->Render(); ?>
 <?php } ?>
-<?php $t89_rektran_view->ExportOptions->Render("body") ?>
+<?php $t10_jurnal_view->ExportOptions->Render("body") ?>
 <?php
-	foreach ($t89_rektran_view->OtherOptions as &$option)
+	foreach ($t10_jurnal_view->OtherOptions as &$option)
 		$option->Render("body");
 ?>
-<?php if (!$t89_rektran_view->IsModal) { ?>
+<?php if (!$t10_jurnal_view->IsModal) { ?>
 <?php echo $Language->SelectionForm(); ?>
 <?php } ?>
 <div class="clearfix"></div>
 </div>
-<?php $t89_rektran_view->ShowPageHeader(); ?>
+<?php $t10_jurnal_view->ShowPageHeader(); ?>
 <?php
-$t89_rektran_view->ShowMessage();
+$t10_jurnal_view->ShowMessage();
 ?>
-<form name="ft89_rektranview" id="ft89_rektranview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t89_rektran_view->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t89_rektran_view->Token ?>">
+<form name="ft10_jurnalview" id="ft10_jurnalview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t10_jurnal_view->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t10_jurnal_view->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t89_rektran">
-<?php if ($t89_rektran_view->IsModal) { ?>
+<input type="hidden" name="t" value="t10_jurnal">
+<?php if ($t10_jurnal_view->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t89_rektran->KodeTransaksi->Visible) { // KodeTransaksi ?>
-	<tr id="r_KodeTransaksi">
-		<td><span id="elh_t89_rektran_KodeTransaksi"><?php echo $t89_rektran->KodeTransaksi->FldCaption() ?></span></td>
-		<td data-name="KodeTransaksi"<?php echo $t89_rektran->KodeTransaksi->CellAttributes() ?>>
-<span id="el_t89_rektran_KodeTransaksi">
-<span<?php echo $t89_rektran->KodeTransaksi->ViewAttributes() ?>>
-<?php echo $t89_rektran->KodeTransaksi->ViewValue ?></span>
+<?php if ($t10_jurnal->id->Visible) { // id ?>
+	<tr id="r_id">
+		<td><span id="elh_t10_jurnal_id"><?php echo $t10_jurnal->id->FldCaption() ?></span></td>
+		<td data-name="id"<?php echo $t10_jurnal->id->CellAttributes() ?>>
+<span id="el_t10_jurnal_id">
+<span<?php echo $t10_jurnal->id->ViewAttributes() ?>>
+<?php echo $t10_jurnal->id->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t89_rektran->JenisTransaksi->Visible) { // JenisTransaksi ?>
-	<tr id="r_JenisTransaksi">
-		<td><span id="elh_t89_rektran_JenisTransaksi"><?php echo $t89_rektran->JenisTransaksi->FldCaption() ?></span></td>
-		<td data-name="JenisTransaksi"<?php echo $t89_rektran->JenisTransaksi->CellAttributes() ?>>
-<span id="el_t89_rektran_JenisTransaksi">
-<span<?php echo $t89_rektran->JenisTransaksi->ViewAttributes() ?>>
-<?php echo $t89_rektran->JenisTransaksi->ViewValue ?></span>
+<?php if ($t10_jurnal->Tanggal->Visible) { // Tanggal ?>
+	<tr id="r_Tanggal">
+		<td><span id="elh_t10_jurnal_Tanggal"><?php echo $t10_jurnal->Tanggal->FldCaption() ?></span></td>
+		<td data-name="Tanggal"<?php echo $t10_jurnal->Tanggal->CellAttributes() ?>>
+<span id="el_t10_jurnal_Tanggal">
+<span<?php echo $t10_jurnal->Tanggal->ViewAttributes() ?>>
+<?php echo $t10_jurnal->Tanggal->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t89_rektran->DebetRekening->Visible) { // DebetRekening ?>
-	<tr id="r_DebetRekening">
-		<td><span id="elh_t89_rektran_DebetRekening"><?php echo $t89_rektran->DebetRekening->FldCaption() ?></span></td>
-		<td data-name="DebetRekening"<?php echo $t89_rektran->DebetRekening->CellAttributes() ?>>
-<span id="el_t89_rektran_DebetRekening">
-<span<?php echo $t89_rektran->DebetRekening->ViewAttributes() ?>>
-<?php echo $t89_rektran->DebetRekening->ViewValue ?></span>
+<?php if ($t10_jurnal->Periode->Visible) { // Periode ?>
+	<tr id="r_Periode">
+		<td><span id="elh_t10_jurnal_Periode"><?php echo $t10_jurnal->Periode->FldCaption() ?></span></td>
+		<td data-name="Periode"<?php echo $t10_jurnal->Periode->CellAttributes() ?>>
+<span id="el_t10_jurnal_Periode">
+<span<?php echo $t10_jurnal->Periode->ViewAttributes() ?>>
+<?php echo $t10_jurnal->Periode->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t89_rektran->KreditRekening->Visible) { // KreditRekening ?>
-	<tr id="r_KreditRekening">
-		<td><span id="elh_t89_rektran_KreditRekening"><?php echo $t89_rektran->KreditRekening->FldCaption() ?></span></td>
-		<td data-name="KreditRekening"<?php echo $t89_rektran->KreditRekening->CellAttributes() ?>>
-<span id="el_t89_rektran_KreditRekening">
-<span<?php echo $t89_rektran->KreditRekening->ViewAttributes() ?>>
-<?php echo $t89_rektran->KreditRekening->ViewValue ?></span>
+<?php if ($t10_jurnal->NomorTransaksi->Visible) { // NomorTransaksi ?>
+	<tr id="r_NomorTransaksi">
+		<td><span id="elh_t10_jurnal_NomorTransaksi"><?php echo $t10_jurnal->NomorTransaksi->FldCaption() ?></span></td>
+		<td data-name="NomorTransaksi"<?php echo $t10_jurnal->NomorTransaksi->CellAttributes() ?>>
+<span id="el_t10_jurnal_NomorTransaksi">
+<span<?php echo $t10_jurnal->NomorTransaksi->ViewAttributes() ?>>
+<?php echo $t10_jurnal->NomorTransaksi->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t10_jurnal->Rekening->Visible) { // Rekening ?>
+	<tr id="r_Rekening">
+		<td><span id="elh_t10_jurnal_Rekening"><?php echo $t10_jurnal->Rekening->FldCaption() ?></span></td>
+		<td data-name="Rekening"<?php echo $t10_jurnal->Rekening->CellAttributes() ?>>
+<span id="el_t10_jurnal_Rekening">
+<span<?php echo $t10_jurnal->Rekening->ViewAttributes() ?>>
+<?php echo $t10_jurnal->Rekening->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t10_jurnal->Debet->Visible) { // Debet ?>
+	<tr id="r_Debet">
+		<td><span id="elh_t10_jurnal_Debet"><?php echo $t10_jurnal->Debet->FldCaption() ?></span></td>
+		<td data-name="Debet"<?php echo $t10_jurnal->Debet->CellAttributes() ?>>
+<span id="el_t10_jurnal_Debet">
+<span<?php echo $t10_jurnal->Debet->ViewAttributes() ?>>
+<?php echo $t10_jurnal->Debet->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t10_jurnal->Kredit->Visible) { // Kredit ?>
+	<tr id="r_Kredit">
+		<td><span id="elh_t10_jurnal_Kredit"><?php echo $t10_jurnal->Kredit->FldCaption() ?></span></td>
+		<td data-name="Kredit"<?php echo $t10_jurnal->Kredit->CellAttributes() ?>>
+<span id="el_t10_jurnal_Kredit">
+<span<?php echo $t10_jurnal->Kredit->ViewAttributes() ?>>
+<?php echo $t10_jurnal->Kredit->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
+	<tr id="r_Keterangan">
+		<td><span id="elh_t10_jurnal_Keterangan"><?php echo $t10_jurnal->Keterangan->FldCaption() ?></span></td>
+		<td data-name="Keterangan"<?php echo $t10_jurnal->Keterangan->CellAttributes() ?>>
+<span id="el_t10_jurnal_Keterangan">
+<span<?php echo $t10_jurnal->Keterangan->ViewAttributes() ?>>
+<?php echo $t10_jurnal->Keterangan->ViewValue ?></span>
 </span>
 </td>
 	</tr>
@@ -958,10 +1051,10 @@ $t89_rektran_view->ShowMessage();
 </table>
 </form>
 <script type="text/javascript">
-ft89_rektranview.Init();
+ft10_jurnalview.Init();
 </script>
 <?php
-$t89_rektran_view->ShowPageFooter();
+$t10_jurnal_view->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -973,5 +1066,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t89_rektran_view->Page_Terminate();
+$t10_jurnal_view->Page_Terminate();
 ?>

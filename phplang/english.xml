@@ -583,8 +583,8 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
-    <menu id="10058">
-      <phrase id="menutext" value="t 10 jurnal" />
+    <menu id="10160">
+      <phrase id="menutext" value="Main Menu" />
     </menu>
     <menu id="16">
       <phrase id="menutext" value="Home" />
@@ -607,14 +607,14 @@
     <menu id="5">
       <phrase id="menutext" value="t 05 pinjamanjaminan" />
     </menu>
-    <menu id="17">
-      <phrase id="menutext" value="Tutup Buku" />
-    </menu>
-    <menu id="10019">
-      <phrase id="menutext" value="List" />
+    <menu id="10058">
+      <phrase id="menutext" value="Jurnal" />
     </menu>
     <menu id="10055">
       <phrase id="menutext" value="Jurnal Transaksi" />
+    </menu>
+    <menu id="10113">
+      <phrase id="menutext" value="Laporan" />
     </menu>
     <menu id="10018">
       <phrase id="menutext" value="Pinjaman" />
@@ -628,23 +628,17 @@
     <menu id="10060">
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
+    <menu id="10161">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10062">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
     </menu>
-    <menu id="10059">
-      <phrase id="menutext" value="v 01 labarugi" />
-    </menu>
     <menu id="35">
       <phrase id="menutext" value="Setup" />
-    </menu>
-    <menu id="10052">
-      <phrase id="menutext" value="Rekening" />
-    </menu>
-    <menu id="10056">
-      <phrase id="menutext" value="Rekening Transaksi" />
-    </menu>
-    <menu id="10053">
-      <phrase id="menutext" value="Rekening Transaksi" />
     </menu>
     <menu id="1">
       <phrase id="menutext" value="Nasabah" />
@@ -655,11 +649,23 @@
     <menu id="14">
       <phrase id="menutext" value="Marketing" />
     </menu>
+    <menu id="17">
+      <phrase id="menutext" value="Tutup Buku" />
+    </menu>
+    <menu id="10053">
+      <phrase id="menutext" value="Rekening Transaksi" />
+    </menu>
     <menu id="7">
       <phrase id="menutext" value="Periode" />
     </menu>
     <menu id="18">
       <phrase id="menutext" value="t 92 periodeold" />
+    </menu>
+    <menu id="10052">
+      <phrase id="menutext" value="Rekening" />
+    </menu>
+    <menu id="10056">
+      <phrase id="menutext" value="Link Rekening" />
     </menu>
     <menu id="10">
       <phrase id="menutext" value="Users" />
@@ -675,6 +681,9 @@
     </menu>
     <menu id="9">
       <phrase id="menutext" value="Description" />
+    </menu>
+    <menu id="10059">
+      <phrase id="menutext" value="v 01 labarugi" />
     </menu>
     <menu id="10061">
       <phrase id="menutext" value="t 91 rekening" />
@@ -753,6 +762,12 @@
     </table>
     <table id="cf02_tutupbuku_php">
       <phrase id="tblcaption" value="Tutup Buku" />
+    </table>
+    <table id="cf03_labarugi_php">
+      <phrase id="tblcaption" value="Laba Rugi" />
+    </table>
+    <table id="cf04_neraca_php">
+      <phrase id="tblcaption" value="Neraca" />
     </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
@@ -1095,7 +1110,7 @@
       </field>
     </table>
     <table id="t10_jurnal">
-      <phrase id="tblcaption" value="t 10 jurnal" />
+      <phrase id="tblcaption" value="Jurnal" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -1121,8 +1136,14 @@
         <phrase id="fldcaption" value="Keterangan" />
       </field>
     </table>
+    <table id="t88_labarugi">
+      <phrase id="tblcaption" value="Laba Rugi" />
+      <field id="field01" />
+      <field id="field02" />
+      <field id="field03" />
+    </table>
     <table id="t89_rektran">
-      <phrase id="tblcaption" value="Rekening Transaksi" />
+      <phrase id="tblcaption" value="Link Rekening" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
@@ -1422,9 +1443,6 @@
       <field id="periode">
         <phrase id="fldcaption" value="periode" />
       </field>
-    </table>
-    <table id="cf03_labarugi_php">
-      <phrase id="tblcaption" value="Laba Rugi" />
     </table>
   </project>
 </ew-language>

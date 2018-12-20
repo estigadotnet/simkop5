@@ -1,21 +1,15 @@
 <?php
 
 // Global variable for table object
-$t94_log = NULL;
+$t88_labarugi = NULL;
 
 //
-// Table class for t94_log
+// Table class for t88_labarugi
 //
-class ct94_log extends cTable {
-	var $AuditTrailOnAdd = TRUE;
-	var $AuditTrailOnEdit = TRUE;
-	var $AuditTrailOnDelete = TRUE;
-	var $AuditTrailOnView = FALSE;
-	var $AuditTrailOnViewData = FALSE;
-	var $AuditTrailOnSearch = FALSE;
-	var $id;
-	var $index_;
-	var $subj_;
+class ct88_labarugi extends cTable {
+	var $field01;
+	var $field02;
+	var $field03;
 
 	//
 	// Table class constructor
@@ -25,12 +19,12 @@ class ct94_log extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 't94_log';
-		$this->TableName = 't94_log';
+		$this->TableVar = 't88_labarugi';
+		$this->TableName = 't88_labarugi';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t94_log`";
+		$this->UpdateTable = "`t88_labarugi`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -47,22 +41,20 @@ class ct94_log extends cTable {
 		$this->UserIDAllowSecurity = 0; // User ID Allow
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
-		// id
-		$this->id = new cField('t94_log', 't94_log', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
-		$this->id->Sortable = TRUE; // Allow sort
-		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['id'] = &$this->id;
+		// field01
+		$this->field01 = new cField('t88_labarugi', 't88_labarugi', 'x_field01', 'field01', '`field01`', '`field01`', 200, -1, FALSE, '`field01`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->field01->Sortable = TRUE; // Allow sort
+		$this->fields['field01'] = &$this->field01;
 
-		// index_
-		$this->index_ = new cField('t94_log', 't94_log', 'x_index_', 'index_', '`index_`', '`index_`', 16, -1, FALSE, '`index_`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->index_->Sortable = TRUE; // Allow sort
-		$this->index_->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['index_'] = &$this->index_;
+		// field02
+		$this->field02 = new cField('t88_labarugi', 't88_labarugi', 'x_field02', 'field02', '`field02`', '`field02`', 200, -1, FALSE, '`field02`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->field02->Sortable = TRUE; // Allow sort
+		$this->fields['field02'] = &$this->field02;
 
-		// subj_
-		$this->subj_ = new cField('t94_log', 't94_log', 'x_subj_', 'subj_', '`subj_`', '`subj_`', 200, -1, FALSE, '`subj_`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->subj_->Sortable = TRUE; // Allow sort
-		$this->fields['subj_'] = &$this->subj_;
+		// field03
+		$this->field03 = new cField('t88_labarugi', 't88_labarugi', 'x_field03', 'field03', '`field03`', '`field03`', 200, -1, FALSE, '`field03`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->field03->Sortable = TRUE; // Allow sort
+		$this->fields['field03'] = &$this->field03;
 	}
 
 	// Set Field Visibility
@@ -99,35 +91,11 @@ class ct94_log extends cTable {
 		}
 	}
 
-	// Current detail table name
-	function getCurrentDetailTable() {
-		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE];
-	}
-
-	function setCurrentDetailTable($v) {
-		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE] = $v;
-	}
-
-	// Get detail url
-	function GetDetailUrl() {
-
-		// Detail url
-		$sDetailUrl = "";
-		if ($this->getCurrentDetailTable() == "t95_logdesc") {
-			$sDetailUrl = $GLOBALS["t95_logdesc"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
-			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
-		}
-		if ($sDetailUrl == "") {
-			$sDetailUrl = "t94_loglist.php";
-		}
-		return $sDetailUrl;
-	}
-
 	// Table level SQL
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t94_log`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t88_labarugi`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -195,7 +163,7 @@ class ct94_log extends cTable {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() { // Order By
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`index_` ASC";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "";
 	}
 
 	function SqlOrderBy() { // For backward compatibility
@@ -348,12 +316,6 @@ class ct94_log extends cTable {
 		$conn = &$this->Connection();
 		$bInsert = $conn->Execute($this->InsertSQL($rs));
 		if ($bInsert) {
-
-			// Get insert id if necessary
-			$this->id->setDbValue($conn->Insert_ID());
-			$rs['id'] = $this->id->DbValue;
-			if ($this->AuditTrailOnAdd)
-				$this->WriteAuditTrailOnAdd($rs);
 		}
 		return $bInsert;
 	}
@@ -380,33 +342,7 @@ class ct94_log extends cTable {
 	// Update
 	function Update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE) {
 		$conn = &$this->Connection();
-
-		// Cascade Update detail table 't95_logdesc'
-		$bCascadeUpdate = FALSE;
-		$rscascade = array();
-		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'log_id'
-			$bCascadeUpdate = TRUE;
-			$rscascade['log_id'] = $rs['id']; 
-		}
-		if ($bCascadeUpdate) {
-			if (!isset($GLOBALS["t95_logdesc"])) $GLOBALS["t95_logdesc"] = new ct95_logdesc();
-			$rswrk = $GLOBALS["t95_logdesc"]->LoadRs("`log_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
-			while ($rswrk && !$rswrk->EOF) {
-				$rskey = array();
-				$fldname = 'id';
-				$rskey[$fldname] = $rswrk->fields[$fldname];
-				$bUpdate = $GLOBALS["t95_logdesc"]->Update($rscascade, $rskey, $rswrk->fields);
-				if (!$bUpdate) return FALSE;
-				$rswrk->MoveNext();
-			}
-		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
-		if ($bUpdate && $this->AuditTrailOnEdit) {
-			$rsaudit = $rs;
-			$fldname = 'id';
-			if (!array_key_exists($fldname, $rsaudit)) $rsaudit[$fldname] = $rsold[$fldname];
-			$this->WriteAuditTrailOnEdit($rsold, $rsaudit);
-		}
 		return $bUpdate;
 	}
 
@@ -416,8 +352,6 @@ class ct94_log extends cTable {
 		if (is_array($where))
 			$where = $this->ArrayToFilter($where);
 		if ($rs) {
-			if (array_key_exists('id', $rs))
-				ew_AddFilter($where, ew_QuotedName('id', $this->DBID) . '=' . ew_QuotedValue($rs['id'], $this->id->FldDataType, $this->DBID));
 		}
 		$filter = ($curfilter) ? $this->CurrentFilter : "";
 		ew_AddFilter($filter, $where);
@@ -431,31 +365,18 @@ class ct94_log extends cTable {
 	// Delete
 	function Delete(&$rs, $where = "", $curfilter = TRUE) {
 		$conn = &$this->Connection();
-
-		// Cascade delete detail table 't95_logdesc'
-		if (!isset($GLOBALS["t95_logdesc"])) $GLOBALS["t95_logdesc"] = new ct95_logdesc();
-		$rscascade = $GLOBALS["t95_logdesc"]->LoadRs("`log_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
-		while ($rscascade && !$rscascade->EOF) {
-			$GLOBALS["t95_logdesc"]->Delete($rscascade->fields);
-			$rscascade->MoveNext();
-		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
-		if ($bDelete && $this->AuditTrailOnDelete)
-			$this->WriteAuditTrailOnDelete($rs);
 		return $bDelete;
 	}
 
 	// Key filter WHERE clause
 	function SqlKeyFilter() {
-		return "`id` = @id@";
+		return "";
 	}
 
 	// Key filter
 	function KeyFilter() {
 		$sKeyFilter = $this->SqlKeyFilter();
-		if (!is_numeric($this->id->CurrentValue))
-			$sKeyFilter = "0=1"; // Invalid key
-		$sKeyFilter = str_replace("@id@", ew_AdjustSql($this->id->CurrentValue, $this->DBID), $sKeyFilter); // Replace key value
 		return $sKeyFilter;
 	}
 
@@ -469,7 +390,7 @@ class ct94_log extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "t94_loglist.php";
+			return "t88_labarugilist.php";
 		}
 	}
 
@@ -479,33 +400,30 @@ class ct94_log extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "t94_loglist.php";
+		return "t88_labarugilist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("t94_logview.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("t88_labarugiview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("t94_logview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("t88_labarugiview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "t94_logadd.php?" . $this->UrlParm($parm);
+			$url = "t88_labarugiadd.php?" . $this->UrlParm($parm);
 		else
-			$url = "t94_logadd.php";
+			$url = "t88_labarugiadd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		if ($parm <> "")
-			$url = $this->KeyUrl("t94_logedit.php", $this->UrlParm($parm));
-		else
-			$url = $this->KeyUrl("t94_logedit.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+		$url = $this->KeyUrl("t88_labarugiedit.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -517,10 +435,7 @@ class ct94_log extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		if ($parm <> "")
-			$url = $this->KeyUrl("t94_logadd.php", $this->UrlParm($parm));
-		else
-			$url = $this->KeyUrl("t94_logadd.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+		$url = $this->KeyUrl("t88_labarugiadd.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -532,7 +447,7 @@ class ct94_log extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("t94_logdelete.php", $this->UrlParm());
+		return $this->KeyUrl("t88_labarugidelete.php", $this->UrlParm());
 	}
 
 	// Add master url
@@ -542,7 +457,6 @@ class ct94_log extends cTable {
 
 	function KeyToJson() {
 		$json = "";
-		$json .= "id:" . ew_VarToJson($this->id->CurrentValue, "number", "'");
 		return "{" . $json . "}";
 	}
 
@@ -550,11 +464,6 @@ class ct94_log extends cTable {
 	function KeyUrl($url, $parm = "") {
 		$sUrl = $url . "?";
 		if ($parm <> "") $sUrl .= $parm . "&";
-		if (!is_null($this->id->CurrentValue)) {
-			$sUrl .= "id=" . urlencode($this->id->CurrentValue);
-		} else {
-			return "javascript:ew_Alert(ewLanguage.Phrase('InvalidRecord'));";
-		}
 		return $sUrl;
 	}
 
@@ -584,12 +493,6 @@ class ct94_log extends cTable {
 			$cnt = count($arKeys);
 		} elseif (!empty($_GET) || !empty($_POST)) {
 			$isPost = ew_IsHttpPost();
-			if ($isPost && isset($_POST["id"]))
-				$arKeys[] = ew_StripSlashes($_POST["id"]);
-			elseif (isset($_GET["id"]))
-				$arKeys[] = ew_StripSlashes($_GET["id"]);
-			else
-				$arKeys = NULL; // Do not setup
 
 			//return $arKeys; // Do not return yet, so the values will also be checked by the following code
 		}
@@ -598,8 +501,6 @@ class ct94_log extends cTable {
 		$ar = array();
 		if (is_array($arKeys)) {
 			foreach ($arKeys as $key) {
-				if (!is_numeric($key))
-					continue;
 				$ar[] = $key;
 			}
 		}
@@ -612,7 +513,6 @@ class ct94_log extends cTable {
 		$sKeyFilter = "";
 		foreach ($arKeys as $key) {
 			if ($sKeyFilter <> "") $sKeyFilter .= " OR ";
-			$this->id->CurrentValue = $key;
 			$sKeyFilter .= "(" . $this->KeyFilter() . ")";
 		}
 		return $sKeyFilter;
@@ -633,9 +533,9 @@ class ct94_log extends cTable {
 
 	// Load row values from recordset
 	function LoadListRowValues(&$rs) {
-		$this->id->setDbValue($rs->fields('id'));
-		$this->index_->setDbValue($rs->fields('index_'));
-		$this->subj_->setDbValue($rs->fields('subj_'));
+		$this->field01->setDbValue($rs->fields('field01'));
+		$this->field02->setDbValue($rs->fields('field02'));
+		$this->field03->setDbValue($rs->fields('field03'));
 	}
 
 	// Render list row values
@@ -646,36 +546,37 @@ class ct94_log extends cTable {
 		$this->Row_Rendering();
 
    // Common render codes
-		// id
-		// index_
-		// subj_
-		// id
+		// field01
+		// field02
+		// field03
+		// field01
 
-		$this->id->ViewValue = $this->id->CurrentValue;
-		$this->id->ViewCustomAttributes = "";
+		$this->field01->ViewValue = $this->field01->CurrentValue;
+		$this->field01->ViewCustomAttributes = "";
 
-		// index_
-		$this->index_->ViewValue = $this->index_->CurrentValue;
-		$this->index_->ViewCustomAttributes = "";
+		// field02
+		$this->field02->ViewValue = $this->field02->CurrentValue;
+		$this->field02->ViewCustomAttributes = "";
 
-		// subj_
-		$this->subj_->ViewValue = $this->subj_->CurrentValue;
-		$this->subj_->ViewCustomAttributes = "";
+		// field03
+		$this->field03->ViewValue = $this->field03->CurrentValue;
+		$this->field03->CellCssStyle .= "text-align: right;";
+		$this->field03->ViewCustomAttributes = "";
 
-		// id
-		$this->id->LinkCustomAttributes = "";
-		$this->id->HrefValue = "";
-		$this->id->TooltipValue = "";
+		// field01
+		$this->field01->LinkCustomAttributes = "";
+		$this->field01->HrefValue = "";
+		$this->field01->TooltipValue = "";
 
-		// index_
-		$this->index_->LinkCustomAttributes = "";
-		$this->index_->HrefValue = "";
-		$this->index_->TooltipValue = "";
+		// field02
+		$this->field02->LinkCustomAttributes = "";
+		$this->field02->HrefValue = "";
+		$this->field02->TooltipValue = "";
 
-		// subj_
-		$this->subj_->LinkCustomAttributes = "";
-		$this->subj_->HrefValue = "";
-		$this->subj_->TooltipValue = "";
+		// field03
+		$this->field03->LinkCustomAttributes = "";
+		$this->field03->HrefValue = "";
+		$this->field03->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -688,23 +589,23 @@ class ct94_log extends cTable {
 		// Call Row Rendering event
 		$this->Row_Rendering();
 
-		// id
-		$this->id->EditAttrs["class"] = "form-control";
-		$this->id->EditCustomAttributes = "";
-		$this->id->EditValue = $this->id->CurrentValue;
-		$this->id->ViewCustomAttributes = "";
+		// field01
+		$this->field01->EditAttrs["class"] = "form-control";
+		$this->field01->EditCustomAttributes = "";
+		$this->field01->EditValue = $this->field01->CurrentValue;
+		$this->field01->PlaceHolder = ew_RemoveHtml($this->field01->FldCaption());
 
-		// index_
-		$this->index_->EditAttrs["class"] = "form-control";
-		$this->index_->EditCustomAttributes = "";
-		$this->index_->EditValue = $this->index_->CurrentValue;
-		$this->index_->PlaceHolder = ew_RemoveHtml($this->index_->FldCaption());
+		// field02
+		$this->field02->EditAttrs["class"] = "form-control";
+		$this->field02->EditCustomAttributes = "";
+		$this->field02->EditValue = $this->field02->CurrentValue;
+		$this->field02->PlaceHolder = ew_RemoveHtml($this->field02->FldCaption());
 
-		// subj_
-		$this->subj_->EditAttrs["class"] = "form-control";
-		$this->subj_->EditCustomAttributes = "";
-		$this->subj_->EditValue = $this->subj_->CurrentValue;
-		$this->subj_->PlaceHolder = ew_RemoveHtml($this->subj_->FldCaption());
+		// field03
+		$this->field03->EditAttrs["class"] = "form-control";
+		$this->field03->EditCustomAttributes = "";
+		$this->field03->EditValue = $this->field03->CurrentValue;
+		$this->field03->PlaceHolder = ew_RemoveHtml($this->field03->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -733,12 +634,13 @@ class ct94_log extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->index_->Exportable) $Doc->ExportCaption($this->index_);
-					if ($this->subj_->Exportable) $Doc->ExportCaption($this->subj_);
+					if ($this->field01->Exportable) $Doc->ExportCaption($this->field01);
+					if ($this->field02->Exportable) $Doc->ExportCaption($this->field02);
+					if ($this->field03->Exportable) $Doc->ExportCaption($this->field03);
 				} else {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->index_->Exportable) $Doc->ExportCaption($this->index_);
-					if ($this->subj_->Exportable) $Doc->ExportCaption($this->subj_);
+					if ($this->field01->Exportable) $Doc->ExportCaption($this->field01);
+					if ($this->field02->Exportable) $Doc->ExportCaption($this->field02);
+					if ($this->field03->Exportable) $Doc->ExportCaption($this->field03);
 				}
 				$Doc->EndExportRow();
 			}
@@ -770,12 +672,13 @@ class ct94_log extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->index_->Exportable) $Doc->ExportField($this->index_);
-						if ($this->subj_->Exportable) $Doc->ExportField($this->subj_);
+						if ($this->field01->Exportable) $Doc->ExportField($this->field01);
+						if ($this->field02->Exportable) $Doc->ExportField($this->field02);
+						if ($this->field03->Exportable) $Doc->ExportField($this->field03);
 					} else {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->index_->Exportable) $Doc->ExportField($this->index_);
-						if ($this->subj_->Exportable) $Doc->ExportField($this->subj_);
+						if ($this->field01->Exportable) $Doc->ExportField($this->field01);
+						if ($this->field02->Exportable) $Doc->ExportField($this->field02);
+						if ($this->field03->Exportable) $Doc->ExportField($this->field03);
 					}
 					$Doc->EndExportRow();
 				}
@@ -814,129 +717,6 @@ class ct94_log extends cTable {
 			return ew_ArrayToJson($rsarr);
 		} else {
 			return FALSE;
-		}
-	}
-
-	// Write Audit Trail start/end for grid update
-	function WriteAuditTrailDummy($typ) {
-		$table = 't94_log';
-		$usr = CurrentUserID();
-		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
-	}
-
-	// Write Audit Trail (add page)
-	function WriteAuditTrailOnAdd(&$rs) {
-		global $Language;
-		if (!$this->AuditTrailOnAdd) return;
-		$table = 't94_log';
-
-		// Get key value
-		$key = "";
-		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
-		$key .= $rs['id'];
-
-		// Write Audit Trail
-		$dt = ew_StdCurrentDateTime();
-		$id = ew_ScriptName();
-		$usr = CurrentUserID();
-		foreach (array_keys($rs) as $fldname) {
-			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
-				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
-					$newvalue = $Language->Phrase("PasswordMask"); // Password Field
-				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) {
-					if (EW_AUDIT_TRAIL_TO_DATABASE)
-						$newvalue = $rs[$fldname];
-					else
-						$newvalue = "[MEMO]"; // Memo Field
-				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) {
-					$newvalue = "[XML]"; // XML Field
-				} else {
-					$newvalue = $rs[$fldname];
-				}
-				ew_WriteAuditTrail("log", $dt, $id, $usr, "A", $table, $fldname, $key, "", $newvalue);
-			}
-		}
-	}
-
-	// Write Audit Trail (edit page)
-	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
-		global $Language;
-		if (!$this->AuditTrailOnEdit) return;
-		$table = 't94_log';
-
-		// Get key value
-		$key = "";
-		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
-		$key .= $rsold['id'];
-
-		// Write Audit Trail
-		$dt = ew_StdCurrentDateTime();
-		$id = ew_ScriptName();
-		$usr = CurrentUserID();
-		foreach (array_keys($rsnew) as $fldname) {
-			if (array_key_exists($fldname, $this->fields) && array_key_exists($fldname, $rsold) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
-				if ($this->fields[$fldname]->FldDataType == EW_DATATYPE_DATE) { // DateTime field
-					$modified = (ew_FormatDateTime($rsold[$fldname], 0) <> ew_FormatDateTime($rsnew[$fldname], 0));
-				} else {
-					$modified = !ew_CompareValue($rsold[$fldname], $rsnew[$fldname]);
-				}
-				if ($modified) {
-					if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") { // Password Field
-						$oldvalue = $Language->Phrase("PasswordMask");
-						$newvalue = $Language->Phrase("PasswordMask");
-					} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) { // Memo field
-						if (EW_AUDIT_TRAIL_TO_DATABASE) {
-							$oldvalue = $rsold[$fldname];
-							$newvalue = $rsnew[$fldname];
-						} else {
-							$oldvalue = "[MEMO]";
-							$newvalue = "[MEMO]";
-						}
-					} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) { // XML field
-						$oldvalue = "[XML]";
-						$newvalue = "[XML]";
-					} else {
-						$oldvalue = $rsold[$fldname];
-						$newvalue = $rsnew[$fldname];
-					}
-					ew_WriteAuditTrail("log", $dt, $id, $usr, "U", $table, $fldname, $key, $oldvalue, $newvalue);
-				}
-			}
-		}
-	}
-
-	// Write Audit Trail (delete page)
-	function WriteAuditTrailOnDelete(&$rs) {
-		global $Language;
-		if (!$this->AuditTrailOnDelete) return;
-		$table = 't94_log';
-
-		// Get key value
-		$key = "";
-		if ($key <> "")
-			$key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
-		$key .= $rs['id'];
-
-		// Write Audit Trail
-		$dt = ew_StdCurrentDateTime();
-		$id = ew_ScriptName();
-		$curUser = CurrentUserID();
-		foreach (array_keys($rs) as $fldname) {
-			if (array_key_exists($fldname, $this->fields) && $this->fields[$fldname]->FldDataType <> EW_DATATYPE_BLOB) { // Ignore BLOB fields
-				if ($this->fields[$fldname]->FldHtmlTag == "PASSWORD") {
-					$oldvalue = $Language->Phrase("PasswordMask"); // Password Field
-				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_MEMO) {
-					if (EW_AUDIT_TRAIL_TO_DATABASE)
-						$oldvalue = $rs[$fldname];
-					else
-						$oldvalue = "[MEMO]"; // Memo field
-				} elseif ($this->fields[$fldname]->FldDataType == EW_DATATYPE_XML) {
-					$oldvalue = "[XML]"; // XML field
-				} else {
-					$oldvalue = $rs[$fldname];
-				}
-				ew_WriteAuditTrail("log", $dt, $id, $curUser, "D", $table, $fldname, $key, $oldvalue, "");
-			}
 		}
 	}
 
