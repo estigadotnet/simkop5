@@ -1145,8 +1145,8 @@ class ct06_pinjamantitipan extends cTable {
 		// kodetransaksi = 07
 		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '07'");
 		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '07'");
-		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No, $rekdebet, $rsnew["Masuk"], 0, "Titipan Masuk Angsuran ke ".$rsnew["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
-		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No, $rekkredit, 0, $rsnew["Masuk"], "Titipan Masuk Angsuran ke ".$rsnew["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TM", $rekdebet, $rsnew["Masuk"], 0, "Titipan Masuk Angsuran ke ".$rsnew["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TM", $rekkredit, 0, $rsnew["Masuk"], "Titipan Masuk Angsuran ke ".$rsnew["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
 	}
 
 	// Row Updating event
@@ -1170,10 +1170,10 @@ class ct06_pinjamantitipan extends cTable {
 		// kodetransaksi = 07
 		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '07'");
 		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '07'");
-		f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No, $rekdebet, "Titipan Masuk Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
-		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No, $rekdebet, $rsupdate["Masuk"], 0, "Titipan Masuk Angsuran ke ".$rsupdate["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
-		f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No, $rekkredit, "Titipan Masuk Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
-		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No, $rekkredit, 0, $rsupdate["Masuk"], "Titipan Masuk Angsuran ke ".$rsupdate["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No.".TM", $rekdebet, "Titipan Masuk Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TM", $rekdebet, $rsupdate["Masuk"], 0, "Titipan Masuk Angsuran ke ".$rsupdate["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No.".TM", $rekkredit, "Titipan Masuk Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TM", $rekkredit, 0, $rsupdate["Masuk"], "Titipan Masuk Angsuran ke ".$rsupdate["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
 	}
 
 	// Row Update Conflict event

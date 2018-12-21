@@ -26,8 +26,15 @@ function Page_Unloaded() {
 
 	//echo "Page Unloaded";
 }
+/*
 
+function yang dibuat untuk memudahkan memproses data
+*/
+
+//-------------------------------------------------------------------------
 function f_hapusjurnal($Periode, $NomorTransaksi, $Rekening, $Keterangan) {
+
+//-------------------------------------------------------------------------
 	$q = "
 		delete from t10_jurnal where
 			Periode = '".$Periode."' and
@@ -38,6 +45,7 @@ function f_hapusjurnal($Periode, $NomorTransaksi, $Rekening, $Keterangan) {
 	Conn()->Execute($q); 
 }
 
+//-------------------------------------------------------------------------
 function f_buatjurnal($Periode, $NomorTransaksi, $Rekening, $Debet, $Kredit, $Keterangan) {
 	$q = "
 		insert into t10_jurnal (

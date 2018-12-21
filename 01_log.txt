@@ -1,5 +1,9 @@
 <strong>----- to do --------------------------------------------------------------------------------</strong>
 
+9:16 AM 12/21/2018
+- daftar transaksi yang harus dijurnalkan
+  - 
+
 <font color="red">1:36 PM 11/30/2018</font>
 - minimize informasi detail di pinjaman yang tidak diperlukan
 

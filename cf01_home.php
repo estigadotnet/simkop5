@@ -418,7 +418,7 @@ $r = Conn()->Execute($q);
 	<div id="log" class="panel-collapse collapse out">
 		<div class="panel-body">
 			<div>
-<pre><?php $lines=file('log.txt');foreach ($lines as $line_num => $line){echo $line;}?></pre>
+<pre><?php $lines=file('01_log.txt');foreach ($lines as $line_num => $line){echo $line;}?></pre>
 			</div>
 		</div>
 	</div>

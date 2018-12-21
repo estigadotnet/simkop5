@@ -1932,6 +1932,7 @@ class ct06_pinjamantitipan_grid extends ct06_pinjamantitipan {
 	function Page_Load() {
 
 		//echo "Page Load";
+		$GLOBALS["t03_pinjaman"]->Visible = false;
 	}
 
 	// Page Unload event

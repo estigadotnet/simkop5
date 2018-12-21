@@ -1404,6 +1404,7 @@ class ct06_pinjamantitipan_list extends ct06_pinjamantitipan {
 	function Page_Load() {
 
 		//echo "Page Load";
+		$GLOBALS["t03_pinjaman"]->Visible = false;
 	}
 
 	// Page Unload event
