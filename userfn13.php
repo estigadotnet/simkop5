@@ -149,11 +149,21 @@ function f_update_saldo_titipan($pinjaman_id) { // -----------------------------
 		order by id";
 	$r = Conn()->Execute($q);
 	$saldo = 0;
+	$Angsuran_Ke = 0;
 	while (!$r->EOF) {
+		$Angsuran_Ke = $r->fields["Angsuran_Ke"];
 		$saldo = $saldo + $r->fields["Masuk"] - $r->fields["Keluar"];
 		$q = "update t06_pinjamantitipan set Sisa = ".$saldo." where id = ".$r->fields["id"]."";
 		Conn()->Execute($q);
 		$r->MoveNext();
+	}
+	if ($saldo > 0) {
+
+		// kodetransaksi = 07
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '07'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '07'");
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TS", $rekdebet, $saldo, 0, "Titipan Sisa Angsuran ke ".$Angsuran_Ke." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TS", $rekkredit, 0, $saldo, "Titipan Sisa Angsuran ke ".$Angsuran_Ke." No. Kontrak ".$Kontrak_No);
 	}
 } // end of function f_update_saldo_titipan ------------------------------------------------
 

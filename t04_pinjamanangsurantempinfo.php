@@ -1429,6 +1429,12 @@ class ct04_pinjamanangsurantemp extends cTable {
 			f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No.".TK", $rekdebet, "Titipan Keluar Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
 			f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No.".TK", $rekkredit, "Titipan Keluar Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
 
+			// kodetransaksi = 07
+			$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '07'");
+			$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '07'");
+			f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No.".TS", $rekdebet, "Titipan Sisa Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+			f_hapusjurnal($GLOBALS["Periode"], $Kontrak_No.".TS", $rekkredit, "Titipan Sisa Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+
 			// periksa apakah nilai titipan nya null atau nol
 			if (is_null($rsnew["Bayar_Titipan"]) or $rsnew["Bayar_Titipan"] == 0) {
 			}
@@ -1462,6 +1468,13 @@ class ct04_pinjamanangsurantemp extends cTable {
 				$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '08'");
 				f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TK", $rekdebet, $rsnew["Bayar_Titipan"], 0, "Titipan Keluar Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
 				f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TK", $rekkredit, 0, $rsnew["Bayar_Titipan"], "Titipan Keluar Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+
+				// kodetransaksi = 07
+				//$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '07'");
+				//$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '07'");
+				//f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TS", $rekdebet, $rsold["Bayar_Titipan"] - $rsnew["Bayar_Titipan"], 0, "Titipan Sisa Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+				//f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TS", $rekkredit, 0, $rsold["Bayar_Titipan"] - $rsnew["Bayar_Titipan"], "Titipan Sisa Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);
+
 			}
 			f_update_saldo_titipan($_SESSION["pinjaman_id"]);
 		}
