@@ -822,13 +822,13 @@ function f_update_saldo_titipan($pinjaman_id) { // -----------------------------
 		Conn()->Execute($q);
 		$r->MoveNext();
 	}
-	if ($saldo > 0) {
+	/*if ($saldo > 0) {
 		// kodetransaksi = 07
 		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '07'");
 		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '07'");
 		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TS", $rekdebet, $saldo, 0, "Titipan Sisa Angsuran ke ".$Angsuran_Ke." No. Kontrak ".$Kontrak_No);
 		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".TS", $rekkredit, 0, $saldo, "Titipan Sisa Angsuran ke ".$Angsuran_Ke." No. Kontrak ".$Kontrak_No);
-	}
+	}*/
 } // end of function f_update_saldo_titipan ------------------------------------------------
 
 
