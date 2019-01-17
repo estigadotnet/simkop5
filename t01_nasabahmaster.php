@@ -6,6 +6,9 @@
 // Pekerjaan
 // Pekerjaan_Alamat
 // Pekerjaan_No_Telp_Hp
+// Status
+// Keterangan
+// marketing_id
 
 ?>
 <?php if ($t01_nasabah->Visible) { ?>
@@ -75,6 +78,39 @@
 <span id="el_t01_nasabah_Pekerjaan_No_Telp_Hp">
 <span<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ViewAttributes() ?>>
 <?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ListViewValue() ?></span>
+</span>
+</td>
+		</tr>
+<?php } ?>
+<?php if ($t01_nasabah->Status->Visible) { // Status ?>
+		<tr id="r_Status">
+			<td><?php echo $t01_nasabah->Status->FldCaption() ?></td>
+			<td<?php echo $t01_nasabah->Status->CellAttributes() ?>>
+<span id="el_t01_nasabah_Status">
+<span<?php echo $t01_nasabah->Status->ViewAttributes() ?>>
+<?php echo $t01_nasabah->Status->ListViewValue() ?></span>
+</span>
+</td>
+		</tr>
+<?php } ?>
+<?php if ($t01_nasabah->Keterangan->Visible) { // Keterangan ?>
+		<tr id="r_Keterangan">
+			<td><?php echo $t01_nasabah->Keterangan->FldCaption() ?></td>
+			<td<?php echo $t01_nasabah->Keterangan->CellAttributes() ?>>
+<span id="el_t01_nasabah_Keterangan">
+<span<?php echo $t01_nasabah->Keterangan->ViewAttributes() ?>>
+<?php echo $t01_nasabah->Keterangan->ListViewValue() ?></span>
+</span>
+</td>
+		</tr>
+<?php } ?>
+<?php if ($t01_nasabah->marketing_id->Visible) { // marketing_id ?>
+		<tr id="r_marketing_id">
+			<td><?php echo $t01_nasabah->marketing_id->FldCaption() ?></td>
+			<td<?php echo $t01_nasabah->marketing_id->CellAttributes() ?>>
+<span id="el_t01_nasabah_marketing_id">
+<span<?php echo $t01_nasabah->marketing_id->ViewAttributes() ?>>
+<?php echo $t01_nasabah->marketing_id->ListViewValue() ?></span>
 </span>
 </td>
 		</tr>

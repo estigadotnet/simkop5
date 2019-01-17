@@ -15,6 +15,8 @@ class ct07_marketing extends cTable {
 	var $AuditTrailOnSearch = FALSE;
 	var $id;
 	var $Nama;
+	var $Alamat;
+	var $NoHP;
 
 	//
 	// Table class constructor
@@ -56,6 +58,16 @@ class ct07_marketing extends cTable {
 		$this->Nama = new cField('t07_marketing', 't07_marketing', 'x_Nama', 'Nama', '`Nama`', '`Nama`', 200, -1, FALSE, '`Nama`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Nama->Sortable = TRUE; // Allow sort
 		$this->fields['Nama'] = &$this->Nama;
+
+		// Alamat
+		$this->Alamat = new cField('t07_marketing', 't07_marketing', 'x_Alamat', 'Alamat', '`Alamat`', '`Alamat`', 200, -1, FALSE, '`Alamat`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Alamat->Sortable = TRUE; // Allow sort
+		$this->fields['Alamat'] = &$this->Alamat;
+
+		// NoHP
+		$this->NoHP = new cField('t07_marketing', 't07_marketing', 'x_NoHP', 'NoHP', '`NoHP`', '`NoHP`', 200, -1, FALSE, '`NoHP`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->NoHP->Sortable = TRUE; // Allow sort
+		$this->fields['NoHP'] = &$this->NoHP;
 	}
 
 	// Set Field Visibility
@@ -570,6 +582,8 @@ class ct07_marketing extends cTable {
 	function LoadListRowValues(&$rs) {
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Nama->setDbValue($rs->fields('Nama'));
+		$this->Alamat->setDbValue($rs->fields('Alamat'));
+		$this->NoHP->setDbValue($rs->fields('NoHP'));
 	}
 
 	// Render list row values
@@ -582,6 +596,8 @@ class ct07_marketing extends cTable {
    // Common render codes
 		// id
 		// Nama
+		// Alamat
+		// NoHP
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -590,6 +606,14 @@ class ct07_marketing extends cTable {
 		// Nama
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
+
+		// Alamat
+		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
+		$this->Alamat->ViewCustomAttributes = "";
+
+		// NoHP
+		$this->NoHP->ViewValue = $this->NoHP->CurrentValue;
+		$this->NoHP->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -600,6 +624,16 @@ class ct07_marketing extends cTable {
 		$this->Nama->LinkCustomAttributes = "";
 		$this->Nama->HrefValue = "";
 		$this->Nama->TooltipValue = "";
+
+		// Alamat
+		$this->Alamat->LinkCustomAttributes = "";
+		$this->Alamat->HrefValue = "";
+		$this->Alamat->TooltipValue = "";
+
+		// NoHP
+		$this->NoHP->LinkCustomAttributes = "";
+		$this->NoHP->HrefValue = "";
+		$this->NoHP->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -623,6 +657,18 @@ class ct07_marketing extends cTable {
 		$this->Nama->EditCustomAttributes = "";
 		$this->Nama->EditValue = $this->Nama->CurrentValue;
 		$this->Nama->PlaceHolder = ew_RemoveHtml($this->Nama->FldCaption());
+
+		// Alamat
+		$this->Alamat->EditAttrs["class"] = "form-control";
+		$this->Alamat->EditCustomAttributes = "";
+		$this->Alamat->EditValue = $this->Alamat->CurrentValue;
+		$this->Alamat->PlaceHolder = ew_RemoveHtml($this->Alamat->FldCaption());
+
+		// NoHP
+		$this->NoHP->EditAttrs["class"] = "form-control";
+		$this->NoHP->EditCustomAttributes = "";
+		$this->NoHP->EditValue = $this->NoHP->CurrentValue;
+		$this->NoHP->PlaceHolder = ew_RemoveHtml($this->NoHP->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -652,9 +698,13 @@ class ct07_marketing extends cTable {
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
+					if ($this->Alamat->Exportable) $Doc->ExportCaption($this->Alamat);
+					if ($this->NoHP->Exportable) $Doc->ExportCaption($this->NoHP);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
+					if ($this->Alamat->Exportable) $Doc->ExportCaption($this->Alamat);
+					if ($this->NoHP->Exportable) $Doc->ExportCaption($this->NoHP);
 				}
 				$Doc->EndExportRow();
 			}
@@ -687,9 +737,13 @@ class ct07_marketing extends cTable {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
+						if ($this->Alamat->Exportable) $Doc->ExportField($this->Alamat);
+						if ($this->NoHP->Exportable) $Doc->ExportField($this->NoHP);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
+						if ($this->Alamat->Exportable) $Doc->ExportField($this->Alamat);
+						if ($this->NoHP->Exportable) $Doc->ExportField($this->NoHP);
 					}
 					$Doc->EndExportRow();
 				}

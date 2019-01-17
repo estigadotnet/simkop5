@@ -377,6 +377,9 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Pekerjaan->SetVisibility();
 		$this->Pekerjaan_Alamat->SetVisibility();
 		$this->Pekerjaan_No_Telp_Hp->SetVisibility();
+		$this->Status->SetVisibility();
+		$this->Keterangan->SetVisibility();
+		$this->marketing_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -734,6 +737,9 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$sFilterList = ew_Concat($sFilterList, $this->Pekerjaan->AdvancedSearch->ToJSON(), ","); // Field Pekerjaan
 		$sFilterList = ew_Concat($sFilterList, $this->Pekerjaan_Alamat->AdvancedSearch->ToJSON(), ","); // Field Pekerjaan_Alamat
 		$sFilterList = ew_Concat($sFilterList, $this->Pekerjaan_No_Telp_Hp->AdvancedSearch->ToJSON(), ","); // Field Pekerjaan_No_Telp_Hp
+		$sFilterList = ew_Concat($sFilterList, $this->Status->AdvancedSearch->ToJSON(), ","); // Field Status
+		$sFilterList = ew_Concat($sFilterList, $this->Keterangan->AdvancedSearch->ToJSON(), ","); // Field Keterangan
+		$sFilterList = ew_Concat($sFilterList, $this->marketing_id->AdvancedSearch->ToJSON(), ","); // Field marketing_id
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -833,6 +839,30 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Pekerjaan_No_Telp_Hp->AdvancedSearch->SearchValue2 = @$filter["y_Pekerjaan_No_Telp_Hp"];
 		$this->Pekerjaan_No_Telp_Hp->AdvancedSearch->SearchOperator2 = @$filter["w_Pekerjaan_No_Telp_Hp"];
 		$this->Pekerjaan_No_Telp_Hp->AdvancedSearch->Save();
+
+		// Field Status
+		$this->Status->AdvancedSearch->SearchValue = @$filter["x_Status"];
+		$this->Status->AdvancedSearch->SearchOperator = @$filter["z_Status"];
+		$this->Status->AdvancedSearch->SearchCondition = @$filter["v_Status"];
+		$this->Status->AdvancedSearch->SearchValue2 = @$filter["y_Status"];
+		$this->Status->AdvancedSearch->SearchOperator2 = @$filter["w_Status"];
+		$this->Status->AdvancedSearch->Save();
+
+		// Field Keterangan
+		$this->Keterangan->AdvancedSearch->SearchValue = @$filter["x_Keterangan"];
+		$this->Keterangan->AdvancedSearch->SearchOperator = @$filter["z_Keterangan"];
+		$this->Keterangan->AdvancedSearch->SearchCondition = @$filter["v_Keterangan"];
+		$this->Keterangan->AdvancedSearch->SearchValue2 = @$filter["y_Keterangan"];
+		$this->Keterangan->AdvancedSearch->SearchOperator2 = @$filter["w_Keterangan"];
+		$this->Keterangan->AdvancedSearch->Save();
+
+		// Field marketing_id
+		$this->marketing_id->AdvancedSearch->SearchValue = @$filter["x_marketing_id"];
+		$this->marketing_id->AdvancedSearch->SearchOperator = @$filter["z_marketing_id"];
+		$this->marketing_id->AdvancedSearch->SearchCondition = @$filter["v_marketing_id"];
+		$this->marketing_id->AdvancedSearch->SearchValue2 = @$filter["y_marketing_id"];
+		$this->marketing_id->AdvancedSearch->SearchOperator2 = @$filter["w_marketing_id"];
+		$this->marketing_id->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -846,6 +876,7 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->BuildBasicSearchSQL($sWhere, $this->Pekerjaan, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->Pekerjaan_Alamat, $arKeywords, $type);
 		$this->BuildBasicSearchSQL($sWhere, $this->Pekerjaan_No_Telp_Hp, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->Keterangan, $arKeywords, $type);
 		return $sWhere;
 	}
 
@@ -1020,6 +1051,9 @@ class ct01_nasabah_list extends ct01_nasabah {
 			$this->UpdateSort($this->Pekerjaan, $bCtrl); // Pekerjaan
 			$this->UpdateSort($this->Pekerjaan_Alamat, $bCtrl); // Pekerjaan_Alamat
 			$this->UpdateSort($this->Pekerjaan_No_Telp_Hp, $bCtrl); // Pekerjaan_No_Telp_Hp
+			$this->UpdateSort($this->Status, $bCtrl); // Status
+			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
+			$this->UpdateSort($this->marketing_id, $bCtrl); // marketing_id
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1058,6 +1092,9 @@ class ct01_nasabah_list extends ct01_nasabah {
 				$this->Pekerjaan->setSort("");
 				$this->Pekerjaan_Alamat->setSort("");
 				$this->Pekerjaan_No_Telp_Hp->setSort("");
+				$this->Status->setSort("");
+				$this->Keterangan->setSort("");
+				$this->marketing_id->setSort("");
 			}
 
 			// Reset start position
@@ -1629,6 +1666,9 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
 		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
+		$this->Status->setDbValue($rs->fields('Status'));
+		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 	}
 
 	// Load DbValue from recordset
@@ -1642,6 +1682,9 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
 		$this->Pekerjaan_Alamat->DbValue = $row['Pekerjaan_Alamat'];
 		$this->Pekerjaan_No_Telp_Hp->DbValue = $row['Pekerjaan_No_Telp_Hp'];
+		$this->Status->DbValue = $row['Status'];
+		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->marketing_id->DbValue = $row['marketing_id'];
 	}
 
 	// Load old record
@@ -1690,6 +1733,9 @@ class ct01_nasabah_list extends ct01_nasabah {
 		// Pekerjaan
 		// Pekerjaan_Alamat
 		// Pekerjaan_No_Telp_Hp
+		// Status
+		// Keterangan
+		// marketing_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1721,6 +1767,42 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Pekerjaan_No_Telp_Hp->ViewValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
 		$this->Pekerjaan_No_Telp_Hp->ViewCustomAttributes = "";
 
+		// Status
+		if (strval($this->Status->CurrentValue) <> "") {
+			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
+		} else {
+			$this->Status->ViewValue = NULL;
+		}
+		$this->Status->ViewCustomAttributes = "";
+
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
+
+		// marketing_id
+		if (strval($this->marketing_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `NoHP` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
+		$sWhereWrk = "";
+		$this->marketing_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->marketing_id->ViewValue = $this->marketing_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
+			}
+		} else {
+			$this->marketing_id->ViewValue = NULL;
+		}
+		$this->marketing_id->ViewCustomAttributes = "";
+
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
@@ -1750,6 +1832,21 @@ class ct01_nasabah_list extends ct01_nasabah {
 			$this->Pekerjaan_No_Telp_Hp->LinkCustomAttributes = "";
 			$this->Pekerjaan_No_Telp_Hp->HrefValue = "";
 			$this->Pekerjaan_No_Telp_Hp->TooltipValue = "";
+
+			// Status
+			$this->Status->LinkCustomAttributes = "";
+			$this->Status->HrefValue = "";
+			$this->Status->TooltipValue = "";
+
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
+			$this->Keterangan->TooltipValue = "";
+
+			// marketing_id
+			$this->marketing_id->LinkCustomAttributes = "";
+			$this->marketing_id->HrefValue = "";
+			$this->marketing_id->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1954,8 +2051,11 @@ ft01_nasabahlist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft01_nasabahlist.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft01_nasabahlist.Lists["x_Status"].Options = <?php echo json_encode($t01_nasabah->Status->Options()) ?>;
+ft01_nasabahlist.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_NoHP","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
 
+// Form object for search
 var CurrentSearchForm = ft01_nasabahlistsrch = new ew_Form("ft01_nasabahlistsrch");
 </script>
 <script type="text/javascript">
@@ -2122,6 +2222,33 @@ $t01_nasabah_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
+<?php if ($t01_nasabah->Status->Visible) { // Status ?>
+	<?php if ($t01_nasabah->SortUrl($t01_nasabah->Status) == "") { ?>
+		<th data-name="Status"><div id="elh_t01_nasabah_Status" class="t01_nasabah_Status"><div class="ewTableHeaderCaption"><?php echo $t01_nasabah->Status->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Status"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t01_nasabah->SortUrl($t01_nasabah->Status) ?>',2);"><div id="elh_t01_nasabah_Status" class="t01_nasabah_Status">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t01_nasabah->Status->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t01_nasabah->Status->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t01_nasabah->Status->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t01_nasabah->Keterangan->Visible) { // Keterangan ?>
+	<?php if ($t01_nasabah->SortUrl($t01_nasabah->Keterangan) == "") { ?>
+		<th data-name="Keterangan"><div id="elh_t01_nasabah_Keterangan" class="t01_nasabah_Keterangan"><div class="ewTableHeaderCaption"><?php echo $t01_nasabah->Keterangan->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t01_nasabah->SortUrl($t01_nasabah->Keterangan) ?>',2);"><div id="elh_t01_nasabah_Keterangan" class="t01_nasabah_Keterangan">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t01_nasabah->Keterangan->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t01_nasabah->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t01_nasabah->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t01_nasabah->marketing_id->Visible) { // marketing_id ?>
+	<?php if ($t01_nasabah->SortUrl($t01_nasabah->marketing_id) == "") { ?>
+		<th data-name="marketing_id"><div id="elh_t01_nasabah_marketing_id" class="t01_nasabah_marketing_id"><div class="ewTableHeaderCaption"><?php echo $t01_nasabah->marketing_id->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="marketing_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t01_nasabah->SortUrl($t01_nasabah->marketing_id) ?>',2);"><div id="elh_t01_nasabah_marketing_id" class="t01_nasabah_marketing_id">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t01_nasabah->marketing_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t01_nasabah->marketing_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t01_nasabah->marketing_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
 <?php
 
 // Render list options (header, right)
@@ -2232,6 +2359,30 @@ $t01_nasabah_list->ListOptions->Render("body", "left", $t01_nasabah_list->RowCnt
 <span id="el<?php echo $t01_nasabah_list->RowCnt ?>_t01_nasabah_Pekerjaan_No_Telp_Hp" class="t01_nasabah_Pekerjaan_No_Telp_Hp">
 <span<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ViewAttributes() ?>>
 <?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t01_nasabah->Status->Visible) { // Status ?>
+		<td data-name="Status"<?php echo $t01_nasabah->Status->CellAttributes() ?>>
+<span id="el<?php echo $t01_nasabah_list->RowCnt ?>_t01_nasabah_Status" class="t01_nasabah_Status">
+<span<?php echo $t01_nasabah->Status->ViewAttributes() ?>>
+<?php echo $t01_nasabah->Status->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t01_nasabah->Keterangan->Visible) { // Keterangan ?>
+		<td data-name="Keterangan"<?php echo $t01_nasabah->Keterangan->CellAttributes() ?>>
+<span id="el<?php echo $t01_nasabah_list->RowCnt ?>_t01_nasabah_Keterangan" class="t01_nasabah_Keterangan">
+<span<?php echo $t01_nasabah->Keterangan->ViewAttributes() ?>>
+<?php echo $t01_nasabah->Keterangan->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t01_nasabah->marketing_id->Visible) { // marketing_id ?>
+		<td data-name="marketing_id"<?php echo $t01_nasabah->marketing_id->CellAttributes() ?>>
+<span id="el<?php echo $t01_nasabah_list->RowCnt ?>_t01_nasabah_marketing_id" class="t01_nasabah_marketing_id">
+<span<?php echo $t01_nasabah->marketing_id->ViewAttributes() ?>>
+<?php echo $t01_nasabah->marketing_id->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

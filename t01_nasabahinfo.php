@@ -20,6 +20,9 @@ class ct01_nasabah extends cTable {
 	var $Pekerjaan;
 	var $Pekerjaan_Alamat;
 	var $Pekerjaan_No_Telp_Hp;
+	var $Status;
+	var $Keterangan;
+	var $marketing_id;
 
 	//
 	// Table class constructor
@@ -86,6 +89,28 @@ class ct01_nasabah extends cTable {
 		$this->Pekerjaan_No_Telp_Hp = new cField('t01_nasabah', 't01_nasabah', 'x_Pekerjaan_No_Telp_Hp', 'Pekerjaan_No_Telp_Hp', '`Pekerjaan_No_Telp_Hp`', '`Pekerjaan_No_Telp_Hp`', 200, -1, FALSE, '`Pekerjaan_No_Telp_Hp`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Pekerjaan_No_Telp_Hp->Sortable = TRUE; // Allow sort
 		$this->fields['Pekerjaan_No_Telp_Hp'] = &$this->Pekerjaan_No_Telp_Hp;
+
+		// Status
+		$this->Status = new cField('t01_nasabah', 't01_nasabah', 'x_Status', 'Status', '`Status`', '`Status`', 16, -1, FALSE, '`Status`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->Status->Sortable = TRUE; // Allow sort
+		$this->Status->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->Status->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
+		$this->Status->OptionCount = 3;
+		$this->Status->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['Status'] = &$this->Status;
+
+		// Keterangan
+		$this->Keterangan = new cField('t01_nasabah', 't01_nasabah', 'x_Keterangan', 'Keterangan', '`Keterangan`', '`Keterangan`', 200, -1, FALSE, '`Keterangan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Keterangan->Sortable = TRUE; // Allow sort
+		$this->fields['Keterangan'] = &$this->Keterangan;
+
+		// marketing_id
+		$this->marketing_id = new cField('t01_nasabah', 't01_nasabah', 'x_marketing_id', 'marketing_id', '`marketing_id`', '`marketing_id`', 3, -1, FALSE, '`marketing_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->marketing_id->Sortable = TRUE; // Allow sort
+		$this->marketing_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->marketing_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
+		$this->marketing_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['marketing_id'] = &$this->marketing_id;
 	}
 
 	// Set Field Visibility
@@ -663,6 +688,9 @@ class ct01_nasabah extends cTable {
 		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
 		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
+		$this->Status->setDbValue($rs->fields('Status'));
+		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 	}
 
 	// Render list row values
@@ -680,6 +708,9 @@ class ct01_nasabah extends cTable {
 		// Pekerjaan
 		// Pekerjaan_Alamat
 		// Pekerjaan_No_Telp_Hp
+		// Status
+		// Keterangan
+		// marketing_id
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -708,6 +739,42 @@ class ct01_nasabah extends cTable {
 		// Pekerjaan_No_Telp_Hp
 		$this->Pekerjaan_No_Telp_Hp->ViewValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
 		$this->Pekerjaan_No_Telp_Hp->ViewCustomAttributes = "";
+
+		// Status
+		if (strval($this->Status->CurrentValue) <> "") {
+			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
+		} else {
+			$this->Status->ViewValue = NULL;
+		}
+		$this->Status->ViewCustomAttributes = "";
+
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
+
+		// marketing_id
+		if (strval($this->marketing_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `NoHP` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
+		$sWhereWrk = "";
+		$this->marketing_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->marketing_id->ViewValue = $this->marketing_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
+			}
+		} else {
+			$this->marketing_id->ViewValue = NULL;
+		}
+		$this->marketing_id->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -743,6 +810,21 @@ class ct01_nasabah extends cTable {
 		$this->Pekerjaan_No_Telp_Hp->LinkCustomAttributes = "";
 		$this->Pekerjaan_No_Telp_Hp->HrefValue = "";
 		$this->Pekerjaan_No_Telp_Hp->TooltipValue = "";
+
+		// Status
+		$this->Status->LinkCustomAttributes = "";
+		$this->Status->HrefValue = "";
+		$this->Status->TooltipValue = "";
+
+		// Keterangan
+		$this->Keterangan->LinkCustomAttributes = "";
+		$this->Keterangan->HrefValue = "";
+		$this->Keterangan->TooltipValue = "";
+
+		// marketing_id
+		$this->marketing_id->LinkCustomAttributes = "";
+		$this->marketing_id->HrefValue = "";
+		$this->marketing_id->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -797,6 +879,21 @@ class ct01_nasabah extends cTable {
 		$this->Pekerjaan_No_Telp_Hp->EditValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
 		$this->Pekerjaan_No_Telp_Hp->PlaceHolder = ew_RemoveHtml($this->Pekerjaan_No_Telp_Hp->FldCaption());
 
+		// Status
+		$this->Status->EditAttrs["class"] = "form-control";
+		$this->Status->EditCustomAttributes = "";
+		$this->Status->EditValue = $this->Status->Options(TRUE);
+
+		// Keterangan
+		$this->Keterangan->EditAttrs["class"] = "form-control";
+		$this->Keterangan->EditCustomAttributes = "";
+		$this->Keterangan->EditValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
+
+		// marketing_id
+		$this->marketing_id->EditAttrs["class"] = "form-control";
+		$this->marketing_id->EditCustomAttributes = "";
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -830,6 +927,9 @@ class ct01_nasabah extends cTable {
 					if ($this->Pekerjaan->Exportable) $Doc->ExportCaption($this->Pekerjaan);
 					if ($this->Pekerjaan_Alamat->Exportable) $Doc->ExportCaption($this->Pekerjaan_Alamat);
 					if ($this->Pekerjaan_No_Telp_Hp->Exportable) $Doc->ExportCaption($this->Pekerjaan_No_Telp_Hp);
+					if ($this->Status->Exportable) $Doc->ExportCaption($this->Status);
+					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
+					if ($this->marketing_id->Exportable) $Doc->ExportCaption($this->marketing_id);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Nama->Exportable) $Doc->ExportCaption($this->Nama);
@@ -838,6 +938,9 @@ class ct01_nasabah extends cTable {
 					if ($this->Pekerjaan->Exportable) $Doc->ExportCaption($this->Pekerjaan);
 					if ($this->Pekerjaan_Alamat->Exportable) $Doc->ExportCaption($this->Pekerjaan_Alamat);
 					if ($this->Pekerjaan_No_Telp_Hp->Exportable) $Doc->ExportCaption($this->Pekerjaan_No_Telp_Hp);
+					if ($this->Status->Exportable) $Doc->ExportCaption($this->Status);
+					if ($this->Keterangan->Exportable) $Doc->ExportCaption($this->Keterangan);
+					if ($this->marketing_id->Exportable) $Doc->ExportCaption($this->marketing_id);
 				}
 				$Doc->EndExportRow();
 			}
@@ -875,6 +978,9 @@ class ct01_nasabah extends cTable {
 						if ($this->Pekerjaan->Exportable) $Doc->ExportField($this->Pekerjaan);
 						if ($this->Pekerjaan_Alamat->Exportable) $Doc->ExportField($this->Pekerjaan_Alamat);
 						if ($this->Pekerjaan_No_Telp_Hp->Exportable) $Doc->ExportField($this->Pekerjaan_No_Telp_Hp);
+						if ($this->Status->Exportable) $Doc->ExportField($this->Status);
+						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
+						if ($this->marketing_id->Exportable) $Doc->ExportField($this->marketing_id);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Nama->Exportable) $Doc->ExportField($this->Nama);
@@ -883,6 +989,9 @@ class ct01_nasabah extends cTable {
 						if ($this->Pekerjaan->Exportable) $Doc->ExportField($this->Pekerjaan);
 						if ($this->Pekerjaan_Alamat->Exportable) $Doc->ExportField($this->Pekerjaan_Alamat);
 						if ($this->Pekerjaan_No_Telp_Hp->Exportable) $Doc->ExportField($this->Pekerjaan_No_Telp_Hp);
+						if ($this->Status->Exportable) $Doc->ExportField($this->Status);
+						if ($this->Keterangan->Exportable) $Doc->ExportField($this->Keterangan);
+						if ($this->marketing_id->Exportable) $Doc->ExportField($this->marketing_id);
 					}
 					$Doc->EndExportRow();
 				}

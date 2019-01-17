@@ -288,6 +288,9 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->Pekerjaan->SetVisibility();
 		$this->Pekerjaan_Alamat->SetVisibility();
 		$this->Pekerjaan_No_Telp_Hp->SetVisibility();
+		$this->Status->SetVisibility();
+		$this->Keterangan->SetVisibility();
+		$this->marketing_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -469,6 +472,9 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
 		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
+		$this->Status->setDbValue($rs->fields('Status'));
+		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 	}
 
 	// Load DbValue from recordset
@@ -482,6 +488,9 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
 		$this->Pekerjaan_Alamat->DbValue = $row['Pekerjaan_Alamat'];
 		$this->Pekerjaan_No_Telp_Hp->DbValue = $row['Pekerjaan_No_Telp_Hp'];
+		$this->Status->DbValue = $row['Status'];
+		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->marketing_id->DbValue = $row['marketing_id'];
 	}
 
 	// Render row values based on field settings
@@ -501,6 +510,9 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		// Pekerjaan
 		// Pekerjaan_Alamat
 		// Pekerjaan_No_Telp_Hp
+		// Status
+		// Keterangan
+		// marketing_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -532,6 +544,42 @@ class ct01_nasabah_delete extends ct01_nasabah {
 		$this->Pekerjaan_No_Telp_Hp->ViewValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
 		$this->Pekerjaan_No_Telp_Hp->ViewCustomAttributes = "";
 
+		// Status
+		if (strval($this->Status->CurrentValue) <> "") {
+			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
+		} else {
+			$this->Status->ViewValue = NULL;
+		}
+		$this->Status->ViewCustomAttributes = "";
+
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
+
+		// marketing_id
+		if (strval($this->marketing_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `NoHP` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
+		$sWhereWrk = "";
+		$this->marketing_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$arwrk[2] = $rswrk->fields('Disp2Fld');
+				$this->marketing_id->ViewValue = $this->marketing_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
+			}
+		} else {
+			$this->marketing_id->ViewValue = NULL;
+		}
+		$this->marketing_id->ViewCustomAttributes = "";
+
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
@@ -561,6 +609,21 @@ class ct01_nasabah_delete extends ct01_nasabah {
 			$this->Pekerjaan_No_Telp_Hp->LinkCustomAttributes = "";
 			$this->Pekerjaan_No_Telp_Hp->HrefValue = "";
 			$this->Pekerjaan_No_Telp_Hp->TooltipValue = "";
+
+			// Status
+			$this->Status->LinkCustomAttributes = "";
+			$this->Status->HrefValue = "";
+			$this->Status->TooltipValue = "";
+
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
+			$this->Keterangan->TooltipValue = "";
+
+			// marketing_id
+			$this->marketing_id->LinkCustomAttributes = "";
+			$this->marketing_id->HrefValue = "";
+			$this->marketing_id->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -782,8 +845,11 @@ ft01_nasabahdelete.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-// Form object for search
+ft01_nasabahdelete.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft01_nasabahdelete.Lists["x_Status"].Options = <?php echo json_encode($t01_nasabah->Status->Options()) ?>;
+ft01_nasabahdelete.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_NoHP","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
 
+// Form object for search
 </script>
 <script type="text/javascript">
 
@@ -831,6 +897,15 @@ $t01_nasabah_delete->ShowMessage();
 <?php } ?>
 <?php if ($t01_nasabah->Pekerjaan_No_Telp_Hp->Visible) { // Pekerjaan_No_Telp_Hp ?>
 		<th><span id="elh_t01_nasabah_Pekerjaan_No_Telp_Hp" class="t01_nasabah_Pekerjaan_No_Telp_Hp"><?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t01_nasabah->Status->Visible) { // Status ?>
+		<th><span id="elh_t01_nasabah_Status" class="t01_nasabah_Status"><?php echo $t01_nasabah->Status->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t01_nasabah->Keterangan->Visible) { // Keterangan ?>
+		<th><span id="elh_t01_nasabah_Keterangan" class="t01_nasabah_Keterangan"><?php echo $t01_nasabah->Keterangan->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t01_nasabah->marketing_id->Visible) { // marketing_id ?>
+		<th><span id="elh_t01_nasabah_marketing_id" class="t01_nasabah_marketing_id"><?php echo $t01_nasabah->marketing_id->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
@@ -898,6 +973,30 @@ while (!$t01_nasabah_delete->Recordset->EOF) {
 <span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Pekerjaan_No_Telp_Hp" class="t01_nasabah_Pekerjaan_No_Telp_Hp">
 <span<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ViewAttributes() ?>>
 <?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t01_nasabah->Status->Visible) { // Status ?>
+		<td<?php echo $t01_nasabah->Status->CellAttributes() ?>>
+<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Status" class="t01_nasabah_Status">
+<span<?php echo $t01_nasabah->Status->ViewAttributes() ?>>
+<?php echo $t01_nasabah->Status->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t01_nasabah->Keterangan->Visible) { // Keterangan ?>
+		<td<?php echo $t01_nasabah->Keterangan->CellAttributes() ?>>
+<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_Keterangan" class="t01_nasabah_Keterangan">
+<span<?php echo $t01_nasabah->Keterangan->ViewAttributes() ?>>
+<?php echo $t01_nasabah->Keterangan->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t01_nasabah->marketing_id->Visible) { // marketing_id ?>
+		<td<?php echo $t01_nasabah->marketing_id->CellAttributes() ?>>
+<span id="el<?php echo $t01_nasabah_delete->RowCnt ?>_t01_nasabah_marketing_id" class="t01_nasabah_marketing_id">
+<span<?php echo $t01_nasabah->marketing_id->ViewAttributes() ?>>
+<?php echo $t01_nasabah->marketing_id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

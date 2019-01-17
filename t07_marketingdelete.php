@@ -283,6 +283,8 @@ class ct07_marketing_delete extends ct07_marketing {
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 		$this->Nama->SetVisibility();
+		$this->Alamat->SetVisibility();
+		$this->NoHP->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -459,6 +461,8 @@ class ct07_marketing_delete extends ct07_marketing {
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Nama->setDbValue($rs->fields('Nama'));
+		$this->Alamat->setDbValue($rs->fields('Alamat'));
+		$this->NoHP->setDbValue($rs->fields('NoHP'));
 	}
 
 	// Load DbValue from recordset
@@ -467,6 +471,8 @@ class ct07_marketing_delete extends ct07_marketing {
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
 		$this->Nama->DbValue = $row['Nama'];
+		$this->Alamat->DbValue = $row['Alamat'];
+		$this->NoHP->DbValue = $row['NoHP'];
 	}
 
 	// Render row values based on field settings
@@ -481,6 +487,8 @@ class ct07_marketing_delete extends ct07_marketing {
 		// Common render codes for all row types
 		// id
 		// Nama
+		// Alamat
+		// NoHP
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -492,10 +500,28 @@ class ct07_marketing_delete extends ct07_marketing {
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
 
+		// Alamat
+		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
+		$this->Alamat->ViewCustomAttributes = "";
+
+		// NoHP
+		$this->NoHP->ViewValue = $this->NoHP->CurrentValue;
+		$this->NoHP->ViewCustomAttributes = "";
+
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
 			$this->Nama->TooltipValue = "";
+
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
+			$this->Alamat->TooltipValue = "";
+
+			// NoHP
+			$this->NoHP->LinkCustomAttributes = "";
+			$this->NoHP->HrefValue = "";
+			$this->NoHP->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -752,6 +778,12 @@ $t07_marketing_delete->ShowMessage();
 <?php if ($t07_marketing->Nama->Visible) { // Nama ?>
 		<th><span id="elh_t07_marketing_Nama" class="t07_marketing_Nama"><?php echo $t07_marketing->Nama->FldCaption() ?></span></th>
 <?php } ?>
+<?php if ($t07_marketing->Alamat->Visible) { // Alamat ?>
+		<th><span id="elh_t07_marketing_Alamat" class="t07_marketing_Alamat"><?php echo $t07_marketing->Alamat->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t07_marketing->NoHP->Visible) { // NoHP ?>
+		<th><span id="elh_t07_marketing_NoHP" class="t07_marketing_NoHP"><?php echo $t07_marketing->NoHP->FldCaption() ?></span></th>
+<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -778,6 +810,22 @@ while (!$t07_marketing_delete->Recordset->EOF) {
 <span id="el<?php echo $t07_marketing_delete->RowCnt ?>_t07_marketing_Nama" class="t07_marketing_Nama">
 <span<?php echo $t07_marketing->Nama->ViewAttributes() ?>>
 <?php echo $t07_marketing->Nama->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t07_marketing->Alamat->Visible) { // Alamat ?>
+		<td<?php echo $t07_marketing->Alamat->CellAttributes() ?>>
+<span id="el<?php echo $t07_marketing_delete->RowCnt ?>_t07_marketing_Alamat" class="t07_marketing_Alamat">
+<span<?php echo $t07_marketing->Alamat->ViewAttributes() ?>>
+<?php echo $t07_marketing->Alamat->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t07_marketing->NoHP->Visible) { // NoHP ?>
+		<td<?php echo $t07_marketing->NoHP->CellAttributes() ?>>
+<span id="el<?php echo $t07_marketing_delete->RowCnt ?>_t07_marketing_NoHP" class="t07_marketing_NoHP">
+<span<?php echo $t07_marketing->NoHP->ViewAttributes() ?>>
+<?php echo $t07_marketing->NoHP->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

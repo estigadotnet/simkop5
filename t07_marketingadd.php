@@ -286,6 +286,8 @@ class ct07_marketing_add extends ct07_marketing {
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
 		$this->Nama->SetVisibility();
+		$this->Alamat->SetVisibility();
+		$this->NoHP->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -474,6 +476,10 @@ class ct07_marketing_add extends ct07_marketing {
 	function LoadDefaultValues() {
 		$this->Nama->CurrentValue = NULL;
 		$this->Nama->OldValue = $this->Nama->CurrentValue;
+		$this->Alamat->CurrentValue = NULL;
+		$this->Alamat->OldValue = $this->Alamat->CurrentValue;
+		$this->NoHP->CurrentValue = NULL;
+		$this->NoHP->OldValue = $this->NoHP->CurrentValue;
 	}
 
 	// Load form values
@@ -484,6 +490,12 @@ class ct07_marketing_add extends ct07_marketing {
 		if (!$this->Nama->FldIsDetailKey) {
 			$this->Nama->setFormValue($objForm->GetValue("x_Nama"));
 		}
+		if (!$this->Alamat->FldIsDetailKey) {
+			$this->Alamat->setFormValue($objForm->GetValue("x_Alamat"));
+		}
+		if (!$this->NoHP->FldIsDetailKey) {
+			$this->NoHP->setFormValue($objForm->GetValue("x_NoHP"));
+		}
 	}
 
 	// Restore form values
@@ -491,6 +503,8 @@ class ct07_marketing_add extends ct07_marketing {
 		global $objForm;
 		$this->LoadOldRecord();
 		$this->Nama->CurrentValue = $this->Nama->FormValue;
+		$this->Alamat->CurrentValue = $this->Alamat->FormValue;
+		$this->NoHP->CurrentValue = $this->NoHP->FormValue;
 	}
 
 	// Load row based on key values
@@ -524,6 +538,8 @@ class ct07_marketing_add extends ct07_marketing {
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Nama->setDbValue($rs->fields('Nama'));
+		$this->Alamat->setDbValue($rs->fields('Alamat'));
+		$this->NoHP->setDbValue($rs->fields('NoHP'));
 	}
 
 	// Load DbValue from recordset
@@ -532,6 +548,8 @@ class ct07_marketing_add extends ct07_marketing {
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
 		$this->Nama->DbValue = $row['Nama'];
+		$this->Alamat->DbValue = $row['Alamat'];
+		$this->NoHP->DbValue = $row['NoHP'];
 	}
 
 	// Load old record
@@ -569,6 +587,8 @@ class ct07_marketing_add extends ct07_marketing {
 		// Common render codes for all row types
 		// id
 		// Nama
+		// Alamat
+		// NoHP
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -580,10 +600,28 @@ class ct07_marketing_add extends ct07_marketing {
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
 
+		// Alamat
+		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
+		$this->Alamat->ViewCustomAttributes = "";
+
+		// NoHP
+		$this->NoHP->ViewValue = $this->NoHP->CurrentValue;
+		$this->NoHP->ViewCustomAttributes = "";
+
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
 			$this->Nama->TooltipValue = "";
+
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
+			$this->Alamat->TooltipValue = "";
+
+			// NoHP
+			$this->NoHP->LinkCustomAttributes = "";
+			$this->NoHP->HrefValue = "";
+			$this->NoHP->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// Nama
@@ -592,11 +630,31 @@ class ct07_marketing_add extends ct07_marketing {
 			$this->Nama->EditValue = ew_HtmlEncode($this->Nama->CurrentValue);
 			$this->Nama->PlaceHolder = ew_RemoveHtml($this->Nama->FldCaption());
 
+			// Alamat
+			$this->Alamat->EditAttrs["class"] = "form-control";
+			$this->Alamat->EditCustomAttributes = "";
+			$this->Alamat->EditValue = ew_HtmlEncode($this->Alamat->CurrentValue);
+			$this->Alamat->PlaceHolder = ew_RemoveHtml($this->Alamat->FldCaption());
+
+			// NoHP
+			$this->NoHP->EditAttrs["class"] = "form-control";
+			$this->NoHP->EditCustomAttributes = "";
+			$this->NoHP->EditValue = ew_HtmlEncode($this->NoHP->CurrentValue);
+			$this->NoHP->PlaceHolder = ew_RemoveHtml($this->NoHP->FldCaption());
+
 			// Add refer script
 			// Nama
 
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
+
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
+
+			// NoHP
+			$this->NoHP->LinkCustomAttributes = "";
+			$this->NoHP->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -621,6 +679,12 @@ class ct07_marketing_add extends ct07_marketing {
 			return ($gsFormError == "");
 		if (!$this->Nama->FldIsDetailKey && !is_null($this->Nama->FormValue) && $this->Nama->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Nama->FldCaption(), $this->Nama->ReqErrMsg));
+		}
+		if (!$this->Alamat->FldIsDetailKey && !is_null($this->Alamat->FormValue) && $this->Alamat->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Alamat->FldCaption(), $this->Alamat->ReqErrMsg));
+		}
+		if (!$this->NoHP->FldIsDetailKey && !is_null($this->NoHP->FormValue) && $this->NoHP->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->NoHP->FldCaption(), $this->NoHP->ReqErrMsg));
 		}
 
 		// Return validate result
@@ -648,6 +712,12 @@ class ct07_marketing_add extends ct07_marketing {
 
 		// Nama
 		$this->Nama->SetDbValueDef($rsnew, $this->Nama->CurrentValue, "", FALSE);
+
+		// Alamat
+		$this->Alamat->SetDbValueDef($rsnew, $this->Alamat->CurrentValue, "", FALSE);
+
+		// NoHP
+		$this->NoHP->SetDbValueDef($rsnew, $this->NoHP->CurrentValue, "", FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -816,6 +886,12 @@ ft07_marketingadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Nama");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t07_marketing->Nama->FldCaption(), $t07_marketing->Nama->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Alamat");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t07_marketing->Alamat->FldCaption(), $t07_marketing->Alamat->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_NoHP");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t07_marketing->NoHP->FldCaption(), $t07_marketing->NoHP->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -885,6 +961,26 @@ $t07_marketing_add->ShowMessage();
 <input type="text" data-table="t07_marketing" data-field="x_Nama" name="x_Nama" id="x_Nama" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t07_marketing->Nama->getPlaceHolder()) ?>" value="<?php echo $t07_marketing->Nama->EditValue ?>"<?php echo $t07_marketing->Nama->EditAttributes() ?>>
 </span>
 <?php echo $t07_marketing->Nama->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t07_marketing->Alamat->Visible) { // Alamat ?>
+	<div id="r_Alamat" class="form-group">
+		<label id="elh_t07_marketing_Alamat" for="x_Alamat" class="col-sm-2 control-label ewLabel"><?php echo $t07_marketing->Alamat->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t07_marketing->Alamat->CellAttributes() ?>>
+<span id="el_t07_marketing_Alamat">
+<input type="text" data-table="t07_marketing" data-field="x_Alamat" name="x_Alamat" id="x_Alamat" size="30" maxlength="100" placeholder="<?php echo ew_HtmlEncode($t07_marketing->Alamat->getPlaceHolder()) ?>" value="<?php echo $t07_marketing->Alamat->EditValue ?>"<?php echo $t07_marketing->Alamat->EditAttributes() ?>>
+</span>
+<?php echo $t07_marketing->Alamat->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t07_marketing->NoHP->Visible) { // NoHP ?>
+	<div id="r_NoHP" class="form-group">
+		<label id="elh_t07_marketing_NoHP" for="x_NoHP" class="col-sm-2 control-label ewLabel"><?php echo $t07_marketing->NoHP->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t07_marketing->NoHP->CellAttributes() ?>>
+<span id="el_t07_marketing_NoHP">
+<input type="text" data-table="t07_marketing" data-field="x_NoHP" name="x_NoHP" id="x_NoHP" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t07_marketing->NoHP->getPlaceHolder()) ?>" value="<?php echo $t07_marketing->NoHP->EditValue ?>"<?php echo $t07_marketing->NoHP->EditAttributes() ?>>
+</span>
+<?php echo $t07_marketing->NoHP->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

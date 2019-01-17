@@ -5,16 +5,6 @@
 // nasabah_id
 // jaminan_id
 // Pinjaman
-// Angsuran_Lama
-// Angsuran_Bunga_Prosen
-// Angsuran_Denda
-// Dispensasi_Denda
-// Angsuran_Pokok
-// Angsuran_Bunga
-// Angsuran_Total
-// No_Ref
-// Biaya_Administrasi
-// Biaya_Materai
 // marketing_id
 
 ?>
@@ -74,116 +64,6 @@
 <span id="el_t03_pinjaman_Pinjaman">
 <span<?php echo $t03_pinjaman->Pinjaman->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->Pinjaman->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Angsuran_Lama->Visible) { // Angsuran_Lama ?>
-		<tr id="r_Angsuran_Lama">
-			<td><?php echo $t03_pinjaman->Angsuran_Lama->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Angsuran_Lama->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Angsuran_Lama">
-<span<?php echo $t03_pinjaman->Angsuran_Lama->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Angsuran_Lama->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Angsuran_Bunga_Prosen->Visible) { // Angsuran_Bunga_Prosen ?>
-		<tr id="r_Angsuran_Bunga_Prosen">
-			<td><?php echo $t03_pinjaman->Angsuran_Bunga_Prosen->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Angsuran_Bunga_Prosen->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Angsuran_Bunga_Prosen">
-<span<?php echo $t03_pinjaman->Angsuran_Bunga_Prosen->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Angsuran_Bunga_Prosen->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Angsuran_Denda->Visible) { // Angsuran_Denda ?>
-		<tr id="r_Angsuran_Denda">
-			<td><?php echo $t03_pinjaman->Angsuran_Denda->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Angsuran_Denda->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Angsuran_Denda">
-<span<?php echo $t03_pinjaman->Angsuran_Denda->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Angsuran_Denda->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Dispensasi_Denda->Visible) { // Dispensasi_Denda ?>
-		<tr id="r_Dispensasi_Denda">
-			<td><?php echo $t03_pinjaman->Dispensasi_Denda->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Dispensasi_Denda->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Dispensasi_Denda">
-<span<?php echo $t03_pinjaman->Dispensasi_Denda->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Dispensasi_Denda->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Angsuran_Pokok->Visible) { // Angsuran_Pokok ?>
-		<tr id="r_Angsuran_Pokok">
-			<td><?php echo $t03_pinjaman->Angsuran_Pokok->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Angsuran_Pokok->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Angsuran_Pokok">
-<span<?php echo $t03_pinjaman->Angsuran_Pokok->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Angsuran_Pokok->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Angsuran_Bunga->Visible) { // Angsuran_Bunga ?>
-		<tr id="r_Angsuran_Bunga">
-			<td><?php echo $t03_pinjaman->Angsuran_Bunga->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Angsuran_Bunga->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Angsuran_Bunga">
-<span<?php echo $t03_pinjaman->Angsuran_Bunga->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Angsuran_Bunga->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Angsuran_Total->Visible) { // Angsuran_Total ?>
-		<tr id="r_Angsuran_Total">
-			<td><?php echo $t03_pinjaman->Angsuran_Total->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Angsuran_Total->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Angsuran_Total">
-<span<?php echo $t03_pinjaman->Angsuran_Total->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Angsuran_Total->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->No_Ref->Visible) { // No_Ref ?>
-		<tr id="r_No_Ref">
-			<td><?php echo $t03_pinjaman->No_Ref->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->No_Ref->CellAttributes() ?>>
-<span id="el_t03_pinjaman_No_Ref">
-<span<?php echo $t03_pinjaman->No_Ref->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->No_Ref->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Biaya_Administrasi->Visible) { // Biaya_Administrasi ?>
-		<tr id="r_Biaya_Administrasi">
-			<td><?php echo $t03_pinjaman->Biaya_Administrasi->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Biaya_Administrasi->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Biaya_Administrasi">
-<span<?php echo $t03_pinjaman->Biaya_Administrasi->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Biaya_Administrasi->ListViewValue() ?></span>
-</span>
-</td>
-		</tr>
-<?php } ?>
-<?php if ($t03_pinjaman->Biaya_Materai->Visible) { // Biaya_Materai ?>
-		<tr id="r_Biaya_Materai">
-			<td><?php echo $t03_pinjaman->Biaya_Materai->FldCaption() ?></td>
-			<td<?php echo $t03_pinjaman->Biaya_Materai->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Biaya_Materai">
-<span<?php echo $t03_pinjaman->Biaya_Materai->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->Biaya_Materai->ListViewValue() ?></span>
 </span>
 </td>
 		</tr>

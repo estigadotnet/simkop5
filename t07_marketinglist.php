@@ -371,6 +371,8 @@ class ct07_marketing_list extends ct07_marketing {
 		// Set up list options
 		$this->SetupListOptions();
 		$this->Nama->SetVisibility();
+		$this->Alamat->SetVisibility();
+		$this->NoHP->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -715,6 +717,8 @@ class ct07_marketing_list extends ct07_marketing {
 		$sFilterList = "";
 		$sFilterList = ew_Concat($sFilterList, $this->id->AdvancedSearch->ToJSON(), ","); // Field id
 		$sFilterList = ew_Concat($sFilterList, $this->Nama->AdvancedSearch->ToJSON(), ","); // Field Nama
+		$sFilterList = ew_Concat($sFilterList, $this->Alamat->AdvancedSearch->ToJSON(), ","); // Field Alamat
+		$sFilterList = ew_Concat($sFilterList, $this->NoHP->AdvancedSearch->ToJSON(), ","); // Field NoHP
 		if ($this->BasicSearch->Keyword <> "") {
 			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
 			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
@@ -774,6 +778,22 @@ class ct07_marketing_list extends ct07_marketing {
 		$this->Nama->AdvancedSearch->SearchValue2 = @$filter["y_Nama"];
 		$this->Nama->AdvancedSearch->SearchOperator2 = @$filter["w_Nama"];
 		$this->Nama->AdvancedSearch->Save();
+
+		// Field Alamat
+		$this->Alamat->AdvancedSearch->SearchValue = @$filter["x_Alamat"];
+		$this->Alamat->AdvancedSearch->SearchOperator = @$filter["z_Alamat"];
+		$this->Alamat->AdvancedSearch->SearchCondition = @$filter["v_Alamat"];
+		$this->Alamat->AdvancedSearch->SearchValue2 = @$filter["y_Alamat"];
+		$this->Alamat->AdvancedSearch->SearchOperator2 = @$filter["w_Alamat"];
+		$this->Alamat->AdvancedSearch->Save();
+
+		// Field NoHP
+		$this->NoHP->AdvancedSearch->SearchValue = @$filter["x_NoHP"];
+		$this->NoHP->AdvancedSearch->SearchOperator = @$filter["z_NoHP"];
+		$this->NoHP->AdvancedSearch->SearchCondition = @$filter["v_NoHP"];
+		$this->NoHP->AdvancedSearch->SearchValue2 = @$filter["y_NoHP"];
+		$this->NoHP->AdvancedSearch->SearchOperator2 = @$filter["w_NoHP"];
+		$this->NoHP->AdvancedSearch->Save();
 		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
 		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
@@ -782,6 +802,8 @@ class ct07_marketing_list extends ct07_marketing {
 	function BasicSearchSQL($arKeywords, $type) {
 		$sWhere = "";
 		$this->BuildBasicSearchSQL($sWhere, $this->Nama, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->Alamat, $arKeywords, $type);
+		$this->BuildBasicSearchSQL($sWhere, $this->NoHP, $arKeywords, $type);
 		return $sWhere;
 	}
 
@@ -951,6 +973,8 @@ class ct07_marketing_list extends ct07_marketing {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
 			$this->UpdateSort($this->Nama, $bCtrl); // Nama
+			$this->UpdateSort($this->Alamat, $bCtrl); // Alamat
+			$this->UpdateSort($this->NoHP, $bCtrl); // NoHP
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -984,6 +1008,8 @@ class ct07_marketing_list extends ct07_marketing {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
 				$this->Nama->setSort("");
+				$this->Alamat->setSort("");
+				$this->NoHP->setSort("");
 			}
 
 			// Reset start position
@@ -1445,6 +1471,8 @@ class ct07_marketing_list extends ct07_marketing {
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->Nama->setDbValue($rs->fields('Nama'));
+		$this->Alamat->setDbValue($rs->fields('Alamat'));
+		$this->NoHP->setDbValue($rs->fields('NoHP'));
 	}
 
 	// Load DbValue from recordset
@@ -1453,6 +1481,8 @@ class ct07_marketing_list extends ct07_marketing {
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
 		$this->Nama->DbValue = $row['Nama'];
+		$this->Alamat->DbValue = $row['Alamat'];
+		$this->NoHP->DbValue = $row['NoHP'];
 	}
 
 	// Load old record
@@ -1496,6 +1526,8 @@ class ct07_marketing_list extends ct07_marketing {
 		// Common render codes for all row types
 		// id
 		// Nama
+		// Alamat
+		// NoHP
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1507,10 +1539,28 @@ class ct07_marketing_list extends ct07_marketing {
 		$this->Nama->ViewValue = $this->Nama->CurrentValue;
 		$this->Nama->ViewCustomAttributes = "";
 
+		// Alamat
+		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
+		$this->Alamat->ViewCustomAttributes = "";
+
+		// NoHP
+		$this->NoHP->ViewValue = $this->NoHP->CurrentValue;
+		$this->NoHP->ViewCustomAttributes = "";
+
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
 			$this->Nama->HrefValue = "";
 			$this->Nama->TooltipValue = "";
+
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
+			$this->Alamat->TooltipValue = "";
+
+			// NoHP
+			$this->NoHP->LinkCustomAttributes = "";
+			$this->NoHP->HrefValue = "";
+			$this->NoHP->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1828,6 +1878,24 @@ $t07_marketing_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
+<?php if ($t07_marketing->Alamat->Visible) { // Alamat ?>
+	<?php if ($t07_marketing->SortUrl($t07_marketing->Alamat) == "") { ?>
+		<th data-name="Alamat"><div id="elh_t07_marketing_Alamat" class="t07_marketing_Alamat"><div class="ewTableHeaderCaption"><?php echo $t07_marketing->Alamat->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Alamat"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t07_marketing->SortUrl($t07_marketing->Alamat) ?>',2);"><div id="elh_t07_marketing_Alamat" class="t07_marketing_Alamat">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t07_marketing->Alamat->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t07_marketing->Alamat->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t07_marketing->Alamat->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t07_marketing->NoHP->Visible) { // NoHP ?>
+	<?php if ($t07_marketing->SortUrl($t07_marketing->NoHP) == "") { ?>
+		<th data-name="NoHP"><div id="elh_t07_marketing_NoHP" class="t07_marketing_NoHP"><div class="ewTableHeaderCaption"><?php echo $t07_marketing->NoHP->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="NoHP"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t07_marketing->SortUrl($t07_marketing->NoHP) ?>',2);"><div id="elh_t07_marketing_NoHP" class="t07_marketing_NoHP">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t07_marketing->NoHP->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t07_marketing->NoHP->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t07_marketing->NoHP->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
 <?php
 
 // Render list options (header, right)
@@ -1900,6 +1968,22 @@ $t07_marketing_list->ListOptions->Render("body", "left", $t07_marketing_list->Ro
 <?php echo $t07_marketing->Nama->ListViewValue() ?></span>
 </span>
 <a id="<?php echo $t07_marketing_list->PageObjName . "_row_" . $t07_marketing_list->RowCnt ?>"></a></td>
+	<?php } ?>
+	<?php if ($t07_marketing->Alamat->Visible) { // Alamat ?>
+		<td data-name="Alamat"<?php echo $t07_marketing->Alamat->CellAttributes() ?>>
+<span id="el<?php echo $t07_marketing_list->RowCnt ?>_t07_marketing_Alamat" class="t07_marketing_Alamat">
+<span<?php echo $t07_marketing->Alamat->ViewAttributes() ?>>
+<?php echo $t07_marketing->Alamat->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t07_marketing->NoHP->Visible) { // NoHP ?>
+		<td data-name="NoHP"<?php echo $t07_marketing->NoHP->CellAttributes() ?>>
+<span id="el<?php echo $t07_marketing_list->RowCnt ?>_t07_marketing_NoHP" class="t07_marketing_NoHP">
+<span<?php echo $t07_marketing->NoHP->ViewAttributes() ?>>
+<?php echo $t07_marketing->NoHP->ListViewValue() ?></span>
+</span>
+</td>
 	<?php } ?>
 <?php
 
