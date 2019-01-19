@@ -619,15 +619,6 @@
     <menu id="10113">
       <phrase id="menutext" value="Laporan" />
     </menu>
-    <menu id="10018">
-      <phrase id="menutext" value="Pinjaman" />
-    </menu>
-    <menu id="10025">
-      <phrase id="menutext" value="Jurnal" />
-    </menu>
-    <menu id="10026">
-      <phrase id="menutext" value="Buku Besar" />
-    </menu>
     <menu id="10060">
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
@@ -688,8 +679,26 @@
     <menu id="10059">
       <phrase id="menutext" value="v 01 labarugi" />
     </menu>
-    <menu id="10061">
+    <menu id="10030">
+      <phrase id="menutext" value="t 87 neraca" />
+    </menu>
+    <menu id="10029">
+      <phrase id="menutext" value="t 88 labarugi" />
+    </menu>
+    <menu id="10028">
+      <phrase id="menutext" value="Laba Rugi 2" />
+    </menu>
+    <menu id="10025">
+      <phrase id="menutext" value="Jurnal" />
+    </menu>
+    <menu id="10026">
+      <phrase id="menutext" value="Buku Besar" />
+    </menu>
+    <menu id="10019">
       <phrase id="menutext" value="t 91 rekening" />
+    </menu>
+    <menu id="10018">
+      <phrase id="menutext" value="Pinjaman" />
     </menu>
     <menu id="10023">
       <phrase id="menutext" value="t 89 rektran" />
