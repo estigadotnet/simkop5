@@ -6,7 +6,7 @@
 if (!isset($EWR_RELATIVE_PATH)) $EWR_RELATIVE_PATH = "";
 
 // Debug
-define("EWR_DEBUG_ENABLED", TRUE, TRUE); // True to debug
+define("EWR_DEBUG_ENABLED", FALSE, TRUE); // True to debug
 if (EWR_DEBUG_ENABLED) {
 	@ini_set("display_errors", "1"); // Display errors
 	error_reporting(E_ALL ^ E_NOTICE); // Report all errors except E_NOTICE
@@ -79,7 +79,7 @@ define("EWR_SESSION_TIMEOUT_COUNTDOWN", 60, TRUE); // Session timeout count down
 // General
 $EWR_ROOT_RELATIVE_PATH = "."; // Relative path of app root
 define("EWR_UNFORMAT_YEAR", 50, TRUE); // Unformat year
-define("EWR_RANDOM_KEY", 'Fz2gegK17Ftls4Lc', TRUE); // Random key for encryption
+define("EWR_RANDOM_KEY", 'ilqxDhkd8EX7W7vW', TRUE); // Random key for encryption
 define("EWR_PROJECT_STYLESHEET_FILENAME", "phprptcss/simkop5_prj.css", TRUE); // Project stylesheet file name
 define("EWR_CHART_WIDTH", 550, TRUE);
 define("EWR_CHART_HEIGHT", 440, TRUE);
