@@ -376,7 +376,6 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Kontrak_No->SetVisibility();
 		$this->Kontrak_Tgl->SetVisibility();
 		$this->nasabah_id->SetVisibility();
-		$this->jaminan_id->SetVisibility();
 		$this->Pinjaman->SetVisibility();
 		$this->marketing_id->SetVisibility();
 
@@ -1170,7 +1169,6 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->UpdateSort($this->Kontrak_No, $bCtrl); // Kontrak_No
 			$this->UpdateSort($this->Kontrak_Tgl, $bCtrl); // Kontrak_Tgl
 			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
-			$this->UpdateSort($this->jaminan_id, $bCtrl); // jaminan_id
 			$this->UpdateSort($this->Pinjaman, $bCtrl); // Pinjaman
 			$this->UpdateSort($this->marketing_id, $bCtrl); // marketing_id
 			$this->setStartRecordNumber(1); // Reset start position
@@ -1208,7 +1206,6 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 				$this->Kontrak_No->setSort("");
 				$this->Kontrak_Tgl->setSort("");
 				$this->nasabah_id->setSort("");
-				$this->jaminan_id->setSort("");
 				$this->Pinjaman->setSort("");
 				$this->marketing_id->setSort("");
 			}
@@ -2171,11 +2168,6 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->nasabah_id->HrefValue = "";
 			$this->nasabah_id->TooltipValue = "";
 
-			// jaminan_id
-			$this->jaminan_id->LinkCustomAttributes = "";
-			$this->jaminan_id->HrefValue = "";
-			$this->jaminan_id->TooltipValue = "";
-
 			// Pinjaman
 			$this->Pinjaman->LinkCustomAttributes = "";
 			$this->Pinjaman->HrefValue = "";
@@ -2202,9 +2194,6 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			// nasabah_id
 			$this->nasabah_id->EditAttrs["class"] = "form-control";
 			$this->nasabah_id->EditCustomAttributes = "";
-
-			// jaminan_id
-			$this->jaminan_id->EditCustomAttributes = "";
 
 			// Pinjaman
 			$this->Pinjaman->EditAttrs["class"] = "form-control";
@@ -2521,7 +2510,6 @@ ft03_pinjamanlist.ValidateRequired = false;
 
 // Dynamic selection lists
 ft03_pinjamanlist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
-ft03_pinjamanlist.Lists["x_jaminan_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Merk_Type","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
 ft03_pinjamanlist.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
 
 // Form object for search
@@ -2703,15 +2691,6 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t03_pinjaman->jaminan_id->Visible) { // jaminan_id ?>
-	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->jaminan_id) == "") { ?>
-		<th data-name="jaminan_id"><div id="elh_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->jaminan_id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="jaminan_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->jaminan_id) ?>',2);"><div id="elh_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->jaminan_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->jaminan_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->jaminan_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t03_pinjaman->Pinjaman->Visible) { // Pinjaman ?>
 	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Pinjaman) == "") { ?>
 		<th data-name="Pinjaman"><div id="elh_t03_pinjaman_Pinjaman" class="t03_pinjaman_Pinjaman"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Pinjaman->FldCaption() ?></div></div></th>
@@ -2816,14 +2795,6 @@ $t03_pinjaman_list->ListOptions->Render("body", "left", $t03_pinjaman_list->RowC
 <span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_nasabah_id" class="t03_pinjaman_nasabah_id">
 <span<?php echo $t03_pinjaman->nasabah_id->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->nasabah_id->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t03_pinjaman->jaminan_id->Visible) { // jaminan_id ?>
-		<td data-name="jaminan_id"<?php echo $t03_pinjaman->jaminan_id->CellAttributes() ?>>
-<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_jaminan_id" class="t03_pinjaman_jaminan_id">
-<span<?php echo $t03_pinjaman->jaminan_id->ViewAttributes() ?>>
-<?php echo $t03_pinjaman->jaminan_id->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
