@@ -2602,7 +2602,7 @@ function Row_Updated($rsold, &$rsnew) {
 		$("#z_nasabah_id option[value='LIKE']").attr('selected', 'selected'); 
 	});
 ]]></CustomScript>
-  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Page_DataRendering" ScriptCtrlID="list" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// Page Data Rendering event
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Page_DataRendering" ScriptCtrlID="search" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// Page Data Rendering event
 function Page_DataRendering(&$header) {
 	// Example:
 	//$header = "your header";

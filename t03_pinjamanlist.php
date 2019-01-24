@@ -2392,13 +2392,6 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// Example:
 		//$header = "your header";
 
-		$q = "select * from t03_pinjaman order by Kontrak_No desc";
-		$r = Conn()->Execute($q);
-
-		//$this->Kontrak_No->EditValue = $r->fields["Kontrak_No"];
-		$this->Kontrak_No->CurrentValue = $r->fields["Kontrak_No"];
-
-		//echo $r->fields["Kontrak_No"];
 	}
 
 	// Page Data Rendered event
