@@ -1203,6 +1203,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
+				$this->setSessionOrderByList($sOrderBy);
 				$this->Kontrak_No->setSort("");
 				$this->Kontrak_Tgl->setSort("");
 				$this->nasabah_id->setSort("");
@@ -1759,6 +1760,10 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->nasabah_id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_nasabah_id"]);
 		if ($this->nasabah_id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->nasabah_id->AdvancedSearch->SearchOperator = @$_GET["z_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->SearchCondition = @$_GET["v_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->SearchValue2 = ew_StripSlashes(@$_GET["y_nasabah_id"]);
+		if ($this->nasabah_id->AdvancedSearch->SearchValue2 <> "") $this->Command = "search";
+		$this->nasabah_id->AdvancedSearch->SearchOperator2 = @$_GET["w_nasabah_id"];
 
 		// jaminan_id
 		$this->jaminan_id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_jaminan_id"]);
@@ -1845,7 +1850,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		if ($this->UseSelectLimit) {
 			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
 			} else {
 				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
 			}
@@ -1892,6 +1897,11 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Kontrak_No->setDbValue($rs->fields('Kontrak_No'));
 		$this->Kontrak_Tgl->setDbValue($rs->fields('Kontrak_Tgl'));
 		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
+		if (array_key_exists('EV__nasabah_id', $rs->fields)) {
+			$this->nasabah_id->VirtualValue = $rs->fields('EV__nasabah_id'); // Set up virtual field value
+		} else {
+			$this->nasabah_id->VirtualValue = ""; // Clear value
+		}
 		$this->jaminan_id->setDbValue($rs->fields('jaminan_id'));
 		$this->Pinjaman->setDbValue($rs->fields('Pinjaman'));
 		$this->Angsuran_Lama->setDbValue($rs->fields('Angsuran_Lama'));
@@ -2010,6 +2020,10 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Kontrak_Tgl->ViewCustomAttributes = "";
 
 		// nasabah_id
+		if ($this->nasabah_id->VirtualValue <> "") {
+			$this->nasabah_id->ViewValue = $this->nasabah_id->VirtualValue;
+		} else {
+			$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
 		if (strval($this->nasabah_id->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
 		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
@@ -2029,6 +2043,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			}
 		} else {
 			$this->nasabah_id->ViewValue = NULL;
+		}
 		}
 		$this->nasabah_id->ViewCustomAttributes = "";
 
@@ -2194,6 +2209,12 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			// nasabah_id
 			$this->nasabah_id->EditAttrs["class"] = "form-control";
 			$this->nasabah_id->EditCustomAttributes = "";
+			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->AdvancedSearch->SearchValue);
+			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+			$this->nasabah_id->EditAttrs["class"] = "form-control";
+			$this->nasabah_id->EditCustomAttributes = "";
+			$this->nasabah_id->EditValue2 = ew_HtmlEncode($this->nasabah_id->AdvancedSearch->SearchValue2);
+			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
 
 			// Pinjaman
 			$this->Pinjaman->EditAttrs["class"] = "form-control";
@@ -2279,6 +2300,18 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			}
 		} elseif ($pageId == "extbs") {
 			switch ($fld->FldVar) {
+		case "x_nasabah_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+			$sWhereWrk = "{filter}";
+			$this->nasabah_id->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 			}
 		} 
 	}
@@ -2292,6 +2325,19 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			}
 		} elseif ($pageId == "extbs") {
 			switch ($fld->FldVar) {
+		case "x_nasabah_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld` FROM `t01_nasabah`";
+			$sWhereWrk = "`Nama` LIKE '{query_value}%'";
+			$this->nasabah_id->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " LIMIT " . EW_AUTO_SUGGEST_MAX_ENTRIES;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 			}
 		} 
 	}
@@ -2346,6 +2392,13 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// Example:
 		//$header = "your header";
 
+		$q = "select * from t03_pinjaman order by Kontrak_No desc";
+		$r = Conn()->Execute($q);
+
+		//$this->Kontrak_No->EditValue = $r->fields["Kontrak_No"];
+		$this->Kontrak_No->CurrentValue = $r->fields["Kontrak_No"];
+
+		//echo $r->fields["Kontrak_No"];
 	}
 
 	// Page Data Rendered event
@@ -2544,6 +2597,7 @@ ft03_pinjamanlistsrch.ValidateRequired = false; // No JavaScript validation
 <?php } ?>
 
 // Dynamic selection lists
+ft03_pinjamanlistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
 </script>
 <script type="text/javascript">
 
@@ -2629,6 +2683,45 @@ $t03_pinjaman_list->RenderRow();
 <?php } ?>
 </div>
 <div id="xsr_2" class="ewRow">
+<?php if ($t03_pinjaman->nasabah_id->Visible) { // nasabah_id ?>
+	<div id="xsc_nasabah_id" class="ewCell form-group">
+		<label class="ewSearchCaption ewLabel"><?php echo $t03_pinjaman->nasabah_id->FldCaption() ?></label>
+		<span class="ewSearchOperator"><select name="z_nasabah_id" id="z_nasabah_id" class="form-control" onchange="ewForms(this).SrchOprChanged(this);"><option value="="<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "=") ? " selected" : "" ?> ><?php echo $Language->Phrase("EQUAL") ?></option><option value="<>"<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "<>") ? " selected" : "" ?> ><?php echo $Language->Phrase("<>") ?></option><option value="<"<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "<") ? " selected" : "" ?> ><?php echo $Language->Phrase("<") ?></option><option value="<="<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "<=") ? " selected" : "" ?> ><?php echo $Language->Phrase("<=") ?></option><option value=">"<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == ">") ? " selected" : "" ?> ><?php echo $Language->Phrase(">") ?></option><option value=">="<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == ">=") ? " selected" : "" ?> ><?php echo $Language->Phrase(">=") ?></option><option value="LIKE"<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "LIKE") ? " selected" : "" ?> ><?php echo $Language->Phrase("LIKE") ?></option><option value="NOT LIKE"<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "NOT LIKE") ? " selected" : "" ?> ><?php echo $Language->Phrase("NOT LIKE") ?></option><option value="STARTS WITH"<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "STARTS WITH") ? " selected" : "" ?> ><?php echo $Language->Phrase("STARTS WITH") ?></option><option value="ENDS WITH"<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "ENDS WITH") ? " selected" : "" ?> ><?php echo $Language->Phrase("ENDS WITH") ?></option><option value="BETWEEN"<?php echo ($t03_pinjaman->nasabah_id->AdvancedSearch->SearchOperator == "BETWEEN") ? " selected" : "" ?> ><?php echo $Language->Phrase("BETWEEN") ?></option></select></span>
+		<span class="ewSearchField">
+<?php
+$wrkonchange = trim(" " . @$t03_pinjaman->nasabah_id->EditAttrs["onchange"]);
+if ($wrkonchange <> "") $wrkonchange = " onchange=\"" . ew_JsEncode2($wrkonchange) . "\"";
+$t03_pinjaman->nasabah_id->EditAttrs["onchange"] = "";
+?>
+<span id="as_x_nasabah_id" style="white-space: nowrap; z-index: 8960">
+	<input type="text" name="sv_x_nasabah_id" id="sv_x_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->EditValue ?>" size="30" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->getPlaceHolder()) ?>"<?php echo $t03_pinjaman->nasabah_id->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_nasabah_id" data-value-separator="<?php echo $t03_pinjaman->nasabah_id->DisplayValueSeparatorAttribute() ?>" name="x_nasabah_id" id="x_nasabah_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->AdvancedSearch->SearchValue) ?>"<?php echo $wrkonchange ?>>
+<input type="hidden" name="q_x_nasabah_id" id="q_x_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->LookupFilterQuery(true, "extbs") ?>">
+<script type="text/javascript">
+ft03_pinjamanlistsrch.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
+</script>
+</span>
+		<span class="ewSearchCond btw1_nasabah_id" style="display: none">&nbsp;<?php echo $Language->Phrase("AND") ?>&nbsp;</span>
+		<span class="ewSearchField btw1_nasabah_id" style="display: none">
+<?php
+$wrkonchange = trim(" " . @$t03_pinjaman->nasabah_id->EditAttrs["onchange"]);
+if ($wrkonchange <> "") $wrkonchange = " onchange=\"" . ew_JsEncode2($wrkonchange) . "\"";
+$t03_pinjaman->nasabah_id->EditAttrs["onchange"] = "";
+?>
+<span id="as_y_nasabah_id" style="white-space: nowrap; z-index: 8960">
+	<input type="text" name="sv_y_nasabah_id" id="sv_y_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->EditValue2 ?>" size="30" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->getPlaceHolder()) ?>"<?php echo $t03_pinjaman->nasabah_id->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_nasabah_id" data-value-separator="<?php echo $t03_pinjaman->nasabah_id->DisplayValueSeparatorAttribute() ?>" name="y_nasabah_id" id="y_nasabah_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->AdvancedSearch->SearchValue2) ?>"<?php echo $wrkonchange ?>>
+<input type="hidden" name="q_y_nasabah_id" id="q_y_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->LookupFilterQuery(true, "extbs") ?>">
+<script type="text/javascript">
+ft03_pinjamanlistsrch.CreateAutoSuggest({"id":"y_nasabah_id","forceSelect":false});
+</script>
+</span>
+	</div>
+<?php } ?>
+</div>
+<div id="xsr_3" class="ewRow">
 	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("QuickSearchBtn") ?></button>
 </div>
 	</div>
@@ -2934,6 +3027,9 @@ if (EW_DEBUG_ENABLED)
 // Write your table-specific startup script here
 // document.write("page loaded");
 
+	$(document).ready(function() { 
+		$("#z_nasabah_id option[value='LIKE']").attr('selected', 'selected'); 
+	});
 </script>
 <?php include_once "footer.php" ?>
 <?php
