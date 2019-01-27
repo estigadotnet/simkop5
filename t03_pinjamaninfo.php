@@ -1824,14 +1824,13 @@ class ct03_pinjaman extends cTable {
 
 		// To view properties of field class, use:
 		//var_dump($this-><FieldName>);
+		//if ($this->PageID == "list") {
 
-		$q = "select * from t03_pinjaman order by Kontrak_No desc";
-		$r = Conn()->Execute($q);
-
-		//$this->Kontrak_No->EditValue = $r->fields["Kontrak_No"];
-		$this->Kontrak_No->EditValue = $r->fields["Kontrak_No"];
-
-		//echo $r->fields["Kontrak_No"];
+		if (CurrentPageID() == "list") {
+			$q = "select * from t03_pinjaman order by Kontrak_No desc";
+			$r = Conn()->Execute($q);
+			$this->Kontrak_No->EditValue = $r->fields["Kontrak_No"];
+		}
 	}
 
 	// User ID Filtering event

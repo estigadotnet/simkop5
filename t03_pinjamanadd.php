@@ -2226,9 +2226,9 @@ if (EW_DEBUG_ENABLED)
 
 // Write your table-specific startup script here
 // document.write("page loaded");
-// tampilkan TANGGAL HARI INI di field KONTRAK_TGL
+	// tampilkan TANGGAL HARI INI di field KONTRAK_TGL
 
-$("#x_Kontrak_Tgl").val("<?php echo date('d-m-Y');?>");
+	$("#x_Kontrak_Tgl").val("<?php echo date('d-m-Y');?>");
 </script>
 <?php include_once "footer.php" ?>
 <?php
