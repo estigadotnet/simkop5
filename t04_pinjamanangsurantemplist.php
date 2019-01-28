@@ -1604,8 +1604,8 @@ class ct04_pinjamanangsurantemp_list extends ct04_pinjamanangsurantemp {
 
 		// Example: 
 		//$this->ListOptions->Items["new"]->Body = "xxx";
-		//$this->ListOptions->Items["edit"]->Body = "";
 
+		$this->ListOptions->Items["edit"]->Body = "";
 	}
 
 	// Row Custom Action event
