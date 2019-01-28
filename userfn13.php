@@ -31,6 +31,51 @@ function Page_Unloaded() {
 function yang dibuat untuk memudahkan memproses data
 */
 
+function f_cariangsuranbaru($pinjaman_id) { // -----------------------------------------
+	$q = "
+		select
+			*
+		from
+			t04_pinjamanangsurantemp
+		where
+			pinjaman_id = ".$pinjaman_id."
+			and Periode is null
+		order by
+			id
+		";
+	$r = Conn()->Execute($q);
+	$Angsuran_Ke = 0;
+	if ($r->EOF) { // belum ada data ber-Periode
+		$Angsuran_Ke = 1;
+
+		//return $Angsuran_Ke;
+	}
+	else {
+
+		// sudah ada data ber-Periode
+		//$Periode = $r->fields["Periode"];
+		// bandingkan data Periode yang ada di database dengan data Periode berjalan
+		//if ($r->fields["Periode"] == $GLOBALS["Periode"]) {
+			// data Periode di database masih pada Periode berjalan
+
+			$Angsuran_Ke = $r->fields["Angsuran_Ke"];
+
+			//return $Angsuran_Ke; //$r->fields["Angsuran_Ke"];
+		//}
+		//else {
+			// data Periode di database sudah tidak sama dengan Periode berjalan
+			//$Angsuran_Ke = ++$r->fields["Angsuran_Ke"];
+			//return $Angsuran_Ke;
+		//}
+
+	}
+	$t04_pinjamanangsurantemp_id = 0;
+	$q = "select id from t04_pinjamanangsurantemp where pinjaman_id = ".
+		$pinjaman_id." and Angsuran_Ke = ".$Angsuran_Ke."";
+	$t04_pinjamanangsurantemp_id = ew_ExecuteScalar($q); //echo $Angsuran_Ke." - "; exit;
+	return $t04_pinjamanangsurantemp_id;
+} // end of function f_cariangsuranbaru ----------------------------------------------------
+
 //-------------------------------------------------------------------------
 function f_hapusjurnal($Periode, $NomorTransaksi, $Rekening, $Keterangan) {
 

@@ -2428,14 +2428,18 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$opt->Header = "";
 		$opt->OnLeft = TRUE; // Link on left
 		$opt->MoveTo(1); // Move to first column
-		$opt = &$this->ListOptions->Add("titipan");
+		$opt = &$this->ListOptions->Add("edit_angsuran");
 		$opt->Header = "";
 		$opt->OnLeft = TRUE; // Link on left
 		$opt->MoveTo(2); // Move to first column
-		$opt = &$this->ListOptions->Add("potongan");
+		$opt = &$this->ListOptions->Add("titipan");
 		$opt->Header = "";
 		$opt->OnLeft = TRUE; // Link on left
 		$opt->MoveTo(3); // Move to first column
+		$opt = &$this->ListOptions->Add("potongan");
+		$opt->Header = "";
+		$opt->OnLeft = TRUE; // Link on left
+		$opt->MoveTo(4); // Move to first column
 	}
 
 	// ListOptions Rendered event
@@ -2473,8 +2477,17 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			//echo "-".$pinjaman_id;
 			$t04_pinjamanangsurantemp_id = f_cari_detail_angsuran($pinjaman_id);
 		}
-		$this->ListOptions->Items["angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\" data-caption=\"Bayar Angsuran\" href=\"t04_pinjamanangsurantempedit.php?id=".$t04_pinjamanangsurantemp_id."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+
+		// cari angsuran terbaru
+		$t04_angsuranbaru = 0;
+		if ($pinjaman_id <> "") {
+
+			//echo "-".$pinjaman_id;
+			$t04_angsuranbaru = f_cariangsuranbaru($pinjaman_id);
+		}
 		$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["angsuran"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\"   data-caption=\"Bayar Angsuran\"   href=\"t04_pinjamanangsurantempedit.php?id=".$t04_angsuranbaru."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["edit_angsuran"]->Body    = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."&edit=1\">Edit Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
 		$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
 		$this->ListOptions->Items["potongan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Potongan\" data-caption=\"Potongan\" href=\"t08_pinjamanpotonganlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Potongan</a>"; // definisikan link, style, dan caption tombol //"xxx";
 	}

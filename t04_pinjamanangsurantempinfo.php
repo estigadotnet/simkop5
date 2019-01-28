@@ -1335,7 +1335,12 @@ class ct04_pinjamanangsurantemp extends cTable {
 	// Recordset Selecting event
 	function Recordset_Selecting(&$filter) {
 
-		// Enter your code here	
+		// Enter your code here
+		//ew_AddFilter($filter, "Field1 = 1234"); // Add your own filter expression
+
+		if (isset($_GET["edit"])) {
+			ew_AddFilter($filter, "Periode is not null"); // Add your own filter expression
+		}
 	}
 
 	// Recordset Selected event

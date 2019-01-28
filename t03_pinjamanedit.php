@@ -472,10 +472,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 				$this->SetUpDetailParms();
 				break;
 			Case "U": // Update
-				if ($this->getCurrentDetailTable() <> "") // Master/detail edit
-					$sReturnUrl = $this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $this->getCurrentDetailTable()); // Master/Detail view page
-				else
-					$sReturnUrl = $this->getReturnUrl();
+				$sReturnUrl = "t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".urlencode($this->id->CurrentValue);
 				if (ew_GetPageName($sReturnUrl) == "t03_pinjamanlist.php")
 					$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 				$this->SendEmail = TRUE; // Send email on update success
