@@ -5,7 +5,8 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t10_jurnalinfo.php" ?>
+<?php include_once "t12_jurnaldetailinfo.php" ?>
+<?php include_once "t11_jurnalmasterinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +15,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t10_jurnal_delete = NULL; // Initialize page object first
+$t12_jurnaldetail_delete = NULL; // Initialize page object first
 
-class ct10_jurnal_delete extends ct10_jurnal {
+class ct12_jurnaldetail_delete extends ct12_jurnaldetail {
 
 	// Page ID
 	var $PageID = 'delete';
@@ -25,10 +26,10 @@ class ct10_jurnal_delete extends ct10_jurnal {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't10_jurnal';
+	var $TableName = 't12_jurnaldetail';
 
 	// Page object name
-	var $PageObjName = 't10_jurnal_delete';
+	var $PageObjName = 't12_jurnaldetail_delete';
 
 	// Page name
 	function PageName() {
@@ -226,11 +227,14 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t10_jurnal)
-		if (!isset($GLOBALS["t10_jurnal"]) || get_class($GLOBALS["t10_jurnal"]) == "ct10_jurnal") {
-			$GLOBALS["t10_jurnal"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t10_jurnal"];
+		// Table object (t12_jurnaldetail)
+		if (!isset($GLOBALS["t12_jurnaldetail"]) || get_class($GLOBALS["t12_jurnaldetail"]) == "ct12_jurnaldetail") {
+			$GLOBALS["t12_jurnaldetail"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t12_jurnaldetail"];
 		}
+
+		// Table object (t11_jurnalmaster)
+		if (!isset($GLOBALS['t11_jurnalmaster'])) $GLOBALS['t11_jurnalmaster'] = new ct11_jurnalmaster();
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -241,7 +245,7 @@ class ct10_jurnal_delete extends ct10_jurnal {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't10_jurnal', TRUE);
+			define("EW_TABLE_NAME", 't12_jurnaldetail', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -272,7 +276,7 @@ class ct10_jurnal_delete extends ct10_jurnal {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t10_jurnallist.php"));
+				$this->Page_Terminate(ew_GetUrl("t12_jurnaldetaillist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -282,9 +286,6 @@ class ct10_jurnal_delete extends ct10_jurnal {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->Tanggal->SetVisibility();
-		$this->NomorTransaksi->SetVisibility();
-		$this->Keterangan->SetVisibility();
 		$this->Rekening->SetVisibility();
 		$this->Debet->SetVisibility();
 		$this->Kredit->SetVisibility();
@@ -319,13 +320,13 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t10_jurnal;
+		global $EW_EXPORT, $t12_jurnaldetail;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t10_jurnal);
+				$doc = new $class($t12_jurnaldetail);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -364,6 +365,9 @@ class ct10_jurnal_delete extends ct10_jurnal {
 	function Page_Main() {
 		global $Language;
 
+		// Set up master/detail parameters
+		$this->SetUpMasterParms();
+
 		// Set up Breadcrumb
 		$this->SetupBreadcrumb();
 
@@ -371,10 +375,10 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
 		$sFilter = $this->GetKeyFilter();
 		if ($sFilter == "")
-			$this->Page_Terminate("t10_jurnallist.php"); // Prevent SQL injection, return to list
+			$this->Page_Terminate("t12_jurnaldetaillist.php"); // Prevent SQL injection, return to list
 
 		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in t10_jurnal class, t10_jurnalinfo.php
+		// SQL constructor in t12_jurnaldetail class, t12_jurnaldetailinfo.php
 
 		$this->CurrentFilter = $sFilter;
 
@@ -402,7 +406,7 @@ class ct10_jurnal_delete extends ct10_jurnal {
 			if ($this->TotalRecs <= 0) { // No record found, exit
 				if ($this->Recordset)
 					$this->Recordset->Close();
-				$this->Page_Terminate("t10_jurnallist.php"); // Return to list
+				$this->Page_Terminate("t12_jurnaldetaillist.php"); // Return to list
 			}
 		}
 	}
@@ -463,10 +467,7 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Periode->setDbValue($rs->fields('Periode'));
-		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
-		$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
-		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
+		$this->jurnalmaster_id->setDbValue($rs->fields('jurnalmaster_id'));
 		$this->Rekening->setDbValue($rs->fields('Rekening'));
 		$this->Debet->setDbValue($rs->fields('Debet'));
 		$this->Kredit->setDbValue($rs->fields('Kredit'));
@@ -477,10 +478,7 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->Periode->DbValue = $row['Periode'];
-		$this->Tanggal->DbValue = $row['Tanggal'];
-		$this->NomorTransaksi->DbValue = $row['NomorTransaksi'];
-		$this->Keterangan->DbValue = $row['Keterangan'];
+		$this->jurnalmaster_id->DbValue = $row['jurnalmaster_id'];
 		$this->Rekening->DbValue = $row['Rekening'];
 		$this->Debet->DbValue = $row['Debet'];
 		$this->Kredit->DbValue = $row['Kredit'];
@@ -505,10 +503,7 @@ class ct10_jurnal_delete extends ct10_jurnal {
 
 		// Common render codes for all row types
 		// id
-		// Periode
-		// Tanggal
-		// NomorTransaksi
-		// Keterangan
+		// jurnalmaster_id
 		// Rekening
 		// Debet
 		// Kredit
@@ -519,49 +514,16 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Periode
-		$this->Periode->ViewValue = $this->Periode->CurrentValue;
-		$this->Periode->ViewCustomAttributes = "";
-
-		// Tanggal
-		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
-		$this->Tanggal->ViewCustomAttributes = "";
-
-		// NomorTransaksi
-		$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
-		if (strval($this->NomorTransaksi->CurrentValue) <> "") {
-			$sFilterWrk = "`NomorTransaksi`" . ew_SearchString("=", $this->NomorTransaksi->CurrentValue, EW_DATATYPE_STRING, "");
-		$sSqlWrk = "SELECT `NomorTransaksi`, `NomorTransaksi` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t10_jurnal`";
-		$sWhereWrk = "";
-		$this->NomorTransaksi->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->NomorTransaksi, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
-			}
-		} else {
-			$this->NomorTransaksi->ViewValue = NULL;
-		}
-		$this->NomorTransaksi->ViewCustomAttributes = "";
-
-		// Keterangan
-		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
-		$this->Keterangan->ViewCustomAttributes = "";
+		// jurnalmaster_id
+		$this->jurnalmaster_id->ViewValue = $this->jurnalmaster_id->CurrentValue;
+		$this->jurnalmaster_id->ViewCustomAttributes = "";
 
 		// Rekening
 		if (strval($this->Rekening->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->Rekening->CurrentValue, EW_DATATYPE_STRING, "");
 		$sSqlWrk = "SELECT `id`, `rekening` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t91_rekening`";
 		$sWhereWrk = "";
-		$this->Rekening->LookupFilters = array();
+		$this->Rekening->LookupFilters = array("dx1" => '`rekening`');
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
 		$this->Lookup_Selecting($this->Rekening, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
@@ -590,21 +552,6 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		$this->Kredit->ViewValue = ew_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
 		$this->Kredit->CellCssStyle .= "text-align: right;";
 		$this->Kredit->ViewCustomAttributes = "";
-
-			// Tanggal
-			$this->Tanggal->LinkCustomAttributes = "";
-			$this->Tanggal->HrefValue = "";
-			$this->Tanggal->TooltipValue = "";
-
-			// NomorTransaksi
-			$this->NomorTransaksi->LinkCustomAttributes = "";
-			$this->NomorTransaksi->HrefValue = "";
-			$this->NomorTransaksi->TooltipValue = "";
-
-			// Keterangan
-			$this->Keterangan->LinkCustomAttributes = "";
-			$this->Keterangan->HrefValue = "";
-			$this->Keterangan->TooltipValue = "";
 
 			// Rekening
 			$this->Rekening->LinkCustomAttributes = "";
@@ -655,7 +602,6 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		}
 		$rows = ($rs) ? $rs->GetRows() : array();
 		$conn->BeginTrans();
-		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
 
 		// Clone old rows
 		$rsold = $rows;
@@ -698,10 +644,8 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		}
 		if ($DeleteRows) {
 			$conn->CommitTrans(); // Commit the changes
-			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
 		} else {
 			$conn->RollbackTrans(); // Rollback changes
-			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
 		}
 
 		// Call Row Deleted event
@@ -713,12 +657,72 @@ class ct10_jurnal_delete extends ct10_jurnal {
 		return $DeleteRows;
 	}
 
+	// Set up master/detail based on QueryString
+	function SetUpMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t11_jurnalmaster") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t11_jurnalmaster"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->jurnalmaster_id->setQueryStringValue($GLOBALS["t11_jurnalmaster"]->id->QueryStringValue);
+					$this->jurnalmaster_id->setSessionValue($this->jurnalmaster_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t11_jurnalmaster"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t11_jurnalmaster") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t11_jurnalmaster"]->id->setFormValue($_POST["fk_id"]);
+					$this->jurnalmaster_id->setFormValue($GLOBALS["t11_jurnalmaster"]->id->FormValue);
+					$this->jurnalmaster_id->setSessionValue($this->jurnalmaster_id->FormValue);
+					if (!is_numeric($GLOBALS["t11_jurnalmaster"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+
+			// Reset start record counter (new master key)
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t11_jurnalmaster") {
+				if ($this->jurnalmaster_id->CurrentValue == "") $this->jurnalmaster_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
+	}
+
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t10_jurnallist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t12_jurnaldetaillist.php"), "", $this->TableVar, TRUE);
 		$PageId = "delete";
 		$Breadcrumb->Add("delete", $PageId, $url);
 	}
@@ -804,29 +808,29 @@ class ct10_jurnal_delete extends ct10_jurnal {
 <?php
 
 // Create page object
-if (!isset($t10_jurnal_delete)) $t10_jurnal_delete = new ct10_jurnal_delete();
+if (!isset($t12_jurnaldetail_delete)) $t12_jurnaldetail_delete = new ct12_jurnaldetail_delete();
 
 // Page init
-$t10_jurnal_delete->Page_Init();
+$t12_jurnaldetail_delete->Page_Init();
 
 // Page main
-$t10_jurnal_delete->Page_Main();
+$t12_jurnaldetail_delete->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t10_jurnal_delete->Page_Render();
+$t12_jurnaldetail_delete->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = ft10_jurnaldelete = new ew_Form("ft10_jurnaldelete", "delete");
+var CurrentForm = ft12_jurnaldetaildelete = new ew_Form("ft12_jurnaldetaildelete", "delete");
 
 // Form_CustomValidate event
-ft10_jurnaldelete.Form_CustomValidate = 
+ft12_jurnaldetaildelete.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -835,14 +839,13 @@ ft10_jurnaldelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft10_jurnaldelete.ValidateRequired = true;
+ft12_jurnaldetaildelete.ValidateRequired = true;
 <?php } else { ?>
-ft10_jurnaldelete.ValidateRequired = false; 
+ft12_jurnaldetaildelete.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-ft10_jurnaldelete.Lists["x_NomorTransaksi"] = {"LinkField":"x_NomorTransaksi","Ajax":true,"AutoFill":false,"DisplayFields":["x_NomorTransaksi","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t10_jurnal"};
-ft10_jurnaldelete.Lists["x_Rekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_rekening","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
+ft12_jurnaldetaildelete.Lists["x_Rekening"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_rekening","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t91_rekening"};
 
 // Form object for search
 </script>
@@ -855,118 +858,85 @@ ft10_jurnaldelete.Lists["x_Rekening"] = {"LinkField":"x_id","Ajax":true,"AutoFil
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $t10_jurnal_delete->ShowPageHeader(); ?>
+<?php $t12_jurnaldetail_delete->ShowPageHeader(); ?>
 <?php
-$t10_jurnal_delete->ShowMessage();
+$t12_jurnaldetail_delete->ShowMessage();
 ?>
-<form name="ft10_jurnaldelete" id="ft10_jurnaldelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t10_jurnal_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t10_jurnal_delete->Token ?>">
+<form name="ft12_jurnaldetaildelete" id="ft12_jurnaldetaildelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t12_jurnaldetail_delete->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t12_jurnaldetail_delete->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t10_jurnal">
+<input type="hidden" name="t" value="t12_jurnaldetail">
 <input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($t10_jurnal_delete->RecKeys as $key) { ?>
+<?php foreach ($t12_jurnaldetail_delete->RecKeys as $key) { ?>
 <?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
 <input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
 <?php } ?>
 <div class="ewGrid">
 <div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <table class="table ewTable">
-<?php echo $t10_jurnal->TableCustomInnerHtml ?>
+<?php echo $t12_jurnaldetail->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t10_jurnal->Tanggal->Visible) { // Tanggal ?>
-		<th><span id="elh_t10_jurnal_Tanggal" class="t10_jurnal_Tanggal"><?php echo $t10_jurnal->Tanggal->FldCaption() ?></span></th>
+<?php if ($t12_jurnaldetail->Rekening->Visible) { // Rekening ?>
+		<th><span id="elh_t12_jurnaldetail_Rekening" class="t12_jurnaldetail_Rekening"><?php echo $t12_jurnaldetail->Rekening->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t10_jurnal->NomorTransaksi->Visible) { // NomorTransaksi ?>
-		<th><span id="elh_t10_jurnal_NomorTransaksi" class="t10_jurnal_NomorTransaksi"><?php echo $t10_jurnal->NomorTransaksi->FldCaption() ?></span></th>
+<?php if ($t12_jurnaldetail->Debet->Visible) { // Debet ?>
+		<th><span id="elh_t12_jurnaldetail_Debet" class="t12_jurnaldetail_Debet"><?php echo $t12_jurnaldetail->Debet->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
-		<th><span id="elh_t10_jurnal_Keterangan" class="t10_jurnal_Keterangan"><?php echo $t10_jurnal->Keterangan->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t10_jurnal->Rekening->Visible) { // Rekening ?>
-		<th><span id="elh_t10_jurnal_Rekening" class="t10_jurnal_Rekening"><?php echo $t10_jurnal->Rekening->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t10_jurnal->Debet->Visible) { // Debet ?>
-		<th><span id="elh_t10_jurnal_Debet" class="t10_jurnal_Debet"><?php echo $t10_jurnal->Debet->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t10_jurnal->Kredit->Visible) { // Kredit ?>
-		<th><span id="elh_t10_jurnal_Kredit" class="t10_jurnal_Kredit"><?php echo $t10_jurnal->Kredit->FldCaption() ?></span></th>
+<?php if ($t12_jurnaldetail->Kredit->Visible) { // Kredit ?>
+		<th><span id="elh_t12_jurnaldetail_Kredit" class="t12_jurnaldetail_Kredit"><?php echo $t12_jurnaldetail->Kredit->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
 	<tbody>
 <?php
-$t10_jurnal_delete->RecCnt = 0;
+$t12_jurnaldetail_delete->RecCnt = 0;
 $i = 0;
-while (!$t10_jurnal_delete->Recordset->EOF) {
-	$t10_jurnal_delete->RecCnt++;
-	$t10_jurnal_delete->RowCnt++;
+while (!$t12_jurnaldetail_delete->Recordset->EOF) {
+	$t12_jurnaldetail_delete->RecCnt++;
+	$t12_jurnaldetail_delete->RowCnt++;
 
 	// Set row properties
-	$t10_jurnal->ResetAttrs();
-	$t10_jurnal->RowType = EW_ROWTYPE_VIEW; // View
+	$t12_jurnaldetail->ResetAttrs();
+	$t12_jurnaldetail->RowType = EW_ROWTYPE_VIEW; // View
 
 	// Get the field contents
-	$t10_jurnal_delete->LoadRowValues($t10_jurnal_delete->Recordset);
+	$t12_jurnaldetail_delete->LoadRowValues($t12_jurnaldetail_delete->Recordset);
 
 	// Render row
-	$t10_jurnal_delete->RenderRow();
+	$t12_jurnaldetail_delete->RenderRow();
 ?>
-	<tr<?php echo $t10_jurnal->RowAttributes() ?>>
-<?php if ($t10_jurnal->Tanggal->Visible) { // Tanggal ?>
-		<td<?php echo $t10_jurnal->Tanggal->CellAttributes() ?>>
-<span id="el<?php echo $t10_jurnal_delete->RowCnt ?>_t10_jurnal_Tanggal" class="t10_jurnal_Tanggal">
-<span<?php echo $t10_jurnal->Tanggal->ViewAttributes() ?>>
-<?php echo $t10_jurnal->Tanggal->ListViewValue() ?></span>
+	<tr<?php echo $t12_jurnaldetail->RowAttributes() ?>>
+<?php if ($t12_jurnaldetail->Rekening->Visible) { // Rekening ?>
+		<td<?php echo $t12_jurnaldetail->Rekening->CellAttributes() ?>>
+<span id="el<?php echo $t12_jurnaldetail_delete->RowCnt ?>_t12_jurnaldetail_Rekening" class="t12_jurnaldetail_Rekening">
+<span<?php echo $t12_jurnaldetail->Rekening->ViewAttributes() ?>>
+<?php echo $t12_jurnaldetail->Rekening->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t10_jurnal->NomorTransaksi->Visible) { // NomorTransaksi ?>
-		<td<?php echo $t10_jurnal->NomorTransaksi->CellAttributes() ?>>
-<span id="el<?php echo $t10_jurnal_delete->RowCnt ?>_t10_jurnal_NomorTransaksi" class="t10_jurnal_NomorTransaksi">
-<span<?php echo $t10_jurnal->NomorTransaksi->ViewAttributes() ?>>
-<?php echo $t10_jurnal->NomorTransaksi->ListViewValue() ?></span>
+<?php if ($t12_jurnaldetail->Debet->Visible) { // Debet ?>
+		<td<?php echo $t12_jurnaldetail->Debet->CellAttributes() ?>>
+<span id="el<?php echo $t12_jurnaldetail_delete->RowCnt ?>_t12_jurnaldetail_Debet" class="t12_jurnaldetail_Debet">
+<span<?php echo $t12_jurnaldetail->Debet->ViewAttributes() ?>>
+<?php echo $t12_jurnaldetail->Debet->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
-		<td<?php echo $t10_jurnal->Keterangan->CellAttributes() ?>>
-<span id="el<?php echo $t10_jurnal_delete->RowCnt ?>_t10_jurnal_Keterangan" class="t10_jurnal_Keterangan">
-<span<?php echo $t10_jurnal->Keterangan->ViewAttributes() ?>>
-<?php echo $t10_jurnal->Keterangan->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t10_jurnal->Rekening->Visible) { // Rekening ?>
-		<td<?php echo $t10_jurnal->Rekening->CellAttributes() ?>>
-<span id="el<?php echo $t10_jurnal_delete->RowCnt ?>_t10_jurnal_Rekening" class="t10_jurnal_Rekening">
-<span<?php echo $t10_jurnal->Rekening->ViewAttributes() ?>>
-<?php echo $t10_jurnal->Rekening->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t10_jurnal->Debet->Visible) { // Debet ?>
-		<td<?php echo $t10_jurnal->Debet->CellAttributes() ?>>
-<span id="el<?php echo $t10_jurnal_delete->RowCnt ?>_t10_jurnal_Debet" class="t10_jurnal_Debet">
-<span<?php echo $t10_jurnal->Debet->ViewAttributes() ?>>
-<?php echo $t10_jurnal->Debet->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t10_jurnal->Kredit->Visible) { // Kredit ?>
-		<td<?php echo $t10_jurnal->Kredit->CellAttributes() ?>>
-<span id="el<?php echo $t10_jurnal_delete->RowCnt ?>_t10_jurnal_Kredit" class="t10_jurnal_Kredit">
-<span<?php echo $t10_jurnal->Kredit->ViewAttributes() ?>>
-<?php echo $t10_jurnal->Kredit->ListViewValue() ?></span>
+<?php if ($t12_jurnaldetail->Kredit->Visible) { // Kredit ?>
+		<td<?php echo $t12_jurnaldetail->Kredit->CellAttributes() ?>>
+<span id="el<?php echo $t12_jurnaldetail_delete->RowCnt ?>_t12_jurnaldetail_Kredit" class="t12_jurnaldetail_Kredit">
+<span<?php echo $t12_jurnaldetail->Kredit->ViewAttributes() ?>>
+<?php echo $t12_jurnaldetail->Kredit->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
 	</tr>
 <?php
-	$t10_jurnal_delete->Recordset->MoveNext();
+	$t12_jurnaldetail_delete->Recordset->MoveNext();
 }
-$t10_jurnal_delete->Recordset->Close();
+$t12_jurnaldetail_delete->Recordset->Close();
 ?>
 </tbody>
 </table>
@@ -974,14 +944,14 @@ $t10_jurnal_delete->Recordset->Close();
 </div>
 <div>
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t10_jurnal_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t12_jurnaldetail_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 </div>
 </form>
 <script type="text/javascript">
-ft10_jurnaldelete.Init();
+ft12_jurnaldetaildelete.Init();
 </script>
 <?php
-$t10_jurnal_delete->ShowPageFooter();
+$t12_jurnaldetail_delete->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -993,5 +963,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t10_jurnal_delete->Page_Terminate();
+$t12_jurnaldetail_delete->Page_Terminate();
 ?>

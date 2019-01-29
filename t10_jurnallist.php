@@ -375,10 +375,10 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->SetupListOptions();
 		$this->Tanggal->SetVisibility();
 		$this->NomorTransaksi->SetVisibility();
+		$this->Keterangan->SetVisibility();
 		$this->Rekening->SetVisibility();
 		$this->Debet->SetVisibility();
 		$this->Kredit->SetVisibility();
-		$this->Keterangan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -1118,13 +1118,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 			return FALSE;
 		if ($objForm->HasValue("x_NomorTransaksi") && $objForm->HasValue("o_NomorTransaksi") && $this->NomorTransaksi->CurrentValue <> $this->NomorTransaksi->OldValue)
 			return FALSE;
+		if ($objForm->HasValue("x_Keterangan") && $objForm->HasValue("o_Keterangan") && $this->Keterangan->CurrentValue <> $this->Keterangan->OldValue)
+			return FALSE;
 		if ($objForm->HasValue("x_Rekening") && $objForm->HasValue("o_Rekening") && $this->Rekening->CurrentValue <> $this->Rekening->OldValue)
 			return FALSE;
 		if ($objForm->HasValue("x_Debet") && $objForm->HasValue("o_Debet") && $this->Debet->CurrentValue <> $this->Debet->OldValue)
 			return FALSE;
 		if ($objForm->HasValue("x_Kredit") && $objForm->HasValue("o_Kredit") && $this->Kredit->CurrentValue <> $this->Kredit->OldValue)
-			return FALSE;
-		if ($objForm->HasValue("x_Keterangan") && $objForm->HasValue("o_Keterangan") && $this->Keterangan->CurrentValue <> $this->Keterangan->OldValue)
 			return FALSE;
 		return TRUE;
 	}
@@ -1211,13 +1211,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 		// Initialize
 		$sFilterList = "";
 		$sFilterList = ew_Concat($sFilterList, $this->id->AdvancedSearch->ToJSON(), ","); // Field id
-		$sFilterList = ew_Concat($sFilterList, $this->Tanggal->AdvancedSearch->ToJSON(), ","); // Field Tanggal
 		$sFilterList = ew_Concat($sFilterList, $this->Periode->AdvancedSearch->ToJSON(), ","); // Field Periode
+		$sFilterList = ew_Concat($sFilterList, $this->Tanggal->AdvancedSearch->ToJSON(), ","); // Field Tanggal
 		$sFilterList = ew_Concat($sFilterList, $this->NomorTransaksi->AdvancedSearch->ToJSON(), ","); // Field NomorTransaksi
+		$sFilterList = ew_Concat($sFilterList, $this->Keterangan->AdvancedSearch->ToJSON(), ","); // Field Keterangan
 		$sFilterList = ew_Concat($sFilterList, $this->Rekening->AdvancedSearch->ToJSON(), ","); // Field Rekening
 		$sFilterList = ew_Concat($sFilterList, $this->Debet->AdvancedSearch->ToJSON(), ","); // Field Debet
 		$sFilterList = ew_Concat($sFilterList, $this->Kredit->AdvancedSearch->ToJSON(), ","); // Field Kredit
-		$sFilterList = ew_Concat($sFilterList, $this->Keterangan->AdvancedSearch->ToJSON(), ","); // Field Keterangan
 		$sFilterList = preg_replace('/,$/', "", $sFilterList);
 
 		// Return filter list in json
@@ -1266,14 +1266,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->id->AdvancedSearch->SearchOperator2 = @$filter["w_id"];
 		$this->id->AdvancedSearch->Save();
 
-		// Field Tanggal
-		$this->Tanggal->AdvancedSearch->SearchValue = @$filter["x_Tanggal"];
-		$this->Tanggal->AdvancedSearch->SearchOperator = @$filter["z_Tanggal"];
-		$this->Tanggal->AdvancedSearch->SearchCondition = @$filter["v_Tanggal"];
-		$this->Tanggal->AdvancedSearch->SearchValue2 = @$filter["y_Tanggal"];
-		$this->Tanggal->AdvancedSearch->SearchOperator2 = @$filter["w_Tanggal"];
-		$this->Tanggal->AdvancedSearch->Save();
-
 		// Field Periode
 		$this->Periode->AdvancedSearch->SearchValue = @$filter["x_Periode"];
 		$this->Periode->AdvancedSearch->SearchOperator = @$filter["z_Periode"];
@@ -1282,6 +1274,14 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->Periode->AdvancedSearch->SearchOperator2 = @$filter["w_Periode"];
 		$this->Periode->AdvancedSearch->Save();
 
+		// Field Tanggal
+		$this->Tanggal->AdvancedSearch->SearchValue = @$filter["x_Tanggal"];
+		$this->Tanggal->AdvancedSearch->SearchOperator = @$filter["z_Tanggal"];
+		$this->Tanggal->AdvancedSearch->SearchCondition = @$filter["v_Tanggal"];
+		$this->Tanggal->AdvancedSearch->SearchValue2 = @$filter["y_Tanggal"];
+		$this->Tanggal->AdvancedSearch->SearchOperator2 = @$filter["w_Tanggal"];
+		$this->Tanggal->AdvancedSearch->Save();
+
 		// Field NomorTransaksi
 		$this->NomorTransaksi->AdvancedSearch->SearchValue = @$filter["x_NomorTransaksi"];
 		$this->NomorTransaksi->AdvancedSearch->SearchOperator = @$filter["z_NomorTransaksi"];
@@ -1289,6 +1289,14 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->NomorTransaksi->AdvancedSearch->SearchValue2 = @$filter["y_NomorTransaksi"];
 		$this->NomorTransaksi->AdvancedSearch->SearchOperator2 = @$filter["w_NomorTransaksi"];
 		$this->NomorTransaksi->AdvancedSearch->Save();
+
+		// Field Keterangan
+		$this->Keterangan->AdvancedSearch->SearchValue = @$filter["x_Keterangan"];
+		$this->Keterangan->AdvancedSearch->SearchOperator = @$filter["z_Keterangan"];
+		$this->Keterangan->AdvancedSearch->SearchCondition = @$filter["v_Keterangan"];
+		$this->Keterangan->AdvancedSearch->SearchValue2 = @$filter["y_Keterangan"];
+		$this->Keterangan->AdvancedSearch->SearchOperator2 = @$filter["w_Keterangan"];
+		$this->Keterangan->AdvancedSearch->Save();
 
 		// Field Rekening
 		$this->Rekening->AdvancedSearch->SearchValue = @$filter["x_Rekening"];
@@ -1313,14 +1321,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->Kredit->AdvancedSearch->SearchValue2 = @$filter["y_Kredit"];
 		$this->Kredit->AdvancedSearch->SearchOperator2 = @$filter["w_Kredit"];
 		$this->Kredit->AdvancedSearch->Save();
-
-		// Field Keterangan
-		$this->Keterangan->AdvancedSearch->SearchValue = @$filter["x_Keterangan"];
-		$this->Keterangan->AdvancedSearch->SearchOperator = @$filter["z_Keterangan"];
-		$this->Keterangan->AdvancedSearch->SearchCondition = @$filter["v_Keterangan"];
-		$this->Keterangan->AdvancedSearch->SearchValue2 = @$filter["y_Keterangan"];
-		$this->Keterangan->AdvancedSearch->SearchOperator2 = @$filter["w_Keterangan"];
-		$this->Keterangan->AdvancedSearch->Save();
 	}
 
 	// Advanced search WHERE clause based on QueryString
@@ -1329,13 +1329,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$sWhere = "";
 		if (!$Security->CanSearch()) return "";
 		$this->BuildSearchSql($sWhere, $this->id, $Default, FALSE); // id
-		$this->BuildSearchSql($sWhere, $this->Tanggal, $Default, FALSE); // Tanggal
 		$this->BuildSearchSql($sWhere, $this->Periode, $Default, FALSE); // Periode
+		$this->BuildSearchSql($sWhere, $this->Tanggal, $Default, FALSE); // Tanggal
 		$this->BuildSearchSql($sWhere, $this->NomorTransaksi, $Default, FALSE); // NomorTransaksi
+		$this->BuildSearchSql($sWhere, $this->Keterangan, $Default, FALSE); // Keterangan
 		$this->BuildSearchSql($sWhere, $this->Rekening, $Default, FALSE); // Rekening
 		$this->BuildSearchSql($sWhere, $this->Debet, $Default, FALSE); // Debet
 		$this->BuildSearchSql($sWhere, $this->Kredit, $Default, FALSE); // Kredit
-		$this->BuildSearchSql($sWhere, $this->Keterangan, $Default, FALSE); // Keterangan
 
 		// Set up search parm
 		if (!$Default && $sWhere <> "") {
@@ -1343,13 +1343,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 		}
 		if (!$Default && $this->Command == "search") {
 			$this->id->AdvancedSearch->Save(); // id
-			$this->Tanggal->AdvancedSearch->Save(); // Tanggal
 			$this->Periode->AdvancedSearch->Save(); // Periode
+			$this->Tanggal->AdvancedSearch->Save(); // Tanggal
 			$this->NomorTransaksi->AdvancedSearch->Save(); // NomorTransaksi
+			$this->Keterangan->AdvancedSearch->Save(); // Keterangan
 			$this->Rekening->AdvancedSearch->Save(); // Rekening
 			$this->Debet->AdvancedSearch->Save(); // Debet
 			$this->Kredit->AdvancedSearch->Save(); // Kredit
-			$this->Keterangan->AdvancedSearch->Save(); // Keterangan
 		}
 		return $sWhere;
 	}
@@ -1406,19 +1406,19 @@ class ct10_jurnal_list extends ct10_jurnal {
 	function CheckSearchParms() {
 		if ($this->id->AdvancedSearch->IssetSession())
 			return TRUE;
-		if ($this->Tanggal->AdvancedSearch->IssetSession())
-			return TRUE;
 		if ($this->Periode->AdvancedSearch->IssetSession())
 			return TRUE;
+		if ($this->Tanggal->AdvancedSearch->IssetSession())
+			return TRUE;
 		if ($this->NomorTransaksi->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Keterangan->AdvancedSearch->IssetSession())
 			return TRUE;
 		if ($this->Rekening->AdvancedSearch->IssetSession())
 			return TRUE;
 		if ($this->Debet->AdvancedSearch->IssetSession())
 			return TRUE;
 		if ($this->Kredit->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Keterangan->AdvancedSearch->IssetSession())
 			return TRUE;
 		return FALSE;
 	}
@@ -1442,13 +1442,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 	// Clear all advanced search parameters
 	function ResetAdvancedSearchParms() {
 		$this->id->AdvancedSearch->UnsetSession();
-		$this->Tanggal->AdvancedSearch->UnsetSession();
 		$this->Periode->AdvancedSearch->UnsetSession();
+		$this->Tanggal->AdvancedSearch->UnsetSession();
 		$this->NomorTransaksi->AdvancedSearch->UnsetSession();
+		$this->Keterangan->AdvancedSearch->UnsetSession();
 		$this->Rekening->AdvancedSearch->UnsetSession();
 		$this->Debet->AdvancedSearch->UnsetSession();
 		$this->Kredit->AdvancedSearch->UnsetSession();
-		$this->Keterangan->AdvancedSearch->UnsetSession();
 	}
 
 	// Restore all search parameters
@@ -1457,13 +1457,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 
 		// Restore advanced search values
 		$this->id->AdvancedSearch->Load();
-		$this->Tanggal->AdvancedSearch->Load();
 		$this->Periode->AdvancedSearch->Load();
+		$this->Tanggal->AdvancedSearch->Load();
 		$this->NomorTransaksi->AdvancedSearch->Load();
+		$this->Keterangan->AdvancedSearch->Load();
 		$this->Rekening->AdvancedSearch->Load();
 		$this->Debet->AdvancedSearch->Load();
 		$this->Kredit->AdvancedSearch->Load();
-		$this->Keterangan->AdvancedSearch->Load();
 	}
 
 	// Set up sort parameters
@@ -1478,10 +1478,10 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->CurrentOrderType = @$_GET["ordertype"];
 			$this->UpdateSort($this->Tanggal, $bCtrl); // Tanggal
 			$this->UpdateSort($this->NomorTransaksi, $bCtrl); // NomorTransaksi
+			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
 			$this->UpdateSort($this->Rekening, $bCtrl); // Rekening
 			$this->UpdateSort($this->Debet, $bCtrl); // Debet
 			$this->UpdateSort($this->Kredit, $bCtrl); // Kredit
-			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1516,10 +1516,10 @@ class ct10_jurnal_list extends ct10_jurnal {
 				$this->setSessionOrderBy($sOrderBy);
 				$this->Tanggal->setSort("");
 				$this->NomorTransaksi->setSort("");
+				$this->Keterangan->setSort("");
 				$this->Rekening->setSort("");
 				$this->Debet->setSort("");
 				$this->Kredit->setSort("");
-				$this->Keterangan->setSort("");
 			}
 
 			// Reset start position
@@ -2057,14 +2057,14 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->Tanggal->OldValue = $this->Tanggal->CurrentValue;
 		$this->NomorTransaksi->CurrentValue = NULL;
 		$this->NomorTransaksi->OldValue = $this->NomorTransaksi->CurrentValue;
+		$this->Keterangan->CurrentValue = NULL;
+		$this->Keterangan->OldValue = $this->Keterangan->CurrentValue;
 		$this->Rekening->CurrentValue = NULL;
 		$this->Rekening->OldValue = $this->Rekening->CurrentValue;
 		$this->Debet->CurrentValue = NULL;
 		$this->Debet->OldValue = $this->Debet->CurrentValue;
 		$this->Kredit->CurrentValue = NULL;
 		$this->Kredit->OldValue = $this->Kredit->CurrentValue;
-		$this->Keterangan->CurrentValue = NULL;
-		$this->Keterangan->OldValue = $this->Keterangan->CurrentValue;
 	}
 
 	// Load search values for validation
@@ -2078,20 +2078,25 @@ class ct10_jurnal_list extends ct10_jurnal {
 		if ($this->id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->id->AdvancedSearch->SearchOperator = @$_GET["z_id"];
 
-		// Tanggal
-		$this->Tanggal->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Tanggal"]);
-		if ($this->Tanggal->AdvancedSearch->SearchValue <> "") $this->Command = "search";
-		$this->Tanggal->AdvancedSearch->SearchOperator = @$_GET["z_Tanggal"];
-
 		// Periode
 		$this->Periode->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Periode"]);
 		if ($this->Periode->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->Periode->AdvancedSearch->SearchOperator = @$_GET["z_Periode"];
 
+		// Tanggal
+		$this->Tanggal->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Tanggal"]);
+		if ($this->Tanggal->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Tanggal->AdvancedSearch->SearchOperator = @$_GET["z_Tanggal"];
+
 		// NomorTransaksi
 		$this->NomorTransaksi->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_NomorTransaksi"]);
 		if ($this->NomorTransaksi->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->NomorTransaksi->AdvancedSearch->SearchOperator = @$_GET["z_NomorTransaksi"];
+
+		// Keterangan
+		$this->Keterangan->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Keterangan"]);
+		if ($this->Keterangan->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Keterangan->AdvancedSearch->SearchOperator = @$_GET["z_Keterangan"];
 
 		// Rekening
 		$this->Rekening->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Rekening"]);
@@ -2107,11 +2112,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->Kredit->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Kredit"]);
 		if ($this->Kredit->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->Kredit->AdvancedSearch->SearchOperator = @$_GET["z_Kredit"];
-
-		// Keterangan
-		$this->Keterangan->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Keterangan"]);
-		if ($this->Keterangan->AdvancedSearch->SearchValue <> "") $this->Command = "search";
-		$this->Keterangan->AdvancedSearch->SearchOperator = @$_GET["z_Keterangan"];
 	}
 
 	// Load form values
@@ -2128,6 +2128,10 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->NomorTransaksi->setFormValue($objForm->GetValue("x_NomorTransaksi"));
 		}
 		$this->NomorTransaksi->setOldValue($objForm->GetValue("o_NomorTransaksi"));
+		if (!$this->Keterangan->FldIsDetailKey) {
+			$this->Keterangan->setFormValue($objForm->GetValue("x_Keterangan"));
+		}
+		$this->Keterangan->setOldValue($objForm->GetValue("o_Keterangan"));
 		if (!$this->Rekening->FldIsDetailKey) {
 			$this->Rekening->setFormValue($objForm->GetValue("x_Rekening"));
 		}
@@ -2140,10 +2144,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->Kredit->setFormValue($objForm->GetValue("x_Kredit"));
 		}
 		$this->Kredit->setOldValue($objForm->GetValue("o_Kredit"));
-		if (!$this->Keterangan->FldIsDetailKey) {
-			$this->Keterangan->setFormValue($objForm->GetValue("x_Keterangan"));
-		}
-		$this->Keterangan->setOldValue($objForm->GetValue("o_Keterangan"));
 		if (!$this->id->FldIsDetailKey && $this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -2156,10 +2156,10 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->Tanggal->CurrentValue = $this->Tanggal->FormValue;
 		$this->Tanggal->CurrentValue = ew_UnFormatDateTime($this->Tanggal->CurrentValue, 7);
 		$this->NomorTransaksi->CurrentValue = $this->NomorTransaksi->FormValue;
+		$this->Keterangan->CurrentValue = $this->Keterangan->FormValue;
 		$this->Rekening->CurrentValue = $this->Rekening->FormValue;
 		$this->Debet->CurrentValue = $this->Debet->FormValue;
 		$this->Kredit->CurrentValue = $this->Kredit->FormValue;
-		$this->Keterangan->CurrentValue = $this->Keterangan->FormValue;
 	}
 
 	// Load recordset
@@ -2218,13 +2218,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
 		$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
+		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 		$this->Rekening->setDbValue($rs->fields('Rekening'));
 		$this->Debet->setDbValue($rs->fields('Debet'));
 		$this->Kredit->setDbValue($rs->fields('Kredit'));
-		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 	}
 
 	// Load DbValue from recordset
@@ -2232,13 +2232,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->Tanggal->DbValue = $row['Tanggal'];
 		$this->Periode->DbValue = $row['Periode'];
+		$this->Tanggal->DbValue = $row['Tanggal'];
 		$this->NomorTransaksi->DbValue = $row['NomorTransaksi'];
+		$this->Keterangan->DbValue = $row['Keterangan'];
 		$this->Rekening->DbValue = $row['Rekening'];
 		$this->Debet->DbValue = $row['Debet'];
 		$this->Kredit->DbValue = $row['Kredit'];
-		$this->Keterangan->DbValue = $row['Keterangan'];
 	}
 
 	// Load old record
@@ -2289,13 +2289,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 
 		// Common render codes for all row types
 		// id
-		// Tanggal
 		// Periode
+		// Tanggal
 		// NomorTransaksi
+		// Keterangan
 		// Rekening
 		// Debet
 		// Kredit
-		// Keterangan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -2303,14 +2303,14 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 		// Tanggal
 		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
 		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
 		$this->Tanggal->ViewCustomAttributes = "";
-
-		// Periode
-		$this->Periode->ViewValue = $this->Periode->CurrentValue;
-		$this->Periode->ViewCustomAttributes = "";
 
 		// NomorTransaksi
 		$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
@@ -2335,6 +2335,10 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->NomorTransaksi->ViewValue = NULL;
 		}
 		$this->NomorTransaksi->ViewCustomAttributes = "";
+
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
 
 		// Rekening
 		if (strval($this->Rekening->CurrentValue) <> "") {
@@ -2371,10 +2375,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 		$this->Kredit->CellCssStyle .= "text-align: right;";
 		$this->Kredit->ViewCustomAttributes = "";
 
-		// Keterangan
-		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
-		$this->Keterangan->ViewCustomAttributes = "";
-
 			// Tanggal
 			$this->Tanggal->LinkCustomAttributes = "";
 			$this->Tanggal->HrefValue = "";
@@ -2384,6 +2384,11 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->NomorTransaksi->LinkCustomAttributes = "";
 			$this->NomorTransaksi->HrefValue = "";
 			$this->NomorTransaksi->TooltipValue = "";
+
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
+			$this->Keterangan->TooltipValue = "";
 
 			// Rekening
 			$this->Rekening->LinkCustomAttributes = "";
@@ -2399,11 +2404,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->Kredit->LinkCustomAttributes = "";
 			$this->Kredit->HrefValue = "";
 			$this->Kredit->TooltipValue = "";
-
-			// Keterangan
-			$this->Keterangan->LinkCustomAttributes = "";
-			$this->Keterangan->HrefValue = "";
-			$this->Keterangan->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// Tanggal
@@ -2438,6 +2438,12 @@ class ct10_jurnal_list extends ct10_jurnal {
 			}
 			$this->NomorTransaksi->PlaceHolder = ew_RemoveHtml($this->NomorTransaksi->FldCaption());
 
+			// Keterangan
+			$this->Keterangan->EditAttrs["class"] = "form-control";
+			$this->Keterangan->EditCustomAttributes = "";
+			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->CurrentValue);
+			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
+
 			// Rekening
 			$this->Rekening->EditAttrs["class"] = "form-control";
 			$this->Rekening->EditCustomAttributes = "";
@@ -2477,12 +2483,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->Kredit->OldValue = $this->Kredit->EditValue;
 			}
 
-			// Keterangan
-			$this->Keterangan->EditAttrs["class"] = "form-control";
-			$this->Keterangan->EditCustomAttributes = "";
-			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->CurrentValue);
-			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
-
 			// Add refer script
 			// Tanggal
 
@@ -2492,6 +2492,10 @@ class ct10_jurnal_list extends ct10_jurnal {
 			// NomorTransaksi
 			$this->NomorTransaksi->LinkCustomAttributes = "";
 			$this->NomorTransaksi->HrefValue = "";
+
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
 
 			// Rekening
 			$this->Rekening->LinkCustomAttributes = "";
@@ -2504,10 +2508,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 			// Kredit
 			$this->Kredit->LinkCustomAttributes = "";
 			$this->Kredit->HrefValue = "";
-
-			// Keterangan
-			$this->Keterangan->LinkCustomAttributes = "";
-			$this->Keterangan->HrefValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// Tanggal
@@ -2542,6 +2542,12 @@ class ct10_jurnal_list extends ct10_jurnal {
 			}
 			$this->NomorTransaksi->PlaceHolder = ew_RemoveHtml($this->NomorTransaksi->FldCaption());
 
+			// Keterangan
+			$this->Keterangan->EditAttrs["class"] = "form-control";
+			$this->Keterangan->EditCustomAttributes = "";
+			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->CurrentValue);
+			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
+
 			// Rekening
 			$this->Rekening->EditAttrs["class"] = "form-control";
 			$this->Rekening->EditCustomAttributes = "";
@@ -2581,12 +2587,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->Kredit->OldValue = $this->Kredit->EditValue;
 			}
 
-			// Keterangan
-			$this->Keterangan->EditAttrs["class"] = "form-control";
-			$this->Keterangan->EditCustomAttributes = "";
-			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->CurrentValue);
-			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
-
 			// Edit refer script
 			// Tanggal
 
@@ -2596,6 +2596,10 @@ class ct10_jurnal_list extends ct10_jurnal {
 			// NomorTransaksi
 			$this->NomorTransaksi->LinkCustomAttributes = "";
 			$this->NomorTransaksi->HrefValue = "";
+
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
 
 			// Rekening
 			$this->Rekening->LinkCustomAttributes = "";
@@ -2608,10 +2612,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 			// Kredit
 			$this->Kredit->LinkCustomAttributes = "";
 			$this->Kredit->HrefValue = "";
-
-			// Keterangan
-			$this->Keterangan->LinkCustomAttributes = "";
-			$this->Keterangan->HrefValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
 
 			// Tanggal
@@ -2646,6 +2646,12 @@ class ct10_jurnal_list extends ct10_jurnal {
 			}
 			$this->NomorTransaksi->PlaceHolder = ew_RemoveHtml($this->NomorTransaksi->FldCaption());
 
+			// Keterangan
+			$this->Keterangan->EditAttrs["class"] = "form-control";
+			$this->Keterangan->EditCustomAttributes = "";
+			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->AdvancedSearch->SearchValue);
+			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
+
 			// Rekening
 			$this->Rekening->EditAttrs["class"] = "form-control";
 			$this->Rekening->EditCustomAttributes = "";
@@ -2661,12 +2667,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 			$this->Kredit->EditCustomAttributes = "";
 			$this->Kredit->EditValue = ew_HtmlEncode($this->Kredit->AdvancedSearch->SearchValue);
 			$this->Kredit->PlaceHolder = ew_RemoveHtml($this->Kredit->FldCaption());
-
-			// Keterangan
-			$this->Keterangan->EditAttrs["class"] = "form-control";
-			$this->Keterangan->EditCustomAttributes = "";
-			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->AdvancedSearch->SearchValue);
-			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -2721,6 +2721,9 @@ class ct10_jurnal_list extends ct10_jurnal {
 		if (!$this->NomorTransaksi->FldIsDetailKey && !is_null($this->NomorTransaksi->FormValue) && $this->NomorTransaksi->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->NomorTransaksi->FldCaption(), $this->NomorTransaksi->ReqErrMsg));
 		}
+		if (!$this->Keterangan->FldIsDetailKey && !is_null($this->Keterangan->FormValue) && $this->Keterangan->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Keterangan->FldCaption(), $this->Keterangan->ReqErrMsg));
+		}
 		if (!$this->Rekening->FldIsDetailKey && !is_null($this->Rekening->FormValue) && $this->Rekening->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Rekening->FldCaption(), $this->Rekening->ReqErrMsg));
 		}
@@ -2735,9 +2738,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 		}
 		if (!ew_CheckNumber($this->Kredit->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Kredit->FldErrMsg());
-		}
-		if (!$this->Keterangan->FldIsDetailKey && !is_null($this->Keterangan->FormValue) && $this->Keterangan->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Keterangan->FldCaption(), $this->Keterangan->ReqErrMsg));
 		}
 
 		// Return validate result
@@ -2863,6 +2863,9 @@ class ct10_jurnal_list extends ct10_jurnal {
 			// NomorTransaksi
 			$this->NomorTransaksi->SetDbValueDef($rsnew, $this->NomorTransaksi->CurrentValue, "", $this->NomorTransaksi->ReadOnly);
 
+			// Keterangan
+			$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, "", $this->Keterangan->ReadOnly);
+
 			// Rekening
 			$this->Rekening->SetDbValueDef($rsnew, $this->Rekening->CurrentValue, "", $this->Rekening->ReadOnly);
 
@@ -2871,9 +2874,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 
 			// Kredit
 			$this->Kredit->SetDbValueDef($rsnew, $this->Kredit->CurrentValue, 0, $this->Kredit->ReadOnly);
-
-			// Keterangan
-			$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, "", $this->Keterangan->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -2924,6 +2924,9 @@ class ct10_jurnal_list extends ct10_jurnal {
 		// NomorTransaksi
 		$this->NomorTransaksi->SetDbValueDef($rsnew, $this->NomorTransaksi->CurrentValue, "", FALSE);
 
+		// Keterangan
+		$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, "", FALSE);
+
 		// Rekening
 		$this->Rekening->SetDbValueDef($rsnew, $this->Rekening->CurrentValue, "", FALSE);
 
@@ -2932,9 +2935,6 @@ class ct10_jurnal_list extends ct10_jurnal {
 
 		// Kredit
 		$this->Kredit->SetDbValueDef($rsnew, $this->Kredit->CurrentValue, 0, FALSE);
-
-		// Keterangan
-		$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, "", FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -2969,13 +2969,13 @@ class ct10_jurnal_list extends ct10_jurnal {
 	// Load advanced search
 	function LoadAdvancedSearch() {
 		$this->id->AdvancedSearch->Load();
-		$this->Tanggal->AdvancedSearch->Load();
 		$this->Periode->AdvancedSearch->Load();
+		$this->Tanggal->AdvancedSearch->Load();
 		$this->NomorTransaksi->AdvancedSearch->Load();
+		$this->Keterangan->AdvancedSearch->Load();
 		$this->Rekening->AdvancedSearch->Load();
 		$this->Debet->AdvancedSearch->Load();
 		$this->Kredit->AdvancedSearch->Load();
-		$this->Keterangan->AdvancedSearch->Load();
 	}
 
 	// Set up Breadcrumb
@@ -3248,6 +3248,9 @@ ft10_jurnallist.Validate = function() {
 			elm = this.GetElements("x" + infix + "_NomorTransaksi");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->NomorTransaksi->FldCaption(), $t10_jurnal->NomorTransaksi->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Keterangan");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->Keterangan->FldCaption(), $t10_jurnal->Keterangan->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Rekening");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->Rekening->FldCaption(), $t10_jurnal->Rekening->ReqErrMsg)) ?>");
@@ -3263,9 +3266,6 @@ ft10_jurnallist.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Kredit");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t10_jurnal->Kredit->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Keterangan");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t10_jurnal->Keterangan->FldCaption(), $t10_jurnal->Keterangan->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -3284,10 +3284,10 @@ ft10_jurnallist.EmptyRow = function(infix) {
 	var fobj = this.Form;
 	if (ew_ValueChanged(fobj, infix, "Tanggal", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "NomorTransaksi", false)) return false;
+	if (ew_ValueChanged(fobj, infix, "Keterangan", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Rekening", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Debet", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Kredit", false)) return false;
-	if (ew_ValueChanged(fobj, infix, "Keterangan", false)) return false;
 	return true;
 }
 
@@ -3501,6 +3501,15 @@ $t10_jurnal_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
+<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
+	<?php if ($t10_jurnal->SortUrl($t10_jurnal->Keterangan) == "") { ?>
+		<th data-name="Keterangan"><div id="elh_t10_jurnal_Keterangan" class="t10_jurnal_Keterangan"><div class="ewTableHeaderCaption"><?php echo $t10_jurnal->Keterangan->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t10_jurnal->SortUrl($t10_jurnal->Keterangan) ?>',2);"><div id="elh_t10_jurnal_Keterangan" class="t10_jurnal_Keterangan">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t10_jurnal->Keterangan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t10_jurnal->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t10_jurnal->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
 <?php if ($t10_jurnal->Rekening->Visible) { // Rekening ?>
 	<?php if ($t10_jurnal->SortUrl($t10_jurnal->Rekening) == "") { ?>
 		<th data-name="Rekening"><div id="elh_t10_jurnal_Rekening" class="t10_jurnal_Rekening"><div class="ewTableHeaderCaption"><?php echo $t10_jurnal->Rekening->FldCaption() ?></div></div></th>
@@ -3525,15 +3534,6 @@ $t10_jurnal_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="Kredit"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t10_jurnal->SortUrl($t10_jurnal->Kredit) ?>',2);"><div id="elh_t10_jurnal_Kredit" class="t10_jurnal_Kredit">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t10_jurnal->Kredit->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t10_jurnal->Kredit->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t10_jurnal->Kredit->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
-	<?php if ($t10_jurnal->SortUrl($t10_jurnal->Keterangan) == "") { ?>
-		<th data-name="Keterangan"><div id="elh_t10_jurnal_Keterangan" class="t10_jurnal_Keterangan"><div class="ewTableHeaderCaption"><?php echo $t10_jurnal->Keterangan->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t10_jurnal->SortUrl($t10_jurnal->Keterangan) ?>',2);"><div id="elh_t10_jurnal_Keterangan" class="t10_jurnal_Keterangan">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t10_jurnal->Keterangan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t10_jurnal->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t10_jurnal->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -3607,6 +3607,14 @@ ft10_jurnallist.CreateAutoSuggest({"id":"x<?php echo $t10_jurnal_list->RowIndex 
 <input type="hidden" data-table="t10_jurnal" data-field="x_NomorTransaksi" name="o<?php echo $t10_jurnal_list->RowIndex ?>_NomorTransaksi" id="o<?php echo $t10_jurnal_list->RowIndex ?>_NomorTransaksi" value="<?php echo ew_HtmlEncode($t10_jurnal->NomorTransaksi->OldValue) ?>">
 </td>
 	<?php } ?>
+	<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
+		<td data-name="Keterangan">
+<span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Keterangan" class="form-group t10_jurnal_Keterangan">
+<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t10_jurnal" data-field="x_Keterangan" name="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" value="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->OldValue) ?>">
+</td>
+	<?php } ?>
 	<?php if ($t10_jurnal->Rekening->Visible) { // Rekening ?>
 		<td data-name="Rekening">
 <span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Rekening" class="form-group t10_jurnal_Rekening">
@@ -3632,14 +3640,6 @@ ft10_jurnallist.CreateAutoSuggest({"id":"x<?php echo $t10_jurnal_list->RowIndex 
 <input type="text" data-table="t10_jurnal" data-field="x_Kredit" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Kredit" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Kredit" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Kredit->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Kredit->EditValue ?>"<?php echo $t10_jurnal->Kredit->EditAttributes() ?>>
 </span>
 <input type="hidden" data-table="t10_jurnal" data-field="x_Kredit" name="o<?php echo $t10_jurnal_list->RowIndex ?>_Kredit" id="o<?php echo $t10_jurnal_list->RowIndex ?>_Kredit" value="<?php echo ew_HtmlEncode($t10_jurnal->Kredit->OldValue) ?>">
-</td>
-	<?php } ?>
-	<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
-		<td data-name="Keterangan">
-<span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Keterangan" class="form-group t10_jurnal_Keterangan">
-<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
-</span>
-<input type="hidden" data-table="t10_jurnal" data-field="x_Keterangan" name="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" value="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->OldValue) ?>">
 </td>
 	<?php } ?>
 <?php
@@ -3850,6 +3850,27 @@ ft10_jurnallist.CreateAutoSuggest({"id":"x<?php echo $t10_jurnal_list->RowIndex 
 <?php } ?>
 </td>
 	<?php } ?>
+	<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
+		<td data-name="Keterangan"<?php echo $t10_jurnal->Keterangan->CellAttributes() ?>>
+<?php if ($t10_jurnal->RowType == EW_ROWTYPE_ADD) { // Add record ?>
+<span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Keterangan" class="form-group t10_jurnal_Keterangan">
+<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t10_jurnal" data-field="x_Keterangan" name="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" value="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->OldValue) ?>">
+<?php } ?>
+<?php if ($t10_jurnal->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Keterangan" class="form-group t10_jurnal_Keterangan">
+<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
+</span>
+<?php } ?>
+<?php if ($t10_jurnal->RowType == EW_ROWTYPE_VIEW) { // View record ?>
+<span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Keterangan" class="t10_jurnal_Keterangan">
+<span<?php echo $t10_jurnal->Keterangan->ViewAttributes() ?>>
+<?php echo $t10_jurnal->Keterangan->ListViewValue() ?></span>
+</span>
+<?php } ?>
+</td>
+	<?php } ?>
 	<?php if ($t10_jurnal->Rekening->Visible) { // Rekening ?>
 		<td data-name="Rekening"<?php echo $t10_jurnal->Rekening->CellAttributes() ?>>
 <?php if ($t10_jurnal->RowType == EW_ROWTYPE_ADD) { // Add record ?>
@@ -3915,27 +3936,6 @@ ft10_jurnallist.CreateAutoSuggest({"id":"x<?php echo $t10_jurnal_list->RowIndex 
 <span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Kredit" class="t10_jurnal_Kredit">
 <span<?php echo $t10_jurnal->Kredit->ViewAttributes() ?>>
 <?php echo $t10_jurnal->Kredit->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
-		<td data-name="Keterangan"<?php echo $t10_jurnal->Keterangan->CellAttributes() ?>>
-<?php if ($t10_jurnal->RowType == EW_ROWTYPE_ADD) { // Add record ?>
-<span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Keterangan" class="form-group t10_jurnal_Keterangan">
-<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
-</span>
-<input type="hidden" data-table="t10_jurnal" data-field="x_Keterangan" name="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" value="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->OldValue) ?>">
-<?php } ?>
-<?php if ($t10_jurnal->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Keterangan" class="form-group t10_jurnal_Keterangan">
-<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
-</span>
-<?php } ?>
-<?php if ($t10_jurnal->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Keterangan" class="t10_jurnal_Keterangan">
-<span<?php echo $t10_jurnal->Keterangan->ViewAttributes() ?>>
-<?php echo $t10_jurnal->Keterangan->ListViewValue() ?></span>
 </span>
 <?php } ?>
 </td>
@@ -4015,6 +4015,14 @@ ft10_jurnallist.CreateAutoSuggest({"id":"x<?php echo $t10_jurnal_list->RowIndex 
 <input type="hidden" data-table="t10_jurnal" data-field="x_NomorTransaksi" name="o<?php echo $t10_jurnal_list->RowIndex ?>_NomorTransaksi" id="o<?php echo $t10_jurnal_list->RowIndex ?>_NomorTransaksi" value="<?php echo ew_HtmlEncode($t10_jurnal->NomorTransaksi->OldValue) ?>">
 </td>
 	<?php } ?>
+	<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
+		<td data-name="Keterangan">
+<span id="el$rowindex$_t10_jurnal_Keterangan" class="form-group t10_jurnal_Keterangan">
+<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t10_jurnal" data-field="x_Keterangan" name="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" value="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->OldValue) ?>">
+</td>
+	<?php } ?>
 	<?php if ($t10_jurnal->Rekening->Visible) { // Rekening ?>
 		<td data-name="Rekening">
 <span id="el$rowindex$_t10_jurnal_Rekening" class="form-group t10_jurnal_Rekening">
@@ -4040,14 +4048,6 @@ ft10_jurnallist.CreateAutoSuggest({"id":"x<?php echo $t10_jurnal_list->RowIndex 
 <input type="text" data-table="t10_jurnal" data-field="x_Kredit" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Kredit" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Kredit" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Kredit->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Kredit->EditValue ?>"<?php echo $t10_jurnal->Kredit->EditAttributes() ?>>
 </span>
 <input type="hidden" data-table="t10_jurnal" data-field="x_Kredit" name="o<?php echo $t10_jurnal_list->RowIndex ?>_Kredit" id="o<?php echo $t10_jurnal_list->RowIndex ?>_Kredit" value="<?php echo ew_HtmlEncode($t10_jurnal->Kredit->OldValue) ?>">
-</td>
-	<?php } ?>
-	<?php if ($t10_jurnal->Keterangan->Visible) { // Keterangan ?>
-		<td data-name="Keterangan">
-<span id="el$rowindex$_t10_jurnal_Keterangan" class="form-group t10_jurnal_Keterangan">
-<input type="text" data-table="t10_jurnal" data-field="x_Keterangan" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" size="30" maxlength="255" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Keterangan->EditValue ?>"<?php echo $t10_jurnal->Keterangan->EditAttributes() ?>>
-</span>
-<input type="hidden" data-table="t10_jurnal" data-field="x_Keterangan" name="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" id="o<?php echo $t10_jurnal_list->RowIndex ?>_Keterangan" value="<?php echo ew_HtmlEncode($t10_jurnal->Keterangan->OldValue) ?>">
 </td>
 	<?php } ?>
 <?php

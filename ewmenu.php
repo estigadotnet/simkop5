@@ -8,6 +8,7 @@ $RootMenu->AddMenuItem(10160, "mci_Main_Menu", $Language->MenuPhrase("10160", "M
 $RootMenu->AddMenuItem(16, "mi_cf01_home_php", $Language->MenuPhrase("16", "MenuText"), "cf01_home.php", 10160, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf01_home.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(3, "mi_t03_pinjaman", $Language->MenuPhrase("3", "MenuText"), "t03_pinjamanlist.php", 10160, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t03_pinjaman'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10058, "mi_t10_jurnal", $Language->MenuPhrase("10058", "MenuText"), "t10_jurnallist.php", 10160, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t10_jurnal'), FALSE, FALSE);
+$RootMenu->AddMenuItem(10164, "mi_t11_jurnalmaster", $Language->MenuPhrase("10164", "MenuText"), "t11_jurnalmasterlist.php", 10160, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t11_jurnalmaster'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10113, "mci_Laporan", $Language->MenuPhrase("10113", "MenuText"), "", -1, "", IsLoggedIn(), TRUE, TRUE);
 $RootMenu->AddMenuItem(10018, "mri_r015fpinjaman", $Language->MenuPhrase("10018", "MenuText"), "r01_pinjamansmry.php", 10113, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r01_pinjaman'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10025, "mri_r035fjurnal", $Language->MenuPhrase("10025", "MenuText"), "r03_jurnalsmry.php", 10113, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r03_jurnal'), FALSE, FALSE);

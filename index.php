@@ -294,6 +294,10 @@ class cdefault {
 			$this->Page_Terminate("t08_pinjamanpotonganlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't10_jurnal'))
 			$this->Page_Terminate("t10_jurnallist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't11_jurnalmaster'))
+			$this->Page_Terminate("t11_jurnalmasterlist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't12_jurnaldetail'))
+			$this->Page_Terminate("t12_jurnaldetaillist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't87_neraca'))
 			$this->Page_Terminate("t87_neracalist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't88_labarugi'))

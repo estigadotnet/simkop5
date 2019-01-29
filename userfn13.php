@@ -31,6 +31,54 @@ function Page_Unloaded() {
 function yang dibuat untuk memudahkan memproses data
 */
 
+function GetNextNomorTransaksi() {
+	$sNextNomorTransaksi = "";
+	$sLastNomorTransaksi = "";
+	$value = ew_ExecuteScalar("SELECT NomorTransaksi FROM t10_jurnal where left(NomorTransaksi, 2) = 'JM' ORDER BY NomorTransaksi DESC");
+	if ($value != "") { // jika sudah ada, langsung ambil dan proses...
+		$sLastNomorTransaksi = intval(substr($value, 2, 3)); // ambil 3 digit terakhir
+		$sLastNomorTransaksi = intval($sLastNomorTransaksi) + 1; // konversi ke integer, lalu tambahkan satu
+		$sNextNomorTransaksi = "JM" . sprintf('%03s', $sLastNomorTransaksi); // format hasilnya dan tambahkan prefix
+		if (strlen($sNextNomorTransaksi) > 5) {
+			$sNextNomorTransaksi = "JM999";
+		}
+	} else { // jika belum ada, gunakan kode yang pertama
+		$sNextNomorTransaksi = "JM001";
+	}
+	return $sNextNomorTransaksi;
+}
+
+function f_savetojurnal($rsnew) {
+
+	// pindah ke tabel t10_jurnal
+	$q = "insert into t10_jurnal (
+			Periode,
+			Tanggal,
+			NomorTransaksi,
+			Keterangan,
+			Rekening,
+			Debet,
+			Kredit)
+		select
+			Periode,
+			Tanggal,
+			NomorTransaksi,
+			Keterangan,
+			Rekening,
+			Debet,
+			Kredit
+		from
+			v03_jurnalmemorial
+		";
+	Conn()->Execute($q);
+
+	// hapus data di temporary
+	$q = "delete from t11_jurnalmaster";
+	Conn()->Execute($q);
+	$q = "delete from t12_jurnaldetail";
+	Conn()->Execute($q);
+}
+
 function f_cariangsuranbaru($pinjaman_id) { // -----------------------------------------
 	$q = "
 		select
