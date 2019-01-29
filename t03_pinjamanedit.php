@@ -783,12 +783,13 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		if ($this->nasabah_id->VirtualValue <> "") {
 			$this->nasabah_id->ViewValue = $this->nasabah_id->VirtualValue;
 		} else {
-			$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
 		if (strval($this->nasabah_id->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
 		$sWhereWrk = "";
-		$this->nasabah_id->LookupFilters = array();
+		$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+		$lookuptblfilter = "`Status` <> 2";
+		ew_AddFilter($sWhereWrk, $lookuptblfilter);
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
 		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
@@ -902,6 +903,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		$this->Biaya_Materai->ViewCustomAttributes = "";
 
 		// marketing_id
+		$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
 		if (strval($this->marketing_id->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
 		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
@@ -1022,10 +1024,31 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			$this->Kontrak_Tgl->PlaceHolder = ew_RemoveHtml($this->Kontrak_Tgl->FldCaption());
 
 			// nasabah_id
-			$this->nasabah_id->EditAttrs["class"] = "form-control";
 			$this->nasabah_id->EditCustomAttributes = "";
-			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->CurrentValue);
-			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+			if (trim(strval($this->nasabah_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `v02_nasabahjaminan`";
+			$sWhereWrk = "";
+			$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+			$lookuptblfilter = "`Status` <> 2";
+			ew_AddFilter($sWhereWrk, $lookuptblfilter);
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+			} else {
+				$this->nasabah_id->ViewValue = $Language->Phrase("PleaseSelect");
+			}
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->nasabah_id->EditValue = $arwrk;
 
 			// jaminan_id
 			$this->jaminan_id->EditCustomAttributes = "";
@@ -1140,21 +1163,28 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			// marketing_id
 			$this->marketing_id->EditAttrs["class"] = "form-control";
 			$this->marketing_id->EditCustomAttributes = "";
-			if (trim(strval($this->marketing_id->CurrentValue)) == "") {
-				$sFilterWrk = "0=1";
-			} else {
+			$this->marketing_id->EditValue = $this->marketing_id->CurrentValue;
+			if (strval($this->marketing_id->CurrentValue) <> "") {
 				$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-			}
-			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t07_marketing`";
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
 			$sWhereWrk = "";
 			$this->marketing_id->LookupFilters = array();
 			ew_AddFilter($sWhereWrk, $sFilterWrk);
 			$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
 			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
-			if ($rswrk) $rswrk->Close();
-			$this->marketing_id->EditValue = $arwrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$this->marketing_id->EditValue = $this->marketing_id->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->marketing_id->EditValue = $this->marketing_id->CurrentValue;
+				}
+			} else {
+				$this->marketing_id->EditValue = NULL;
+			}
+			$this->marketing_id->ViewCustomAttributes = "";
 
 			// Edit refer script
 			// Kontrak_No
@@ -1221,6 +1251,7 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			// marketing_id
 			$this->marketing_id->LinkCustomAttributes = "";
 			$this->marketing_id->HrefValue = "";
+			$this->marketing_id->TooltipValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -1317,9 +1348,6 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		}
 		if (!ew_CheckNumber($this->Biaya_Materai->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Biaya_Materai->FldErrMsg());
-		}
-		if (!$this->marketing_id->FldIsDetailKey && !is_null($this->marketing_id->FormValue) && $this->marketing_id->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->marketing_id->FldCaption(), $this->marketing_id->ReqErrMsg));
 		}
 
 		// Validate detail grid
@@ -1439,9 +1467,6 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 
 			// Biaya_Materai
 			$this->Biaya_Materai->SetDbValueDef($rsnew, $this->Biaya_Materai->CurrentValue, 0, $this->Biaya_Materai->ReadOnly);
-
-			// marketing_id
-			$this->marketing_id->SetDbValueDef($rsnew, $this->marketing_id->CurrentValue, 0, $this->marketing_id->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -1598,9 +1623,11 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		switch ($fld->FldVar) {
 		case "x_nasabah_id":
 			$sSqlWrk = "";
-			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
 			$sWhereWrk = "{filter}";
-			$this->nasabah_id->LookupFilters = array();
+			$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+			$lookuptblfilter = "`Status` <> 2";
+			ew_AddFilter($sWhereWrk, $lookuptblfilter);
 			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
 			$sSqlWrk = "";
 			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
@@ -1620,18 +1647,6 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 			if ($sSqlWrk <> "")
 				$fld->LookupFilters["s"] .= $sSqlWrk;
 			break;
-		case "x_marketing_id":
-			$sSqlWrk = "";
-			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
-			$sWhereWrk = "";
-			$this->marketing_id->LookupFilters = array();
-			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
-			$sSqlWrk = "";
-			$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			if ($sSqlWrk <> "")
-				$fld->LookupFilters["s"] .= $sSqlWrk;
-			break;
 		}
 	}
 
@@ -1640,19 +1655,6 @@ class ct03_pinjaman_edit extends ct03_pinjaman {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
-		case "x_nasabah_id":
-			$sSqlWrk = "";
-			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld` FROM `t01_nasabah`";
-			$sWhereWrk = "`Nama` LIKE '{query_value}%'";
-			$this->nasabah_id->LookupFilters = array();
-			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "");
-			$sSqlWrk = "";
-			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$sSqlWrk .= " LIMIT " . EW_AUTO_SUGGEST_MAX_ENTRIES;
-			if ($sSqlWrk <> "")
-				$fld->LookupFilters["s"] .= $sSqlWrk;
-			break;
 		}
 	}
 
@@ -1839,9 +1841,6 @@ ft03_pinjamanedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Biaya_Materai");
 			if (elm && !ew_CheckNumber(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t03_pinjaman->Biaya_Materai->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_marketing_id");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_pinjaman->marketing_id->FldCaption(), $t03_pinjaman->marketing_id->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1875,7 +1874,7 @@ ft03_pinjamanedit.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft03_pinjamanedit.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
+ft03_pinjamanedit.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":true,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 ft03_pinjamanedit.Lists["x_jaminan_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Merk_Type","","",""],"ParentFields":["x_nasabah_id"],"ChildFields":[],"FilterFields":["x_nasabah_id"],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
 ft03_pinjamanedit.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
 
@@ -1933,22 +1932,17 @@ ew_CreateCalendar("ft03_pinjamanedit", "x_Kontrak_Tgl", 7);
 <?php } ?>
 <?php if ($t03_pinjaman->nasabah_id->Visible) { // nasabah_id ?>
 	<div id="r_nasabah_id" class="form-group">
-		<label id="elh_t03_pinjaman_nasabah_id" class="col-sm-2 control-label ewLabel"><?php echo $t03_pinjaman->nasabah_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t03_pinjaman_nasabah_id" for="x_nasabah_id" class="col-sm-2 control-label ewLabel"><?php echo $t03_pinjaman->nasabah_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t03_pinjaman->nasabah_id->CellAttributes() ?>>
 <span id="el_t03_pinjaman_nasabah_id">
-<?php
-$wrkonchange = trim("ew_UpdateOpt.call(this); " . @$t03_pinjaman->nasabah_id->EditAttrs["onchange"]);
-if ($wrkonchange <> "") $wrkonchange = " onchange=\"" . ew_JsEncode2($wrkonchange) . "\"";
-$t03_pinjaman->nasabah_id->EditAttrs["onchange"] = "";
-?>
-<span id="as_x_nasabah_id" style="white-space: nowrap; z-index: 8960">
-	<input type="text" name="sv_x_nasabah_id" id="sv_x_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->EditValue ?>" size="30" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->getPlaceHolder()) ?>"<?php echo $t03_pinjaman->nasabah_id->EditAttributes() ?>>
+<?php $t03_pinjaman->nasabah_id->EditAttrs["onchange"] = "ew_UpdateOpt.call(this); " . @$t03_pinjaman->nasabah_id->EditAttrs["onchange"]; ?>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_nasabah_id"><?php echo (strval($t03_pinjaman->nasabah_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t03_pinjaman->nasabah_id->ViewValue); ?></span>
 </span>
-<input type="hidden" data-table="t03_pinjaman" data-field="x_nasabah_id" data-value-separator="<?php echo $t03_pinjaman->nasabah_id->DisplayValueSeparatorAttribute() ?>" name="x_nasabah_id" id="x_nasabah_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->nasabah_id->CurrentValue) ?>"<?php echo $wrkonchange ?>>
-<input type="hidden" name="q_x_nasabah_id" id="q_x_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->LookupFilterQuery(true) ?>">
-<script type="text/javascript">
-ft03_pinjamanedit.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
-</script>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t03_pinjaman->nasabah_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_nasabah_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_nasabah_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t03_pinjaman->nasabah_id->DisplayValueSeparatorAttribute() ?>" name="x_nasabah_id" id="x_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->CurrentValue ?>"<?php echo $t03_pinjaman->nasabah_id->EditAttributes() ?>>
+<input type="hidden" name="s_x_nasabah_id" id="s_x_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->LookupFilterQuery() ?>">
+<input type="hidden" name="ln_x_nasabah_id" id="ln_x_nasabah_id" value="x_jaminan_id[]">
 </span>
 <?php echo $t03_pinjaman->nasabah_id->CustomMsg ?></div></div>
 	</div>
@@ -2090,14 +2084,13 @@ ft03_pinjamanedit.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
 <?php } ?>
 <?php if ($t03_pinjaman->marketing_id->Visible) { // marketing_id ?>
 	<div id="r_marketing_id" class="form-group">
-		<label id="elh_t03_pinjaman_marketing_id" for="x_marketing_id" class="col-sm-2 control-label ewLabel"><?php echo $t03_pinjaman->marketing_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t03_pinjaman_marketing_id" class="col-sm-2 control-label ewLabel"><?php echo $t03_pinjaman->marketing_id->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t03_pinjaman->marketing_id->CellAttributes() ?>>
 <span id="el_t03_pinjaman_marketing_id">
-<select data-table="t03_pinjaman" data-field="x_marketing_id" data-value-separator="<?php echo $t03_pinjaman->marketing_id->DisplayValueSeparatorAttribute() ?>" id="x_marketing_id" name="x_marketing_id"<?php echo $t03_pinjaman->marketing_id->EditAttributes() ?>>
-<?php echo $t03_pinjaman->marketing_id->SelectOptionListHtml("x_marketing_id") ?>
-</select>
-<input type="hidden" name="s_x_marketing_id" id="s_x_marketing_id" value="<?php echo $t03_pinjaman->marketing_id->LookupFilterQuery() ?>">
+<span<?php echo $t03_pinjaman->marketing_id->ViewAttributes() ?>>
+<p class="form-control-static"><?php echo $t03_pinjaman->marketing_id->EditValue ?></p></span>
 </span>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_marketing_id" name="x_marketing_id" id="x_marketing_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->marketing_id->CurrentValue) ?>">
 <?php echo $t03_pinjaman->marketing_id->CustomMsg ?></div></div>
 	</div>
 <?php } ?>

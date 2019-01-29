@@ -80,8 +80,10 @@ class ct03_pinjaman extends cTable {
 		$this->fields['Kontrak_Tgl'] = &$this->Kontrak_Tgl;
 
 		// nasabah_id
-		$this->nasabah_id = new cField('t03_pinjaman', 't03_pinjaman', 'x_nasabah_id', 'nasabah_id', '`nasabah_id`', '`nasabah_id`', 3, -1, FALSE, '`EV__nasabah_id`', TRUE, FALSE, TRUE, 'FORMATTED TEXT', 'TEXT');
+		$this->nasabah_id = new cField('t03_pinjaman', 't03_pinjaman', 'x_nasabah_id', 'nasabah_id', '`nasabah_id`', '`nasabah_id`', 3, -1, FALSE, '`EV__nasabah_id`', TRUE, TRUE, TRUE, 'FORMATTED TEXT', 'SELECT');
 		$this->nasabah_id->Sortable = TRUE; // Allow sort
+		$this->nasabah_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->nasabah_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->nasabah_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['nasabah_id'] = &$this->nasabah_id;
 
@@ -158,10 +160,8 @@ class ct03_pinjaman extends cTable {
 		$this->fields['Biaya_Materai'] = &$this->Biaya_Materai;
 
 		// marketing_id
-		$this->marketing_id = new cField('t03_pinjaman', 't03_pinjaman', 'x_marketing_id', 'marketing_id', '`marketing_id`', '`marketing_id`', 3, -1, FALSE, '`marketing_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->marketing_id = new cField('t03_pinjaman', 't03_pinjaman', 'x_marketing_id', 'marketing_id', '`marketing_id`', '`marketing_id`', 3, -1, FALSE, '`marketing_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->marketing_id->Sortable = TRUE; // Allow sort
-		$this->marketing_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
-		$this->marketing_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->marketing_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['marketing_id'] = &$this->marketing_id;
 
@@ -291,7 +291,7 @@ class ct03_pinjaman extends cTable {
 	function getSqlSelectList() { // Select for List page
 		$select = "";
 		$select = "SELECT * FROM (" .
-			"SELECT *, (SELECT `Nama` FROM `t01_nasabah` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t03_pinjaman`.`nasabah_id` LIMIT 1) AS `EV__nasabah_id` FROM `t03_pinjaman`" .
+			"SELECT *, (SELECT `Nama` FROM `v02_nasabahjaminan` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t03_pinjaman`.`nasabah_id` LIMIT 1) AS `EV__nasabah_id` FROM `t03_pinjaman`" .
 			") `EW_TMP_TABLE`";
 		return ($this->_SqlSelectList <> "") ? $this->_SqlSelectList : $select;
 	}
@@ -929,12 +929,13 @@ class ct03_pinjaman extends cTable {
 		if ($this->nasabah_id->VirtualValue <> "") {
 			$this->nasabah_id->ViewValue = $this->nasabah_id->VirtualValue;
 		} else {
-			$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
 		if (strval($this->nasabah_id->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
 		$sWhereWrk = "";
-		$this->nasabah_id->LookupFilters = array();
+		$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+		$lookuptblfilter = "`Status` <> 2";
+		ew_AddFilter($sWhereWrk, $lookuptblfilter);
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
 		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
@@ -1048,6 +1049,7 @@ class ct03_pinjaman extends cTable {
 		$this->Biaya_Materai->ViewCustomAttributes = "";
 
 		// marketing_id
+		$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
 		if (strval($this->marketing_id->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
 		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
@@ -1196,8 +1198,6 @@ class ct03_pinjaman extends cTable {
 		// nasabah_id
 		$this->nasabah_id->EditAttrs["class"] = "form-control";
 		$this->nasabah_id->EditCustomAttributes = "";
-		$this->nasabah_id->EditValue = $this->nasabah_id->CurrentValue;
-		$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
 
 		// jaminan_id
 		$this->jaminan_id->EditCustomAttributes = "";
@@ -1277,6 +1277,28 @@ class ct03_pinjaman extends cTable {
 		// marketing_id
 		$this->marketing_id->EditAttrs["class"] = "form-control";
 		$this->marketing_id->EditCustomAttributes = "";
+		$this->marketing_id->EditValue = $this->marketing_id->CurrentValue;
+		if (strval($this->marketing_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
+		$sWhereWrk = "";
+		$this->marketing_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->marketing_id->EditValue = $this->marketing_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->marketing_id->EditValue = $this->marketing_id->CurrentValue;
+			}
+		} else {
+			$this->marketing_id->EditValue = NULL;
+		}
+		$this->marketing_id->ViewCustomAttributes = "";
 
 		// Periode
 		$this->Periode->EditAttrs["class"] = "form-control";
@@ -1431,6 +1453,31 @@ class ct03_pinjaman extends cTable {
 	function GetAutoFill($id, $val) {
 		$rsarr = array();
 		$rowcnt = 0;
+		if (preg_match('/^x(\d)*_nasabah_id$/', $id)) {
+			$conn = &$this->Connection();
+			$sSqlWrk = "SELECT `jaminan_id` AS FIELD0, `marketing_id` AS FIELD1 FROM `v02_nasabahjaminan`";
+			$sWhereWrk = "(`id` = " . ew_QuotedValue($val, EW_DATATYPE_NUMBER, $this->DBID) . ")";
+			$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+			$lookuptblfilter = "`Status` <> 2";
+			ew_AddFilter($sWhereWrk, $lookuptblfilter);
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($rs = ew_LoadRecordset($sSqlWrk, $conn)) {
+				while ($rs && !$rs->EOF) {
+					$ar = array();
+					$this->jaminan_id->setDbValue($rs->fields[0]);
+					$this->marketing_id->setDbValue($rs->fields[1]);
+					$this->RowType == EW_ROWTYPE_EDIT;
+					$this->RenderEditRow();
+					$ar[] = $this->jaminan_id->CurrentValue;
+					$ar[] = ($this->marketing_id->AutoFillOriginalValue) ? $this->marketing_id->CurrentValue : $this->marketing_id->EditValue;
+					$rowcnt += 1;
+					$rsarr[] = $ar;
+					$rs->MoveNext();
+				}
+				$rs->Close();
+			}
+		}
 
 		// Output
 		if (is_array($rsarr) && $rowcnt > 0) {
@@ -1830,6 +1877,9 @@ class ct03_pinjaman extends cTable {
 			$q = "select * from t03_pinjaman order by Kontrak_No desc";
 			$r = Conn()->Execute($q);
 			$this->Kontrak_No->EditValue = $r->fields["Kontrak_No"];
+			if (isset($_GET["x_Kontrak_No"])) {
+				$this->Kontrak_No->EditValue = $_GET["x_Kontrak_No"];
+			}
 		}
 	}
 
