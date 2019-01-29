@@ -583,6 +583,9 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="10163">
+      <phrase id="menutext" value="v 02 nasabahjaminan" />
+    </menu>
     <menu id="10162">
       <phrase id="menutext" value="Neraca" />
     </menu>
@@ -1481,6 +1484,42 @@
       </field>
       <field id="periode">
         <phrase id="fldcaption" value="periode" />
+      </field>
+    </table>
+    <table id="v02_nasabahjaminan">
+      <phrase id="tblcaption" value="v 02 nasabahjaminan" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="nama">
+        <phrase id="fldcaption" value="Nama" />
+      </field>
+      <field id="alamat">
+        <phrase id="fldcaption" value="Alamat" />
+      </field>
+      <field id="no_telp_hp">
+        <phrase id="fldcaption" value="No Telp Hp" />
+      </field>
+      <field id="pekerjaan">
+        <phrase id="fldcaption" value="Pekerjaan" />
+      </field>
+      <field id="pekerjaan_alamat">
+        <phrase id="fldcaption" value="Pekerjaan Alamat" />
+      </field>
+      <field id="pekerjaan_no_telp_hp">
+        <phrase id="fldcaption" value="Pekerjaan No Telp Hp" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Status" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="marketing_id">
+        <phrase id="fldcaption" value="marketing id" />
+      </field>
+      <field id="jaminan_id">
+        <phrase id="fldcaption" value="jaminan id" />
       </field>
     </table>
   </project>
