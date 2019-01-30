@@ -1054,7 +1054,7 @@ class ct03_pinjaman extends cTable {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
 		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
 		$sWhereWrk = "";
-		$this->marketing_id->LookupFilters = array();
+		$this->marketing_id->LookupFilters = array("dx1" => '`Nama`');
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
 		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
@@ -1278,27 +1278,7 @@ class ct03_pinjaman extends cTable {
 		$this->marketing_id->EditAttrs["class"] = "form-control";
 		$this->marketing_id->EditCustomAttributes = "";
 		$this->marketing_id->EditValue = $this->marketing_id->CurrentValue;
-		if (strval($this->marketing_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
-		$sWhereWrk = "";
-		$this->marketing_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$this->marketing_id->EditValue = $this->marketing_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->marketing_id->EditValue = $this->marketing_id->CurrentValue;
-			}
-		} else {
-			$this->marketing_id->EditValue = NULL;
-		}
-		$this->marketing_id->ViewCustomAttributes = "";
+		$this->marketing_id->PlaceHolder = ew_RemoveHtml($this->marketing_id->FldCaption());
 
 		// Periode
 		$this->Periode->EditAttrs["class"] = "form-control";

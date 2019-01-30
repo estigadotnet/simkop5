@@ -941,7 +941,7 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
 		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
 		$sWhereWrk = "";
-		$this->marketing_id->LookupFilters = array();
+		$this->marketing_id->LookupFilters = array("dx1" => '`Nama`');
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
 		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
 		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
@@ -1201,7 +1201,7 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 				$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
 			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
 			$sWhereWrk = "";
-			$this->marketing_id->LookupFilters = array();
+			$this->marketing_id->LookupFilters = array("dx1" => '`Nama`');
 			ew_AddFilter($sWhereWrk, $sFilterWrk);
 			$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
 			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
@@ -1684,7 +1684,7 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 			$sSqlWrk = "";
 			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
 			$sWhereWrk = "{filter}";
-			$this->marketing_id->LookupFilters = array();
+			$this->marketing_id->LookupFilters = array("dx1" => '`Nama`');
 			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
 			$sSqlWrk = "";
 			$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
@@ -1704,7 +1704,7 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 			$sSqlWrk = "";
 			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld` FROM `t07_marketing`";
 			$sWhereWrk = "`Nama` LIKE '{query_value}%'";
-			$this->marketing_id->LookupFilters = array();
+			$this->marketing_id->LookupFilters = array("dx1" => '`Nama`');
 			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "");
 			$sSqlWrk = "";
 			$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
@@ -2160,11 +2160,13 @@ $t03_pinjaman->marketing_id->EditAttrs["onchange"] = "";
 <span id="as_x_marketing_id" style="white-space: nowrap; z-index: 8830">
 	<input type="text" name="sv_x_marketing_id" id="sv_x_marketing_id" value="<?php echo $t03_pinjaman->marketing_id->EditValue ?>" size="30" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->marketing_id->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->marketing_id->getPlaceHolder()) ?>"<?php echo $t03_pinjaman->marketing_id->EditAttributes() ?>>
 </span>
-<input type="hidden" data-table="t03_pinjaman" data-field="x_marketing_id" data-value-separator="<?php echo $t03_pinjaman->marketing_id->DisplayValueSeparatorAttribute() ?>" name="x_marketing_id" id="x_marketing_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->marketing_id->CurrentValue) ?>"<?php echo $wrkonchange ?>>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_marketing_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t03_pinjaman->marketing_id->DisplayValueSeparatorAttribute() ?>" name="x_marketing_id" id="x_marketing_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->marketing_id->CurrentValue) ?>"<?php echo $wrkonchange ?>>
 <input type="hidden" name="q_x_marketing_id" id="q_x_marketing_id" value="<?php echo $t03_pinjaman->marketing_id->LookupFilterQuery(true) ?>">
 <script type="text/javascript">
 ft03_pinjamanadd.CreateAutoSuggest({"id":"x_marketing_id","forceSelect":false});
 </script>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t03_pinjaman->marketing_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x_marketing_id',m:0,n:10,srch:true});" class="ewLookupBtn btn btn-default btn-sm"><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" name="s_x_marketing_id" id="s_x_marketing_id" value="<?php echo $t03_pinjaman->marketing_id->LookupFilterQuery(false) ?>">
 </span>
 <?php echo $t03_pinjaman->marketing_id->CustomMsg ?></div></div>
 	</div>
