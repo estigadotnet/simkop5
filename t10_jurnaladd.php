@@ -744,7 +744,7 @@ class ct10_jurnal_add extends ct10_jurnal {
 
 			// Tanggal
 			$this->Tanggal->EditAttrs["class"] = "form-control";
-			$this->Tanggal->EditCustomAttributes = "";
+			$this->Tanggal->EditCustomAttributes = "style='width: 115px;'";
 			$this->Tanggal->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Tanggal->CurrentValue, 7));
 			$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
@@ -1225,7 +1225,7 @@ $t10_jurnal_add->ShowMessage();
 		<label id="elh_t10_jurnal_Tanggal" for="x_Tanggal" class="col-sm-2 control-label ewLabel"><?php echo $t10_jurnal->Tanggal->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t10_jurnal->Tanggal->CellAttributes() ?>>
 <span id="el_t10_jurnal_Tanggal">
-<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x_Tanggal" id="x_Tanggal" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x_Tanggal" id="x_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
 <?php if (!$t10_jurnal->Tanggal->ReadOnly && !$t10_jurnal->Tanggal->Disabled && !isset($t10_jurnal->Tanggal->EditAttrs["readonly"]) && !isset($t10_jurnal->Tanggal->EditAttrs["disabled"])) { ?>
 <script type="text/javascript">
 ew_CreateCalendar("ft10_jurnaladd", "x_Tanggal", 7);

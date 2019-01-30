@@ -31,6 +31,23 @@ function Page_Unloaded() {
 function yang dibuat untuk memudahkan memproses data
 */
 
+function GetNextNoKontrak() {
+	$sNextNoKontrak = "";
+	$sLastNoKontrak = "";
+	$value = ew_ExecuteScalar("SELECT Kontrak_No FROM t03_pinjaman ORDER BY Kontrak_No DESC");
+	if ($value != "") { // jika sudah ada, langsung ambil dan proses...
+		$sLastNoKontrak = intval(substr($value, 1, 4)); // ambil 4 digit terakhir
+		$sLastNoKontrak = intval($sLastNoKontrak) + 1; // konversi ke integer, lalu tambahkan satu
+		$sNextNoKontrak = "6" . sprintf('%04s', $sLastNoKontrak); // format hasilnya dan tambahkan prefix
+		if (strlen($sNextNoKontrak) > 5) {
+			$sNextNoKontrak = "69999";
+		}
+	} else { // jika belum ada, gunakan kode yang pertama
+		$sNextNoKontrak = "60001";
+	}
+	return $sNextNoKontrak;
+}
+
 function GetNextNomorTransaksi() {
 	$sNextNomorTransaksi = "";
 	$sLastNomorTransaksi = "";

@@ -777,7 +777,7 @@ class ct10_jurnal extends cTable {
 
 		// Tanggal
 		$this->Tanggal->EditAttrs["class"] = "form-control";
-		$this->Tanggal->EditCustomAttributes = "";
+		$this->Tanggal->EditCustomAttributes = "style='width: 115px;'";
 		$this->Tanggal->EditValue = ew_FormatDateTime($this->Tanggal->CurrentValue, 7);
 		$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 

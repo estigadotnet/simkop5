@@ -1669,6 +1669,7 @@ class ct03_pinjaman extends cTable {
 		// To cancel, set return value to FALSE
 
 		$rsnew["Periode"] = $GLOBALS["Periode"];
+		$rsnew["Kontrak_No"] = GetNextNoKontrak(); // mengantisipasi lebih satu user menginput data saat bersamaan
 		return TRUE;
 	}
 
@@ -1880,6 +1881,19 @@ class ct03_pinjaman extends cTable {
 			if (isset($_GET["x_Kontrak_No"])) {
 				$this->Kontrak_No->EditValue = $_GET["x_Kontrak_No"];
 			}
+		}
+
+		// Kondisi saat form Tambah sedang terbuka (tidak dalam mode konfirmasi)
+		if (CurrentPageID() == "add" && $this->CurrentAction != "F") {
+			$this->Kontrak_No->CurrentValue = GetNextNoKontrak(); // trik
+			$this->Kontrak_No->EditValue = $this->Kontrak_No->CurrentValue; // tampilkan
+
+			//$this->Kode->ReadOnly = TRUE; // supaya tidak bisa diubah
+		}
+
+		// Kondisi saat form Tambah sedang dalam mode konfirmasi
+		if ($this->CurrentAction == "add" && $this->CurrentAction=="F") {
+			$this->Kontrak_No->ViewValue = $this->Kontrak_No->CurrentValue; // ambil dari mode sebelumnya
 		}
 	}
 

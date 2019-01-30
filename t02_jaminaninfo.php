@@ -66,27 +66,27 @@ class ct02_jaminan extends cTable {
 		$this->fields['nasabah_id'] = &$this->nasabah_id;
 
 		// Merk_Type
-		$this->Merk_Type = new cField('t02_jaminan', 't02_jaminan', 'x_Merk_Type', 'Merk_Type', '`Merk_Type`', '`Merk_Type`', 200, -1, FALSE, '`Merk_Type`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Merk_Type = new cField('t02_jaminan', 't02_jaminan', 'x_Merk_Type', 'Merk_Type', '`Merk_Type`', '`Merk_Type`', 201, -1, FALSE, '`Merk_Type`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->Merk_Type->Sortable = TRUE; // Allow sort
 		$this->fields['Merk_Type'] = &$this->Merk_Type;
 
 		// No_Rangka
-		$this->No_Rangka = new cField('t02_jaminan', 't02_jaminan', 'x_No_Rangka', 'No_Rangka', '`No_Rangka`', '`No_Rangka`', 200, -1, FALSE, '`No_Rangka`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->No_Rangka = new cField('t02_jaminan', 't02_jaminan', 'x_No_Rangka', 'No_Rangka', '`No_Rangka`', '`No_Rangka`', 201, -1, FALSE, '`No_Rangka`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->No_Rangka->Sortable = TRUE; // Allow sort
 		$this->fields['No_Rangka'] = &$this->No_Rangka;
 
 		// No_Mesin
-		$this->No_Mesin = new cField('t02_jaminan', 't02_jaminan', 'x_No_Mesin', 'No_Mesin', '`No_Mesin`', '`No_Mesin`', 200, -1, FALSE, '`No_Mesin`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->No_Mesin = new cField('t02_jaminan', 't02_jaminan', 'x_No_Mesin', 'No_Mesin', '`No_Mesin`', '`No_Mesin`', 201, -1, FALSE, '`No_Mesin`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->No_Mesin->Sortable = TRUE; // Allow sort
 		$this->fields['No_Mesin'] = &$this->No_Mesin;
 
 		// Warna
-		$this->Warna = new cField('t02_jaminan', 't02_jaminan', 'x_Warna', 'Warna', '`Warna`', '`Warna`', 200, -1, FALSE, '`Warna`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Warna = new cField('t02_jaminan', 't02_jaminan', 'x_Warna', 'Warna', '`Warna`', '`Warna`', 201, -1, FALSE, '`Warna`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->Warna->Sortable = TRUE; // Allow sort
 		$this->fields['Warna'] = &$this->Warna;
 
 		// No_Pol
-		$this->No_Pol = new cField('t02_jaminan', 't02_jaminan', 'x_No_Pol', 'No_Pol', '`No_Pol`', '`No_Pol`', 200, -1, FALSE, '`No_Pol`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->No_Pol = new cField('t02_jaminan', 't02_jaminan', 'x_No_Pol', 'No_Pol', '`No_Pol`', '`No_Pol`', 201, -1, FALSE, '`No_Pol`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->No_Pol->Sortable = TRUE; // Allow sort
 		$this->fields['No_Pol'] = &$this->No_Pol;
 
@@ -96,7 +96,7 @@ class ct02_jaminan extends cTable {
 		$this->fields['Keterangan'] = &$this->Keterangan;
 
 		// Atas_Nama
-		$this->Atas_Nama = new cField('t02_jaminan', 't02_jaminan', 'x_Atas_Nama', 'Atas_Nama', '`Atas_Nama`', '`Atas_Nama`', 200, -1, FALSE, '`Atas_Nama`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Atas_Nama = new cField('t02_jaminan', 't02_jaminan', 'x_Atas_Nama', 'Atas_Nama', '`Atas_Nama`', '`Atas_Nama`', 201, -1, FALSE, '`Atas_Nama`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
 		$this->Atas_Nama->Sortable = TRUE; // Allow sort
 		$this->fields['Atas_Nama'] = &$this->Atas_Nama;
 	}

@@ -423,13 +423,13 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="Merk_Type"<?php echo $t02_jaminan->Merk_Type->CellAttributes() ?>>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_Merk_Type" class="form-group t02_jaminan_Merk_Type">
-<input type="text" data-table="t02_jaminan" data-field="x_Merk_Type" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Merk_Type->EditValue ?>"<?php echo $t02_jaminan->Merk_Type->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Merk_Type" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Merk_Type->EditAttributes() ?>><?php echo $t02_jaminan->Merk_Type->EditValue ?></textarea>
 </span>
 <input type="hidden" data-table="t02_jaminan" data-field="x_Merk_Type" name="o<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" id="o<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" value="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->OldValue) ?>">
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_Merk_Type" class="form-group t02_jaminan_Merk_Type">
-<input type="text" data-table="t02_jaminan" data-field="x_Merk_Type" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Merk_Type->EditValue ?>"<?php echo $t02_jaminan->Merk_Type->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Merk_Type" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Merk_Type->EditAttributes() ?>><?php echo $t02_jaminan->Merk_Type->EditValue ?></textarea>
 </span>
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -451,13 +451,13 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="No_Rangka"<?php echo $t02_jaminan->No_Rangka->CellAttributes() ?>>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_No_Rangka" class="form-group t02_jaminan_No_Rangka">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Rangka" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Rangka->EditValue ?>"<?php echo $t02_jaminan->No_Rangka->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Rangka" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Rangka->EditAttributes() ?>><?php echo $t02_jaminan->No_Rangka->EditValue ?></textarea>
 </span>
 <input type="hidden" data-table="t02_jaminan" data-field="x_No_Rangka" name="o<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" id="o<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" value="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->OldValue) ?>">
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_No_Rangka" class="form-group t02_jaminan_No_Rangka">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Rangka" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Rangka->EditValue ?>"<?php echo $t02_jaminan->No_Rangka->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Rangka" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Rangka->EditAttributes() ?>><?php echo $t02_jaminan->No_Rangka->EditValue ?></textarea>
 </span>
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -479,13 +479,13 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="No_Mesin"<?php echo $t02_jaminan->No_Mesin->CellAttributes() ?>>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_No_Mesin" class="form-group t02_jaminan_No_Mesin">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Mesin" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Mesin->EditValue ?>"<?php echo $t02_jaminan->No_Mesin->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Mesin" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Mesin->EditAttributes() ?>><?php echo $t02_jaminan->No_Mesin->EditValue ?></textarea>
 </span>
 <input type="hidden" data-table="t02_jaminan" data-field="x_No_Mesin" name="o<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" id="o<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" value="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->OldValue) ?>">
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_No_Mesin" class="form-group t02_jaminan_No_Mesin">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Mesin" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Mesin->EditValue ?>"<?php echo $t02_jaminan->No_Mesin->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Mesin" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Mesin->EditAttributes() ?>><?php echo $t02_jaminan->No_Mesin->EditValue ?></textarea>
 </span>
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -507,13 +507,13 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="Warna"<?php echo $t02_jaminan->Warna->CellAttributes() ?>>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_Warna" class="form-group t02_jaminan_Warna">
-<input type="text" data-table="t02_jaminan" data-field="x_Warna" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Warna->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Warna->EditValue ?>"<?php echo $t02_jaminan->Warna->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Warna" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Warna->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Warna->EditAttributes() ?>><?php echo $t02_jaminan->Warna->EditValue ?></textarea>
 </span>
 <input type="hidden" data-table="t02_jaminan" data-field="x_Warna" name="o<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" id="o<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" value="<?php echo ew_HtmlEncode($t02_jaminan->Warna->OldValue) ?>">
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_Warna" class="form-group t02_jaminan_Warna">
-<input type="text" data-table="t02_jaminan" data-field="x_Warna" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Warna->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Warna->EditValue ?>"<?php echo $t02_jaminan->Warna->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Warna" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Warna->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Warna->EditAttributes() ?>><?php echo $t02_jaminan->Warna->EditValue ?></textarea>
 </span>
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -535,13 +535,13 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="No_Pol"<?php echo $t02_jaminan->No_Pol->CellAttributes() ?>>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_No_Pol" class="form-group t02_jaminan_No_Pol">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Pol" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Pol->EditValue ?>"<?php echo $t02_jaminan->No_Pol->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Pol" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Pol->EditAttributes() ?>><?php echo $t02_jaminan->No_Pol->EditValue ?></textarea>
 </span>
 <input type="hidden" data-table="t02_jaminan" data-field="x_No_Pol" name="o<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" id="o<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" value="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->OldValue) ?>">
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_No_Pol" class="form-group t02_jaminan_No_Pol">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Pol" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Pol->EditValue ?>"<?php echo $t02_jaminan->No_Pol->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Pol" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Pol->EditAttributes() ?>><?php echo $t02_jaminan->No_Pol->EditValue ?></textarea>
 </span>
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -591,13 +591,13 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="Atas_Nama"<?php echo $t02_jaminan->Atas_Nama->CellAttributes() ?>>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_Atas_Nama" class="form-group t02_jaminan_Atas_Nama">
-<input type="text" data-table="t02_jaminan" data-field="x_Atas_Nama" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Atas_Nama->EditValue ?>"<?php echo $t02_jaminan->Atas_Nama->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Atas_Nama" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Atas_Nama->EditAttributes() ?>><?php echo $t02_jaminan->Atas_Nama->EditValue ?></textarea>
 </span>
 <input type="hidden" data-table="t02_jaminan" data-field="x_Atas_Nama" name="o<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" id="o<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" value="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->OldValue) ?>">
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t02_jaminan_grid->RowCnt ?>_t02_jaminan_Atas_Nama" class="form-group t02_jaminan_Atas_Nama">
-<input type="text" data-table="t02_jaminan" data-field="x_Atas_Nama" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Atas_Nama->EditValue ?>"<?php echo $t02_jaminan->Atas_Nama->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Atas_Nama" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Atas_Nama->EditAttributes() ?>><?php echo $t02_jaminan->Atas_Nama->EditValue ?></textarea>
 </span>
 <?php } ?>
 <?php if ($t02_jaminan->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -697,7 +697,7 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="Merk_Type">
 <?php if ($t02_jaminan->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t02_jaminan_Merk_Type" class="form-group t02_jaminan_Merk_Type">
-<input type="text" data-table="t02_jaminan" data-field="x_Merk_Type" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Merk_Type->EditValue ?>"<?php echo $t02_jaminan->Merk_Type->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Merk_Type" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Merk_Type" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Merk_Type->EditAttributes() ?>><?php echo $t02_jaminan->Merk_Type->EditValue ?></textarea>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t02_jaminan_Merk_Type" class="form-group t02_jaminan_Merk_Type">
@@ -713,7 +713,7 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="No_Rangka">
 <?php if ($t02_jaminan->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t02_jaminan_No_Rangka" class="form-group t02_jaminan_No_Rangka">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Rangka" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Rangka->EditValue ?>"<?php echo $t02_jaminan->No_Rangka->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Rangka" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Rangka" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Rangka->EditAttributes() ?>><?php echo $t02_jaminan->No_Rangka->EditValue ?></textarea>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t02_jaminan_No_Rangka" class="form-group t02_jaminan_No_Rangka">
@@ -729,7 +729,7 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="No_Mesin">
 <?php if ($t02_jaminan->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t02_jaminan_No_Mesin" class="form-group t02_jaminan_No_Mesin">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Mesin" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Mesin->EditValue ?>"<?php echo $t02_jaminan->No_Mesin->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Mesin" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Mesin" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Mesin->EditAttributes() ?>><?php echo $t02_jaminan->No_Mesin->EditValue ?></textarea>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t02_jaminan_No_Mesin" class="form-group t02_jaminan_No_Mesin">
@@ -745,7 +745,7 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="Warna">
 <?php if ($t02_jaminan->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t02_jaminan_Warna" class="form-group t02_jaminan_Warna">
-<input type="text" data-table="t02_jaminan" data-field="x_Warna" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Warna->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Warna->EditValue ?>"<?php echo $t02_jaminan->Warna->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Warna" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Warna" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Warna->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Warna->EditAttributes() ?>><?php echo $t02_jaminan->Warna->EditValue ?></textarea>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t02_jaminan_Warna" class="form-group t02_jaminan_Warna">
@@ -761,7 +761,7 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="No_Pol">
 <?php if ($t02_jaminan->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t02_jaminan_No_Pol" class="form-group t02_jaminan_No_Pol">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Pol" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Pol->EditValue ?>"<?php echo $t02_jaminan->No_Pol->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Pol" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_No_Pol" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Pol->EditAttributes() ?>><?php echo $t02_jaminan->No_Pol->EditValue ?></textarea>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t02_jaminan_No_Pol" class="form-group t02_jaminan_No_Pol">
@@ -793,7 +793,7 @@ ft02_jaminangrid.CreateAutoSuggest({"id":"x<?php echo $t02_jaminan_grid->RowInde
 		<td data-name="Atas_Nama">
 <?php if ($t02_jaminan->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t02_jaminan_Atas_Nama" class="form-group t02_jaminan_Atas_Nama">
-<input type="text" data-table="t02_jaminan" data-field="x_Atas_Nama" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Atas_Nama->EditValue ?>"<?php echo $t02_jaminan->Atas_Nama->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Atas_Nama" name="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" id="x<?php echo $t02_jaminan_grid->RowIndex ?>_Atas_Nama" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Atas_Nama->EditAttributes() ?>><?php echo $t02_jaminan->Atas_Nama->EditValue ?></textarea>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t02_jaminan_Atas_Nama" class="form-group t02_jaminan_Atas_Nama">

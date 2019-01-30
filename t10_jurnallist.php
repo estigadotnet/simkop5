@@ -2408,7 +2408,7 @@ class ct10_jurnal_list extends ct10_jurnal {
 
 			// Tanggal
 			$this->Tanggal->EditAttrs["class"] = "form-control";
-			$this->Tanggal->EditCustomAttributes = "";
+			$this->Tanggal->EditCustomAttributes = "style='width: 115px;'";
 			$this->Tanggal->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Tanggal->CurrentValue, 7));
 			$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
@@ -2512,7 +2512,7 @@ class ct10_jurnal_list extends ct10_jurnal {
 
 			// Tanggal
 			$this->Tanggal->EditAttrs["class"] = "form-control";
-			$this->Tanggal->EditCustomAttributes = "";
+			$this->Tanggal->EditCustomAttributes = "style='width: 115px;'";
 			$this->Tanggal->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Tanggal->CurrentValue, 7));
 			$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
@@ -2616,7 +2616,7 @@ class ct10_jurnal_list extends ct10_jurnal {
 
 			// Tanggal
 			$this->Tanggal->EditAttrs["class"] = "form-control";
-			$this->Tanggal->EditCustomAttributes = "";
+			$this->Tanggal->EditCustomAttributes = "style='width: 115px;'";
 			$this->Tanggal->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->Tanggal->AdvancedSearch->SearchValue, 7), 7));
 			$this->Tanggal->PlaceHolder = ew_RemoveHtml($this->Tanggal->FldCaption());
 
@@ -3577,7 +3577,7 @@ $t10_jurnal_list->ListOptions->Render("body", "left", $t10_jurnal_list->RowCnt);
 	<?php if ($t10_jurnal->Tanggal->Visible) { // Tanggal ?>
 		<td data-name="Tanggal">
 <span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Tanggal" class="form-group t10_jurnal_Tanggal">
-<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
 <?php if (!$t10_jurnal->Tanggal->ReadOnly && !$t10_jurnal->Tanggal->Disabled && !isset($t10_jurnal->Tanggal->EditAttrs["readonly"]) && !isset($t10_jurnal->Tanggal->EditAttrs["disabled"])) { ?>
 <script type="text/javascript">
 ew_CreateCalendar("ft10_jurnallist", "x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal", 7);
@@ -3771,7 +3771,7 @@ $t10_jurnal_list->ListOptions->Render("body", "left", $t10_jurnal_list->RowCnt);
 		<td data-name="Tanggal"<?php echo $t10_jurnal->Tanggal->CellAttributes() ?>>
 <?php if ($t10_jurnal->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Tanggal" class="form-group t10_jurnal_Tanggal">
-<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
 <?php if (!$t10_jurnal->Tanggal->ReadOnly && !$t10_jurnal->Tanggal->Disabled && !isset($t10_jurnal->Tanggal->EditAttrs["readonly"]) && !isset($t10_jurnal->Tanggal->EditAttrs["disabled"])) { ?>
 <script type="text/javascript">
 ew_CreateCalendar("ft10_jurnallist", "x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal", 7);
@@ -3782,7 +3782,7 @@ ew_CreateCalendar("ft10_jurnallist", "x<?php echo $t10_jurnal_list->RowIndex ?>_
 <?php } ?>
 <?php if ($t10_jurnal->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t10_jurnal_list->RowCnt ?>_t10_jurnal_Tanggal" class="form-group t10_jurnal_Tanggal">
-<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
 <?php if (!$t10_jurnal->Tanggal->ReadOnly && !$t10_jurnal->Tanggal->Disabled && !isset($t10_jurnal->Tanggal->EditAttrs["readonly"]) && !isset($t10_jurnal->Tanggal->EditAttrs["disabled"])) { ?>
 <script type="text/javascript">
 ew_CreateCalendar("ft10_jurnallist", "x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal", 7);
@@ -3985,7 +3985,7 @@ $t10_jurnal_list->ListOptions->Render("body", "left", $t10_jurnal_list->RowIndex
 	<?php if ($t10_jurnal->Tanggal->Visible) { // Tanggal ?>
 		<td data-name="Tanggal">
 <span id="el$rowindex$_t10_jurnal_Tanggal" class="form-group t10_jurnal_Tanggal">
-<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
+<input type="text" data-table="t10_jurnal" data-field="x_Tanggal" data-format="7" name="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" id="x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal" size="10" placeholder="<?php echo ew_HtmlEncode($t10_jurnal->Tanggal->getPlaceHolder()) ?>" value="<?php echo $t10_jurnal->Tanggal->EditValue ?>"<?php echo $t10_jurnal->Tanggal->EditAttributes() ?>>
 <?php if (!$t10_jurnal->Tanggal->ReadOnly && !$t10_jurnal->Tanggal->Disabled && !isset($t10_jurnal->Tanggal->EditAttrs["readonly"]) && !isset($t10_jurnal->Tanggal->EditAttrs["disabled"])) { ?>
 <script type="text/javascript">
 ew_CreateCalendar("ft10_jurnallist", "x<?php echo $t10_jurnal_list->RowIndex ?>_Tanggal", 7);

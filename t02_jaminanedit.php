@@ -1326,7 +1326,7 @@ ft02_jaminanedit.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
 		<label id="elh_t02_jaminan_Merk_Type" for="x_Merk_Type" class="col-sm-2 control-label ewLabel"><?php echo $t02_jaminan->Merk_Type->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t02_jaminan->Merk_Type->CellAttributes() ?>>
 <span id="el_t02_jaminan_Merk_Type">
-<input type="text" data-table="t02_jaminan" data-field="x_Merk_Type" name="x_Merk_Type" id="x_Merk_Type" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Merk_Type->EditValue ?>"<?php echo $t02_jaminan->Merk_Type->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Merk_Type" name="x_Merk_Type" id="x_Merk_Type" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Merk_Type->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Merk_Type->EditAttributes() ?>><?php echo $t02_jaminan->Merk_Type->EditValue ?></textarea>
 </span>
 <?php echo $t02_jaminan->Merk_Type->CustomMsg ?></div></div>
 	</div>
@@ -1336,7 +1336,7 @@ ft02_jaminanedit.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
 		<label id="elh_t02_jaminan_No_Rangka" for="x_No_Rangka" class="col-sm-2 control-label ewLabel"><?php echo $t02_jaminan->No_Rangka->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t02_jaminan->No_Rangka->CellAttributes() ?>>
 <span id="el_t02_jaminan_No_Rangka">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Rangka" name="x_No_Rangka" id="x_No_Rangka" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Rangka->EditValue ?>"<?php echo $t02_jaminan->No_Rangka->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Rangka" name="x_No_Rangka" id="x_No_Rangka" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Rangka->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Rangka->EditAttributes() ?>><?php echo $t02_jaminan->No_Rangka->EditValue ?></textarea>
 </span>
 <?php echo $t02_jaminan->No_Rangka->CustomMsg ?></div></div>
 	</div>
@@ -1346,7 +1346,7 @@ ft02_jaminanedit.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
 		<label id="elh_t02_jaminan_No_Mesin" for="x_No_Mesin" class="col-sm-2 control-label ewLabel"><?php echo $t02_jaminan->No_Mesin->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t02_jaminan->No_Mesin->CellAttributes() ?>>
 <span id="el_t02_jaminan_No_Mesin">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Mesin" name="x_No_Mesin" id="x_No_Mesin" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Mesin->EditValue ?>"<?php echo $t02_jaminan->No_Mesin->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Mesin" name="x_No_Mesin" id="x_No_Mesin" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Mesin->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Mesin->EditAttributes() ?>><?php echo $t02_jaminan->No_Mesin->EditValue ?></textarea>
 </span>
 <?php echo $t02_jaminan->No_Mesin->CustomMsg ?></div></div>
 	</div>
@@ -1356,7 +1356,7 @@ ft02_jaminanedit.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
 		<label id="elh_t02_jaminan_Warna" for="x_Warna" class="col-sm-2 control-label ewLabel"><?php echo $t02_jaminan->Warna->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t02_jaminan->Warna->CellAttributes() ?>>
 <span id="el_t02_jaminan_Warna">
-<input type="text" data-table="t02_jaminan" data-field="x_Warna" name="x_Warna" id="x_Warna" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Warna->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Warna->EditValue ?>"<?php echo $t02_jaminan->Warna->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Warna" name="x_Warna" id="x_Warna" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Warna->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Warna->EditAttributes() ?>><?php echo $t02_jaminan->Warna->EditValue ?></textarea>
 </span>
 <?php echo $t02_jaminan->Warna->CustomMsg ?></div></div>
 	</div>
@@ -1366,7 +1366,7 @@ ft02_jaminanedit.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
 		<label id="elh_t02_jaminan_No_Pol" for="x_No_Pol" class="col-sm-2 control-label ewLabel"><?php echo $t02_jaminan->No_Pol->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t02_jaminan->No_Pol->CellAttributes() ?>>
 <span id="el_t02_jaminan_No_Pol">
-<input type="text" data-table="t02_jaminan" data-field="x_No_Pol" name="x_No_Pol" id="x_No_Pol" size="30" maxlength="15" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->No_Pol->EditValue ?>"<?php echo $t02_jaminan->No_Pol->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_No_Pol" name="x_No_Pol" id="x_No_Pol" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->No_Pol->getPlaceHolder()) ?>"<?php echo $t02_jaminan->No_Pol->EditAttributes() ?>><?php echo $t02_jaminan->No_Pol->EditValue ?></textarea>
 </span>
 <?php echo $t02_jaminan->No_Pol->CustomMsg ?></div></div>
 	</div>
@@ -1386,7 +1386,7 @@ ft02_jaminanedit.CreateAutoSuggest({"id":"x_nasabah_id","forceSelect":false});
 		<label id="elh_t02_jaminan_Atas_Nama" for="x_Atas_Nama" class="col-sm-2 control-label ewLabel"><?php echo $t02_jaminan->Atas_Nama->FldCaption() ?></label>
 		<div class="col-sm-10"><div<?php echo $t02_jaminan->Atas_Nama->CellAttributes() ?>>
 <span id="el_t02_jaminan_Atas_Nama">
-<input type="text" data-table="t02_jaminan" data-field="x_Atas_Nama" name="x_Atas_Nama" id="x_Atas_Nama" size="30" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->getPlaceHolder()) ?>" value="<?php echo $t02_jaminan->Atas_Nama->EditValue ?>"<?php echo $t02_jaminan->Atas_Nama->EditAttributes() ?>>
+<textarea data-table="t02_jaminan" data-field="x_Atas_Nama" name="x_Atas_Nama" id="x_Atas_Nama" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t02_jaminan->Atas_Nama->getPlaceHolder()) ?>"<?php echo $t02_jaminan->Atas_Nama->EditAttributes() ?>><?php echo $t02_jaminan->Atas_Nama->EditValue ?></textarea>
 </span>
 <?php echo $t02_jaminan->Atas_Nama->CustomMsg ?></div></div>
 	</div>
