@@ -327,6 +327,10 @@ $r3 = Conn()->Execute($q);
 
 $q = "select * from t91_rekening where left(parent, 1) = '2' and tipe = 'DETAIL' order by id";
 $rdet3 = Conn()->Execute($q);
+
+// kodetransaksi = 11
+$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '11'");
+$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '11'");
 ?>
 
 <div class="panel panel-default">
@@ -393,13 +397,22 @@ $rdet3 = Conn()->Execute($q);
 					<?php } ?>
 
 					<?php $mtotal2 = 0;?>
+					<?php
+					
+					?>
 					<?php while (!$rdet3->EOF) { ?>
 					<?php
+							// echo $rdet3->fields["id"]."<br>";
+							if ($rdet3->fields["id"] == $rekdebet) {
+								$nilai = f_hitunglabarugi();
+							}
+							else {
 							$q = "select sum(Kredit) - sum(Debet) as Nilai from t10_jurnal where
 								Rekening = '".$rdet3->fields["id"]."'
 								and Periode = '".$GLOBALS["Periode"]."'";
 							$rhasil = Conn()->Execute($q);
 							$nilai = $rhasil->fields["Nilai"] == null ? 0 : $rhasil->fields["Nilai"];
+							}
 							$mtotal2 += $nilai;
 					?>
 					<tr>

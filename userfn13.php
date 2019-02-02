@@ -31,6 +31,73 @@ function Page_Unloaded() {
 function yang dibuat untuk memudahkan memproses data
 */
 
+function f_hitunglabarugi() {
+	$q = "select * from t91_rekening where id = '3'";
+	$r = Conn()->Execute($q);
+	$q = "select * from t91_rekening where parent = '3' and tipe = 'DETAIL' order by id";
+	$rdet = Conn()->Execute($q);
+	$q = "select * from t91_rekening where id = '5'";
+	$r2 = Conn()->Execute($q);
+	$q = "select * from t91_rekening where parent = '5' and tipe = 'DETAIL' order by id";
+	$rdet2 = Conn()->Execute($q);
+	$q = "select * from t91_rekening where id = '4'";
+	$r3 = Conn()->Execute($q);
+	$q = "select * from t91_rekening where parent = '4' and tipe = 'DETAIL' order by id";
+	$rdet3 = Conn()->Execute($q);
+	$q = "select * from t91_rekening where id = '6'";
+	$r4 = Conn()->Execute($q);
+	$q = "select * from t91_rekening where parent = '6' and tipe = 'DETAIL' order by id";
+	$rdet4 = Conn()->Execute($q);
+
+	// id 3
+	$mtotal = 0;
+	while (!$rdet->EOF) {
+		$q = "select sum(Kredit) - sum(Debet) as Nilai from t10_jurnal where
+			Rekening = '".$rdet->fields["id"]."'
+			and Periode = '".$GLOBALS["Periode"]."'";
+		$rhasil = Conn()->Execute($q);
+		$nilai = $rhasil->fields["Nilai"] == null ? 0 : $rhasil->fields["Nilai"];
+		$mtotal += $nilai;
+		$rdet->MoveNext();
+	}
+
+	// id 5
+	while (!$rdet2->EOF) {
+		$q = "select sum(Kredit) - sum(Debet) as Nilai from t10_jurnal where
+			Rekening = '".$rdet2->fields["id"]."'
+			and Periode = '".$GLOBALS["Periode"]."'";
+		$rhasil = Conn()->Execute($q);
+		$nilai = $rhasil->fields["Nilai"] == null ? 0 : $rhasil->fields["Nilai"];
+		$mtotal += $nilai;
+		$rdet2->MoveNext();
+	}
+
+	// id = 4
+	$mtotal2 = 0;
+	while (!$rdet3->EOF) {
+		$q = "select sum(Debet) - sum(Kredit) as Nilai from t10_jurnal where
+			Rekening = '".$rdet3->fields["id"]."'
+			and Periode = '".$GLOBALS["Periode"]."'";
+		$rhasil = Conn()->Execute($q);
+		$nilai = $rhasil->fields["Nilai"] == null ? 0 : $rhasil->fields["Nilai"];
+		$mtotal2 += $nilai;
+		$rdet3->MoveNext();
+	}
+
+	// id = 6
+	while (!$rdet4->EOF) {
+		$q = "select sum(Debet) - sum(Kredit) as Nilai from t10_jurnal where
+			Rekening = '".$rdet4->fields["id"]."'
+			and Periode = '".$GLOBALS["Periode"]."'";
+		$rhasil = Conn()->Execute($q);
+		$nilai = $rhasil->fields["Nilai"] == null ? 0 : $rhasil->fields["Nilai"];
+		$mtotal2 += $nilai;
+		$rdet4->MoveNext();
+	}
+	$mshu = $mtotal - $mtotal2;
+	return $mshu;
+}
+
 function GetNextNoKontrak() {
 	$sNextNoKontrak = "";
 	$sLastNoKontrak = "";
