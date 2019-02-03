@@ -17,6 +17,7 @@ Conn()->Execute($q);
 // update data di tabel periode dengan data periode baru
 $q = "select * from t93_periode";
 $r = Conn()->Execute($q);
+$periode_skrg = $r->fields["Tahun_Bulan"];
 $periode_lalu_bulan = $r->fields["Bulan"];
 $periode_lalu_tahun = $r->fields["Tahun"];
 $periode_skrg_bulan = $periode_lalu_bulan + 1;
@@ -32,6 +33,14 @@ Conn()->Execute($q);
 $q = "insert into t93_periode values (null, ".$periode_skrg_bulan.", ".$periode_skrg_tahun.", ".$periode_skrg_tahun_bulan.")";
 Conn()->Execute($q); //echo $q; exit();
 
+// backup data laba rugi untuk periode sekarang
+// dari tabel t88_labarugi ke tabel t86_labarugiold
+$q = "SELECT * FROM `t88_labarugi` where field02 <> ''";
+$r = Conn()->Execute($q);
+$q = "insert into t86_labarugiold (Tahun_Bulan, Rekening, Jumlah)
+	select '".$periode_skrg."', field01, field03
+	from t88_labarugi where field02 <> ''";
+Conn()->Execute($q); //echo $q; exit();
 
 // kembali ke cf02_tutupbuku
 header("location: cf02_tutupbuku.php?ok=1");
