@@ -14,6 +14,7 @@ $RootMenu->AddMenuItem(10018, "mri_r015fpinjaman", $Language->MenuPhrase("10018"
 $RootMenu->AddMenuItem(10025, "mri_r035fjurnal", $Language->MenuPhrase("10025", "MenuText"), "r03_jurnalsmry.php", 10113, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r03_jurnal'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10026, "mri_r045fbukubesar", $Language->MenuPhrase("10026", "MenuText"), "r04_bukubesarsmry.php", 10113, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r04_bukubesar'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10060, "mi_cf03_labarugi_php", $Language->MenuPhrase("10060", "MenuText"), "cf03_labarugi.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf03_labarugi.php'), FALSE, TRUE);
+$RootMenu->AddMenuItem(10168, "mi_cf05_labarugi_php", $Language->MenuPhrase("10168", "MenuText"), "cf05_labarugi.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf05_labarugi.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10062, "mi_cf04_neraca_php", $Language->MenuPhrase("10062", "MenuText"), "cf04_neraca.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf04_neraca.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(36, "mi_t99_audittrail", $Language->MenuPhrase("36", "MenuText"), "t99_audittraillist.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t99_audittrail'), FALSE, FALSE);
 $RootMenu->AddMenuItem(35, "mci_Setup", $Language->MenuPhrase("35", "MenuText"), "", -1, "", IsLoggedIn(), TRUE, TRUE);

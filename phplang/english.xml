@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/2/3" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/2/4" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -582,12 +582,9 @@
   </global>
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
-    <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
     <menu id="10166">
       <phrase id="menutext" value="v 03 jurnalmemorial" />
-    </menu>
-    <menu id="10163">
-      <phrase id="menutext" value="v 02 nasabahjaminan" />
     </menu>
     <menu id="10160">
       <phrase id="menutext" value="Main Menu" />
@@ -622,6 +619,9 @@
     <menu id="10165">
       <phrase id="menutext" value="Detail" />
     </menu>
+    <menu id="10167">
+      <phrase id="menutext" value="t 86 labarugiold" />
+    </menu>
     <menu id="10113">
       <phrase id="menutext" value="Laporan" />
     </menu>
@@ -640,14 +640,17 @@
     <menu id="10060">
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
+    <menu id="10168">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10169">
+      <phrase id="menutext" value="Laba Rugi Proses" />
+    </menu>
     <menu id="10062">
       <phrase id="menutext" value="Neraca" />
     </menu>
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
-    </menu>
-    <menu id="10162">
-      <phrase id="menutext" value="Neraca" />
     </menu>
     <menu id="35">
       <phrase id="menutext" value="Setup" />
@@ -693,6 +696,12 @@
     </menu>
     <menu id="9">
       <phrase id="menutext" value="Description" />
+    </menu>
+    <menu id="10163">
+      <phrase id="menutext" value="v 02 nasabahjaminan" />
+    </menu>
+    <menu id="10162">
+      <phrase id="menutext" value="Neraca" />
     </menu>
     <menu id="10055">
       <phrase id="menutext" value="Jurnal Transaksi" />
@@ -1217,6 +1226,21 @@
         <phrase id="fldcaption" value="Kredit" />
       </field>
     </table>
+    <table id="t86_labarugiold">
+      <phrase id="tblcaption" value="t 86 labarugiold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="tahun_bulan">
+        <phrase id="fldcaption" value="Tahun Bulan" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="Rekening" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="Jumlah" />
+      </field>
+    </table>
     <table id="t87_neraca">
       <phrase id="tblcaption" value="Neraca" />
       <field id="field01" />
@@ -1593,6 +1617,12 @@
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
       </field>
+    </table>
+    <table id="cf05_labarugi_php">
+      <phrase id="tblcaption" value="Laba Rugi" />
+    </table>
+    <table id="cf06_labarugiproses_php">
+      <phrase id="tblcaption" value="Laba Rugi Proses" />
     </table>
   </project>
 </ew-language>
