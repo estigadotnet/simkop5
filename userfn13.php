@@ -31,6 +31,14 @@ function Page_Unloaded() {
 function yang dibuat untuk memudahkan memproses data
 */
 
+function f_hitunglabarugi2($periode) {
+	$q = "select sum(Kredit) - sum(Debet) as LabaRugi from v05_labarugi where
+		Tahun_Bulan = '".$periode."' ";
+	$r = Conn()->Execute($q);
+	$LabaRugi = $r->fields["LabaRugi"];
+	return $LabaRugi;
+}
+
 function f_hitunglabarugi() {
 	$q = "select * from t91_rekening where id = '3'";
 	$r = Conn()->Execute($q);

@@ -1414,9 +1414,9 @@ class ct87_neraca_list extends ct87_neraca {
 
 		// Example:
 		//$header = "your header";
+		//$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
+		//$header = "Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode");
 
-		$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
-		$header = "Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode");
 	}
 
 	// Page Data Rendered event

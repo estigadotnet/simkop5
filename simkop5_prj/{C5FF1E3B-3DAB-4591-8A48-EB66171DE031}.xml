@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <configuration date="2019/02/05" author="e.World Technology Ltd.">
-  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2019/02/05 15:30:20" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2019/02/05 16:29:00" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="cf01_home_php" name="cf01_home.php" caption="Home" userlevel="-2,&quot;Anonymous&quot;,8;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf02_tutupbuku_php" name="cf02_tutupbuku.php" caption="Tutup Buku" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf03_labarugi_php" name="cf03_labarugi.php" caption="Laba Rugi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -39,5 +39,9 @@
     <table id="v03_jurnalmemorial" name="v03_jurnalmemorial" caption="v 03 jurnalmemorial" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v04_lrper" name="v04_lrper" caption="v 04 lrper" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v05_labarugi" name="v05_labarugi" caption="v 05 labarugi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="v06_nrcper" name="v06_nrcper" caption="v 06 nrcper" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="v07_neraca" name="v07_neraca" caption="v 07 neraca" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="cf07_neraca_php" name="cf07_neraca.php" caption="Neraca" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="cf08_neracaproses_php" name="cf08_neracaproses.php" caption="Neraca" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
   </project>
 </configuration>

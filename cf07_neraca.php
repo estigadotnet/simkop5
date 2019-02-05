@@ -3,6 +3,7 @@ if (session_id() == "") session_start(); // Init session data
 ob_start(); // Turn on output buffering
 ?>
 <?php include_once "ewcfg13.php" ?>
+<?php $EW_ROOT_RELATIVE_PATH = ""; ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
@@ -13,18 +14,21 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$default = NULL; // Initialize page object first
+$cf07_neraca_php = NULL; // Initialize page object first
 
-class cdefault {
+class ccf07_neraca_php {
 
 	// Page ID
-	var $PageID = 'default';
+	var $PageID = 'custom';
 
 	// Project ID
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
+	// Table name
+	var $TableName = 'cf07_neraca.php';
+
 	// Page object name
-	var $PageObjName = 'default';
+	var $PageObjName = 'cf07_neraca_php';
 
 	// Page name
 	function PageName() {
@@ -187,7 +191,11 @@ class cdefault {
 
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
-			define("EW_PAGE_ID", 'default', TRUE);
+			define("EW_PAGE_ID", 'custom', TRUE);
+
+		// Table name (for backward compatibility)
+		if (!defined("EW_TABLE_NAME"))
+			define("EW_TABLE_NAME", 'cf07_neraca.php', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -210,12 +218,23 @@ class cdefault {
 
 		// Security
 		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanReport()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
-
-		// Page Load event
-		$this->Page_Load();
 
 		// Check token
 		if (!$this->ValidPost()) {
@@ -234,16 +253,12 @@ class cdefault {
 	function Page_Terminate($url = "") {
 		global $gsExportFile, $gTmpImages;
 
-		// Page Unload event
-		$this->Page_Unload();
-
 		// Global Page Unloaded event (in userfn*.php)
 		Page_Unloaded();
 
 		// Export
-		$this->Page_Redirecting($url);
-
 		 // Close connection
+
 		ew_CloseConn();
 
 		// Go to URL if specified
@@ -259,115 +274,17 @@ class cdefault {
 	// Page main
 	//
 	function Page_Main() {
-		global $Security, $Language;
 
-		// If session expired, show session expired message
-		if (@$_GET["expired"] == "1")
-			$this->setFailureMessage($Language->Phrase("SessionExpired"));
-		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
-		$Security->LoadUserLevel(); // Load User Level
-		if ($Security->AllowList(CurrentProjectID() . 'cf01_home.php'))
-		$this->Page_Terminate("cf01_home.php"); // Exit and go to default page
-		if ($Security->AllowList(CurrentProjectID() . 'cf02_tutupbuku.php'))
-			$this->Page_Terminate("cf02_tutupbuku.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf03_labarugi.php'))
-			$this->Page_Terminate("cf03_labarugi.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf04_neraca.php'))
-			$this->Page_Terminate("cf04_neraca.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf05_labarugi.php'))
-			$this->Page_Terminate("cf05_labarugi.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf06_labarugiproses.php'))
-			$this->Page_Terminate("cf06_labarugiproses.php");
-		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
-			$this->Page_Terminate("t01_nasabahlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))
-			$this->Page_Terminate("t02_jaminanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't03_pinjaman'))
-			$this->Page_Terminate("t03_pinjamanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't04_pinjamanangsuran'))
-			$this->Page_Terminate("t04_pinjamanangsuranlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't04_pinjamanangsurantemp'))
-			$this->Page_Terminate("t04_pinjamanangsurantemplist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't05_pinjamanjaminan'))
-			$this->Page_Terminate("t05_pinjamanjaminanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't06_pinjamantitipan'))
-			$this->Page_Terminate("t06_pinjamantitipanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't07_marketing'))
-			$this->Page_Terminate("t07_marketinglist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't08_pinjamanpotongan'))
-			$this->Page_Terminate("t08_pinjamanpotonganlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't10_jurnal'))
-			$this->Page_Terminate("t10_jurnallist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't11_jurnalmaster'))
-			$this->Page_Terminate("t11_jurnalmasterlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't12_jurnaldetail'))
-			$this->Page_Terminate("t12_jurnaldetaillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't86_labarugi2'))
-			$this->Page_Terminate("t86_labarugi2list.php");
-		if ($Security->AllowList(CurrentProjectID() . 't87_neraca'))
-			$this->Page_Terminate("t87_neracalist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't88_labarugi'))
-			$this->Page_Terminate("t88_labarugilist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't89_rektran'))
-			$this->Page_Terminate("t89_rektranlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't90_rektran'))
-			$this->Page_Terminate("t90_rektranlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't91_rekening'))
-			$this->Page_Terminate("t91_rekeninglist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't92_periodeold'))
-			$this->Page_Terminate("t92_periodeoldlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't93_periode'))
-			$this->Page_Terminate("t93_periodelist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't94_log'))
-			$this->Page_Terminate("t94_loglist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't95_logdesc'))
-			$this->Page_Terminate("t95_logdesclist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't96_employees'))
-			$this->Page_Terminate("t96_employeeslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't97_userlevels'))
-			$this->Page_Terminate("t97_userlevelslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't98_userlevelpermissions'))
-			$this->Page_Terminate("t98_userlevelpermissionslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
-			$this->Page_Terminate("t99_audittraillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf07_neraca.php'))
-			$this->Page_Terminate("cf07_neraca.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf08_neracaproses.php'))
-			$this->Page_Terminate("cf08_neracaproses.php");
-		if ($Security->IsLoggedIn()) {
-			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
-		} else {
-			$this->Page_Terminate("login.php"); // Exit and go to login page
-		}
+		// Set up Breadcrumb
+		$this->SetupBreadcrumb();
 	}
 
-	// Page Load event
-	function Page_Load() {
-
-		//echo "Page Load";
-	}
-
-	// Page Unload event
-	function Page_Unload() {
-
-		//echo "Page Unload";
-	}
-
-	// Page Redirecting event
-	function Page_Redirecting(&$url) {
-
-		// Example:
-		//$url = "your URL";
-
-	}
-
-	// Message Showing event
-	// $type = ''|'success'|'failure'
-	function Message_Showing(&$msg, $type) {
-
-		// Example:
-		//if ($type == 'success') $msg = "your success message";
-
+	// Set up Breadcrumb
+	function SetupBreadcrumb() {
+		global $Breadcrumb;
+		$Breadcrumb = new cBreadcrumb();
+		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
+		$Breadcrumb->Add("custom", "cf07_neraca_php", $url, "", "cf07_neraca_php", TRUE);
 	}
 }
 ?>
@@ -375,19 +292,49 @@ class cdefault {
 <?php
 
 // Create page object
-if (!isset($default)) $default = new cdefault();
+if (!isset($cf07_neraca_php)) $cf07_neraca_php = new ccf07_neraca_php();
 
 // Page init
-$default->Page_Init();
+$cf07_neraca_php->Page_Init();
 
 // Page main
-$default->Page_Main();
+$cf07_neraca_php->Page_Main();
+
+// Global Page Rendering event (in userfn*.php)
+Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
-<?php
-$default->ShowMessage();
-?>
+<?php if (!@$gbSkipHeaderFooter) { ?>
+<div class="ewToolbar">
+<?php $Breadcrumb->Render(); ?>
+<?php echo $Language->SelectionForm(); ?>
+<div class="clearfix"></div>
+</div>
+<?php } ?>
+<html>
+	<head>
+	</head>
+	<body>
+		<form method="post" action="cf08_neracaproses.php">
+			Pilih Periode :
+			<select name="periode">
+				<?php
+				$q = "select * from v05_labarugi group by Tahun_Bulan order by Tahun_Bulan desc";
+				$r = Conn()->Execute($q);
+				while(!$r->EOF) {
+					?>
+					<option value="<?php echo $r->fields["Tahun_Bulan"]?>"><?php echo $r->fields["Tahun_Bulan"]?></option>
+					<?php
+					$r->MoveNext();
+				}
+				?>
+			</select>
+			<input type="submit" name="msubmit" value="Submit">&nbsp;<input type="button" name="mback" value="Back" onclick="window.location.href='.'">
+		</form>
+	</body>
+</html>
+<?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
-$default->Page_Terminate();
+$cf07_neraca_php->Page_Terminate();
 ?>

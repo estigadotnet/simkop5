@@ -583,6 +583,15 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
+    <menu id="10174">
+      <phrase id="menutext" value="v 06 nrcper" />
+    </menu>
+    <menu id="10175">
+      <phrase id="menutext" value="v 07 neraca" />
+    </menu>
+    <menu id="10176">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
     <menu id="10160">
       <phrase id="menutext" value="Main Menu" />
     </menu>
@@ -644,6 +653,9 @@
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
     <menu id="10062">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10173">
       <phrase id="menutext" value="Neraca" />
     </menu>
     <menu id="36">
@@ -1655,6 +1667,45 @@
       <field id="rekening">
         <phrase id="fldcaption" value="Rekening" />
       </field>
+    </table>
+    <table id="v06_nrcper">
+      <phrase id="tblcaption" value="v 06 nrcper" />
+      <field id="tahun_bulan">
+        <phrase id="fldcaption" value="Tahun Bulan" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="nourut">
+        <phrase id="fldcaption" value="No Urut" />
+      </field>
+    </table>
+    <table id="v07_neraca">
+      <phrase id="tblcaption" value="v 07 neraca" />
+      <field id="tahun_bulan">
+        <phrase id="fldcaption" value="Tahun Bulan" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="Rekening" />
+      </field>
+      <field id="nourut">
+        <phrase id="fldcaption" value="No Urut" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="cf07_neraca_php">
+      <phrase id="tblcaption" value="Neraca" />
+    </table>
+    <table id="cf08_neracaproses_php">
+      <phrase id="tblcaption" value="Neraca" />
     </table>
   </project>
 </ew-language>
