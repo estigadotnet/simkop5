@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/2/4" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/2/5" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -358,9 +358,6 @@
     </menu>
     <menu id="32">
       <phrase id="menutext" value="t 12 jurnaldetail" />
-    </menu>
-    <menu id="33">
-      <phrase id="menutext" value="t 86 labarugiold" />
     </menu>
     <menu id="34">
       <phrase id="menutext" value="v 02 nasabahjaminan" />
@@ -1055,21 +1052,6 @@
         <phrase id="fldcaption" value="Kredit" />
       </field>
     </table>
-    <table id="t86_labarugiold">
-      <phrase id="tblcaption" value="t 86 labarugiold" />
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="tahun_bulan">
-        <phrase id="fldcaption" value="Tahun Bulan" />
-      </field>
-      <field id="rekening">
-        <phrase id="fldcaption" value="Rekening" />
-      </field>
-      <field id="jumlah">
-        <phrase id="fldcaption" value="Jumlah" />
-      </field>
-    </table>
     <table id="t87_neraca">
       <phrase id="tblcaption" value="t 87 neraca" />
       <field id="field01">
@@ -1457,10 +1439,13 @@
         <phrase id="fldcaption" value="No Urut" />
       </field>
       <field id="debet">
-        <phrase id="fldcaption" value="debet" />
+        <phrase id="fldcaption" value="Debet" />
       </field>
       <field id="kredit">
-        <phrase id="fldcaption" value="kredit" />
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="Rekening" />
       </field>
     </table>
   </project>

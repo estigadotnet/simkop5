@@ -319,7 +319,7 @@ Page_Rendering();
 			Pilih Periode :
 			<select name="periode">
 				<?php
-				$q = "select * from v05_labarugi group by Tahun_Bulan";
+				$q = "select * from v05_labarugi group by Tahun_Bulan order by Tahun_Bulan desc";
 				$r = Conn()->Execute($q);
 				while(!$r->EOF) {
 					?>
