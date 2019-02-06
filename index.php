@@ -278,6 +278,10 @@ class cdefault {
 			$this->Page_Terminate("cf05_labarugi.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf06_labarugiproses.php'))
 			$this->Page_Terminate("cf06_labarugiproses.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf07_neraca.php'))
+			$this->Page_Terminate("cf07_neraca.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf08_neracaproses.php'))
+			$this->Page_Terminate("cf08_neracaproses.php");
 		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
 			$this->Page_Terminate("t01_nasabahlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))
@@ -302,6 +306,8 @@ class cdefault {
 			$this->Page_Terminate("t11_jurnalmasterlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't12_jurnaldetail'))
 			$this->Page_Terminate("t12_jurnaldetaillist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't85_neraca2'))
+			$this->Page_Terminate("t85_neraca2list.php");
 		if ($Security->AllowList(CurrentProjectID() . 't86_labarugi2'))
 			$this->Page_Terminate("t86_labarugi2list.php");
 		if ($Security->AllowList(CurrentProjectID() . 't87_neraca'))
@@ -330,10 +336,6 @@ class cdefault {
 			$this->Page_Terminate("t98_userlevelpermissionslist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
 			$this->Page_Terminate("t99_audittraillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf07_neraca.php'))
-			$this->Page_Terminate("cf07_neraca.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf08_neracaproses.php'))
-			$this->Page_Terminate("cf08_neracaproses.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {

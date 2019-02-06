@@ -495,42 +495,32 @@ else {
 	//$header = "Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode");
 	//$header = "Periode ".$_GET["periode"];
 
-	// hapus t86_labarugi2
-	$q = "delete from t86_labarugi2";
+	// hapus t85_neraca2
+	$q = "delete from t85_neraca2";
 	Conn()->Execute($q);
 
-	$q = "select * from t91_rekening where id = '3'";
+	$q = "select * from t91_rekening where id = '1'";
 	$r = Conn()->Execute($q);
-	$q = "select * from v05_labarugi where left(id, 1) = '3' and Tahun_Bulan = '".$Tahun_Bulanx."' order by id";
+	$q = "select * from v07_neraca where left(id, 1) = '1' and Tahun_Bulan = '".$Tahun_Bulanx."' order by id";
 	$rdetx = Conn()->Execute($q);
-	$q = "select * from v05_labarugi where left(id, 1) = '3' and Tahun_Bulan = '".$_POST["periode"]."' order by id";
+	$q = "select * from v07_neraca where left(id, 1) = '1' and Tahun_Bulan = '".$_POST["periode"]."' order by id";
 	$rdet = Conn()->Execute($q);
 
-	$q = "select * from t91_rekening where id = '5'";
+	$q = "select * from t91_rekening where id = '2'";
 	$r2 = Conn()->Execute($q);
-	$q = "select * from v05_labarugi where left(id, 1) = '5' and Tahun_Bulan = '".$Tahun_Bulanx."' order by id";
+	$q = "select * from v07_neraca where left(id, 1) = '2' and Tahun_Bulan = '".$Tahun_Bulanx."' order by id";
 	$rdetx2 = Conn()->Execute($q);
-	$q = "select * from v05_labarugi where left(id, 1) = '5' and Tahun_Bulan = '".$_POST["periode"]."' order by id";
+	$q = "select * from v07_neraca where left(id, 1) = '2' and Tahun_Bulan = '".$_POST["periode"]."' order by id";
 	$rdet2 = Conn()->Execute($q);
 
-	$q = "select * from t91_rekening where id = '4'";
-	$r3 = Conn()->Execute($q);
-	$q = "select * from v05_labarugi where left(id, 1) = '4' and Tahun_Bulan = '".$Tahun_Bulanx."' order by id";
-	$rdetx3 = Conn()->Execute($q);
-	$q = "select * from v05_labarugi where left(id, 1) = '4' and Tahun_Bulan = '".$_POST["periode"]."' order by id";
-	$rdet3 = Conn()->Execute($q);
-
-	$q = "select * from t91_rekening where id = '6'";
-	$r4 = Conn()->Execute($q);
-	$q = "select * from v05_labarugi where left(id, 1) = '6' and Tahun_Bulan = '".$Tahun_Bulanx."' order by id";
-	$rdetx4 = Conn()->Execute($q);
-	$q = "select * from v05_labarugi where left(id, 1) = '6' and Tahun_Bulan = '".$_POST["periode"]."' order by id";
-	$rdet4 = Conn()->Execute($q);
+	// kodetransaksi = 11
+	$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '11'");
+	$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '11'");
 	?>
 
 	<div class="panel panel-default">
 		<!-- <div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#labarugi">Laba Rugi Periode <?php echo $GLOBALS["Periode"]; ?></a></strong></div> -->
-		<div id="labarugi" class="panel-collapse collapse in">
+		<div id="neraca" class="panel-collapse collapse in">
 			<div class="panel-body">
 				<div>
 					<table class='table table-striped table-hover table-condensed'>
@@ -543,9 +533,9 @@ else {
 								<td align='right'><?php echo $periode2; ?></td>
 								<td>&nbsp;</td>
 							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('', '', '".$periode1."', '".$periode2."', '')"; Conn()->Execute($q);?>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('', '', '".$periode1."', '".$periode2."', '')"; Conn()->Execute($q);?>
 
-							<!-- id 3 -->
+							<!-- id 1 -->
 							<?php while (!$r->EOF) { ?>
 							<tr>
 								<td><strong><?php echo $r->fields["rekening"]; ?></strong></td>
@@ -554,16 +544,16 @@ else {
 								<td>&nbsp;</td>
 								<td>&nbsp;</td>
 							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('<strong>".$r->fields["rekening"]."</strong>', '', '', '', '')"; Conn()->Execute($q);?>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('<strong>".$r->fields["rekening"]."</strong>', '', '', '', '')"; Conn()->Execute($q);?>
 							<?php   $r->MoveNext(); ?>
 							<?php } ?>
 
 							<?php $mtotal = 0;?>
 							<?php $mtotalx = 0;?>
 							<?php while (!$rdet->EOF) { ?>
-							<?php   $nilai = $rdet->fields["Kredit"] - $rdet->fields["Debet"]; ?>
+							<?php   $nilai = $rdet->fields["Debet"] - $rdet->fields["Kredit"]; ?>
 							<?php   $mtotal += $nilai; ?>
-							<?php   $nilaix = $rdetx->fields["Kredit"] - $rdetx->fields["Debet"]; ?>
+							<?php   $nilaix = $rdetx->fields["Debet"] - $rdetx->fields["Kredit"]; ?>
 							<?php   $mtotalx += $nilaix; ?>
 							<tr>
 								<td><?php echo $rdet->fields["id"]; ?></td>
@@ -572,13 +562,33 @@ else {
 								<td align="right"><?php echo number_format($nilai, 2); ?></td>
 								<td align="right"><?php echo number_format($nilai + $nilaix, 2); ?></td>
 							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('".$rdet->fields["id"]."', '".$rdet->fields["Rekening"]."', '".number_format($nilaix, 2)."', '".number_format($nilai, 2)."', '".number_format($nilai + $nilaix, 2)."')"; Conn()->Execute($q);?>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('".$rdet->fields["id"]."', '".$rdet->fields["Rekening"]."', '".number_format($nilaix, 2)."', '".number_format($nilai, 2)."', '".number_format($nilai + $nilaix, 2)."')"; Conn()->Execute($q);?>
 							<?php   $rdet->MoveNext(); ?>
 							<?php   $rdetx->MoveNext(); ?>
 							<?php } ?>
 
+							<!-- sub total id 1 -->
+							<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td align="right"><strong><?php echo number_format($mtotalx, 2); ?></strong></td>
+								<td align="right"><strong><?php echo number_format($mtotal, 2); ?></strong></td>
+								<td align="right"><strong><?php echo number_format($mtotal + $mtotalx, 2); ?></strong></td>
+							</tr>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalx, 2)."</strong>', '<strong>".number_format($mtotal, 2)."</strong>', '<strong>".number_format($mtotal + $mtotalx, 2)."</strong>')"; Conn()->Execute($q);?>
 
-							<!-- id 5 -->
+							<!-- baris kosong -->
+							<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+							</tr>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('', '', '', '', '')"; Conn()->Execute($q);?>
+
+
+							<!-- id 2 -->
 							<?php while (!$r2->EOF) { ?>
 							<tr>
 								<td><strong><?php echo $r2->fields["rekening"]; ?></strong></td>
@@ -587,15 +597,32 @@ else {
 								<td>&nbsp;</td>
 								<td>&nbsp;</td>
 							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('<strong>".$r2->fields["rekening"]."</strong>', '', '', '', '')"; Conn()->Execute($q);?>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('<strong>".$r2->fields["rekening"]."</strong>', '', '', '', '')"; Conn()->Execute($q);?>
 							<?php   $r2->MoveNext(); ?>
 							<?php } ?>
 
+							<?php $mtotal2 = 0;?>
+							<?php $mtotalx2 = 0;?>
 							<?php while (!$rdet2->EOF) { ?>
-							<?php   $nilai = $rdet2->fields["Kredit"] - $rdet2->fields["Debet"]; ?>
-							<?php   $mtotal += $nilai; ?>
-							<?php   $nilaix = $rdetx2->fields["Kredit"] - $rdetx2->fields["Debet"]; ?>
-							<?php   $mtotalx += $nilaix; ?>
+							<?php
+							        if ($rdet2->fields["id"] == $rekdebet) { 
+							          $nilai = f_hitunglabarugi2($_POST["periode"]); 
+							        } 
+							        else { 
+							          $nilai = $rdet2->fields["Kredit"] - $rdet2->fields["Debet"]; 
+							        }
+							?>
+							<?php   $mtotal2 += $nilai; ?>
+
+							<?php
+							        if ($rdetx2->fields["id"] == $rekdebet) { 
+							          $nilaix = f_hitunglabarugi2($Tahun_Bulanx); 
+							        } 
+							        else { 
+							          $nilaix = $rdetx2->fields["Kredit"] - $rdetx2->fields["Debet"]; 
+							        }
+							?>
+							<?php   $mtotalx2 += $nilaix; ?>
 							<tr>
 								<td><?php echo $rdet2->fields["id"]; ?></td>
 								<td><?php echo $rdet2->fields["Rekening"]; ?></td>
@@ -603,94 +630,12 @@ else {
 								<td align="right"><?php echo number_format($nilai, 2); ?></td>
 								<td align="right"><?php echo number_format($nilai + $nilaix, 2); ?></td>
 							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('".$rdet2->fields["id"]."', '".$rdet2->fields["Rekening"]."', '".number_format($nilaix, 2)."', '".number_format($nilai, 2)."', '".number_format($nilai + $nilaix, 2)."')"; Conn()->Execute($q);?>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('".$rdet2->fields["id"]."', '".$rdet2->fields["Rekening"]."', '".number_format($nilaix, 2)."', '".number_format($nilai, 2)."', '".number_format($nilai + $nilaix, 2)."')"; Conn()->Execute($q);?>
 							<?php   $rdet2->MoveNext(); ?>
 							<?php   $rdetx2->MoveNext(); ?>
 							<?php } ?>
 
-							<!-- sub total id 3 dan 5 -->
-							<tr>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td align="right"><strong><?php echo number_format($mtotalx, 2); ?></strong></td>
-								<td align="right"><strong><?php echo number_format($mtotal, 2); ?></strong></td>
-								<td align="right"><strong><?php echo number_format($mtotal + $mtotalx, 2); ?></strong></td>
-							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalx, 2)."</strong>', '<strong>".number_format($mtotal, 2)."</strong>', '<strong>".number_format($mtotal + $mtotalx, 2)."</strong>')"; Conn()->Execute($q);?>
-
-							<!-- baris kosong -->
-							<tr>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('', '', '', '', '')"; Conn()->Execute($q);?>
-
-
-							<!-- id 4 -->
-							<?php while (!$r3->EOF) { ?>
-							<tr>
-								<td><strong><?php echo $r3->fields["rekening"]; ?></strong></td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('<strong>".$r3->fields["rekening"]."</strong>', '', '', '', '')"; Conn()->Execute($q);?>
-							<?php   $r3->MoveNext(); ?>
-							<?php } ?>
-
-							<?php $mtotal2 = 0;?>
-							<?php $mtotalx2 = 0;?>
-							<?php while (!$rdet3->EOF) { ?>
-							<?php   $nilai = $rdet3->fields["Debet"] - $rdet3->fields["Kredit"]; ?>
-							<?php   $mtotal2 += $nilai; ?>
-							<?php   $nilaix = $rdetx3->fields["Debet"] - $rdetx3->fields["Kredit"]; ?>
-							<?php   $mtotalx2 += $nilaix; ?>
-							<tr>
-								<td><?php echo $rdet3->fields["id"]; ?></td>
-								<td><?php echo $rdet3->fields["Rekening"]; ?></td>
-								<td align="right"><?php echo number_format($nilaix, 2); ?></td>
-								<td align="right"><?php echo number_format($nilai, 2); ?></td>
-								<td align="right"><?php echo number_format($nilai + $nilaix, 2); ?></td>
-							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('".$rdet3->fields["id"]."', '".$rdet3->fields["Rekening"]."', '".number_format($nilaix, 2)."', '".number_format($nilai, 2)."', '".number_format($nilai + $nilaix, 2)."')"; Conn()->Execute($q);?>
-							<?php   $rdet3->MoveNext(); ?>
-							<?php   $rdetx3->MoveNext(); ?>
-							<?php } ?>
-
-							<!-- id 6 -->
-							<?php while (!$r4->EOF) { ?>
-							<tr>
-								<td><strong><?php echo $r4->fields["rekening"]; ?></strong></td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('<strong>".$r4->fields["rekening"]."</strong>', '', '', '', '')"; Conn()->Execute($q);?>
-							<?php   $r4->MoveNext(); ?>
-							<?php } ?>
-
-							<?php while (!$rdet4->EOF) { ?>
-							<?php   $nilai = $rdet4->fields["Debet"] - $rdet4->fields["Kredit"]; ?>
-							<?php   $mtotal2 += $nilai; ?>
-							<?php   $nilaix = $rdetx4->fields["Debet"] - $rdetx4->fields["Kredit"]; ?>
-							<?php   $mtotalx2 += $nilaix; ?>
-							<tr>
-								<td><?php echo $rdet4->fields["id"]; ?></td>
-								<td><?php echo $rdet4->fields["Rekening"]; ?></td>
-								<td align="right"><?php echo number_format($nilaix, 2); ?></td>
-								<td align="right"><?php echo number_format($nilai, 2); ?></td>
-								<td align="right"><?php echo number_format($nilai + $nilaix, 2); ?></td>
-							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('".$rdet4->fields["id"]."', '".$rdet4->fields["Rekening"]."', '".number_format($nilaix, 2)."', '".number_format($nilai, 2)."', '".number_format($nilai + $nilaix, 2)."')"; Conn()->Execute($q);?>
-							<?php   $rdet4->MoveNext(); ?>
-							<?php } ?>
-
-							<!-- sub total id 4 dan 6 -->
+							<!-- sub total id 2 -->
 							<tr>
 								<td>&nbsp;</td>
 								<td>&nbsp;</td>
@@ -698,7 +643,7 @@ else {
 								<td align="right"><strong><?php echo number_format($mtotal2, 2); ?></strong></td>
 								<td align="right"><strong><?php echo number_format($mtotal2 + $mtotalx2, 2); ?></strong></td>
 							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalx2, 2)."</strong>', '<strong>".number_format($mtotal2, 2)."</strong>', '<strong>".number_format($mtotal2 + $mtotalx2, 2)."</strong>')"; Conn()->Execute($q);?>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalx2, 2)."</strong>', '<strong>".number_format($mtotal2, 2)."</strong>', '<strong>".number_format($mtotal2 + $mtotalx2, 2)."</strong>')"; Conn()->Execute($q);?>
 
 							<!-- baris kosong -->
 							<tr>
@@ -708,9 +653,9 @@ else {
 								<td>&nbsp;</td>
 								<td>&nbsp;</td>
 							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('', '', '', '', '')"; Conn()->Execute($q);?>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('', '', '', '', '')"; Conn()->Execute($q);?>
 
-							<!-- nilai laba rugi -->
+							<!-- nilai neraca -->
 							<tr>
 								<td>&nbsp;</td>
 								<td>&nbsp;</td>
@@ -718,7 +663,7 @@ else {
 								<td align="right"><strong><?php echo number_format($mtotal - $mtotal2, 2); ?></strong></td>
 								<td align="right"><strong><?php echo number_format(($mtotalx - $mtotalx2) + ($mtotal - $mtotal2), 2); ?></strong></td>
 							</tr>
-							<?php   $q = "insert into t86_labarugi2 (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalx - $mtotalx2, 2)."</strong>', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>', '<strong>".number_format(($mtotal - $mtotal2) + ($mtotalx - $mtotalx2), 2)."</strong>')"; Conn()->Execute($q);?>
+							<?php   $q = "insert into t85_neraca2 (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalx - $mtotalx2, 2)."</strong>', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>', '<strong>".number_format(($mtotal - $mtotal2) + ($mtotalx - $mtotalx2), 2)."</strong>')"; Conn()->Execute($q);?>
 
 							<!-- baris kosong -->
 							<tr>
@@ -738,7 +683,7 @@ else {
 
 	<?php
 	//header("Location: r05_labarugismry.php");
-	header("Location: t86_labarugi2list.php");
+	header("Location: t85_neraca2list.php");
 	?>
 	<?php
 }

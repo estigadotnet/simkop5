@@ -3,7 +3,6 @@
 
 // Generate all menu items
 $RootMenu->IsRoot = TRUE;
-$RootMenu->AddMenuItem(10176, "mmi_cf08_neracaproses_php", $Language->MenuPhrase("10176", "MenuText"), "cf08_neracaproses.php", -1, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf08_neracaproses.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10160, "mmci_Main_Menu", $Language->MenuPhrase("10160", "MenuText"), "", -1, "", TRUE, TRUE, TRUE);
 $RootMenu->AddMenuItem(16, "mmi_cf01_home_php", $Language->MenuPhrase("16", "MenuText"), "cf01_home.php", 10160, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf01_home.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(3, "mmi_t03_pinjaman", $Language->MenuPhrase("3", "MenuText"), "t03_pinjamanlist.php", 10160, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t03_pinjaman'), FALSE, FALSE);
@@ -14,7 +13,6 @@ $RootMenu->AddMenuItem(10018, "mmri_r015fpinjaman", $Language->MenuPhrase("10018
 $RootMenu->AddMenuItem(10025, "mmri_r035fjurnal", $Language->MenuPhrase("10025", "MenuText"), "r03_jurnalsmry.php", 10113, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r03_jurnal'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10026, "mmri_r045fbukubesar", $Language->MenuPhrase("10026", "MenuText"), "r04_bukubesarsmry.php", 10113, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r04_bukubesar'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10168, "mmi_cf05_labarugi_php", $Language->MenuPhrase("10168", "MenuText"), "cf05_labarugi.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf05_labarugi.php'), FALSE, TRUE);
-$RootMenu->AddMenuItem(10062, "mmi_cf04_neraca_php", $Language->MenuPhrase("10062", "MenuText"), "cf04_neraca.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf04_neraca.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10173, "mmi_cf07_neraca_php", $Language->MenuPhrase("10173", "MenuText"), "cf07_neraca.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf07_neraca.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(36, "mmi_t99_audittrail", $Language->MenuPhrase("36", "MenuText"), "t99_audittraillist.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t99_audittrail'), FALSE, FALSE);
 $RootMenu->AddMenuItem(35, "mmci_Setup", $Language->MenuPhrase("35", "MenuText"), "", -1, "", IsLoggedIn(), TRUE, TRUE);

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/2/5" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/2/6" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -589,9 +589,6 @@
     <menu id="10175">
       <phrase id="menutext" value="v 07 neraca" />
     </menu>
-    <menu id="10176">
-      <phrase id="menutext" value="Neraca" />
-    </menu>
     <menu id="10160">
       <phrase id="menutext" value="Main Menu" />
     </menu>
@@ -656,6 +653,12 @@
       <phrase id="menutext" value="Neraca" />
     </menu>
     <menu id="10173">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10176">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10177">
       <phrase id="menutext" value="Neraca" />
     </menu>
     <menu id="36">
@@ -825,6 +828,12 @@
     </table>
     <table id="cf06_labarugiproses_php">
       <phrase id="tblcaption" value="Laba Rugi" />
+    </table>
+    <table id="cf07_neraca_php">
+      <phrase id="tblcaption" value="Neraca" />
+    </table>
+    <table id="cf08_neracaproses_php">
+      <phrase id="tblcaption" value="Neraca" />
     </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
@@ -1249,6 +1258,14 @@
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
       </field>
+    </table>
+    <table id="t85_neraca2">
+      <phrase id="tblcaption" value="Neraca" />
+      <field id="field01" />
+      <field id="field02" />
+      <field id="field03" />
+      <field id="field04" />
+      <field id="field05" />
     </table>
     <table id="t86_labarugi2">
       <phrase id="tblcaption" value="Laba Rugi" />
@@ -1700,12 +1717,6 @@
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
       </field>
-    </table>
-    <table id="cf07_neraca_php">
-      <phrase id="tblcaption" value="Neraca" />
-    </table>
-    <table id="cf08_neracaproses_php">
-      <phrase id="tblcaption" value="Neraca" />
     </table>
   </project>
 </ew-language>
