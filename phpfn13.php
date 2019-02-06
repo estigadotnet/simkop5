@@ -4994,11 +4994,11 @@ function Database_Connecting(&$info) {
 		$info["db"] = "db_simkop5"; // sesuaikan dengan nama database di komputer localhost
 		$lines=file('00_dbport.txt');foreach ($lines as $line_num => $line){$port = $line;}
 		$info["port"] = $port; //$info["port"] = "3306";
-	} elseif (ew_CurrentHost () == "simkop5.nma-indonesia.com") { // setting koneksi database untuk komputer server
+	} elseif (ew_CurrentHost () == "simkop.estiga.net") { // setting koneksi database untuk komputer server
 		$info["host"] = "mysql.hostinger.co.id";  // sesuaikan dengan ip address atau hostname komputer server
-		$info["user"] = "u945388674_simk5"; // sesuaikan dengan username database di komputer server
+		$info["user"] = "u473805576_simk5"; // sesuaikan dengan username database di komputer server
 		$info["pass"] = "PresarioCQ43"; // sesuaikan deengan password database di komputer server
-		$info["db"] = "u945388674_simk5"; // sesuaikan dengan nama database di komputer server
+		$info["db"] = "u473805576_simk5"; // sesuaikan dengan nama database di komputer server
 		$info["port"] = "3306";
 	}
 }
