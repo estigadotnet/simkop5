@@ -2229,6 +2229,8 @@ function Row_Updated($rsold, &$rsnew) {
 	}
 	
 	$rsupdate["Total_Denda"] = ($rsold["Total_Denda"] <> $rsnew["Total_Denda"]) ? $rsnew["Total_Denda"] : $rsold["Total_Denda"];
+	//if () {
+	//}
 
 	// kodetransaksi = 04
 	$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '04'");
