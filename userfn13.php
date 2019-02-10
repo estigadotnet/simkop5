@@ -31,6 +31,19 @@ function Page_Unloaded() {
 function yang dibuat untuk memudahkan memproses data
 */
 
+function f_periode($tanggal) {
+	$periode = substr($tanggal, 0, 4).substr($tanggal, 5, 2);
+	return $periode;
+}
+
+function f_hitungdenda($hari_terlambat) {
+	$total_denda =
+		($_SESSION["Angsuran_Denda"] *
+		$_SESSION["Angsuran_Total"] *
+		$hari_terlambat) / 100;
+	return $total_denda;
+}
+
 function f_hitunglabarugi2($periode) {
 	$q = "select sum(Kredit) - sum(Debet) as LabaRugi from v05_labarugi where
 		Tahun_Bulan = '".$periode."' ";
@@ -183,15 +196,18 @@ function f_cariangsuranbaru($pinjaman_id) { // ---------------------------------
 		order by
 			id
 		";
-	$r = Conn()->Execute($q);
+	$r = Conn()->Execute($q); //echo $q;
 	$Angsuran_Ke = 0;
 	if ($r->EOF) { // belum ada data ber-Periode
-		$Angsuran_Ke = 1;
 
+		//$Angsuran_Ke = 1;
+		//echo "1";
 		//return $Angsuran_Ke;
+
 	}
 	else {
 
+		//echo "2";
 		// sudah ada data ber-Periode
 		//$Periode = $r->fields["Periode"];
 		// bandingkan data Periode yang ada di database dengan data Periode berjalan

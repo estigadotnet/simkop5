@@ -1824,6 +1824,24 @@ class ct03_pinjaman extends cTable {
 	function Row_Deleted(&$rs) {
 
 		//echo "Row Deleted";
+		// kodetransaksi = 01
+
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '01'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '01'");
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".PINJ", $rekdebet, "Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".PINJ", $rekkredit, "Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+
+		// kodetransaksi = 02
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '02'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '02'");
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekdebet, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekkredit, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+
+		// kodetransaksi = 03
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '03'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '03'");
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekdebet, "Pendapatan Materai Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekkredit, "Pendapatan Materai Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
 	}
 
 	// Email Sending event

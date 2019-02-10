@@ -1396,8 +1396,28 @@ class ct04_pinjamanangsurantemp extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
-		$rsnew["Periode"] = $GLOBALS["Periode"];
-		return TRUE;
+		/*echo $this->Angsuran_Tanggal->CurrentValue . "<br>";
+		echo $this->Tanggal_Bayar->CurrentValue . "<br>";
+		echo $_SESSION["Dispensasi_Denda"]."<br>";
+		exit; return false;*/
+		if ($this->Total_Denda->CurrentValue == 0) {
+			echo $this->Tanggal_Bayar->CurrentValue."<br>";
+			echo $this->Angsuran_Tanggal->CurrentValue."<br>";
+			$start_date = new DateTime($this->Tanggal_Bayar->CurrentValue);
+			$end_date = new DateTime($this->Angsuran_Tanggal->CurrentValue);
+			$hari_terlambat = $start_date->diff($end_date);
+			if ($hari_terlambat->days > $_SESSION["Dispensasi_Denda"]) {
+				$rsnew["Keterangan"] = "Denda Rp. ".number_format(f_hitungdenda($hari_terlambat->days), 2);
+			}
+		}
+
+		//$rsnew["Periode"] = $GLOBALS["Periode"];
+		/*
+		$rsnew["Periode"] = substr($this->Tanggal_Bayar->CurrentValue, 0, 4).
+			substr($this->Tanggal_Bayar->CurrentValue, 5, 2);
+		*/
+		$rsnew["Periode"] = f_periode($this->Tanggal_Bayar->CurrentValue);
+		return true;
 	}
 
 	// Row Updated event
@@ -1484,8 +1504,23 @@ class ct04_pinjamanangsurantemp extends cTable {
 			f_update_saldo_titipan($_SESSION["pinjaman_id"]);
 		}
 		$rsupdate["Total_Denda"] = ($rsold["Total_Denda"] <> $rsnew["Total_Denda"]) ? $rsnew["Total_Denda"] : $rsold["Total_Denda"];
+		$nilai_denda = $rsupdate["Total_Denda"];
+		$tgl_jatuhtempo = $rsold["Angsuran_Tanggal"];
+		$tgl_bayar = ($rsold["Tanggal_Bayar"] <> $rsnew["Tanggal_Bayar"]) ? $rsnew["Tanggal_Bayar"] : $rsold["Tanggal_Bayar"];
+		$terlambat = ($rsold["Terlambat"] <> $rsnew["Terlambat"]) ? $rsnew["Terlambat"] : $rsold["Terlambat"];
 
+		//if ($nilai_denda == 0) {
+			/*echo $this->Angsuran_Tanggal->CurrentValue . "<br>";
+			echo $this->Tanggal_Bayar->CurrentValue . "<br>";
+			echo $_SESSION["Dispensasi_Denda"]."<br>";
+			exit; return false;*/
+
+			//$terlambat = $this->Tanggal_Bayar->CurrentValue - $this->Angsuran_Tanggal->CurrentValue;
+			//if ($terlambat > $_SESSION["Dispensasi_Denda"]) {
+			//}
+		//}
 		// kodetransaksi = 04
+
 		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '04'");
 		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '04'");
 		f_hapusjurnal($GLOBALS["Periode"], $rsold["id"].".ANG", $rekdebet, "Pembayaran Angsuran ke ".$rsold["Angsuran_Ke"]." No. Kontrak ".$Kontrak_No);

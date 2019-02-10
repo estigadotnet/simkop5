@@ -1307,6 +1307,9 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 			where
 				a.id = ".$_SESSION["pinjaman_id"].""; //echo $q;
 		$r = Conn()->Execute($q);
+		$_SESSION["Dispensasi_Denda"] = $r->fields["Dispensasi_Denda"];
+		$_SESSION["Angsuran_Denda"] = $r->fields["Angsuran_Denda"];
+		$_SESSION["Angsuran_Total"] = $r->fields["Angsuran_Total"];
 
 		// detail jaminan
 		//echo strlen($r->fields["jaminan_id"]);
