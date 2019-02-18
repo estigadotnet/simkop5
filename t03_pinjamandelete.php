@@ -715,9 +715,9 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 
 		// Macet
 		if (ew_ConvertToBool($this->Macet->CurrentValue)) {
-			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "Yes";
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "Yes";
 		} else {
-			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "No";
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "No";
 		}
 		$this->Macet->ViewCustomAttributes = "";
 

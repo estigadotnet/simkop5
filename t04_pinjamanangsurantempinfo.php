@@ -1410,6 +1410,14 @@ class ct04_pinjamanangsurantemp extends cTable {
 				$rsnew["Keterangan"] = "Denda Rp. ".number_format(f_hitungdenda($hari_terlambat->days), 2);
 			}
 		}
+		if (
+			(date_format(date_create($rsnew["Tanggal_Bayar"]),"Ym") <> $GLOBALS["Periode"])
+			or
+			(date_format(date_create($rsold["Tanggal_Bayar"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}
 		$rsnew["Periode"] = $GLOBALS["Periode"];
 		/*
 		$rsnew["Periode"] = substr($this->Tanggal_Bayar->CurrentValue, 0, 4).
