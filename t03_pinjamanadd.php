@@ -304,7 +304,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 		$this->Biaya_Administrasi->SetVisibility();
 		$this->Biaya_Materai->SetVisibility();
 		$this->marketing_id->SetVisibility();
-		$this->Macet->SetVisibility();
 
 		// Set up detail page object
 		$this->SetupDetailPages();
@@ -555,7 +554,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 		$this->Biaya_Materai->CurrentValue = 0.00;
 		$this->marketing_id->CurrentValue = NULL;
 		$this->marketing_id->OldValue = $this->marketing_id->CurrentValue;
-		$this->Macet->CurrentValue = "N";
 	}
 
 	// Load form values
@@ -612,9 +610,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 		if (!$this->marketing_id->FldIsDetailKey) {
 			$this->marketing_id->setFormValue($objForm->GetValue("x_marketing_id"));
 		}
-		if (!$this->Macet->FldIsDetailKey) {
-			$this->Macet->setFormValue($objForm->GetValue("x_Macet"));
-		}
 	}
 
 	// Restore form values
@@ -638,7 +633,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 		$this->Biaya_Administrasi->CurrentValue = $this->Biaya_Administrasi->FormValue;
 		$this->Biaya_Materai->CurrentValue = $this->Biaya_Materai->FormValue;
 		$this->marketing_id->CurrentValue = $this->marketing_id->FormValue;
-		$this->Macet->CurrentValue = $this->Macet->FormValue;
 	}
 
 	// Load row based on key values
@@ -974,9 +968,9 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 
 		// Macet
 		if (ew_ConvertToBool($this->Macet->CurrentValue)) {
-			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "Yes";
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "Yes";
 		} else {
-			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "No";
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "No";
 		}
 		$this->Macet->ViewCustomAttributes = "";
 
@@ -1059,17 +1053,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 			$this->marketing_id->LinkCustomAttributes = "";
 			$this->marketing_id->HrefValue = "";
 			$this->marketing_id->TooltipValue = "";
-
-			// Macet
-			$this->Macet->LinkCustomAttributes = "";
-			if (!ew_Empty($this->id->CurrentValue)) {
-				$this->Macet->HrefValue = "cf09_nasabahmacet.php?id=" . ((!empty($this->id->ViewValue)) ? ew_RemoveHtml($this->id->ViewValue) : $this->id->CurrentValue); // Add prefix/suffix
-				$this->Macet->LinkAttrs["target"] = ""; // Add target
-				if ($this->Export <> "") $this->Macet->HrefValue = ew_ConvertFullUrl($this->Macet->HrefValue);
-			} else {
-				$this->Macet->HrefValue = "";
-			}
-			$this->Macet->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// Kontrak_No
@@ -1247,10 +1230,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 			}
 			$this->marketing_id->PlaceHolder = ew_RemoveHtml($this->marketing_id->FldCaption());
 
-			// Macet
-			$this->Macet->EditCustomAttributes = "";
-			$this->Macet->EditValue = $this->Macet->Options(FALSE);
-
 			// Add refer script
 			// Kontrak_No
 
@@ -1316,16 +1295,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 			// marketing_id
 			$this->marketing_id->LinkCustomAttributes = "";
 			$this->marketing_id->HrefValue = "";
-
-			// Macet
-			$this->Macet->LinkCustomAttributes = "";
-			if (!ew_Empty($this->id->CurrentValue)) {
-				$this->Macet->HrefValue = "cf09_nasabahmacet.php?id=" . ((!empty($this->id->EditValue)) ? ew_RemoveHtml($this->id->EditValue) : $this->id->CurrentValue); // Add prefix/suffix
-				$this->Macet->LinkAttrs["target"] = ""; // Add target
-				if ($this->Export <> "") $this->Macet->HrefValue = ew_ConvertFullUrl($this->Macet->HrefValue);
-			} else {
-				$this->Macet->HrefValue = "";
-			}
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -1429,9 +1398,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 		if (!ew_CheckInteger($this->marketing_id->FormValue)) {
 			ew_AddMessage($gsFormError, $this->marketing_id->FldErrMsg());
 		}
-		if ($this->Macet->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Macet->FldCaption(), $this->Macet->ReqErrMsg));
-		}
 
 		// Validate detail grid
 		$DetailTblVar = explode(",", $this->getCurrentDetailTable());
@@ -1533,9 +1499,6 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 
 		// marketing_id
 		$this->marketing_id->SetDbValueDef($rsnew, $this->marketing_id->CurrentValue, 0, FALSE);
-
-		// Macet
-		$this->Macet->SetDbValueDef($rsnew, ((strval($this->Macet->CurrentValue) == "Y") ? "Y" : "N"), "N", strval($this->Macet->CurrentValue) == "");
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -1954,9 +1917,6 @@ ft03_pinjamanadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_marketing_id");
 			if (elm && !ew_CheckInteger(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t03_pinjaman->marketing_id->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Macet");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_pinjaman->Macet->FldCaption(), $t03_pinjaman->Macet->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1993,8 +1953,6 @@ ft03_pinjamanadd.ValidateRequired = false;
 ft03_pinjamanadd.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":true,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 ft03_pinjamanadd.Lists["x_jaminan_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Merk_Type","","",""],"ParentFields":["x_nasabah_id"],"ChildFields":[],"FilterFields":["x_nasabah_id"],"Options":[],"Template":"","LinkTable":"t02_jaminan"};
 ft03_pinjamanadd.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
-ft03_pinjamanadd.Lists["x_Macet"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft03_pinjamanadd.Lists["x_Macet"].Options = <?php echo json_encode($t03_pinjaman->Macet->Options()) ?>;
 
 // Form object for search
 </script>
@@ -2222,19 +2180,6 @@ ft03_pinjamanadd.CreateAutoSuggest({"id":"x_marketing_id","forceSelect":false});
 <input type="hidden" name="s_x_marketing_id" id="s_x_marketing_id" value="<?php echo $t03_pinjaman->marketing_id->LookupFilterQuery(false) ?>">
 </span>
 <?php echo $t03_pinjaman->marketing_id->CustomMsg ?></div></div>
-	</div>
-<?php } ?>
-<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
-	<div id="r_Macet" class="form-group">
-		<label id="elh_t03_pinjaman_Macet" class="col-sm-2 control-label ewLabel"><?php echo $t03_pinjaman->Macet->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t03_pinjaman->Macet->CellAttributes() ?>>
-<span id="el_t03_pinjaman_Macet">
-<div id="tp_x_Macet" class="ewTemplate"><input type="radio" data-table="t03_pinjaman" data-field="x_Macet" data-value-separator="<?php echo $t03_pinjaman->Macet->DisplayValueSeparatorAttribute() ?>" name="x_Macet" id="x_Macet" value="{value}"<?php echo $t03_pinjaman->Macet->EditAttributes() ?>></div>
-<div id="dsl_x_Macet" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t03_pinjaman->Macet->RadioButtonListHtml(FALSE, "x_Macet") ?>
-</div></div>
-</span>
-<?php echo $t03_pinjaman->Macet->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

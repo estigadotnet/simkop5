@@ -965,10 +965,10 @@
       </field>
       <field id="macet">
         <phrase id="fldcaption" value="Macet" />
-        <phrase id="fldtagvalue1" value="Y" />
-        <phrase id="fldtagcaption1" value="Yes" />
-        <phrase id="fldtagvalue2" value="N" />
-        <phrase id="fldtagcaption2" value="No" />
+        <phrase id="fldtagvalue1" value="N" />
+        <phrase id="fldtagcaption1" value="No" />
+        <phrase id="fldtagvalue2" value="Y" />
+        <phrase id="fldtagcaption2" value="Yes" />
       </field>
     </table>
     <table id="t04_pinjamanangsuran">

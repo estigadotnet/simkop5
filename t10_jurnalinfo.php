@@ -1112,6 +1112,14 @@ class ct10_jurnal extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (
+			(date_format(date_create($rsnew["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+			or
+			(date_format(date_create($rsold["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}
 		$rsnew["Periode"] = $GLOBALS["Periode"];
 		return TRUE;
 	}
@@ -1128,6 +1136,12 @@ class ct10_jurnal extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (
+			(date_format(date_create($rsnew["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini [row_updating]");
+			return false;
+		}
 		return TRUE;
 	}
 
@@ -1152,6 +1166,17 @@ class ct10_jurnal extends cTable {
 		// Enter your code here
 		// To reject grid insert, set return value to FALSE
 
+		$rsnew = $this->GetGridFormValues();
+		foreach ($rsnew as $row) {
+
+			//var_dump($row); die();
+			if (
+				(date_format(date_create($row["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+				) {
+				$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+				return false;
+			}	
+		}
 		return TRUE;
 	}
 
@@ -1167,6 +1192,19 @@ class ct10_jurnal extends cTable {
 		// Enter your code here
 		// To reject grid update, set return value to FALSE
 
+		$rsnew = $this->GetGridFormValues(); 
+		foreach($rsnew as $rows) {
+
+			//print_r($rows);
+			//die();
+
+			if (
+				(date_format(date_create($rows["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+				) {
+				$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini [grid_updating]");
+				return false;
+			}
+		}
 		return TRUE;
 	}
 

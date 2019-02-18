@@ -31,6 +31,50 @@ function Page_Unloaded() {
 function yang dibuat untuk memudahkan memproses data
 */
 
+function GetNextNoKontrakCopy($id) {
+	$sNextNoKontrak = "";
+	$sLastNoKontrak = "";
+	$value = ew_ExecuteScalar("SELECT Kontrak_No FROM t03_pinjaman where id = ".$id." ORDER BY Kontrak_No DESC");
+	if ($value != "") { // jika sudah ada, langsung ambil dan proses...
+		$kode_terakhir = substr(rtrim($value, " "), -1);
+		$value2 = substr($value, 0, 5);
+		if ($kode_terakhir >= '0' and $kode_terakhir <= '9') {
+
+			// berarti kode terakhir nomor kontrak bukan huruf
+			$kode_terakhir = "B";
+			$sNextNoKontrak = $value2 . $kode_terakhir;
+		}
+		else {
+			switch($kode_terakhir) {
+				case "B":
+					$kode_terakhir = "C";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "C":
+					$kode_terakhir = "D";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "D":
+					$kode_terakhir = "E";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "E":
+					$sLastNoKontrak = intval(substr($value, 1, 4)); // ambil 4 digit terakhir
+					$sLastNoKontrak = intval($sLastNoKontrak) + 1; // konversi ke integer, lalu tambahkan satu
+					$sNextNoKontrak = "6" . sprintf('%04s', $sLastNoKontrak); // format hasilnya dan tambahkan prefix
+					if (strlen($sNextNoKontrak) > 5) {
+						$sNextNoKontrak = "69999";
+					}
+					break;
+			}
+		}
+	}
+	else { // jika belum ada, gunakan kode yang pertama
+		$sNextNoKontrak = "60001";
+	}
+	return $sNextNoKontrak;
+}
+
 function f_periode($tanggal) {
 	$periode = substr($tanggal, 0, 4).substr($tanggal, 5, 2);
 	return $periode;

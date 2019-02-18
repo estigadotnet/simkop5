@@ -51,7 +51,7 @@
       <Field FldName="Biaya_Materai" FldAlias="0" FldSourceName="" FldSourceTable="" FldSourceField="" FldType="4" FldTypeName="FLOAT" NativeDataType="4" FldSQL="" FldIsCustom="0" FldSupport="1" FldSort="1" FldSize="14" FldUniqueIdx="0" FldZeroLen="0" FldReq="1" FldIsPrimaryKey="0" FldAutoIncrement="0" FldAttribute="4" FldMin="" FldMax="" FldErrMsg="" FldValidate="FLOAT" FldServerValidateArgs="" FldClientValidateArgs="" FldRequired="1" FldPopCalendar="0" FldGenerate="1" FldList="0" FldExport="1" FldView="1" FldEdit="1" FldAdd="1" FldAddOpt="1" FldSearch="1" FldBasicSearch="0" FldExtendedBasicSearch="0" FldRegister="0" FldSrchOpr="=" FldSrchOpr2="" FldDefault="0.00" FldSearchDefault="" FldSearchDefault2="" FldDbDefault="0.00" FldCaption="Materai" FldViewTag="FORMATTED TEXT" FldViewThumbnail="0" FldHtmlTag="TEXT" FldTagSize="10" FldTagMaxLength="0" FldTagValues="" FldHtmlTagReadOnly="0" FldTagHiddenValue="" FldSelectType="Values" FldTagLnkTbl="" FldTagLnkFld="" FldTagLnkDisplay="" FldTagLnkDisp2="" FldTagLnkDisp3="" FldTagLnkDisp4="" FldTagLnkOrderBy="" FldTagLnkOrderType="" FldTagLnkDistinct="0" FldTagCols="0" FldTagRows="0" FldTagImgWidth="0" FldTagImgHeight="0" FldTagAType="" FldTagATarget="" FldTagAPrefix="None" FldTagASuffix="" FldBold="0" FldItalic="0" FldAlign="right" FldFmtType="Number" FldDtFormat="0" FldNumDigits="2" FldIncLeadDigit="-2" FldUseParen="-2" FldGpDigits="-2" FileNameFld="" FileTypeFld="" FileSizeFld="" ImageWidthFld="" ImageHeightFld="" FldHrefFld="" FldHrefFldOrig="0" FldStrFunc="" FldUseDHTMLEditor="0" FldMemoMaxLength="0" FldSelectSize="0" FldSelectMultiple="0" FldSelectFilter="" FldAutoFillSourceFields="" FldAutoFillTargetFields="" FldParentSelect="" FldParentSelect2="" FldParentSelect3="" FldParentSelect4="" FldSelectFilterFld="" FldSelectFilterFld2="" FldSelectFilterFld3="" FldSelectFilterFld4="" FldParentSelectTbl="" FldParentSelectTbl2="" FldParentSelectTbl3="" FldParentSelectTbl4="" FldSelectAllowAdd="0" FldQuoteS="" FldQuoteE="" FldColumnWidth="" FldColumnWrap="1" FldAggregate="" FldGroupBy="0" FldOrderBy="0" FldOrder="" FldGroupByShowSummary="0" FldRptAggSum="0" FldRptAggAvg="0" FldRptAggMin="0" FldRptAggMax="0" FldRepeatColumns="5" FldUploadPath="" FldUploadMultiple="0" UploadAllowedFileExt="" UploadMaxFileSize="0" UploadMaxFileCount="0" FldCheckDuplicate="0" FldPageIndex="1" FldAjax="1" FldAutoUpdateValue="" FldUploadResize="0" FldResizeWidth="0" FldResizeHeight="0" FldMultiUpdate="1" FldTitle="" FldAlt="" FldEditCustomAttributes="" FldViewCustomAttributes="" FldTagACustomAttributes="" FldResizeQuality="75" FldEditTableField="" FldAutoFill="0" FldSelectForceSelection="0" FldMemoCRLFReplace="0" FldTooltipFld="" FldTooltipWidth="0" FldVirtualLookup="0" FldVirtualLookupSearch="0" FldViewTemplate="" FldOptionTemplate="" FldDropdown="0" FldDropdownWidth="0" FldDropdownHeight="0" FldModalLookup="0" FldModalLookupPageSize="0" />
       <Field FldName="marketing_id" FldAlias="0" FldSourceName="" FldSourceTable="" FldSourceField="" FldType="3" FldTypeName="INT" NativeDataType="3" FldSQL="" FldIsCustom="0" FldSupport="1" FldSort="1" FldSize="11" FldUniqueIdx="0" FldZeroLen="0" FldReq="1" FldIsPrimaryKey="0" FldAutoIncrement="0" FldAttribute="4" FldMin="" FldMax="" FldErrMsg="" FldValidate="INTEGER" FldServerValidateArgs="" FldClientValidateArgs="" FldRequired="1" FldPopCalendar="0" FldGenerate="1" FldList="1" FldExport="1" FldView="1" FldEdit="1" FldAdd="1" FldAddOpt="1" FldSearch="1" FldBasicSearch="0" FldExtendedBasicSearch="0" FldRegister="0" FldSrchOpr="=" FldSrchOpr2="" FldDefault="" FldSearchDefault="" FldSearchDefault2="" FldDbDefault="" FldCaption="Marketing" FldViewTag="FORMATTED TEXT" FldViewThumbnail="0" FldHtmlTag="TEXT" FldTagSize="30" FldTagMaxLength="0" FldTagValues="" FldHtmlTagReadOnly="0" FldTagHiddenValue="" FldSelectType="Table" FldTagLnkTbl="t07_marketing" FldTagLnkFld="id" FldTagLnkDisplay="Nama" FldTagLnkDisp2="" FldTagLnkDisp3="" FldTagLnkDisp4="" FldTagLnkOrderBy="" FldTagLnkOrderType="" FldTagLnkDistinct="0" FldTagCols="0" FldTagRows="0" FldTagImgWidth="0" FldTagImgHeight="0" FldTagAType="" FldTagATarget="" FldTagAPrefix="None" FldTagASuffix="" FldBold="0" FldItalic="0" FldAlign="" FldFmtType="None" FldDtFormat="0" FldNumDigits="0" FldIncLeadDigit="-2" FldUseParen="-2" FldGpDigits="-2" FileNameFld="" FileTypeFld="" FileSizeFld="" ImageWidthFld="" ImageHeightFld="" FldHrefFld="" FldHrefFldOrig="0" FldStrFunc="" FldUseDHTMLEditor="0" FldMemoMaxLength="0" FldSelectSize="0" FldSelectMultiple="0" FldSelectFilter="" FldAutoFillSourceFields="" FldAutoFillTargetFields="" FldParentSelect="" FldParentSelect2="" FldParentSelect3="" FldParentSelect4="" FldSelectFilterFld="" FldSelectFilterFld2="" FldSelectFilterFld3="" FldSelectFilterFld4="" FldParentSelectTbl="" FldParentSelectTbl2="" FldParentSelectTbl3="" FldParentSelectTbl4="" FldSelectAllowAdd="0" FldQuoteS="" FldQuoteE="" FldColumnWidth="" FldColumnWrap="1" FldAggregate="" FldGroupBy="0" FldOrderBy="0" FldOrder="" FldGroupByShowSummary="0" FldRptAggSum="0" FldRptAggAvg="0" FldRptAggMin="0" FldRptAggMax="0" FldRepeatColumns="5" FldUploadPath="" FldUploadMultiple="0" UploadAllowedFileExt="" UploadMaxFileSize="0" UploadMaxFileCount="0" FldCheckDuplicate="0" FldPageIndex="1" FldAjax="1" FldAutoUpdateValue="" FldUploadResize="0" FldResizeWidth="0" FldResizeHeight="0" FldMultiUpdate="1" FldTitle="" FldAlt="" FldEditCustomAttributes="" FldViewCustomAttributes="" FldTagACustomAttributes="" FldResizeQuality="75" FldEditTableField="" FldAutoFill="0" FldSelectForceSelection="0" FldMemoCRLFReplace="0" FldTooltipFld="" FldTooltipWidth="0" FldVirtualLookup="0" FldVirtualLookupSearch="0" FldViewTemplate="" FldOptionTemplate="" FldDropdown="0" FldDropdownWidth="0" FldDropdownHeight="0" FldModalLookup="1" FldModalLookupPageSize="0" />
       <Field FldName="Periode" FldAlias="0" FldSourceName="" FldSourceTable="" FldSourceField="" FldType="200" FldTypeName="VARCHAR" NativeDataType="253" FldSQL="" FldIsCustom="0" FldSupport="1" FldSort="1" FldSize="6" FldUniqueIdx="0" FldZeroLen="0" FldReq="1" FldIsPrimaryKey="0" FldAutoIncrement="0" FldAttribute="4" FldMin="" FldMax="" FldErrMsg="" FldValidate="" FldServerValidateArgs="" FldClientValidateArgs="" FldRequired="1" FldPopCalendar="0" FldGenerate="1" FldList="0" FldExport="1" FldView="0" FldEdit="0" FldAdd="0" FldAddOpt="1" FldSearch="1" FldBasicSearch="0" FldExtendedBasicSearch="0" FldRegister="0" FldSrchOpr="LIKE" FldSrchOpr2="" FldDefault="" FldSearchDefault="" FldSearchDefault2="" FldDbDefault="" FldCaption="Periode" FldViewTag="FORMATTED TEXT" FldViewThumbnail="0" FldHtmlTag="TEXT" FldTagSize="30" FldTagMaxLength="6" FldTagValues="" FldHtmlTagReadOnly="0" FldTagHiddenValue="" FldSelectType="Values" FldTagLnkTbl="" FldTagLnkFld="" FldTagLnkDisplay="" FldTagLnkDisp2="" FldTagLnkDisp3="" FldTagLnkDisp4="" FldTagLnkOrderBy="" FldTagLnkOrderType="" FldTagLnkDistinct="0" FldTagCols="0" FldTagRows="0" FldTagImgWidth="0" FldTagImgHeight="0" FldTagAType="" FldTagATarget="" FldTagAPrefix="None" FldTagASuffix="" FldBold="0" FldItalic="0" FldAlign="" FldFmtType="None" FldDtFormat="0" FldNumDigits="0" FldIncLeadDigit="-2" FldUseParen="-2" FldGpDigits="-2" FileNameFld="" FileTypeFld="" FileSizeFld="" ImageWidthFld="" ImageHeightFld="" FldHrefFld="" FldHrefFldOrig="0" FldStrFunc="" FldUseDHTMLEditor="0" FldMemoMaxLength="0" FldSelectSize="0" FldSelectMultiple="0" FldSelectFilter="" FldAutoFillSourceFields="" FldAutoFillTargetFields="" FldParentSelect="" FldParentSelect2="" FldParentSelect3="" FldParentSelect4="" FldSelectFilterFld="" FldSelectFilterFld2="" FldSelectFilterFld3="" FldSelectFilterFld4="" FldParentSelectTbl="" FldParentSelectTbl2="" FldParentSelectTbl3="" FldParentSelectTbl4="" FldSelectAllowAdd="0" FldQuoteS="'" FldQuoteE="'" FldColumnWidth="" FldColumnWrap="1" FldAggregate="" FldGroupBy="0" FldOrderBy="0" FldOrder="" FldGroupByShowSummary="0" FldRptAggSum="0" FldRptAggAvg="0" FldRptAggMin="0" FldRptAggMax="0" FldRepeatColumns="5" FldUploadPath="" FldUploadMultiple="0" UploadAllowedFileExt="" UploadMaxFileSize="0" UploadMaxFileCount="0" FldCheckDuplicate="0" FldPageIndex="1" FldAjax="1" FldAutoUpdateValue="" FldUploadResize="0" FldResizeWidth="0" FldResizeHeight="0" FldMultiUpdate="1" FldTitle="" FldAlt="" FldEditCustomAttributes="" FldViewCustomAttributes="" FldTagACustomAttributes="" FldResizeQuality="75" FldEditTableField="" FldAutoFill="0" FldSelectForceSelection="0" FldMemoCRLFReplace="0" FldTooltipFld="" FldTooltipWidth="0" FldVirtualLookup="0" FldVirtualLookupSearch="0" FldViewTemplate="" FldOptionTemplate="" FldDropdown="0" FldDropdownWidth="0" FldDropdownHeight="0" FldModalLookup="0" FldModalLookupPageSize="0" />
-      <Field FldName="Macet" FldAlias="0" FldSourceName="" FldSourceTable="" FldSourceField="" FldType="202" FldTypeName="ENUM" NativeDataType="247" FldSQL="" FldIsCustom="0" FldSupport="1" FldSort="1" FldSize="1" FldUniqueIdx="0" FldZeroLen="0" FldReq="1" FldIsPrimaryKey="0" FldAutoIncrement="0" FldAttribute="4" FldMin="" FldMax="" FldErrMsg="" FldValidate="" FldServerValidateArgs="" FldClientValidateArgs="" FldRequired="1" FldPopCalendar="0" FldGenerate="1" FldList="1" FldExport="1" FldView="1" FldEdit="1" FldAdd="1" FldAddOpt="1" FldSearch="1" FldBasicSearch="0" FldExtendedBasicSearch="1" FldRegister="0" FldSrchOpr="=" FldSrchOpr2="" FldDefault="&quot;N&quot;" FldSearchDefault="" FldSearchDefault2="" FldDbDefault="&quot;N&quot;" FldCaption="Macet" FldViewTag="FORMATTED TEXT" FldViewThumbnail="0" FldHtmlTag="RADIO" FldTagSize="30" FldTagMaxLength="1" FldTagValues="&quot;Y&quot;,&quot;Yes&quot;|&quot;N&quot;,&quot;No&quot;" FldHtmlTagReadOnly="0" FldTagHiddenValue="" FldSelectType="Values" FldTagLnkTbl="" FldTagLnkFld="" FldTagLnkDisplay="" FldTagLnkDisp2="" FldTagLnkDisp3="" FldTagLnkDisp4="" FldTagLnkOrderBy="" FldTagLnkOrderType="" FldTagLnkDistinct="0" FldTagCols="0" FldTagRows="0" FldTagImgWidth="0" FldTagImgHeight="0" FldTagAType="" FldTagATarget="" FldTagAPrefix="cf09_nasabahmacet.php?id=" FldTagASuffix="" FldBold="0" FldItalic="0" FldAlign="" FldFmtType="None" FldDtFormat="0" FldNumDigits="0" FldIncLeadDigit="-2" FldUseParen="-2" FldGpDigits="-2" FileNameFld="" FileTypeFld="" FileSizeFld="" ImageWidthFld="" ImageHeightFld="" FldHrefFld="id" FldHrefFldOrig="0" FldStrFunc="" FldUseDHTMLEditor="0" FldMemoMaxLength="0" FldSelectSize="0" FldSelectMultiple="0" FldSelectFilter="" FldAutoFillSourceFields="" FldAutoFillTargetFields="" FldParentSelect="" FldParentSelect2="" FldParentSelect3="" FldParentSelect4="" FldSelectFilterFld="" FldSelectFilterFld2="" FldSelectFilterFld3="" FldSelectFilterFld4="" FldParentSelectTbl="" FldParentSelectTbl2="" FldParentSelectTbl3="" FldParentSelectTbl4="" FldSelectAllowAdd="0" FldQuoteS="'" FldQuoteE="'" FldColumnWidth="" FldColumnWrap="1" FldAggregate="" FldGroupBy="0" FldOrderBy="0" FldOrder="" FldGroupByShowSummary="0" FldRptAggSum="0" FldRptAggAvg="0" FldRptAggMin="0" FldRptAggMax="0" FldRepeatColumns="5" FldUploadPath="" FldUploadMultiple="0" UploadAllowedFileExt="" UploadMaxFileSize="0" UploadMaxFileCount="0" FldCheckDuplicate="0" FldPageIndex="1" FldAjax="1" FldAutoUpdateValue="" FldUploadResize="0" FldResizeWidth="0" FldResizeHeight="0" FldMultiUpdate="1" FldTitle="" FldAlt="" FldEditCustomAttributes="" FldViewCustomAttributes="" FldTagACustomAttributes="" FldResizeQuality="75" FldEditTableField="" FldAutoFill="0" FldSelectForceSelection="0" FldMemoCRLFReplace="0" FldTooltipFld="" FldTooltipWidth="0" FldVirtualLookup="0" FldVirtualLookupSearch="0" FldViewTemplate="" FldOptionTemplate="" FldDropdown="0" FldDropdownWidth="0" FldDropdownHeight="0" FldModalLookup="0" FldModalLookupPageSize="0" />
+      <Field FldName="Macet" FldAlias="0" FldSourceName="" FldSourceTable="" FldSourceField="" FldType="202" FldTypeName="ENUM" NativeDataType="247" FldSQL="" FldIsCustom="0" FldSupport="1" FldSort="1" FldSize="1" FldUniqueIdx="0" FldZeroLen="0" FldReq="1" FldIsPrimaryKey="0" FldAutoIncrement="0" FldAttribute="4" FldMin="" FldMax="" FldErrMsg="" FldValidate="" FldServerValidateArgs="" FldClientValidateArgs="" FldRequired="1" FldPopCalendar="0" FldGenerate="1" FldList="1" FldExport="1" FldView="1" FldEdit="1" FldAdd="0" FldAddOpt="1" FldSearch="1" FldBasicSearch="0" FldExtendedBasicSearch="1" FldRegister="0" FldSrchOpr="=" FldSrchOpr2="" FldDefault="&quot;N&quot;" FldSearchDefault="" FldSearchDefault2="" FldDbDefault="&quot;N&quot;" FldCaption="Macet" FldViewTag="FORMATTED TEXT" FldViewThumbnail="0" FldHtmlTag="RADIO" FldTagSize="30" FldTagMaxLength="1" FldTagValues="&quot;N&quot;,&quot;No&quot;|&quot;Y&quot;,&quot;Yes&quot;" FldHtmlTagReadOnly="0" FldTagHiddenValue="" FldSelectType="Values" FldTagLnkTbl="" FldTagLnkFld="" FldTagLnkDisplay="" FldTagLnkDisp2="" FldTagLnkDisp3="" FldTagLnkDisp4="" FldTagLnkOrderBy="" FldTagLnkOrderType="" FldTagLnkDistinct="0" FldTagCols="0" FldTagRows="0" FldTagImgWidth="0" FldTagImgHeight="0" FldTagAType="" FldTagATarget="" FldTagAPrefix="cf09_nasabahmacet.php?id=" FldTagASuffix="" FldBold="0" FldItalic="0" FldAlign="" FldFmtType="None" FldDtFormat="0" FldNumDigits="0" FldIncLeadDigit="-2" FldUseParen="-2" FldGpDigits="-2" FileNameFld="" FileTypeFld="" FileSizeFld="" ImageWidthFld="" ImageHeightFld="" FldHrefFld="id" FldHrefFldOrig="0" FldStrFunc="" FldUseDHTMLEditor="0" FldMemoMaxLength="0" FldSelectSize="0" FldSelectMultiple="0" FldSelectFilter="" FldAutoFillSourceFields="" FldAutoFillTargetFields="" FldParentSelect="" FldParentSelect2="" FldParentSelect3="" FldParentSelect4="" FldSelectFilterFld="" FldSelectFilterFld2="" FldSelectFilterFld3="" FldSelectFilterFld4="" FldParentSelectTbl="" FldParentSelectTbl2="" FldParentSelectTbl3="" FldParentSelectTbl4="" FldSelectAllowAdd="0" FldQuoteS="'" FldQuoteE="'" FldColumnWidth="" FldColumnWrap="1" FldAggregate="" FldGroupBy="0" FldOrderBy="0" FldOrder="" FldGroupByShowSummary="0" FldRptAggSum="0" FldRptAggAvg="0" FldRptAggMin="0" FldRptAggMax="0" FldRepeatColumns="5" FldUploadPath="" FldUploadMultiple="0" UploadAllowedFileExt="" UploadMaxFileSize="0" UploadMaxFileCount="0" FldCheckDuplicate="0" FldPageIndex="1" FldAjax="1" FldAutoUpdateValue="" FldUploadResize="0" FldResizeWidth="0" FldResizeHeight="0" FldMultiUpdate="1" FldTitle="" FldAlt="" FldEditCustomAttributes="" FldViewCustomAttributes="" FldTagACustomAttributes="" FldResizeQuality="75" FldEditTableField="" FldAutoFill="0" FldSelectForceSelection="0" FldMemoCRLFReplace="0" FldTooltipFld="" FldTooltipWidth="0" FldVirtualLookup="0" FldVirtualLookupSearch="0" FldViewTemplate="" FldOptionTemplate="" FldDropdown="0" FldDropdownWidth="0" FldDropdownHeight="0" FldModalLookup="0" FldModalLookupPageSize="0" />
     </Table>
     <Table TblSchema="" TblName="t04_pinjamanangsuran" TblType="TABLE" TblGen="1" TblGenList="info=1,list=1,add=1,view=1,edit=1,delete=1" TblList="1" TblView="1" TblInlineEdit="0" TblGridEdit="0" TblEdit="1" TblEditConfirm="0" TblEditCaptcha="0" TblGridAdd="0" TblAdd="1" TblAddReturnPage="" TblAddOpt="0" TblAddConfirm="0" TblAddCaptcha="0" TblInlineAdd="0" TblInlineCopy="0" TblMultiUpdate="0" TblMultiUpdateConfirm="0" TblAnonymous="0" TblIsMaster="0" TblIsDetail="0" TblDelete="1" TblCaption="t 04 pinjamanangsuran" TblUpdatable="1" TblSQL="" TblError="" TblSrchType="BASIC" TblSearchHighlight="0" TblSearchColor="" TblSearch="0" TblBasicSearch="1" TblExtendedBasicSearch="1" TblBasicSearchDefault="" TblBasicSearchTypeDefault="" TblExtSearchFldPerRow="0" TblDefault="0" TblCopy="1" TblFilter="" TblUserIDFld="" TblSecurity="0,&quot;Default&quot;,0" TblUserIDAllow="0" TblExpanded="0" TblLoaded="1" TblRptShowDetails="0" TblRptShowGrandTotal="0" OutputFolder="" IncludeFiles="1" TblReportType="" TblCustomSQL="" TblCustomError="" TblRptSrc="" TblRptIndent="0" TblUseGlobal="1" TblRecPerPage="20" TblRecPerPageList="" TblPrinterFriendly="0" TblExportHtml="0" TblExportWord="0" TblExportExcel="0" TblExportXml="0" TblExportCsv="0" TblExportEmail="0" TblExportPDF="0" TblExportType="" TblRecPerRow="0" TblMultiDelete="0" TblSortType="0" TblPagerStyle="2" TblTopPageLink="0" TblBottomPageLink="1" TblViewExport="0" TblListExport="0" TblLinkOnLeft="0" TblInlineDelete="0" TblDetailViewPaging="0" TblDetailEditPaging="0" TblModalSearch="0" TblModalAdd="0" TblModalEdit="0" TblModalUpdate="0" TblModalView="0" TblAuditTrail="1" TblSendMailOnAdd="0" TblSendMailOnEdit="0" TblSendMailOnDelete="0" TblShowBlankListPage="0" TblDetailShowCount="0" TblDetailAdd="0" TblDetailEdit="0" TblDetailView="0" TblShowMultipleDetails="0" TblEditReturnPage="" TblMultiPageAdd="0" TblMultiPageEdit="0" TblMultiPageView="0" TblMultiPageSearch="0" TblCheckConcurrentUpdate="0" TblUserLevelPriv="1" TblDisplayRowCount="0" TblUseButtonsForLinks="1" TblUseDropDownForAction="1" TblUseDropDownForListOptions="1" TblMultiPageType="" TblUseDropDownForExport="1" LinkDBID="" LinkTableName="" LinkTableType="" TblPageCaptions="">
       <Field FldName="id" FldAlias="0" FldSourceName="" FldSourceTable="" FldSourceField="" FldType="3" FldTypeName="INT" NativeDataType="3" FldSQL="" FldIsCustom="0" FldSupport="1" FldSort="1" FldSize="11" FldUniqueIdx="0" FldZeroLen="0" FldReq="0" FldIsPrimaryKey="1" FldAutoIncrement="1" FldAttribute="96" FldMin="" FldMax="" FldErrMsg="" FldValidate="INTEGER" FldServerValidateArgs="" FldClientValidateArgs="" FldRequired="0" FldPopCalendar="0" FldGenerate="1" FldList="0" FldExport="1" FldView="0" FldEdit="0" FldAdd="0" FldAddOpt="0" FldSearch="1" FldBasicSearch="0" FldExtendedBasicSearch="0" FldRegister="0" FldSrchOpr="=" FldSrchOpr2="" FldDefault="" FldSearchDefault="" FldSearchDefault2="" FldDbDefault="" FldCaption="id" FldViewTag="FORMATTED TEXT" FldViewThumbnail="0" FldHtmlTag="NO" FldTagSize="0" FldTagMaxLength="0" FldTagValues="" FldHtmlTagReadOnly="0" FldTagHiddenValue="" FldSelectType="Values" FldTagLnkTbl="" FldTagLnkFld="" FldTagLnkDisplay="" FldTagLnkDisp2="" FldTagLnkDisp3="" FldTagLnkDisp4="" FldTagLnkOrderBy="" FldTagLnkOrderType="" FldTagLnkDistinct="0" FldTagCols="0" FldTagRows="0" FldTagImgWidth="0" FldTagImgHeight="0" FldTagAType="" FldTagATarget="" FldTagAPrefix="None" FldTagASuffix="" FldBold="0" FldItalic="0" FldAlign="" FldFmtType="None" FldDtFormat="0" FldNumDigits="0" FldIncLeadDigit="-2" FldUseParen="-2" FldGpDigits="-2" FileNameFld="" FileTypeFld="" FileSizeFld="" ImageWidthFld="" ImageHeightFld="" FldHrefFld="" FldHrefFldOrig="0" FldStrFunc="" FldUseDHTMLEditor="0" FldMemoMaxLength="0" FldSelectSize="0" FldSelectMultiple="0" FldSelectFilter="" FldAutoFillSourceFields="" FldAutoFillTargetFields="" FldParentSelect="" FldParentSelect2="" FldParentSelect3="" FldParentSelect4="" FldSelectFilterFld="" FldSelectFilterFld2="" FldSelectFilterFld3="" FldSelectFilterFld4="" FldParentSelectTbl="" FldParentSelectTbl2="" FldParentSelectTbl3="" FldParentSelectTbl4="" FldSelectAllowAdd="0" FldQuoteS="" FldQuoteE="" FldColumnWidth="" FldColumnWrap="1" FldAggregate="" FldGroupBy="0" FldOrderBy="0" FldOrder="" FldGroupByShowSummary="0" FldRptAggSum="0" FldRptAggAvg="0" FldRptAggMin="0" FldRptAggMax="0" FldRepeatColumns="5" FldUploadPath="" FldUploadMultiple="0" UploadAllowedFileExt="" UploadMaxFileSize="0" UploadMaxFileCount="0" FldCheckDuplicate="0" FldPageIndex="1" FldAjax="1" FldAutoUpdateValue="" FldUploadResize="0" FldResizeWidth="0" FldResizeHeight="0" FldMultiUpdate="0" FldTitle="" FldAlt="" FldEditCustomAttributes="" FldViewCustomAttributes="" FldTagACustomAttributes="" FldResizeQuality="75" FldEditTableField="" FldAutoFill="0" FldSelectForceSelection="0" FldMemoCRLFReplace="0" FldTooltipFld="" FldTooltipWidth="0" FldVirtualLookup="0" FldVirtualLookupSearch="0" FldViewTemplate="" FldOptionTemplate="" FldDropdown="0" FldDropdownWidth="0" FldDropdownHeight="0" FldModalLookup="0" FldModalLookupPageSize="0" />
@@ -845,6 +845,52 @@ function yang dibuat untuk memudahkan memproses data
 
 
 
+function GetNextNoKontrakCopy($id) {
+	$sNextNoKontrak = "";
+	$sLastNoKontrak = "";
+	$value = ew_ExecuteScalar("SELECT Kontrak_No FROM t03_pinjaman where id = ".$id." ORDER BY Kontrak_No DESC");
+	if ($value != "") { // jika sudah ada, langsung ambil dan proses...
+		$kode_terakhir = substr(rtrim($value, " "), -1);
+		$value2 = substr($value, 0, 5);
+		if ($kode_terakhir >= '0' and $kode_terakhir <= '9') {
+			// berarti kode terakhir nomor kontrak bukan huruf
+			$kode_terakhir = "B";
+			$sNextNoKontrak = $value2 . $kode_terakhir;
+		}
+		else {
+			switch($kode_terakhir) {
+				case "B":
+					$kode_terakhir = "C";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "C":
+					$kode_terakhir = "D";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "D":
+					$kode_terakhir = "E";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "E":
+					$sLastNoKontrak = intval(substr($value, 1, 4)); // ambil 4 digit terakhir
+					$sLastNoKontrak = intval($sLastNoKontrak) + 1; // konversi ke integer, lalu tambahkan satu
+					$sNextNoKontrak = "6" . sprintf('%04s', $sLastNoKontrak); // format hasilnya dan tambahkan prefix
+					if (strlen($sNextNoKontrak) > 5) {
+						$sNextNoKontrak = "69999";
+					}
+					break;
+			}
+		}
+	}
+	else { // jika belum ada, gunakan kode yang pertama
+		$sNextNoKontrak = "60001";
+	}
+	return $sNextNoKontrak;
+}
+
+
+
+
 function f_periode($tanggal) {
 	$periode = substr($tanggal, 0, 4).substr($tanggal, 5, 2);
 	return $periode;
@@ -1527,8 +1573,17 @@ function Row_Inserting($rsold, &$rsnew) {
 	// Enter your code here
 	// To cancel, set return value to FALSE
 
+	if (
+		(date_format(date_create($rsnew["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+		or
+		(date_format(date_create($rsold["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+		) {
+		$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+		return false;
+	}
+
 	$rsnew["Periode"] = $GLOBALS["Periode"];
-	$rsnew["Kontrak_No"] = GetNextNoKontrak(); // mengantisipasi lebih satu user menginput data saat bersamaan
+	//$rsnew["Kontrak_No"] = GetNextNoKontrak(); // mengantisipasi lebih satu user menginput data saat bersamaan
 	return TRUE;
 }
 ]]></CustomScript>
@@ -2913,6 +2968,15 @@ function Row_Inserting($rsold, &$rsnew) {
 	// Enter your code here
 	// To cancel, set return value to FALSE
 
+	if (
+		(date_format(date_create($rsnew["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+		or
+		(date_format(date_create($rsold["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+		) {
+		$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+		return false;
+	}
+
 	$rsnew["Periode"] = $GLOBALS["Periode"];
 	
 	return TRUE;
@@ -3078,9 +3142,24 @@ function Row_Rendered() {
 
 	// Kondisi saat form Tambah sedang terbuka (tidak dalam mode konfirmasi)
 	if (CurrentPageID() == "add" && $this->CurrentAction != "F") {
-		$this->Kontrak_No->CurrentValue = GetNextNoKontrak(); // trik
+
+		// users meng-klik icon COPY
+		if (isset($_GET["id"])) {
+			//echo "id ".$_GET["id"];
+			// proses copy
+			$this->Kontrak_No->CurrentValue = GetNextNoKontrakCopy($_GET["id"]); // trik
+		}
+		else {
+			$this->Kontrak_No->CurrentValue = GetNextNoKontrak(); // trik
+		}
+		
 		$this->Kontrak_No->EditValue = $this->Kontrak_No->CurrentValue; // tampilkan
 		//$this->Kode->ReadOnly = TRUE; // supaya tidak bisa diubah
+		if (isset($_GET["id"])) {
+			//echo "id ".$_GET["id"];
+			// proses copy
+			
+		}
 	}
  
 	// Kondisi saat form Tambah sedang dalam mode konfirmasi
@@ -3141,6 +3220,15 @@ function Row_Inserted($rsold, &$rsnew) {
 function Row_Inserting($rsold, &$rsnew) {
 	// Enter your code here
 	// To cancel, set return value to FALSE
+
+	if (
+		(date_format(date_create($rsnew["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+		or
+		(date_format(date_create($rsold["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+		) {
+		$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+		return false;
+	}
 
 	$rsnew["Periode"] = $GLOBALS["Periode"];
 	$rsnew["NomorTransaksi"] = GetNextNomorTransaksi(); // mengantisipasi lebih satu user menginput data saat bersamaan
@@ -4553,20 +4641,20 @@ function Row_Deleted(&$rs) {
 	// kodetransaksi = 01
 	$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '01'");
 	$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '01'");
-	f_hapusjurnal($rsold["Periode"], $rsold["id"].".PINJ", $rekdebet, "Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
-	f_hapusjurnal($rsold["Periode"], $rsold["id"].".PINJ", $rekkredit, "Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+	f_hapusjurnal($rs["Periode"], $rs["id"].".PINJ", $rekdebet, "Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
+	f_hapusjurnal($rs["Periode"], $rs["id"].".PINJ", $rekkredit, "Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
 
 	// kodetransaksi = 02
 	$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '02'");
 	$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '02'");
-	f_hapusjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekdebet, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
-	f_hapusjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekkredit, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+	f_hapusjurnal($rs["Periode"], $rs["id"].".ADM", $rekdebet, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
+	f_hapusjurnal($rs["Periode"], $rs["id"].".ADM", $rekkredit, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
 
 	// kodetransaksi = 03
 	$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '03'");
 	$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '03'");
-	f_hapusjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekdebet, "Pendapatan Materai Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
-	f_hapusjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekkredit, "Pendapatan Materai Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+	f_hapusjurnal($rs["Periode"], $rs["id"].".MAT", $rekdebet, "Pendapatan Materai Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
+	f_hapusjurnal($rs["Periode"], $rs["id"].".MAT", $rekkredit, "Pendapatan Materai Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
 
 }
 ]]></CustomScript>
@@ -4587,6 +4675,95 @@ if ($r["Macet"] == "N") {
 }
 header("location: t03_pinjamanlist.php");
 ?>
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Row_Updating" ScriptCtrlID="" ScriptL1Key="t03_pinjaman" ScriptL2Key=""><![CDATA[// Row Updating event
+function Row_Updating($rsold, &$rsnew) {
+	// Enter your code here
+	// To cancel, set return value to FALSE
+
+	if (
+		(date_format(date_create($rsnew["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+		or
+		(date_format(date_create($rsold["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+		) {
+		$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+		return false;
+	}
+	
+	return TRUE;
+}
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Row_Updating" ScriptCtrlID="" ScriptL1Key="t11_jurnalmaster" ScriptL2Key=""><![CDATA[// Row Updating event
+function Row_Updating($rsold, &$rsnew) {
+	// Enter your code here
+	// To cancel, set return value to FALSE
+
+	if (
+		(date_format(date_create($rsnew["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+		or
+		(date_format(date_create($rsold["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+		) {
+		$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+		return false;
+	}
+	
+	return TRUE;
+}
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Grid_Inserting" ScriptCtrlID="" ScriptL1Key="t10_jurnal" ScriptL2Key=""><![CDATA[// Grid Inserting event
+function Grid_Inserting() {
+	// Enter your code here
+	// To reject grid insert, set return value to FALSE
+
+	$rsnew = $this->GetGridFormValues();
+	foreach ($rsnew as $row) {
+		//var_dump($row); die();
+		if (
+			(date_format(date_create($row["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}	
+	}
+	
+	return TRUE;
+}
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Grid_Updating" ScriptCtrlID="" ScriptL1Key="t10_jurnal" ScriptL2Key=""><![CDATA[// Grid Updating event
+function Grid_Updating($rsold) {
+	// Enter your code here
+	// To reject grid update, set return value to FALSE
+
+	$rsnew = $this->GetGridFormValues(); 
+
+	foreach($rsnew as $rows) {
+		//print_r($rows);
+		//die();
+		if (
+			(date_format(date_create($rows["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini [grid_updating]");
+			return false;
+		}
+	}
+	
+	return TRUE;
+}
+]]></CustomScript>
+  <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Row_Updating" ScriptCtrlID="" ScriptL1Key="t10_jurnal" ScriptL2Key=""><![CDATA[// Row Updating event
+function Row_Updating($rsold, &$rsnew) {
+	// Enter your code here
+	// To cancel, set return value to FALSE
+
+	if (
+		(date_format(date_create($rsnew["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
+		) {
+		$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini [row_updating]");
+		return false;
+	}
+	
+	return TRUE;
+}
 ]]></CustomScript>
   <Menu MenuID="10178" MenuText="Nasabah Macet" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="cf09_nasabahmacet.php" MenuCustomUrl="0" MenuLevel="0" MenuShow="0" MenuDisplayOrder="100" />
   <Menu MenuID="10174" MenuText="v 06 nrcper" MenuParentID="-1" MenuGroup="0" MenuSource="" MenuExtUrl="" MenuAnonymous="0" MenuSecurity="" MenuUrl="v06_nrcper" MenuCustomUrl="0" MenuLevel="0" MenuShow="0" MenuDisplayOrder="200" />

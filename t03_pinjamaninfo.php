@@ -1090,9 +1090,9 @@ class ct03_pinjaman extends cTable {
 
 		// Macet
 		if (ew_ConvertToBool($this->Macet->CurrentValue)) {
-			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "Yes";
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "Yes";
 		} else {
-			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "No";
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "No";
 		}
 		$this->Macet->ViewCustomAttributes = "";
 
@@ -1687,8 +1687,17 @@ class ct03_pinjaman extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (
+			(date_format(date_create($rsnew["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+			or
+			(date_format(date_create($rsold["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}
 		$rsnew["Periode"] = $GLOBALS["Periode"];
-		$rsnew["Kontrak_No"] = GetNextNoKontrak(); // mengantisipasi lebih satu user menginput data saat bersamaan
+
+		//$rsnew["Kontrak_No"] = GetNextNoKontrak(); // mengantisipasi lebih satu user menginput data saat bersamaan
 		return TRUE;
 	}
 
@@ -1738,6 +1747,14 @@ class ct03_pinjaman extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (
+			(date_format(date_create($rsnew["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+			or
+			(date_format(date_create($rsold["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}
 		return TRUE;
 	}
 
@@ -1867,20 +1884,20 @@ class ct03_pinjaman extends cTable {
 
 		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '01'");
 		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '01'");
-		f_hapusjurnal($rsold["Periode"], $rsold["id"].".PINJ", $rekdebet, "Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
-		f_hapusjurnal($rsold["Periode"], $rsold["id"].".PINJ", $rekkredit, "Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".PINJ", $rekdebet, "Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".PINJ", $rekkredit, "Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
 
 		// kodetransaksi = 02
 		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '02'");
 		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '02'");
-		f_hapusjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekdebet, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
-		f_hapusjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekkredit, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".ADM", $rekdebet, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".ADM", $rekkredit, "Pendapatan Administrasi Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
 
 		// kodetransaksi = 03
 		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '03'");
 		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '03'");
-		f_hapusjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekdebet, "Pendapatan Materai Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
-		f_hapusjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekkredit, "Pendapatan Materai Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".MAT", $rekdebet, "Pendapatan Materai Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".MAT", $rekkredit, "Pendapatan Materai Pinjaman No. Kontrak ".$rs["Kontrak_No"]);
 	}
 
 	// Email Sending event
@@ -1922,10 +1939,27 @@ class ct03_pinjaman extends cTable {
 
 		// Kondisi saat form Tambah sedang terbuka (tidak dalam mode konfirmasi)
 		if (CurrentPageID() == "add" && $this->CurrentAction != "F") {
-			$this->Kontrak_No->CurrentValue = GetNextNoKontrak(); // trik
+
+			// users meng-klik icon COPY
+			if (isset($_GET["id"])) {
+
+				//echo "id ".$_GET["id"];
+				// proses copy
+
+				$this->Kontrak_No->CurrentValue = GetNextNoKontrakCopy($_GET["id"]); // trik
+			}
+			else {
+				$this->Kontrak_No->CurrentValue = GetNextNoKontrak(); // trik
+			}
 			$this->Kontrak_No->EditValue = $this->Kontrak_No->CurrentValue; // tampilkan
 
 			//$this->Kode->ReadOnly = TRUE; // supaya tidak bisa diubah
+			if (isset($_GET["id"])) {
+
+				//echo "id ".$_GET["id"];
+				// proses copy
+
+			}
 		}
 
 		// Kondisi saat form Tambah sedang dalam mode konfirmasi
