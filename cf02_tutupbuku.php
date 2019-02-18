@@ -338,7 +338,7 @@ if (isset($_GET["ok"])) {
 			<div class="panel-body">
 				<p>Proses Tutup Buku selesai !</p>
 				<p>&nbsp;</p>
-				<p><a href='cf02_tutupbukuproses.php'><button>Proses</button></a></p>
+				<p><a href='.'><button>Selesai</button></a></p>
 				<!--<table class='table table-striped table-bordered table-hover table-condensed'>
 					<tr>
 						<td>Proses Tutup Buku selesai !</td>

@@ -2870,8 +2870,6 @@ ft03_pinjamanlistsrch.ValidateRequired = false; // No JavaScript validation
 
 // Dynamic selection lists
 ft03_pinjamanlistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
-ft03_pinjamanlistsrch.Lists["x_Macet"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft03_pinjamanlistsrch.Lists["x_Macet"].Options = <?php echo json_encode($t03_pinjaman->Macet->Options()) ?>;
 </script>
 <script type="text/javascript">
 
@@ -2979,20 +2977,6 @@ $t03_pinjaman_list->RenderRow();
 <?php } ?>
 </div>
 <div id="xsr_3" class="ewRow">
-<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
-	<div id="xsc_Macet" class="ewCell form-group">
-		<label class="ewSearchCaption ewLabel"><?php echo $t03_pinjaman->Macet->FldCaption() ?></label>
-		<span class="ewSearchOperator"><?php echo $Language->Phrase("=") ?><input type="hidden" name="z_Macet" id="z_Macet" value="="></span>
-		<span class="ewSearchField">
-<div id="tp_x_Macet" class="ewTemplate"><input type="radio" data-table="t03_pinjaman" data-field="x_Macet" data-value-separator="<?php echo $t03_pinjaman->Macet->DisplayValueSeparatorAttribute() ?>" name="x_Macet" id="x_Macet" value="{value}"<?php echo $t03_pinjaman->Macet->EditAttributes() ?>></div>
-<div id="dsl_x_Macet" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t03_pinjaman->Macet->RadioButtonListHtml(FALSE, "x_Macet") ?>
-</div></div>
-</span>
-	</div>
-<?php } ?>
-</div>
-<div id="xsr_4" class="ewRow">
 	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("QuickSearchBtn") ?></button>
 </div>
 	</div>
