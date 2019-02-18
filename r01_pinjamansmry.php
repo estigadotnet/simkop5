@@ -554,12 +554,13 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 		$this->Biaya_Materai->SetVisibility();
 		$this->marketing_id->SetVisibility();
 		$this->Periode->SetVisibility();
+		$this->Macet->SetVisibility();
 
 		// Aggregate variables
 		// 1st dimension = no of groups (level 0 used for grand total)
 		// 2nd dimension = no of fields
 
-		$nDtls = 18;
+		$nDtls = 19;
 		$nGrps = 1;
 		$this->Val = &ewr_InitArray($nDtls, 0);
 		$this->Cnt = &ewr_Init2DArray($nGrps, $nDtls, 0);
@@ -572,7 +573,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 		$this->GrandMx = &ewr_InitArray($nDtls, NULL);
 
 		// Set up array if accumulation required: array(Accum, SkipNullOrZero)
-		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(TRUE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE));
+		$this->Col = array(array(FALSE, FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(TRUE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE), array(FALSE,FALSE));
 
 		// Set up groups per page dynamically
 		$this->SetUpDisplayGrps();
@@ -792,6 +793,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 				$this->FirstRowData['Biaya_Materai'] = ewr_Conv($rs->fields('Biaya_Materai'), 4);
 				$this->FirstRowData['marketing_id'] = ewr_Conv($rs->fields('marketing_id'), 3);
 				$this->FirstRowData['Periode'] = ewr_Conv($rs->fields('Periode'), 200);
+				$this->FirstRowData['Macet'] = ewr_Conv($rs->fields('Macet'), 202);
 		} else { // Get next row
 			$rs->MoveNext();
 		}
@@ -814,6 +816,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 			$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 			$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 			$this->Periode->setDbValue($rs->fields('Periode'));
+			$this->Macet->setDbValue($rs->fields('Macet'));
 			$this->Val[1] = $this->Kontrak_No->CurrentValue;
 			$this->Val[2] = $this->Kontrak_Tgl->CurrentValue;
 			$this->Val[3] = $this->nasabah_id->CurrentValue;
@@ -831,6 +834,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 			$this->Val[15] = $this->Biaya_Materai->CurrentValue;
 			$this->Val[16] = $this->marketing_id->CurrentValue;
 			$this->Val[17] = $this->Periode->CurrentValue;
+			$this->Val[18] = $this->Macet->CurrentValue;
 		} else {
 			$this->id->setDbValue("");
 			$this->Kontrak_No->setDbValue("");
@@ -850,6 +854,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 			$this->Biaya_Materai->setDbValue("");
 			$this->marketing_id->setDbValue("");
 			$this->Periode->setDbValue("");
+			$this->Macet->setDbValue("");
 		}
 	}
 
@@ -1033,6 +1038,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 				$this->GrandCnt[15] = $this->TotCount;
 				$this->GrandCnt[16] = $this->TotCount;
 				$this->GrandCnt[17] = $this->TotCount;
+				$this->GrandCnt[18] = $this->TotCount;
 				$rsagg->Close();
 				$bGotSummary = TRUE;
 			}
@@ -1119,6 +1125,9 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 
 			// Periode
 			$this->Periode->HrefValue = "";
+
+			// Macet
+			$this->Macet->HrefValue = "";
 		} else {
 			if ($this->RowTotalType == EWR_ROWTOTAL_GROUP && $this->RowTotalSubType == EWR_ROWTOTAL_HEADER) {
 			} else {
@@ -1211,6 +1220,10 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 			$this->Periode->ViewValue = $this->Periode->CurrentValue;
 			$this->Periode->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
 
+			// Macet
+			$this->Macet->ViewValue = ewr_BooleanName($this->Macet->CurrentValue);
+			$this->Macet->CellAttrs["class"] = ($this->RecCount % 2 <> 1) ? "ewTableAltRow" : "ewTableRow";
+
 			// Kontrak_No
 			$this->Kontrak_No->HrefValue = "";
 
@@ -1261,6 +1274,9 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 
 			// Periode
 			$this->Periode->HrefValue = "";
+
+			// Macet
+			$this->Macet->HrefValue = "";
 		}
 
 		// Call Cell_Rendered event
@@ -1428,6 +1444,15 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 			$HrefValue = &$this->Periode->HrefValue;
 			$LinkAttrs = &$this->Periode->LinkAttrs;
 			$this->Cell_Rendered($this->Periode, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
+
+			// Macet
+			$CurrentValue = $this->Macet->CurrentValue;
+			$ViewValue = &$this->Macet->ViewValue;
+			$ViewAttrs = &$this->Macet->ViewAttrs;
+			$CellAttrs = &$this->Macet->CellAttrs;
+			$HrefValue = &$this->Macet->HrefValue;
+			$LinkAttrs = &$this->Macet->LinkAttrs;
+			$this->Cell_Rendered($this->Macet, $CurrentValue, $ViewValue, $ViewAttrs, $CellAttrs, $HrefValue, $LinkAttrs);
 		}
 
 		// Call Row_Rendered event
@@ -1457,6 +1482,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 		if ($this->Biaya_Materai->Visible) $this->DtlColumnCount += 1;
 		if ($this->marketing_id->Visible) $this->DtlColumnCount += 1;
 		if ($this->Periode->Visible) $this->DtlColumnCount += 1;
+		if ($this->Macet->Visible) $this->DtlColumnCount += 1;
 	}
 
 	// Set up Breadcrumb
@@ -1524,6 +1550,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 			$this->Biaya_Materai->setSort("");
 			$this->marketing_id->setSort("");
 			$this->Periode->setSort("");
+			$this->Macet->setSort("");
 
 		// Check for an Order parameter
 		} elseif ($orderBy <> "") {
@@ -1546,6 +1573,7 @@ class crr01_pinjaman_summary extends crr01_pinjaman {
 			$this->UpdateSort($this->Biaya_Materai, $bCtrl); // Biaya_Materai
 			$this->UpdateSort($this->marketing_id, $bCtrl); // marketing_id
 			$this->UpdateSort($this->Periode, $bCtrl); // Periode
+			$this->UpdateSort($this->Macet, $bCtrl); // Macet
 			$sSortSql = $this->SortSql();
 			$this->setOrderBy($sSortSql);
 			$this->setStartGroup(1);
@@ -2276,6 +2304,24 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 	</td>
 <?php } ?>
 <?php } ?>
+<?php if ($Page->Macet->Visible) { ?>
+<?php if ($Page->Export <> "" || $Page->DrillDown) { ?>
+	<td data-field="Macet"><div class="r01_pinjaman_Macet"><span class="ewTableHeaderCaption"><?php echo $Page->Macet->FldCaption() ?></span></div></td>
+<?php } else { ?>
+	<td data-field="Macet">
+<?php if ($Page->SortUrl($Page->Macet) == "") { ?>
+		<div class="ewTableHeaderBtn r01_pinjaman_Macet">
+			<span class="ewTableHeaderCaption"><?php echo $Page->Macet->FldCaption() ?></span>
+		</div>
+<?php } else { ?>
+		<div class="ewTableHeaderBtn ewPointer r01_pinjaman_Macet" onclick="ewr_Sort(event,'<?php echo $Page->SortUrl($Page->Macet) ?>',2);">
+			<span class="ewTableHeaderCaption"><?php echo $Page->Macet->FldCaption() ?></span>
+			<span class="ewTableHeaderSort"><?php if ($Page->Macet->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($Page->Macet->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span>
+		</div>
+<?php } ?>
+	</td>
+<?php } ?>
+<?php } ?>
 	</tr>
 </thead>
 <tbody>
@@ -2362,6 +2408,10 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 		<td data-field="Periode"<?php echo $Page->Periode->CellAttributes() ?>>
 <span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->RecCount ?>_r01_pinjaman_Periode"<?php echo $Page->Periode->ViewAttributes() ?>><?php echo $Page->Periode->ListViewValue() ?></span></td>
 <?php } ?>
+<?php if ($Page->Macet->Visible) { ?>
+		<td data-field="Macet"<?php echo $Page->Macet->CellAttributes() ?>>
+<span data-class="tpx<?php echo $Page->GrpCount ?>_<?php echo $Page->RecCount ?>_r01_pinjaman_Macet"<?php echo $Page->Macet->ViewAttributes() ?>><?php echo $Page->Macet->ListViewValue() ?></span></td>
+<?php } ?>
 	</tr>
 <?php
 
@@ -2439,6 +2489,9 @@ while ($rs && !$rs->EOF && $Page->GrpCount <= $Page->DisplayGrps || $Page->ShowH
 <?php } ?>
 <?php if ($Page->Periode->Visible) { ?>
 		<td data-field="Periode"<?php echo $Page->Periode->CellAttributes() ?>>&nbsp;</td>
+<?php } ?>
+<?php if ($Page->Macet->Visible) { ?>
+		<td data-field="Macet"<?php echo $Page->Macet->CellAttributes() ?>>&nbsp;</td>
 <?php } ?>
 	</tr>
 	</tfoot>

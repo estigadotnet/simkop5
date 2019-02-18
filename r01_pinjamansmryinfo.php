@@ -27,6 +27,7 @@ class crr01_pinjaman extends crTableBase {
 	var $Biaya_Materai;
 	var $marketing_id;
 	var $Periode;
+	var $Macet;
 
 	//
 	// Table class constructor
@@ -197,6 +198,14 @@ class crr01_pinjaman extends crTableBase {
 		$this->Periode->DateFilter = "";
 		$this->Periode->SqlSelect = "";
 		$this->Periode->SqlOrderBy = "";
+
+		// Macet
+		$this->Macet = new crField('r01_pinjaman', 'r01_pinjaman', 'x_Macet', 'Macet', '`Macet`', 202, EWR_DATATYPE_STRING, -1);
+		$this->Macet->Sortable = TRUE; // Allow sort
+		$this->fields['Macet'] = &$this->Macet;
+		$this->Macet->DateFilter = "";
+		$this->Macet->SqlSelect = "";
+		$this->Macet->SqlOrderBy = "";
 	}
 
 	// Set Field Visibility
