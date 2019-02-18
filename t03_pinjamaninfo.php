@@ -31,6 +31,7 @@ class ct03_pinjaman extends cTable {
 	var $Biaya_Materai;
 	var $marketing_id;
 	var $Periode;
+	var $Macet;
 
 	//
 	// Table class constructor
@@ -169,6 +170,15 @@ class ct03_pinjaman extends cTable {
 		$this->Periode = new cField('t03_pinjaman', 't03_pinjaman', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Periode->Sortable = TRUE; // Allow sort
 		$this->fields['Periode'] = &$this->Periode;
+
+		// Macet
+		$this->Macet = new cField('t03_pinjaman', 't03_pinjaman', 'x_Macet', 'Macet', '`Macet`', '`Macet`', 202, -1, FALSE, '`Macet`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'RADIO');
+		$this->Macet->Sortable = TRUE; // Allow sort
+		$this->Macet->FldDataType = EW_DATATYPE_BOOLEAN;
+		$this->Macet->TrueValue = 'Y';
+		$this->Macet->FalseValue = 'N';
+		$this->Macet->OptionCount = 2;
+		$this->fields['Macet'] = &$this->Macet;
 	}
 
 	// Set Field Visibility
@@ -883,6 +893,7 @@ class ct03_pinjaman extends cTable {
 		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Macet->setDbValue($rs->fields('Macet'));
 	}
 
 	// Render list row values
@@ -911,6 +922,7 @@ class ct03_pinjaman extends cTable {
 		// Biaya_Materai
 		// marketing_id
 		// Periode
+		// Macet
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -1076,6 +1088,14 @@ class ct03_pinjaman extends cTable {
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
 
+		// Macet
+		if (ew_ConvertToBool($this->Macet->CurrentValue)) {
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "Yes";
+		} else {
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "No";
+		}
+		$this->Macet->ViewCustomAttributes = "";
+
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
@@ -1165,6 +1185,17 @@ class ct03_pinjaman extends cTable {
 		$this->Periode->LinkCustomAttributes = "";
 		$this->Periode->HrefValue = "";
 		$this->Periode->TooltipValue = "";
+
+		// Macet
+		$this->Macet->LinkCustomAttributes = "";
+		if (!ew_Empty($this->id->CurrentValue)) {
+			$this->Macet->HrefValue = "cf09_nasabahmacet.php?id=" . ((!empty($this->id->ViewValue)) ? ew_RemoveHtml($this->id->ViewValue) : $this->id->CurrentValue); // Add prefix/suffix
+			$this->Macet->LinkAttrs["target"] = ""; // Add target
+			if ($this->Export <> "") $this->Macet->HrefValue = ew_ConvertFullUrl($this->Macet->HrefValue);
+		} else {
+			$this->Macet->HrefValue = "";
+		}
+		$this->Macet->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -1286,6 +1317,10 @@ class ct03_pinjaman extends cTable {
 		$this->Periode->EditValue = $this->Periode->CurrentValue;
 		$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
 
+		// Macet
+		$this->Macet->EditCustomAttributes = "";
+		$this->Macet->EditValue = $this->Macet->Options(FALSE);
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -1329,6 +1364,7 @@ class ct03_pinjaman extends cTable {
 					if ($this->Biaya_Administrasi->Exportable) $Doc->ExportCaption($this->Biaya_Administrasi);
 					if ($this->Biaya_Materai->Exportable) $Doc->ExportCaption($this->Biaya_Materai);
 					if ($this->marketing_id->Exportable) $Doc->ExportCaption($this->marketing_id);
+					if ($this->Macet->Exportable) $Doc->ExportCaption($this->Macet);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->Kontrak_No->Exportable) $Doc->ExportCaption($this->Kontrak_No);
@@ -1348,6 +1384,7 @@ class ct03_pinjaman extends cTable {
 					if ($this->Biaya_Materai->Exportable) $Doc->ExportCaption($this->Biaya_Materai);
 					if ($this->marketing_id->Exportable) $Doc->ExportCaption($this->marketing_id);
 					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
+					if ($this->Macet->Exportable) $Doc->ExportCaption($this->Macet);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1395,6 +1432,7 @@ class ct03_pinjaman extends cTable {
 						if ($this->Biaya_Administrasi->Exportable) $Doc->ExportField($this->Biaya_Administrasi);
 						if ($this->Biaya_Materai->Exportable) $Doc->ExportField($this->Biaya_Materai);
 						if ($this->marketing_id->Exportable) $Doc->ExportField($this->marketing_id);
+						if ($this->Macet->Exportable) $Doc->ExportField($this->Macet);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->Kontrak_No->Exportable) $Doc->ExportField($this->Kontrak_No);
@@ -1414,6 +1452,7 @@ class ct03_pinjaman extends cTable {
 						if ($this->Biaya_Materai->Exportable) $Doc->ExportField($this->Biaya_Materai);
 						if ($this->marketing_id->Exportable) $Doc->ExportField($this->marketing_id);
 						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
+						if ($this->Macet->Exportable) $Doc->ExportField($this->Macet);
 					}
 					$Doc->EndExportRow();
 				}

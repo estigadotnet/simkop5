@@ -5,6 +5,7 @@
 // nasabah_id
 // Pinjaman
 // marketing_id
+// Macet
 
 ?>
 <?php if ($t03_pinjaman->Visible) { ?>
@@ -63,6 +64,22 @@
 <span id="el_t03_pinjaman_marketing_id">
 <span<?php echo $t03_pinjaman->marketing_id->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->marketing_id->ListViewValue() ?></span>
+</span>
+</td>
+		</tr>
+<?php } ?>
+<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
+		<tr id="r_Macet">
+			<td><?php echo $t03_pinjaman->Macet->FldCaption() ?></td>
+			<td<?php echo $t03_pinjaman->Macet->CellAttributes() ?>>
+<span id="el_t03_pinjaman_Macet">
+<span<?php echo $t03_pinjaman->Macet->ViewAttributes() ?>>
+<?php if ((!ew_EmptyStr($t03_pinjaman->Macet->ListViewValue())) && $t03_pinjaman->Macet->LinkAttributes() <> "") { ?>
+<a<?php echo $t03_pinjaman->Macet->LinkAttributes() ?>><?php echo $t03_pinjaman->Macet->ListViewValue() ?></a>
+<?php } else { ?>
+<?php echo $t03_pinjaman->Macet->ListViewValue() ?>
+<?php } ?>
+</span>
 </span>
 </td>
 		</tr>

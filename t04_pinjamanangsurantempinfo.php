@@ -1410,13 +1410,13 @@ class ct04_pinjamanangsurantemp extends cTable {
 				$rsnew["Keterangan"] = "Denda Rp. ".number_format(f_hitungdenda($hari_terlambat->days), 2);
 			}
 		}
-
-		//$rsnew["Periode"] = $GLOBALS["Periode"];
+		$rsnew["Periode"] = $GLOBALS["Periode"];
 		/*
 		$rsnew["Periode"] = substr($this->Tanggal_Bayar->CurrentValue, 0, 4).
 			substr($this->Tanggal_Bayar->CurrentValue, 5, 2);
 		*/
-		$rsnew["Periode"] = f_periode($this->Tanggal_Bayar->CurrentValue);
+
+		//$rsnew["Periode"] = f_periode($this->Tanggal_Bayar->CurrentValue);
 		return true;
 	}
 

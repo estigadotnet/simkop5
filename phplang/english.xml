@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/2/15" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/2/18" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,6 +583,9 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
+    <menu id="10178">
+      <phrase id="menutext" value="Nasabah Macet" />
+    </menu>
     <menu id="10174">
       <phrase id="menutext" value="v 06 nrcper" />
     </menu>
@@ -959,6 +962,13 @@
       </field>
       <field id="periode">
         <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="macet">
+        <phrase id="fldcaption" value="Macet" />
+        <phrase id="fldtagvalue1" value="Y" />
+        <phrase id="fldtagcaption1" value="Yes" />
+        <phrase id="fldtagvalue2" value="N" />
+        <phrase id="fldtagcaption2" value="No" />
       </field>
     </table>
     <table id="t04_pinjamanangsuran">
@@ -1717,6 +1727,9 @@
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
       </field>
+    </table>
+    <table id="cf09_nasabahmacet_php">
+      <phrase id="tblcaption" value="Nasabah Macet" />
     </table>
   </project>
 </ew-language>

@@ -418,6 +418,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->nasabah_id->SetVisibility();
 		$this->Pinjaman->SetVisibility();
 		$this->marketing_id->SetVisibility();
+		$this->Macet->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -815,6 +816,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$sFilterList = ew_Concat($sFilterList, $this->Biaya_Materai->AdvancedSearch->ToJSON(), ","); // Field Biaya_Materai
 		$sFilterList = ew_Concat($sFilterList, $this->marketing_id->AdvancedSearch->ToJSON(), ","); // Field marketing_id
 		$sFilterList = ew_Concat($sFilterList, $this->Periode->AdvancedSearch->ToJSON(), ","); // Field Periode
+		$sFilterList = ew_Concat($sFilterList, $this->Macet->AdvancedSearch->ToJSON(), ","); // Field Macet
 		$sFilterList = preg_replace('/,$/', "", $sFilterList);
 
 		// Return filter list in json
@@ -998,6 +1000,14 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Periode->AdvancedSearch->SearchValue2 = @$filter["y_Periode"];
 		$this->Periode->AdvancedSearch->SearchOperator2 = @$filter["w_Periode"];
 		$this->Periode->AdvancedSearch->Save();
+
+		// Field Macet
+		$this->Macet->AdvancedSearch->SearchValue = @$filter["x_Macet"];
+		$this->Macet->AdvancedSearch->SearchOperator = @$filter["z_Macet"];
+		$this->Macet->AdvancedSearch->SearchCondition = @$filter["v_Macet"];
+		$this->Macet->AdvancedSearch->SearchValue2 = @$filter["y_Macet"];
+		$this->Macet->AdvancedSearch->SearchOperator2 = @$filter["w_Macet"];
+		$this->Macet->AdvancedSearch->Save();
 	}
 
 	// Advanced search WHERE clause based on QueryString
@@ -1023,6 +1033,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->BuildSearchSql($sWhere, $this->Biaya_Materai, $Default, FALSE); // Biaya_Materai
 		$this->BuildSearchSql($sWhere, $this->marketing_id, $Default, FALSE); // marketing_id
 		$this->BuildSearchSql($sWhere, $this->Periode, $Default, FALSE); // Periode
+		$this->BuildSearchSql($sWhere, $this->Macet, $Default, FALSE); // Macet
 
 		// Set up search parm
 		if (!$Default && $sWhere <> "") {
@@ -1047,6 +1058,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->Biaya_Materai->AdvancedSearch->Save(); // Biaya_Materai
 			$this->marketing_id->AdvancedSearch->Save(); // marketing_id
 			$this->Periode->AdvancedSearch->Save(); // Periode
+			$this->Macet->AdvancedSearch->Save(); // Macet
 		}
 		return $sWhere;
 	}
@@ -1137,6 +1149,8 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			return TRUE;
 		if ($this->Periode->AdvancedSearch->IssetSession())
 			return TRUE;
+		if ($this->Macet->AdvancedSearch->IssetSession())
+			return TRUE;
 		return FALSE;
 	}
 
@@ -1176,6 +1190,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Materai->AdvancedSearch->UnsetSession();
 		$this->marketing_id->AdvancedSearch->UnsetSession();
 		$this->Periode->AdvancedSearch->UnsetSession();
+		$this->Macet->AdvancedSearch->UnsetSession();
 	}
 
 	// Restore all search parameters
@@ -1201,6 +1216,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Materai->AdvancedSearch->Load();
 		$this->marketing_id->AdvancedSearch->Load();
 		$this->Periode->AdvancedSearch->Load();
+		$this->Macet->AdvancedSearch->Load();
 	}
 
 	// Set up sort parameters
@@ -1218,6 +1234,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
 			$this->UpdateSort($this->Pinjaman, $bCtrl); // Pinjaman
 			$this->UpdateSort($this->marketing_id, $bCtrl); // marketing_id
+			$this->UpdateSort($this->Macet, $bCtrl); // Macet
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1256,6 +1273,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 				$this->nasabah_id->setSort("");
 				$this->Pinjaman->setSort("");
 				$this->marketing_id->setSort("");
+				$this->Macet->setSort("");
 			}
 
 			// Reset start position
@@ -1913,6 +1931,11 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Periode->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Periode"]);
 		if ($this->Periode->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->Periode->AdvancedSearch->SearchOperator = @$_GET["z_Periode"];
+
+		// Macet
+		$this->Macet->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Macet"]);
+		if ($this->Macet->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Macet->AdvancedSearch->SearchOperator = @$_GET["z_Macet"];
 	}
 
 	// Load recordset
@@ -1993,6 +2016,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Macet->setDbValue($rs->fields('Macet'));
 	}
 
 	// Load DbValue from recordset
@@ -2017,6 +2041,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Materai->DbValue = $row['Biaya_Materai'];
 		$this->marketing_id->DbValue = $row['marketing_id'];
 		$this->Periode->DbValue = $row['Periode'];
+		$this->Macet->DbValue = $row['Macet'];
 	}
 
 	// Load old record
@@ -2080,6 +2105,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		// Biaya_Materai
 		// marketing_id
 		// Periode
+		// Macet
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -2247,6 +2273,14 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
 
+		// Macet
+		if (ew_ConvertToBool($this->Macet->CurrentValue)) {
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "Yes";
+		} else {
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "No";
+		}
+		$this->Macet->ViewCustomAttributes = "";
+
 			// Kontrak_No
 			$this->Kontrak_No->LinkCustomAttributes = "";
 			$this->Kontrak_No->HrefValue = "";
@@ -2271,6 +2305,17 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->marketing_id->LinkCustomAttributes = "";
 			$this->marketing_id->HrefValue = "";
 			$this->marketing_id->TooltipValue = "";
+
+			// Macet
+			$this->Macet->LinkCustomAttributes = "";
+			if (!ew_Empty($this->id->CurrentValue)) {
+				$this->Macet->HrefValue = "cf09_nasabahmacet.php?id=" . ((!empty($this->id->ViewValue)) ? ew_RemoveHtml($this->id->ViewValue) : $this->id->CurrentValue); // Add prefix/suffix
+				$this->Macet->LinkAttrs["target"] = ""; // Add target
+				if ($this->Export <> "") $this->Macet->HrefValue = ew_ConvertFullUrl($this->Macet->HrefValue);
+			} else {
+				$this->Macet->HrefValue = "";
+			}
+			$this->Macet->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
 
 			// Kontrak_No
@@ -2306,6 +2351,10 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->marketing_id->EditCustomAttributes = "";
 			$this->marketing_id->EditValue = ew_HtmlEncode($this->marketing_id->AdvancedSearch->SearchValue);
 			$this->marketing_id->PlaceHolder = ew_RemoveHtml($this->marketing_id->FldCaption());
+
+			// Macet
+			$this->Macet->EditCustomAttributes = "";
+			$this->Macet->EditValue = $this->Macet->Options(FALSE);
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -2361,6 +2410,7 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Biaya_Materai->AdvancedSearch->Load();
 		$this->marketing_id->AdvancedSearch->Load();
 		$this->Periode->AdvancedSearch->Load();
+		$this->Macet->AdvancedSearch->Load();
 	}
 
 	// Set up export options
@@ -2698,11 +2748,11 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			//echo "-".$pinjaman_id;
 			$t04_angsuranbaru = f_cariangsuranbaru($pinjaman_id);
 		}
-		$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-		$this->ListOptions->Items["angsuran"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\"   data-caption=\"Bayar Angsuran\"   href=\"t04_pinjamanangsurantempedit.php?id=".$t04_angsuranbaru."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\">Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-		$this->ListOptions->Items["edit_angsuran"]->Body    = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."&edit=1\">Edit Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-		$this->ListOptions->Items["titipan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\" data-caption=\"Setor Titipan\" href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
-		$this->ListOptions->Items["potongan"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Potongan\" data-caption=\"Potongan\" href=\"t08_pinjamanpotonganlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\">Potongan</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\"                          >Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["angsuran"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\"   data-caption=\"Bayar Angsuran\"   href=\"t04_pinjamanangsurantempedit.php?id=".$t04_angsuranbaru."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\" >Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["edit_angsuran"]->Body    = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."&edit=1\"                   >Edit Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["titipan"]->Body          = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\"    data-caption=\"Setor Titipan\"    href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\"                                           >Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
+		$this->ListOptions->Items["potongan"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Potongan\"         data-caption=\"Potongan\"         href=\"t08_pinjamanpotonganlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\"                                          >Potongan</a>"; // definisikan link, style, dan caption tombol //"xxx";
 	}
 
 	// Row Custom Action event
@@ -2784,6 +2834,8 @@ ft03_pinjamanlist.ValidateRequired = false;
 // Dynamic selection lists
 ft03_pinjamanlist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 ft03_pinjamanlist.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
+ft03_pinjamanlist.Lists["x_Macet"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft03_pinjamanlist.Lists["x_Macet"].Options = <?php echo json_encode($t03_pinjaman->Macet->Options()) ?>;
 
 // Form object for search
 var CurrentSearchForm = ft03_pinjamanlistsrch = new ew_Form("ft03_pinjamanlistsrch");
@@ -2818,6 +2870,8 @@ ft03_pinjamanlistsrch.ValidateRequired = false; // No JavaScript validation
 
 // Dynamic selection lists
 ft03_pinjamanlistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft03_pinjamanlistsrch.Lists["x_Macet"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft03_pinjamanlistsrch.Lists["x_Macet"].Options = <?php echo json_encode($t03_pinjaman->Macet->Options()) ?>;
 </script>
 <script type="text/javascript">
 
@@ -2925,6 +2979,20 @@ $t03_pinjaman_list->RenderRow();
 <?php } ?>
 </div>
 <div id="xsr_3" class="ewRow">
+<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
+	<div id="xsc_Macet" class="ewCell form-group">
+		<label class="ewSearchCaption ewLabel"><?php echo $t03_pinjaman->Macet->FldCaption() ?></label>
+		<span class="ewSearchOperator"><?php echo $Language->Phrase("=") ?><input type="hidden" name="z_Macet" id="z_Macet" value="="></span>
+		<span class="ewSearchField">
+<div id="tp_x_Macet" class="ewTemplate"><input type="radio" data-table="t03_pinjaman" data-field="x_Macet" data-value-separator="<?php echo $t03_pinjaman->Macet->DisplayValueSeparatorAttribute() ?>" name="x_Macet" id="x_Macet" value="{value}"<?php echo $t03_pinjaman->Macet->EditAttributes() ?>></div>
+<div id="dsl_x_Macet" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t03_pinjaman->Macet->RadioButtonListHtml(FALSE, "x_Macet") ?>
+</div></div>
+</span>
+	</div>
+<?php } ?>
+</div>
+<div id="xsr_4" class="ewRow">
 	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("QuickSearchBtn") ?></button>
 </div>
 	</div>
@@ -3002,6 +3070,15 @@ $t03_pinjaman_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="marketing_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->marketing_id) ?>',2);"><div id="elh_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->marketing_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->marketing_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->marketing_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
+	<?php if ($t03_pinjaman->SortUrl($t03_pinjaman->Macet) == "") { ?>
+		<th data-name="Macet"><div id="elh_t03_pinjaman_Macet" class="t03_pinjaman_Macet"><div class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Macet->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Macet"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t03_pinjaman->SortUrl($t03_pinjaman->Macet) ?>',2);"><div id="elh_t03_pinjaman_Macet" class="t03_pinjaman_Macet">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t03_pinjaman->Macet->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t03_pinjaman->Macet->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t03_pinjaman->Macet->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -3107,6 +3184,19 @@ $t03_pinjaman_list->ListOptions->Render("body", "left", $t03_pinjaman_list->RowC
 <span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id">
 <span<?php echo $t03_pinjaman->marketing_id->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->marketing_id->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
+		<td data-name="Macet"<?php echo $t03_pinjaman->Macet->CellAttributes() ?>>
+<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Macet" class="t03_pinjaman_Macet">
+<span<?php echo $t03_pinjaman->Macet->ViewAttributes() ?>>
+<?php if ((!ew_EmptyStr($t03_pinjaman->Macet->ListViewValue())) && $t03_pinjaman->Macet->LinkAttributes() <> "") { ?>
+<a<?php echo $t03_pinjaman->Macet->LinkAttributes() ?>><?php echo $t03_pinjaman->Macet->ListViewValue() ?></a>
+<?php } else { ?>
+<?php echo $t03_pinjaman->Macet->ListViewValue() ?>
+<?php } ?>
+</span>
 </span>
 </td>
 	<?php } ?>

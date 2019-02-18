@@ -287,6 +287,7 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->nasabah_id->SetVisibility();
 		$this->Pinjaman->SetVisibility();
 		$this->marketing_id->SetVisibility();
+		$this->Macet->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -484,6 +485,7 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Macet->setDbValue($rs->fields('Macet'));
 	}
 
 	// Load DbValue from recordset
@@ -508,6 +510,7 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Biaya_Materai->DbValue = $row['Biaya_Materai'];
 		$this->marketing_id->DbValue = $row['marketing_id'];
 		$this->Periode->DbValue = $row['Periode'];
+		$this->Macet->DbValue = $row['Macet'];
 	}
 
 	// Render row values based on field settings
@@ -542,6 +545,7 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		// Biaya_Materai
 		// marketing_id
 		// Periode
+		// Macet
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -709,6 +713,14 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
 
+		// Macet
+		if (ew_ConvertToBool($this->Macet->CurrentValue)) {
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(1) <> "" ? $this->Macet->FldTagCaption(1) : "Yes";
+		} else {
+			$this->Macet->ViewValue = $this->Macet->FldTagCaption(2) <> "" ? $this->Macet->FldTagCaption(2) : "No";
+		}
+		$this->Macet->ViewCustomAttributes = "";
+
 			// Kontrak_No
 			$this->Kontrak_No->LinkCustomAttributes = "";
 			$this->Kontrak_No->HrefValue = "";
@@ -733,6 +745,17 @@ class ct03_pinjaman_delete extends ct03_pinjaman {
 			$this->marketing_id->LinkCustomAttributes = "";
 			$this->marketing_id->HrefValue = "";
 			$this->marketing_id->TooltipValue = "";
+
+			// Macet
+			$this->Macet->LinkCustomAttributes = "";
+			if (!ew_Empty($this->id->CurrentValue)) {
+				$this->Macet->HrefValue = "cf09_nasabahmacet.php?id=" . ((!empty($this->id->ViewValue)) ? ew_RemoveHtml($this->id->ViewValue) : $this->id->CurrentValue); // Add prefix/suffix
+				$this->Macet->LinkAttrs["target"] = ""; // Add target
+				if ($this->Export <> "") $this->Macet->HrefValue = ew_ConvertFullUrl($this->Macet->HrefValue);
+			} else {
+				$this->Macet->HrefValue = "";
+			}
+			$this->Macet->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -956,6 +979,8 @@ ft03_pinjamandelete.ValidateRequired = false;
 // Dynamic selection lists
 ft03_pinjamandelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 ft03_pinjamandelete.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
+ft03_pinjamandelete.Lists["x_Macet"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft03_pinjamandelete.Lists["x_Macet"].Options = <?php echo json_encode($t03_pinjaman->Macet->Options()) ?>;
 
 // Form object for search
 </script>
@@ -1002,6 +1027,9 @@ $t03_pinjaman_delete->ShowMessage();
 <?php } ?>
 <?php if ($t03_pinjaman->marketing_id->Visible) { // marketing_id ?>
 		<th><span id="elh_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id"><?php echo $t03_pinjaman->marketing_id->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
+		<th><span id="elh_t03_pinjaman_Macet" class="t03_pinjaman_Macet"><?php echo $t03_pinjaman->Macet->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
@@ -1061,6 +1089,19 @@ while (!$t03_pinjaman_delete->Recordset->EOF) {
 <span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id">
 <span<?php echo $t03_pinjaman->marketing_id->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->marketing_id->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
+		<td<?php echo $t03_pinjaman->Macet->CellAttributes() ?>>
+<span id="el<?php echo $t03_pinjaman_delete->RowCnt ?>_t03_pinjaman_Macet" class="t03_pinjaman_Macet">
+<span<?php echo $t03_pinjaman->Macet->ViewAttributes() ?>>
+<?php if ((!ew_EmptyStr($t03_pinjaman->Macet->ListViewValue())) && $t03_pinjaman->Macet->LinkAttributes() <> "") { ?>
+<a<?php echo $t03_pinjaman->Macet->LinkAttributes() ?>><?php echo $t03_pinjaman->Macet->ListViewValue() ?></a>
+<?php } else { ?>
+<?php echo $t03_pinjaman->Macet->ListViewValue() ?>
+<?php } ?>
+</span>
 </span>
 </td>
 <?php } ?>
