@@ -583,6 +583,12 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
+    <menu id="10180">
+      <phrase id="menutext" value="t 83 saldoawalold" />
+    </menu>
+    <menu id="10181">
+      <phrase id="menutext" value="t 82 jurnalold" />
+    </menu>
     <menu id="10178">
       <phrase id="menutext" value="Nasabah Macet" />
     </menu>
@@ -1273,6 +1279,54 @@
       </field>
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="t82_jurnalold">
+      <phrase id="tblcaption" value="t 82 jurnalold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="Rekening" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+    </table>
+    <table id="t83_saldoawalold">
+      <phrase id="tblcaption" value="t 83 saldoawalold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="akun">
+        <phrase id="fldcaption" value="Akun" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="Saldo" />
       </field>
     </table>
     <table id="t84_saldoawal">

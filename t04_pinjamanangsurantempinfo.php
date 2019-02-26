@@ -1401,8 +1401,10 @@ class ct04_pinjamanangsurantemp extends cTable {
 		echo $_SESSION["Dispensasi_Denda"]."<br>";
 		exit; return false;*/
 		if ($this->Total_Denda->CurrentValue == 0) {
-			echo $this->Tanggal_Bayar->CurrentValue."<br>";
-			echo $this->Angsuran_Tanggal->CurrentValue."<br>";
+
+			//echo $this->Tanggal_Bayar->CurrentValue."<br>";
+			//echo $this->Angsuran_Tanggal->CurrentValue."<br>";
+
 			$start_date = new DateTime($this->Tanggal_Bayar->CurrentValue);
 			$end_date = new DateTime($this->Angsuran_Tanggal->CurrentValue);
 			$hari_terlambat = $start_date->diff($end_date);
@@ -1412,7 +1414,7 @@ class ct04_pinjamanangsurantemp extends cTable {
 		}
 		if (
 			(date_format(date_create($rsnew["Tanggal_Bayar"]),"Ym") <> $GLOBALS["Periode"])
-			or
+			and
 			(date_format(date_create($rsold["Tanggal_Bayar"]),"Ym") <> $GLOBALS["Periode"])
 			) {
 			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
