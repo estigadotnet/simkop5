@@ -9,7 +9,10 @@ ob_start(); // Turn on output buffering
 <?php include_once "userfn13.php" ?>
 
 <?php
-// tabel periode --------------------------------------------------
+// --------------------------------------------------
+// tabel periode
+// tabel periodeold
+// --------------------------------------------------
 // proses pindah data dari tabel periode ke tabel periode_old
 $q = "insert into t92_periodeold (Bulan, Tahun, Tahun_Bulan) select Bulan, Tahun, Tahun_Bulan from t93_periode";
 Conn()->Execute($q);
@@ -32,15 +35,41 @@ Conn()->Execute($q);
 
 $q = "insert into t93_periode values (null, ".$periode_skrg_bulan.", ".$periode_skrg_tahun.", ".$periode_skrg_tahun_bulan.")";
 Conn()->Execute($q); //echo $q; exit();
+// --------------------------------------------------
 
-// backup data laba rugi untuk periode sekarang
-// dari tabel t88_labarugi ke tabel t86_labarugiold
-$q = "SELECT * FROM `t88_labarugi` where field02 <> ''";
-$r = Conn()->Execute($q);
-$q = "insert into t86_labarugiold (Tahun_Bulan, Rekening, Jumlah)
-	select '".$periode_skrg."', field01, field03
-	from t88_labarugi where field02 <> ''";
-Conn()->Execute($q); //echo $q; exit();
+
+// --------------------------------------------------
+// tabel saldoawal
+// tabel saldoawalold
+// --------------------------------------------------
+// append data dari tabel saldoawal ke saldoawalold
+$q = "insert into t83_saldoawalold (Periode, Akun, Debet, Kredit, Saldo) SELECT Periode, Akun, Debet, Kredit, Saldo FROM `t84_saldoawal`";
+Conn()->Execute($q);
+
+// truncate tabel saldoawal
+$q = "truncate t84_saldoawal";
+Conn()->Execute($q);
+
+// copy data tabel rekening ke tabel saldoawal
+$q = "insert into t84_saldoawal (periode, akun) select '".$periode_skrg_tahun_bulan."', id from t91_rekening";
+Conn()->Execute($q);
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+// tabel jurnal
+// tabel jurnalold
+// --------------------------------------------------
+// append data dari tabel jurnal ke jurnalold
+$q = "insert into t82_jurnalold (Tanggal, Periode, NomorTransaksi, Rekening, Debet, Kredit, Keterangan) 
+	SELECT Tanggal, Periode, NomorTransaksi, Rekening, Debet, Kredit, Keterangan FROM `t10_jurnal`";
+Conn()->Execute($q);
+
+// truncate tabel jurnal
+$q = "truncate t10_jurnal";
+Conn()->Execute($q);
+// --------------------------------------------------
+
 
 // kembali ke cf02_tutupbuku
 header("location: cf02_tutupbuku.php?ok=1");

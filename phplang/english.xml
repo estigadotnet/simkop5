@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/2/19" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/2/26" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -586,12 +586,6 @@
     <menu id="10178">
       <phrase id="menutext" value="Nasabah Macet" />
     </menu>
-    <menu id="10174">
-      <phrase id="menutext" value="v 06 nrcper" />
-    </menu>
-    <menu id="10175">
-      <phrase id="menutext" value="v 07 neraca" />
-    </menu>
     <menu id="10160">
       <phrase id="menutext" value="Main Menu" />
     </menu>
@@ -624,6 +618,9 @@
     </menu>
     <menu id="10165">
       <phrase id="menutext" value="Detail" />
+    </menu>
+    <menu id="10174">
+      <phrase id="menutext" value="v 06 nrcper" />
     </menu>
     <menu id="10113">
       <phrase id="menutext" value="Laporan" />
@@ -667,6 +664,9 @@
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
     </menu>
+    <menu id="10175">
+      <phrase id="menutext" value="v 07 neraca" />
+    </menu>
     <menu id="35">
       <phrase id="menutext" value="Setup" />
     </menu>
@@ -690,6 +690,9 @@
     </menu>
     <menu id="18">
       <phrase id="menutext" value="t 92 periodeold" />
+    </menu>
+    <menu id="10179">
+      <phrase id="menutext" value="Saldo Awal" />
     </menu>
     <menu id="10052">
       <phrase id="menutext" value="Rekening" />
@@ -837,6 +840,9 @@
     </table>
     <table id="cf08_neracaproses_php">
       <phrase id="tblcaption" value="Neraca" />
+    </table>
+    <table id="cf09_nasabahmacet_php">
+      <phrase id="tblcaption" value="Nasabah Macet" />
     </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
@@ -1267,6 +1273,30 @@
       </field>
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="t84_saldoawal">
+      <phrase id="tblcaption" value="Saldo Awal" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="akun">
+        <phrase id="fldcaption" value="Akun" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="Rekening" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="Saldo" />
       </field>
     </table>
     <table id="t85_neraca2">
@@ -1727,9 +1757,6 @@
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
       </field>
-    </table>
-    <table id="cf09_nasabahmacet_php">
-      <phrase id="tblcaption" value="Nasabah Macet" />
     </table>
   </project>
 </ew-language>

@@ -2178,6 +2178,13 @@ if ($t12_jurnaldetail_list->DbMasterFilter <> "" && $t12_jurnaldetail->getCurren
 		else
 			$t12_jurnaldetail_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t12_jurnaldetail_list->AuditTrailOnSearch && $t12_jurnaldetail_list->Command == "search" && !$t12_jurnaldetail_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t12_jurnaldetail_list->getSessionWhere();
+		$t12_jurnaldetail_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t12_jurnaldetail_list->RenderOtherOptions();
 ?>
 <?php if ($Security->CanSearch()) { ?>

@@ -601,6 +601,7 @@ class ct12_jurnaldetail_view extends ct12_jurnaldetail {
 		// Call Row Selected event
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
+		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->jurnalmaster_id->setDbValue($rs->fields('jurnalmaster_id'));
 		$this->Rekening->setDbValue($rs->fields('Rekening'));

@@ -2141,6 +2141,13 @@ var CurrentSearchForm = ft11_jurnalmasterlistsrch = new ew_Form("ft11_jurnalmast
 		else
 			$t11_jurnalmaster_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+
+	// Audit trail on search
+	if ($t11_jurnalmaster_list->AuditTrailOnSearch && $t11_jurnalmaster_list->Command == "search" && !$t11_jurnalmaster_list->RestoreSearch) {
+		$searchparm = ew_ServerVar("QUERY_STRING");
+		$searchsql = $t11_jurnalmaster_list->getSessionWhere();
+		$t11_jurnalmaster_list->WriteAuditTrailOnSearch($searchparm, $searchsql);
+	}
 $t11_jurnalmaster_list->RenderOtherOptions();
 ?>
 <?php if ($Security->CanSearch()) { ?>

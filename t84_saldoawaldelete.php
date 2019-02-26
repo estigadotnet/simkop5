@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t11_jurnalmasterinfo.php" ?>
+<?php include_once "t84_saldoawalinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t11_jurnalmaster_delete = NULL; // Initialize page object first
+$t84_saldoawal_delete = NULL; // Initialize page object first
 
-class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
+class ct84_saldoawal_delete extends ct84_saldoawal {
 
 	// Page ID
 	var $PageID = 'delete';
@@ -25,10 +25,10 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't11_jurnalmaster';
+	var $TableName = 't84_saldoawal';
 
 	// Page object name
-	var $PageObjName = 't11_jurnalmaster_delete';
+	var $PageObjName = 't84_saldoawal_delete';
 
 	// Page name
 	function PageName() {
@@ -226,10 +226,10 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t11_jurnalmaster)
-		if (!isset($GLOBALS["t11_jurnalmaster"]) || get_class($GLOBALS["t11_jurnalmaster"]) == "ct11_jurnalmaster") {
-			$GLOBALS["t11_jurnalmaster"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t11_jurnalmaster"];
+		// Table object (t84_saldoawal)
+		if (!isset($GLOBALS["t84_saldoawal"]) || get_class($GLOBALS["t84_saldoawal"]) == "ct84_saldoawal") {
+			$GLOBALS["t84_saldoawal"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t84_saldoawal"];
 		}
 
 		// Table object (t96_employees)
@@ -241,7 +241,7 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't11_jurnalmaster', TRUE);
+			define("EW_TABLE_NAME", 't84_saldoawal', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -272,7 +272,7 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t11_jurnalmasterlist.php"));
+				$this->Page_Terminate(ew_GetUrl("t84_saldoawallist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -282,11 +282,12 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->Tanggal->SetVisibility();
-		$this->NomorTransaksi->SetVisibility();
-		$this->Keterangan->SetVisibility();
+		$this->Periode->SetVisibility();
+		$this->Akun->SetVisibility();
+		$this->Rekening->SetVisibility();
+		$this->Debet->SetVisibility();
+		$this->Kredit->SetVisibility();
+		$this->Saldo->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -318,13 +319,13 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t11_jurnalmaster;
+		global $EW_EXPORT, $t84_saldoawal;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t11_jurnalmaster);
+				$doc = new $class($t84_saldoawal);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -370,10 +371,10 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
 		$sFilter = $this->GetKeyFilter();
 		if ($sFilter == "")
-			$this->Page_Terminate("t11_jurnalmasterlist.php"); // Prevent SQL injection, return to list
+			$this->Page_Terminate("t84_saldoawallist.php"); // Prevent SQL injection, return to list
 
 		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in t11_jurnalmaster class, t11_jurnalmasterinfo.php
+		// SQL constructor in t84_saldoawal class, t84_saldoawalinfo.php
 
 		$this->CurrentFilter = $sFilter;
 
@@ -401,7 +402,7 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 			if ($this->TotalRecs <= 0) { // No record found, exit
 				if ($this->Recordset)
 					$this->Recordset->Close();
-				$this->Page_Terminate("t11_jurnalmasterlist.php"); // Return to list
+				$this->Page_Terminate("t84_saldoawallist.php"); // Return to list
 			}
 		}
 	}
@@ -462,10 +463,12 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
-		$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
-		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Akun->setDbValue($rs->fields('Akun'));
+		$this->Rekening->setDbValue($rs->fields('Rekening'));
+		$this->Debet->setDbValue($rs->fields('Debet'));
+		$this->Kredit->setDbValue($rs->fields('Kredit'));
+		$this->Saldo->setDbValue($rs->fields('Saldo'));
 	}
 
 	// Load DbValue from recordset
@@ -473,10 +476,12 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->Tanggal->DbValue = $row['Tanggal'];
-		$this->NomorTransaksi->DbValue = $row['NomorTransaksi'];
-		$this->Keterangan->DbValue = $row['Keterangan'];
 		$this->Periode->DbValue = $row['Periode'];
+		$this->Akun->DbValue = $row['Akun'];
+		$this->Rekening->DbValue = $row['Rekening'];
+		$this->Debet->DbValue = $row['Debet'];
+		$this->Kredit->DbValue = $row['Kredit'];
+		$this->Saldo->DbValue = $row['Saldo'];
 	}
 
 	// Render row values based on field settings
@@ -484,16 +489,30 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 		global $Security, $Language, $gsLanguage;
 
 		// Initialize URLs
-		// Call Row_Rendering event
+		// Convert decimal values if posted back
 
+		if ($this->Debet->FormValue == $this->Debet->CurrentValue && is_numeric(ew_StrToFloat($this->Debet->CurrentValue)))
+			$this->Debet->CurrentValue = ew_StrToFloat($this->Debet->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Kredit->FormValue == $this->Kredit->CurrentValue && is_numeric(ew_StrToFloat($this->Kredit->CurrentValue)))
+			$this->Kredit->CurrentValue = ew_StrToFloat($this->Kredit->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Saldo->FormValue == $this->Saldo->CurrentValue && is_numeric(ew_StrToFloat($this->Saldo->CurrentValue)))
+			$this->Saldo->CurrentValue = ew_StrToFloat($this->Saldo->CurrentValue);
+
+		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// Tanggal
-		// NomorTransaksi
-		// Keterangan
 		// Periode
+		// Akun
+		// Rekening
+		// Debet
+		// Kredit
+		// Saldo
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -501,42 +520,65 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Tanggal
-		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
-		$this->Tanggal->ViewCustomAttributes = "";
-
-		// NomorTransaksi
-		$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
-		$this->NomorTransaksi->ViewCustomAttributes = "";
-
-		// Keterangan
-		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
-		$this->Keterangan->ViewCustomAttributes = "";
-
 		// Periode
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
+		// Akun
+		$this->Akun->ViewValue = $this->Akun->CurrentValue;
+		$this->Akun->ViewCustomAttributes = "";
 
-			// Tanggal
-			$this->Tanggal->LinkCustomAttributes = "";
-			$this->Tanggal->HrefValue = "";
-			$this->Tanggal->TooltipValue = "";
+		// Rekening
+		$this->Rekening->ViewValue = $this->Rekening->CurrentValue;
+		$this->Rekening->ViewCustomAttributes = "";
 
-			// NomorTransaksi
-			$this->NomorTransaksi->LinkCustomAttributes = "";
-			$this->NomorTransaksi->HrefValue = "";
-			$this->NomorTransaksi->TooltipValue = "";
+		// Debet
+		$this->Debet->ViewValue = $this->Debet->CurrentValue;
+		$this->Debet->ViewValue = ew_FormatNumber($this->Debet->ViewValue, 2, -2, -2, -2);
+		$this->Debet->CellCssStyle .= "text-align: right;";
+		$this->Debet->ViewCustomAttributes = "";
 
-			// Keterangan
-			$this->Keterangan->LinkCustomAttributes = "";
-			$this->Keterangan->HrefValue = "";
-			$this->Keterangan->TooltipValue = "";
+		// Kredit
+		$this->Kredit->ViewValue = $this->Kredit->CurrentValue;
+		$this->Kredit->ViewValue = ew_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
+		$this->Kredit->CellCssStyle .= "text-align: right;";
+		$this->Kredit->ViewCustomAttributes = "";
+
+		// Saldo
+		$this->Saldo->ViewValue = $this->Saldo->CurrentValue;
+		$this->Saldo->ViewValue = ew_FormatNumber($this->Saldo->ViewValue, 2, -2, -2, -2);
+		$this->Saldo->CellCssStyle .= "text-align: right;";
+		$this->Saldo->ViewCustomAttributes = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
+
+			// Akun
+			$this->Akun->LinkCustomAttributes = "";
+			$this->Akun->HrefValue = "";
+			$this->Akun->TooltipValue = "";
+
+			// Rekening
+			$this->Rekening->LinkCustomAttributes = "";
+			$this->Rekening->HrefValue = "";
+			$this->Rekening->TooltipValue = "";
+
+			// Debet
+			$this->Debet->LinkCustomAttributes = "";
+			$this->Debet->HrefValue = "";
+			$this->Debet->TooltipValue = "";
+
+			// Kredit
+			$this->Kredit->LinkCustomAttributes = "";
+			$this->Kredit->HrefValue = "";
+			$this->Kredit->TooltipValue = "";
+
+			// Saldo
+			$this->Saldo->LinkCustomAttributes = "";
+			$this->Saldo->HrefValue = "";
+			$this->Saldo->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -635,7 +677,7 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t11_jurnalmasterlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t84_saldoawallist.php"), "", $this->TableVar, TRUE);
 		$PageId = "delete";
 		$Breadcrumb->Add("delete", $PageId, $url);
 	}
@@ -721,29 +763,29 @@ class ct11_jurnalmaster_delete extends ct11_jurnalmaster {
 <?php
 
 // Create page object
-if (!isset($t11_jurnalmaster_delete)) $t11_jurnalmaster_delete = new ct11_jurnalmaster_delete();
+if (!isset($t84_saldoawal_delete)) $t84_saldoawal_delete = new ct84_saldoawal_delete();
 
 // Page init
-$t11_jurnalmaster_delete->Page_Init();
+$t84_saldoawal_delete->Page_Init();
 
 // Page main
-$t11_jurnalmaster_delete->Page_Main();
+$t84_saldoawal_delete->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t11_jurnalmaster_delete->Page_Render();
+$t84_saldoawal_delete->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = ft11_jurnalmasterdelete = new ew_Form("ft11_jurnalmasterdelete", "delete");
+var CurrentForm = ft84_saldoawaldelete = new ew_Form("ft84_saldoawaldelete", "delete");
 
 // Form_CustomValidate event
-ft11_jurnalmasterdelete.Form_CustomValidate = 
+ft84_saldoawaldelete.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -752,9 +794,9 @@ ft11_jurnalmasterdelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft11_jurnalmasterdelete.ValidateRequired = true;
+ft84_saldoawaldelete.ValidateRequired = true;
 <?php } else { ?>
-ft11_jurnalmasterdelete.ValidateRequired = false; 
+ft84_saldoawaldelete.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -770,96 +812,118 @@ ft11_jurnalmasterdelete.ValidateRequired = false;
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $t11_jurnalmaster_delete->ShowPageHeader(); ?>
+<?php $t84_saldoawal_delete->ShowPageHeader(); ?>
 <?php
-$t11_jurnalmaster_delete->ShowMessage();
+$t84_saldoawal_delete->ShowMessage();
 ?>
-<form name="ft11_jurnalmasterdelete" id="ft11_jurnalmasterdelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t11_jurnalmaster_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t11_jurnalmaster_delete->Token ?>">
+<form name="ft84_saldoawaldelete" id="ft84_saldoawaldelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t84_saldoawal_delete->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t84_saldoawal_delete->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t11_jurnalmaster">
+<input type="hidden" name="t" value="t84_saldoawal">
 <input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($t11_jurnalmaster_delete->RecKeys as $key) { ?>
+<?php foreach ($t84_saldoawal_delete->RecKeys as $key) { ?>
 <?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
 <input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
 <?php } ?>
 <div class="ewGrid">
 <div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <table class="table ewTable">
-<?php echo $t11_jurnalmaster->TableCustomInnerHtml ?>
+<?php echo $t84_saldoawal->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t11_jurnalmaster->id->Visible) { // id ?>
-		<th><span id="elh_t11_jurnalmaster_id" class="t11_jurnalmaster_id"><?php echo $t11_jurnalmaster->id->FldCaption() ?></span></th>
+<?php if ($t84_saldoawal->Periode->Visible) { // Periode ?>
+		<th><span id="elh_t84_saldoawal_Periode" class="t84_saldoawal_Periode"><?php echo $t84_saldoawal->Periode->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t11_jurnalmaster->Tanggal->Visible) { // Tanggal ?>
-		<th><span id="elh_t11_jurnalmaster_Tanggal" class="t11_jurnalmaster_Tanggal"><?php echo $t11_jurnalmaster->Tanggal->FldCaption() ?></span></th>
+<?php if ($t84_saldoawal->Akun->Visible) { // Akun ?>
+		<th><span id="elh_t84_saldoawal_Akun" class="t84_saldoawal_Akun"><?php echo $t84_saldoawal->Akun->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t11_jurnalmaster->NomorTransaksi->Visible) { // NomorTransaksi ?>
-		<th><span id="elh_t11_jurnalmaster_NomorTransaksi" class="t11_jurnalmaster_NomorTransaksi"><?php echo $t11_jurnalmaster->NomorTransaksi->FldCaption() ?></span></th>
+<?php if ($t84_saldoawal->Rekening->Visible) { // Rekening ?>
+		<th><span id="elh_t84_saldoawal_Rekening" class="t84_saldoawal_Rekening"><?php echo $t84_saldoawal->Rekening->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t11_jurnalmaster->Keterangan->Visible) { // Keterangan ?>
-		<th><span id="elh_t11_jurnalmaster_Keterangan" class="t11_jurnalmaster_Keterangan"><?php echo $t11_jurnalmaster->Keterangan->FldCaption() ?></span></th>
+<?php if ($t84_saldoawal->Debet->Visible) { // Debet ?>
+		<th><span id="elh_t84_saldoawal_Debet" class="t84_saldoawal_Debet"><?php echo $t84_saldoawal->Debet->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t84_saldoawal->Kredit->Visible) { // Kredit ?>
+		<th><span id="elh_t84_saldoawal_Kredit" class="t84_saldoawal_Kredit"><?php echo $t84_saldoawal->Kredit->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t84_saldoawal->Saldo->Visible) { // Saldo ?>
+		<th><span id="elh_t84_saldoawal_Saldo" class="t84_saldoawal_Saldo"><?php echo $t84_saldoawal->Saldo->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
 	<tbody>
 <?php
-$t11_jurnalmaster_delete->RecCnt = 0;
+$t84_saldoawal_delete->RecCnt = 0;
 $i = 0;
-while (!$t11_jurnalmaster_delete->Recordset->EOF) {
-	$t11_jurnalmaster_delete->RecCnt++;
-	$t11_jurnalmaster_delete->RowCnt++;
+while (!$t84_saldoawal_delete->Recordset->EOF) {
+	$t84_saldoawal_delete->RecCnt++;
+	$t84_saldoawal_delete->RowCnt++;
 
 	// Set row properties
-	$t11_jurnalmaster->ResetAttrs();
-	$t11_jurnalmaster->RowType = EW_ROWTYPE_VIEW; // View
+	$t84_saldoawal->ResetAttrs();
+	$t84_saldoawal->RowType = EW_ROWTYPE_VIEW; // View
 
 	// Get the field contents
-	$t11_jurnalmaster_delete->LoadRowValues($t11_jurnalmaster_delete->Recordset);
+	$t84_saldoawal_delete->LoadRowValues($t84_saldoawal_delete->Recordset);
 
 	// Render row
-	$t11_jurnalmaster_delete->RenderRow();
+	$t84_saldoawal_delete->RenderRow();
 ?>
-	<tr<?php echo $t11_jurnalmaster->RowAttributes() ?>>
-<?php if ($t11_jurnalmaster->id->Visible) { // id ?>
-		<td<?php echo $t11_jurnalmaster->id->CellAttributes() ?>>
-<span id="el<?php echo $t11_jurnalmaster_delete->RowCnt ?>_t11_jurnalmaster_id" class="t11_jurnalmaster_id">
-<span<?php echo $t11_jurnalmaster->id->ViewAttributes() ?>>
-<?php echo $t11_jurnalmaster->id->ListViewValue() ?></span>
+	<tr<?php echo $t84_saldoawal->RowAttributes() ?>>
+<?php if ($t84_saldoawal->Periode->Visible) { // Periode ?>
+		<td<?php echo $t84_saldoawal->Periode->CellAttributes() ?>>
+<span id="el<?php echo $t84_saldoawal_delete->RowCnt ?>_t84_saldoawal_Periode" class="t84_saldoawal_Periode">
+<span<?php echo $t84_saldoawal->Periode->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Periode->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t11_jurnalmaster->Tanggal->Visible) { // Tanggal ?>
-		<td<?php echo $t11_jurnalmaster->Tanggal->CellAttributes() ?>>
-<span id="el<?php echo $t11_jurnalmaster_delete->RowCnt ?>_t11_jurnalmaster_Tanggal" class="t11_jurnalmaster_Tanggal">
-<span<?php echo $t11_jurnalmaster->Tanggal->ViewAttributes() ?>>
-<?php echo $t11_jurnalmaster->Tanggal->ListViewValue() ?></span>
+<?php if ($t84_saldoawal->Akun->Visible) { // Akun ?>
+		<td<?php echo $t84_saldoawal->Akun->CellAttributes() ?>>
+<span id="el<?php echo $t84_saldoawal_delete->RowCnt ?>_t84_saldoawal_Akun" class="t84_saldoawal_Akun">
+<span<?php echo $t84_saldoawal->Akun->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Akun->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t11_jurnalmaster->NomorTransaksi->Visible) { // NomorTransaksi ?>
-		<td<?php echo $t11_jurnalmaster->NomorTransaksi->CellAttributes() ?>>
-<span id="el<?php echo $t11_jurnalmaster_delete->RowCnt ?>_t11_jurnalmaster_NomorTransaksi" class="t11_jurnalmaster_NomorTransaksi">
-<span<?php echo $t11_jurnalmaster->NomorTransaksi->ViewAttributes() ?>>
-<?php echo $t11_jurnalmaster->NomorTransaksi->ListViewValue() ?></span>
+<?php if ($t84_saldoawal->Rekening->Visible) { // Rekening ?>
+		<td<?php echo $t84_saldoawal->Rekening->CellAttributes() ?>>
+<span id="el<?php echo $t84_saldoawal_delete->RowCnt ?>_t84_saldoawal_Rekening" class="t84_saldoawal_Rekening">
+<span<?php echo $t84_saldoawal->Rekening->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Rekening->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t11_jurnalmaster->Keterangan->Visible) { // Keterangan ?>
-		<td<?php echo $t11_jurnalmaster->Keterangan->CellAttributes() ?>>
-<span id="el<?php echo $t11_jurnalmaster_delete->RowCnt ?>_t11_jurnalmaster_Keterangan" class="t11_jurnalmaster_Keterangan">
-<span<?php echo $t11_jurnalmaster->Keterangan->ViewAttributes() ?>>
-<?php echo $t11_jurnalmaster->Keterangan->ListViewValue() ?></span>
+<?php if ($t84_saldoawal->Debet->Visible) { // Debet ?>
+		<td<?php echo $t84_saldoawal->Debet->CellAttributes() ?>>
+<span id="el<?php echo $t84_saldoawal_delete->RowCnt ?>_t84_saldoawal_Debet" class="t84_saldoawal_Debet">
+<span<?php echo $t84_saldoawal->Debet->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Debet->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t84_saldoawal->Kredit->Visible) { // Kredit ?>
+		<td<?php echo $t84_saldoawal->Kredit->CellAttributes() ?>>
+<span id="el<?php echo $t84_saldoawal_delete->RowCnt ?>_t84_saldoawal_Kredit" class="t84_saldoawal_Kredit">
+<span<?php echo $t84_saldoawal->Kredit->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Kredit->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t84_saldoawal->Saldo->Visible) { // Saldo ?>
+		<td<?php echo $t84_saldoawal->Saldo->CellAttributes() ?>>
+<span id="el<?php echo $t84_saldoawal_delete->RowCnt ?>_t84_saldoawal_Saldo" class="t84_saldoawal_Saldo">
+<span<?php echo $t84_saldoawal->Saldo->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Saldo->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
 	</tr>
 <?php
-	$t11_jurnalmaster_delete->Recordset->MoveNext();
+	$t84_saldoawal_delete->Recordset->MoveNext();
 }
-$t11_jurnalmaster_delete->Recordset->Close();
+$t84_saldoawal_delete->Recordset->Close();
 ?>
 </tbody>
 </table>
@@ -867,14 +931,14 @@ $t11_jurnalmaster_delete->Recordset->Close();
 </div>
 <div>
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t11_jurnalmaster_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t84_saldoawal_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 </div>
 </form>
 <script type="text/javascript">
-ft11_jurnalmasterdelete.Init();
+ft84_saldoawaldelete.Init();
 </script>
 <?php
-$t11_jurnalmaster_delete->ShowPageFooter();
+$t84_saldoawal_delete->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -886,5 +950,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t11_jurnalmaster_delete->Page_Terminate();
+$t84_saldoawal_delete->Page_Terminate();
 ?>

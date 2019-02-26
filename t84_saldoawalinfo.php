@@ -1,23 +1,25 @@
 <?php
 
 // Global variable for table object
-$t86_labarugi2 = NULL;
+$t84_saldoawal = NULL;
 
 //
-// Table class for t86_labarugi2
+// Table class for t84_saldoawal
 //
-class ct86_labarugi2 extends cTable {
+class ct84_saldoawal extends cTable {
 	var $AuditTrailOnAdd = TRUE;
 	var $AuditTrailOnEdit = TRUE;
 	var $AuditTrailOnDelete = TRUE;
 	var $AuditTrailOnView = FALSE;
 	var $AuditTrailOnViewData = FALSE;
 	var $AuditTrailOnSearch = FALSE;
-	var $field01;
-	var $field02;
-	var $field03;
-	var $field04;
-	var $field05;
+	var $id;
+	var $Periode;
+	var $Akun;
+	var $Rekening;
+	var $Debet;
+	var $Kredit;
+	var $Saldo;
 
 	//
 	// Table class constructor
@@ -27,12 +29,12 @@ class ct86_labarugi2 extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 't86_labarugi2';
-		$this->TableName = 't86_labarugi2';
+		$this->TableVar = 't84_saldoawal';
+		$this->TableName = 't84_saldoawal';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t86_labarugi2`";
+		$this->UpdateTable = "`t84_saldoawal`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -49,30 +51,45 @@ class ct86_labarugi2 extends cTable {
 		$this->UserIDAllowSecurity = 0; // User ID Allow
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
-		// field01
-		$this->field01 = new cField('t86_labarugi2', 't86_labarugi2', 'x_field01', 'field01', '`field01`', '`field01`', 200, -1, FALSE, '`field01`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->field01->Sortable = TRUE; // Allow sort
-		$this->fields['field01'] = &$this->field01;
+		// id
+		$this->id = new cField('t84_saldoawal', 't84_saldoawal', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id->Sortable = TRUE; // Allow sort
+		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['id'] = &$this->id;
 
-		// field02
-		$this->field02 = new cField('t86_labarugi2', 't86_labarugi2', 'x_field02', 'field02', '`field02`', '`field02`', 200, -1, FALSE, '`field02`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->field02->Sortable = TRUE; // Allow sort
-		$this->fields['field02'] = &$this->field02;
+		// Periode
+		$this->Periode = new cField('t84_saldoawal', 't84_saldoawal', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Periode->Sortable = TRUE; // Allow sort
+		$this->fields['Periode'] = &$this->Periode;
 
-		// field03
-		$this->field03 = new cField('t86_labarugi2', 't86_labarugi2', 'x_field03', 'field03', '`field03`', '`field03`', 200, -1, FALSE, '`field03`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->field03->Sortable = TRUE; // Allow sort
-		$this->fields['field03'] = &$this->field03;
+		// Akun
+		$this->Akun = new cField('t84_saldoawal', 't84_saldoawal', 'x_Akun', 'Akun', '`Akun`', '`Akun`', 200, -1, FALSE, '`Akun`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Akun->Sortable = TRUE; // Allow sort
+		$this->fields['Akun'] = &$this->Akun;
 
-		// field04
-		$this->field04 = new cField('t86_labarugi2', 't86_labarugi2', 'x_field04', 'field04', '`field04`', '`field04`', 200, -1, FALSE, '`field04`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->field04->Sortable = TRUE; // Allow sort
-		$this->fields['field04'] = &$this->field04;
+		// Rekening
+		$this->Rekening = new cField('t84_saldoawal', 't84_saldoawal', 'x_Rekening', 'Rekening', '(select rekening from t91_rekening where id = Akun)', '(select rekening from t91_rekening where id = Akun)', 200, -1, FALSE, '(select rekening from t91_rekening where id = Akun)', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Rekening->FldIsCustom = TRUE; // Custom field
+		$this->Rekening->Sortable = TRUE; // Allow sort
+		$this->fields['Rekening'] = &$this->Rekening;
 
-		// field05
-		$this->field05 = new cField('t86_labarugi2', 't86_labarugi2', 'x_field05', 'field05', '`field05`', '`field05`', 200, -1, FALSE, '`field05`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->field05->Sortable = TRUE; // Allow sort
-		$this->fields['field05'] = &$this->field05;
+		// Debet
+		$this->Debet = new cField('t84_saldoawal', 't84_saldoawal', 'x_Debet', 'Debet', '`Debet`', '`Debet`', 4, -1, FALSE, '`Debet`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Debet->Sortable = TRUE; // Allow sort
+		$this->Debet->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Debet'] = &$this->Debet;
+
+		// Kredit
+		$this->Kredit = new cField('t84_saldoawal', 't84_saldoawal', 'x_Kredit', 'Kredit', '`Kredit`', '`Kredit`', 4, -1, FALSE, '`Kredit`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Kredit->Sortable = TRUE; // Allow sort
+		$this->Kredit->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Kredit'] = &$this->Kredit;
+
+		// Saldo
+		$this->Saldo = new cField('t84_saldoawal', 't84_saldoawal', 'x_Saldo', 'Saldo', '`Saldo`', '`Saldo`', 4, -1, FALSE, '`Saldo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Saldo->Sortable = TRUE; // Allow sort
+		$this->Saldo->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Saldo'] = &$this->Saldo;
 	}
 
 	// Set Field Visibility
@@ -113,7 +130,7 @@ class ct86_labarugi2 extends cTable {
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t86_labarugi2`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t84_saldoawal`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -126,7 +143,7 @@ class ct86_labarugi2 extends cTable {
 	var $_SqlSelect = "";
 
 	function getSqlSelect() { // Select
-		return ($this->_SqlSelect <> "") ? $this->_SqlSelect : "SELECT * FROM " . $this->getSqlFrom();
+		return ($this->_SqlSelect <> "") ? $this->_SqlSelect : "SELECT *, (select rekening from t91_rekening where id = Akun) AS `Rekening` FROM " . $this->getSqlFrom();
 	}
 
 	function SqlSelect() { // For backward compatibility
@@ -334,6 +351,10 @@ class ct86_labarugi2 extends cTable {
 		$conn = &$this->Connection();
 		$bInsert = $conn->Execute($this->InsertSQL($rs));
 		if ($bInsert) {
+
+			// Get insert id if necessary
+			$this->id->setDbValue($conn->Insert_ID());
+			$rs['id'] = $this->id->DbValue;
 			if ($this->AuditTrailOnAdd)
 				$this->WriteAuditTrailOnAdd($rs);
 		}
@@ -365,6 +386,8 @@ class ct86_labarugi2 extends cTable {
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
+			$fldname = 'id';
+			if (!array_key_exists($fldname, $rsaudit)) $rsaudit[$fldname] = $rsold[$fldname];
 			$this->WriteAuditTrailOnEdit($rsold, $rsaudit);
 		}
 		return $bUpdate;
@@ -376,6 +399,8 @@ class ct86_labarugi2 extends cTable {
 		if (is_array($where))
 			$where = $this->ArrayToFilter($where);
 		if ($rs) {
+			if (array_key_exists('id', $rs))
+				ew_AddFilter($where, ew_QuotedName('id', $this->DBID) . '=' . ew_QuotedValue($rs['id'], $this->id->FldDataType, $this->DBID));
 		}
 		$filter = ($curfilter) ? $this->CurrentFilter : "";
 		ew_AddFilter($filter, $where);
@@ -397,12 +422,15 @@ class ct86_labarugi2 extends cTable {
 
 	// Key filter WHERE clause
 	function SqlKeyFilter() {
-		return "";
+		return "`id` = @id@";
 	}
 
 	// Key filter
 	function KeyFilter() {
 		$sKeyFilter = $this->SqlKeyFilter();
+		if (!is_numeric($this->id->CurrentValue))
+			$sKeyFilter = "0=1"; // Invalid key
+		$sKeyFilter = str_replace("@id@", ew_AdjustSql($this->id->CurrentValue, $this->DBID), $sKeyFilter); // Replace key value
 		return $sKeyFilter;
 	}
 
@@ -416,7 +444,7 @@ class ct86_labarugi2 extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "t86_labarugi2list.php";
+			return "t84_saldoawallist.php";
 		}
 	}
 
@@ -426,30 +454,30 @@ class ct86_labarugi2 extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "t86_labarugi2list.php";
+		return "t84_saldoawallist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("t86_labarugi2view.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("t84_saldoawalview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("t86_labarugi2view.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("t84_saldoawalview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "t86_labarugi2add.php?" . $this->UrlParm($parm);
+			$url = "t84_saldoawaladd.php?" . $this->UrlParm($parm);
 		else
-			$url = "t86_labarugi2add.php";
+			$url = "t84_saldoawaladd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		$url = $this->KeyUrl("t86_labarugi2edit.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("t84_saldoawaledit.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -461,7 +489,7 @@ class ct86_labarugi2 extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		$url = $this->KeyUrl("t86_labarugi2add.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("t84_saldoawaladd.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -473,7 +501,7 @@ class ct86_labarugi2 extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("t86_labarugi2delete.php", $this->UrlParm());
+		return $this->KeyUrl("t84_saldoawaldelete.php", $this->UrlParm());
 	}
 
 	// Add master url
@@ -483,6 +511,7 @@ class ct86_labarugi2 extends cTable {
 
 	function KeyToJson() {
 		$json = "";
+		$json .= "id:" . ew_VarToJson($this->id->CurrentValue, "number", "'");
 		return "{" . $json . "}";
 	}
 
@@ -490,6 +519,11 @@ class ct86_labarugi2 extends cTable {
 	function KeyUrl($url, $parm = "") {
 		$sUrl = $url . "?";
 		if ($parm <> "") $sUrl .= $parm . "&";
+		if (!is_null($this->id->CurrentValue)) {
+			$sUrl .= "id=" . urlencode($this->id->CurrentValue);
+		} else {
+			return "javascript:ew_Alert(ewLanguage.Phrase('InvalidRecord'));";
+		}
 		return $sUrl;
 	}
 
@@ -519,6 +553,12 @@ class ct86_labarugi2 extends cTable {
 			$cnt = count($arKeys);
 		} elseif (!empty($_GET) || !empty($_POST)) {
 			$isPost = ew_IsHttpPost();
+			if ($isPost && isset($_POST["id"]))
+				$arKeys[] = ew_StripSlashes($_POST["id"]);
+			elseif (isset($_GET["id"]))
+				$arKeys[] = ew_StripSlashes($_GET["id"]);
+			else
+				$arKeys = NULL; // Do not setup
 
 			//return $arKeys; // Do not return yet, so the values will also be checked by the following code
 		}
@@ -527,6 +567,8 @@ class ct86_labarugi2 extends cTable {
 		$ar = array();
 		if (is_array($arKeys)) {
 			foreach ($arKeys as $key) {
+				if (!is_numeric($key))
+					continue;
 				$ar[] = $key;
 			}
 		}
@@ -539,6 +581,7 @@ class ct86_labarugi2 extends cTable {
 		$sKeyFilter = "";
 		foreach ($arKeys as $key) {
 			if ($sKeyFilter <> "") $sKeyFilter .= " OR ";
+			$this->id->CurrentValue = $key;
 			$sKeyFilter .= "(" . $this->KeyFilter() . ")";
 		}
 		return $sKeyFilter;
@@ -559,11 +602,13 @@ class ct86_labarugi2 extends cTable {
 
 	// Load row values from recordset
 	function LoadListRowValues(&$rs) {
-		$this->field01->setDbValue($rs->fields('field01'));
-		$this->field02->setDbValue($rs->fields('field02'));
-		$this->field03->setDbValue($rs->fields('field03'));
-		$this->field04->setDbValue($rs->fields('field04'));
-		$this->field05->setDbValue($rs->fields('field05'));
+		$this->id->setDbValue($rs->fields('id'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Akun->setDbValue($rs->fields('Akun'));
+		$this->Rekening->setDbValue($rs->fields('Rekening'));
+		$this->Debet->setDbValue($rs->fields('Debet'));
+		$this->Kredit->setDbValue($rs->fields('Kredit'));
+		$this->Saldo->setDbValue($rs->fields('Saldo'));
 	}
 
 	// Render list row values
@@ -574,59 +619,82 @@ class ct86_labarugi2 extends cTable {
 		$this->Row_Rendering();
 
    // Common render codes
-		// field01
-		// field02
-		// field03
-		// field04
-		// field05
-		// field01
+		// id
+		// Periode
+		// Akun
+		// Rekening
+		// Debet
+		// Kredit
+		// Saldo
+		// id
 
-		$this->field01->ViewValue = $this->field01->CurrentValue;
-		$this->field01->ViewCustomAttributes = "";
+		$this->id->ViewValue = $this->id->CurrentValue;
+		$this->id->ViewCustomAttributes = "";
 
-		// field02
-		$this->field02->ViewValue = $this->field02->CurrentValue;
-		$this->field02->ViewCustomAttributes = "";
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
-		// field03
-		$this->field03->ViewValue = $this->field03->CurrentValue;
-		$this->field03->CellCssStyle .= "text-align: right;";
-		$this->field03->ViewCustomAttributes = "";
+		// Akun
+		$this->Akun->ViewValue = $this->Akun->CurrentValue;
+		$this->Akun->ViewCustomAttributes = "";
 
-		// field04
-		$this->field04->ViewValue = $this->field04->CurrentValue;
-		$this->field04->CellCssStyle .= "text-align: right;";
-		$this->field04->ViewCustomAttributes = "";
+		// Rekening
+		$this->Rekening->ViewValue = $this->Rekening->CurrentValue;
+		$this->Rekening->ViewCustomAttributes = "";
 
-		// field05
-		$this->field05->ViewValue = $this->field05->CurrentValue;
-		$this->field05->CellCssStyle .= "text-align: right;";
-		$this->field05->ViewCustomAttributes = "";
+		// Debet
+		$this->Debet->ViewValue = $this->Debet->CurrentValue;
+		$this->Debet->ViewValue = ew_FormatNumber($this->Debet->ViewValue, 2, -2, -2, -2);
+		$this->Debet->CellCssStyle .= "text-align: right;";
+		$this->Debet->ViewCustomAttributes = "";
 
-		// field01
-		$this->field01->LinkCustomAttributes = "";
-		$this->field01->HrefValue = "";
-		$this->field01->TooltipValue = "";
+		// Kredit
+		$this->Kredit->ViewValue = $this->Kredit->CurrentValue;
+		$this->Kredit->ViewValue = ew_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
+		$this->Kredit->CellCssStyle .= "text-align: right;";
+		$this->Kredit->ViewCustomAttributes = "";
 
-		// field02
-		$this->field02->LinkCustomAttributes = "";
-		$this->field02->HrefValue = "";
-		$this->field02->TooltipValue = "";
+		// Saldo
+		$this->Saldo->ViewValue = $this->Saldo->CurrentValue;
+		$this->Saldo->ViewValue = ew_FormatNumber($this->Saldo->ViewValue, 2, -2, -2, -2);
+		$this->Saldo->CellCssStyle .= "text-align: right;";
+		$this->Saldo->ViewCustomAttributes = "";
 
-		// field03
-		$this->field03->LinkCustomAttributes = "";
-		$this->field03->HrefValue = "";
-		$this->field03->TooltipValue = "";
+		// id
+		$this->id->LinkCustomAttributes = "";
+		$this->id->HrefValue = "";
+		$this->id->TooltipValue = "";
 
-		// field04
-		$this->field04->LinkCustomAttributes = "";
-		$this->field04->HrefValue = "";
-		$this->field04->TooltipValue = "";
+		// Periode
+		$this->Periode->LinkCustomAttributes = "";
+		$this->Periode->HrefValue = "";
+		$this->Periode->TooltipValue = "";
 
-		// field05
-		$this->field05->LinkCustomAttributes = "";
-		$this->field05->HrefValue = "";
-		$this->field05->TooltipValue = "";
+		// Akun
+		$this->Akun->LinkCustomAttributes = "";
+		$this->Akun->HrefValue = "";
+		$this->Akun->TooltipValue = "";
+
+		// Rekening
+		$this->Rekening->LinkCustomAttributes = "";
+		$this->Rekening->HrefValue = "";
+		$this->Rekening->TooltipValue = "";
+
+		// Debet
+		$this->Debet->LinkCustomAttributes = "";
+		$this->Debet->HrefValue = "";
+		$this->Debet->TooltipValue = "";
+
+		// Kredit
+		$this->Kredit->LinkCustomAttributes = "";
+		$this->Kredit->HrefValue = "";
+		$this->Kredit->TooltipValue = "";
+
+		// Saldo
+		$this->Saldo->LinkCustomAttributes = "";
+		$this->Saldo->HrefValue = "";
+		$this->Saldo->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -639,35 +707,50 @@ class ct86_labarugi2 extends cTable {
 		// Call Row Rendering event
 		$this->Row_Rendering();
 
-		// field01
-		$this->field01->EditAttrs["class"] = "form-control";
-		$this->field01->EditCustomAttributes = "";
-		$this->field01->EditValue = $this->field01->CurrentValue;
-		$this->field01->PlaceHolder = ew_RemoveHtml($this->field01->FldCaption());
+		// id
+		$this->id->EditAttrs["class"] = "form-control";
+		$this->id->EditCustomAttributes = "";
+		$this->id->EditValue = $this->id->CurrentValue;
+		$this->id->ViewCustomAttributes = "";
 
-		// field02
-		$this->field02->EditAttrs["class"] = "form-control";
-		$this->field02->EditCustomAttributes = "";
-		$this->field02->EditValue = $this->field02->CurrentValue;
-		$this->field02->PlaceHolder = ew_RemoveHtml($this->field02->FldCaption());
+		// Periode
+		$this->Periode->EditAttrs["class"] = "form-control";
+		$this->Periode->EditCustomAttributes = "";
+		$this->Periode->EditValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
-		// field03
-		$this->field03->EditAttrs["class"] = "form-control";
-		$this->field03->EditCustomAttributes = "";
-		$this->field03->EditValue = $this->field03->CurrentValue;
-		$this->field03->PlaceHolder = ew_RemoveHtml($this->field03->FldCaption());
+		// Akun
+		$this->Akun->EditAttrs["class"] = "form-control";
+		$this->Akun->EditCustomAttributes = "";
+		$this->Akun->EditValue = $this->Akun->CurrentValue;
+		$this->Akun->ViewCustomAttributes = "";
 
-		// field04
-		$this->field04->EditAttrs["class"] = "form-control";
-		$this->field04->EditCustomAttributes = "";
-		$this->field04->EditValue = $this->field04->CurrentValue;
-		$this->field04->PlaceHolder = ew_RemoveHtml($this->field04->FldCaption());
+		// Rekening
+		$this->Rekening->EditAttrs["class"] = "form-control";
+		$this->Rekening->EditCustomAttributes = "";
+		$this->Rekening->EditValue = $this->Rekening->CurrentValue;
+		$this->Rekening->ViewCustomAttributes = "";
 
-		// field05
-		$this->field05->EditAttrs["class"] = "form-control";
-		$this->field05->EditCustomAttributes = "";
-		$this->field05->EditValue = $this->field05->CurrentValue;
-		$this->field05->PlaceHolder = ew_RemoveHtml($this->field05->FldCaption());
+		// Debet
+		$this->Debet->EditAttrs["class"] = "form-control";
+		$this->Debet->EditCustomAttributes = "";
+		$this->Debet->EditValue = $this->Debet->CurrentValue;
+		$this->Debet->PlaceHolder = ew_RemoveHtml($this->Debet->FldCaption());
+		if (strval($this->Debet->EditValue) <> "" && is_numeric($this->Debet->EditValue)) $this->Debet->EditValue = ew_FormatNumber($this->Debet->EditValue, -2, -2, -2, -2);
+
+		// Kredit
+		$this->Kredit->EditAttrs["class"] = "form-control";
+		$this->Kredit->EditCustomAttributes = "";
+		$this->Kredit->EditValue = $this->Kredit->CurrentValue;
+		$this->Kredit->PlaceHolder = ew_RemoveHtml($this->Kredit->FldCaption());
+		if (strval($this->Kredit->EditValue) <> "" && is_numeric($this->Kredit->EditValue)) $this->Kredit->EditValue = ew_FormatNumber($this->Kredit->EditValue, -2, -2, -2, -2);
+
+		// Saldo
+		$this->Saldo->EditAttrs["class"] = "form-control";
+		$this->Saldo->EditCustomAttributes = "";
+		$this->Saldo->EditValue = $this->Saldo->CurrentValue;
+		$this->Saldo->PlaceHolder = ew_RemoveHtml($this->Saldo->FldCaption());
+		if (strval($this->Saldo->EditValue) <> "" && is_numeric($this->Saldo->EditValue)) $this->Saldo->EditValue = ew_FormatNumber($this->Saldo->EditValue, -2, -2, -2, -2);
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -696,17 +779,20 @@ class ct86_labarugi2 extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->field01->Exportable) $Doc->ExportCaption($this->field01);
-					if ($this->field02->Exportable) $Doc->ExportCaption($this->field02);
-					if ($this->field03->Exportable) $Doc->ExportCaption($this->field03);
-					if ($this->field04->Exportable) $Doc->ExportCaption($this->field04);
-					if ($this->field05->Exportable) $Doc->ExportCaption($this->field05);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
+					if ($this->Akun->Exportable) $Doc->ExportCaption($this->Akun);
+					if ($this->Rekening->Exportable) $Doc->ExportCaption($this->Rekening);
+					if ($this->Debet->Exportable) $Doc->ExportCaption($this->Debet);
+					if ($this->Kredit->Exportable) $Doc->ExportCaption($this->Kredit);
+					if ($this->Saldo->Exportable) $Doc->ExportCaption($this->Saldo);
 				} else {
-					if ($this->field01->Exportable) $Doc->ExportCaption($this->field01);
-					if ($this->field02->Exportable) $Doc->ExportCaption($this->field02);
-					if ($this->field03->Exportable) $Doc->ExportCaption($this->field03);
-					if ($this->field04->Exportable) $Doc->ExportCaption($this->field04);
-					if ($this->field05->Exportable) $Doc->ExportCaption($this->field05);
+					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
+					if ($this->Akun->Exportable) $Doc->ExportCaption($this->Akun);
+					if ($this->Rekening->Exportable) $Doc->ExportCaption($this->Rekening);
+					if ($this->Debet->Exportable) $Doc->ExportCaption($this->Debet);
+					if ($this->Kredit->Exportable) $Doc->ExportCaption($this->Kredit);
+					if ($this->Saldo->Exportable) $Doc->ExportCaption($this->Saldo);
 				}
 				$Doc->EndExportRow();
 			}
@@ -738,17 +824,20 @@ class ct86_labarugi2 extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->field01->Exportable) $Doc->ExportField($this->field01);
-						if ($this->field02->Exportable) $Doc->ExportField($this->field02);
-						if ($this->field03->Exportable) $Doc->ExportField($this->field03);
-						if ($this->field04->Exportable) $Doc->ExportField($this->field04);
-						if ($this->field05->Exportable) $Doc->ExportField($this->field05);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
+						if ($this->Akun->Exportable) $Doc->ExportField($this->Akun);
+						if ($this->Rekening->Exportable) $Doc->ExportField($this->Rekening);
+						if ($this->Debet->Exportable) $Doc->ExportField($this->Debet);
+						if ($this->Kredit->Exportable) $Doc->ExportField($this->Kredit);
+						if ($this->Saldo->Exportable) $Doc->ExportField($this->Saldo);
 					} else {
-						if ($this->field01->Exportable) $Doc->ExportField($this->field01);
-						if ($this->field02->Exportable) $Doc->ExportField($this->field02);
-						if ($this->field03->Exportable) $Doc->ExportField($this->field03);
-						if ($this->field04->Exportable) $Doc->ExportField($this->field04);
-						if ($this->field05->Exportable) $Doc->ExportField($this->field05);
+						if ($this->id->Exportable) $Doc->ExportField($this->id);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
+						if ($this->Akun->Exportable) $Doc->ExportField($this->Akun);
+						if ($this->Rekening->Exportable) $Doc->ExportField($this->Rekening);
+						if ($this->Debet->Exportable) $Doc->ExportField($this->Debet);
+						if ($this->Kredit->Exportable) $Doc->ExportField($this->Kredit);
+						if ($this->Saldo->Exportable) $Doc->ExportField($this->Saldo);
 					}
 					$Doc->EndExportRow();
 				}
@@ -792,7 +881,7 @@ class ct86_labarugi2 extends cTable {
 
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
-		$table = 't86_labarugi2';
+		$table = 't84_saldoawal';
 		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -801,10 +890,12 @@ class ct86_labarugi2 extends cTable {
 	function WriteAuditTrailOnAdd(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnAdd) return;
-		$table = 't86_labarugi2';
+		$table = 't84_saldoawal';
 
 		// Get key value
 		$key = "";
+		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rs['id'];
 
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
@@ -833,10 +924,12 @@ class ct86_labarugi2 extends cTable {
 	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
 		global $Language;
 		if (!$this->AuditTrailOnEdit) return;
-		$table = 't86_labarugi2';
+		$table = 't84_saldoawal';
 
 		// Get key value
 		$key = "";
+		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rsold['id'];
 
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
@@ -878,10 +971,13 @@ class ct86_labarugi2 extends cTable {
 	function WriteAuditTrailOnDelete(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnDelete) return;
-		$table = 't86_labarugi2';
+		$table = 't84_saldoawal';
 
 		// Get key value
 		$key = "";
+		if ($key <> "")
+			$key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+		$key .= $rs['id'];
 
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();

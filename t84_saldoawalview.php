@@ -5,9 +5,8 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t11_jurnalmasterinfo.php" ?>
+<?php include_once "t84_saldoawalinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
-<?php include_once "t12_jurnaldetailgridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -15,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t11_jurnalmaster_view = NULL; // Initialize page object first
+$t84_saldoawal_view = NULL; // Initialize page object first
 
-class ct11_jurnalmaster_view extends ct11_jurnalmaster {
+class ct84_saldoawal_view extends ct84_saldoawal {
 
 	// Page ID
 	var $PageID = 'view';
@@ -26,10 +25,10 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't11_jurnalmaster';
+	var $TableName = 't84_saldoawal';
 
 	// Page object name
-	var $PageObjName = 't11_jurnalmaster_view';
+	var $PageObjName = 't84_saldoawal_view';
 
 	// Page name
 	function PageName() {
@@ -259,10 +258,10 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t11_jurnalmaster)
-		if (!isset($GLOBALS["t11_jurnalmaster"]) || get_class($GLOBALS["t11_jurnalmaster"]) == "ct11_jurnalmaster") {
-			$GLOBALS["t11_jurnalmaster"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t11_jurnalmaster"];
+		// Table object (t84_saldoawal)
+		if (!isset($GLOBALS["t84_saldoawal"]) || get_class($GLOBALS["t84_saldoawal"]) == "ct84_saldoawal") {
+			$GLOBALS["t84_saldoawal"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t84_saldoawal"];
 		}
 		$KeyUrl = "";
 		if (@$_GET["id"] <> "") {
@@ -286,7 +285,7 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't11_jurnalmaster', TRUE);
+			define("EW_TABLE_NAME", 't84_saldoawal', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -330,7 +329,7 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t11_jurnalmasterlist.php"));
+				$this->Page_Terminate(ew_GetUrl("t84_saldoawallist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -340,11 +339,12 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
-		$this->Tanggal->SetVisibility();
-		$this->NomorTransaksi->SetVisibility();
-		$this->Keterangan->SetVisibility();
+		$this->Periode->SetVisibility();
+		$this->Akun->SetVisibility();
+		$this->Rekening->SetVisibility();
+		$this->Debet->SetVisibility();
+		$this->Kredit->SetVisibility();
+		$this->Saldo->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -376,13 +376,13 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t11_jurnalmaster;
+		global $EW_EXPORT, $t84_saldoawal;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t11_jurnalmaster);
+				$doc = new $class($t84_saldoawal);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -451,7 +451,7 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$sReturnUrl = "t11_jurnalmasterlist.php"; // Return to list
+				$sReturnUrl = "t84_saldoawallist.php"; // Return to list
 			}
 
 			// Get action
@@ -461,11 +461,11 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$sReturnUrl = "t11_jurnalmasterlist.php"; // No matching record, return to list
+						$sReturnUrl = "t84_saldoawallist.php"; // No matching record, return to list
 					}
 			}
 		} else {
-			$sReturnUrl = "t11_jurnalmasterlist.php"; // Not page request, return to list
+			$sReturnUrl = "t84_saldoawallist.php"; // Not page request, return to list
 		}
 		if ($sReturnUrl <> "")
 			$this->Page_Terminate($sReturnUrl);
@@ -478,9 +478,6 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		$this->RowType = EW_ROWTYPE_VIEW;
 		$this->ResetAttrs();
 		$this->RenderRow();
-
-		// Set up detail parameters
-		$this->SetUpDetailParms();
 	}
 
 	// Set up other options
@@ -488,15 +485,6 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		global $Language, $Security;
 		$options = &$this->OtherOptions;
 		$option = &$options["action"];
-
-		// Add
-		$item = &$option->Add("add");
-		$addcaption = ew_HtmlTitle($Language->Phrase("ViewPageAddLink"));
-		if ($this->IsModal) // Modal
-			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->AddUrl) . "',caption:'" . $addcaption . "'});\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ewAction ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("ViewPageAddLink") . "</a>";
-		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
 
 		// Edit
 		$item = &$option->Add("edit");
@@ -506,98 +494,6 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		else
 			$item->Body = "<a class=\"ewAction ewEdit\" title=\"" . $editcaption . "\" data-caption=\"" . $editcaption . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("ViewPageEditLink") . "</a>";
 		$item->Visible = ($this->EditUrl <> "" && $Security->CanEdit());
-
-		// Copy
-		$item = &$option->Add("copy");
-		$copycaption = ew_HtmlTitle($Language->Phrase("ViewPageCopyLink"));
-		if ($this->IsModal) // Modal
-			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"javascript:void(0);\" onclick=\"ew_ModalDialogShow({lnk:this,url:'" . ew_HtmlEncode($this->CopyUrl) . "',caption:'" . $copycaption . "'});\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ewAction ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("ViewPageCopyLink") . "</a>";
-		$item->Visible = ($this->CopyUrl <> "" && $Security->CanAdd());
-
-		// Delete
-		$item = &$option->Add("delete");
-		if ($this->IsModal) // Handle as inline delete
-			$item->Body = "<a onclick=\"return ew_ConfirmDelete(this);\" class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode(ew_AddQueryStringToUrl($this->DeleteUrl, "a_delete=1")) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ewAction ewDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("ViewPageDeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("ViewPageDeleteLink") . "</a>";
-		$item->Visible = ($this->DeleteUrl <> "" && $Security->CanDelete());
-		$option = &$options["detail"];
-		$DetailTableLink = "";
-		$DetailViewTblVar = "";
-		$DetailCopyTblVar = "";
-		$DetailEditTblVar = "";
-
-		// "detail_t12_jurnaldetail"
-		$item = &$option->Add("detail_t12_jurnaldetail");
-		$body = $Language->Phrase("ViewPageDetailLink") . $Language->TablePhrase("t12_jurnaldetail", "TblCaption");
-		$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t12_jurnaldetaillist.php?" . EW_TABLE_SHOW_MASTER . "=t11_jurnalmaster&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
-		$links = "";
-		if ($GLOBALS["t12_jurnaldetail_grid"] && $GLOBALS["t12_jurnaldetail_grid"]->DetailView && $Security->CanView() && $Security->AllowView(CurrentProjectID() . 't12_jurnaldetail')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t12_jurnaldetail")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
-			if ($DetailViewTblVar <> "") $DetailViewTblVar .= ",";
-			$DetailViewTblVar .= "t12_jurnaldetail";
-		}
-		if ($GLOBALS["t12_jurnaldetail_grid"] && $GLOBALS["t12_jurnaldetail_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't12_jurnaldetail')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t12_jurnaldetail")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
-			if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
-			$DetailEditTblVar .= "t12_jurnaldetail";
-		}
-		if ($GLOBALS["t12_jurnaldetail_grid"] && $GLOBALS["t12_jurnaldetail_grid"]->DetailAdd && $Security->CanAdd() && $Security->AllowAdd(CurrentProjectID() . 't12_jurnaldetail')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=t12_jurnaldetail")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
-			if ($DetailCopyTblVar <> "") $DetailCopyTblVar .= ",";
-			$DetailCopyTblVar .= "t12_jurnaldetail";
-		}
-		if ($links <> "") {
-			$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
-			$body .= "<ul class=\"dropdown-menu\">". $links . "</ul>";
-		}
-		$body = "<div class=\"btn-group\">" . $body . "</div>";
-		$item->Body = $body;
-		$item->Visible = $Security->AllowList(CurrentProjectID() . 't12_jurnaldetail');
-		if ($item->Visible) {
-			if ($DetailTableLink <> "") $DetailTableLink .= ",";
-			$DetailTableLink .= "t12_jurnaldetail";
-		}
-		if ($this->ShowMultipleDetails) $item->Visible = FALSE;
-
-		// Multiple details
-		if ($this->ShowMultipleDetails) {
-			$body = $Language->Phrase("MultipleMasterDetails");
-			$body = "<div class=\"btn-group\">";
-			$links = "";
-			if ($DetailViewTblVar <> "") {
-				$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailViewTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
-			}
-			if ($DetailEditTblVar <> "") {
-				$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailEditTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
-			}
-			if ($DetailCopyTblVar <> "") {
-				$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=" . $DetailCopyTblVar)) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
-			}
-			if ($links <> "") {
-				$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewMasterDetail\" title=\"" . ew_HtmlTitle($Language->Phrase("MultipleMasterDetails")) . "\" data-toggle=\"dropdown\">" . $Language->Phrase("MultipleMasterDetails") . "<b class=\"caret\"></b></button>";
-				$body .= "<ul class=\"dropdown-menu ewMenu\">". $links . "</ul>";
-			}
-			$body .= "</div>";
-
-			// Multiple details
-			$oListOpt = &$option->Add("details");
-			$oListOpt->Body = $body;
-		}
-
-		// Set up detail default
-		$option = &$options["detail"];
-		$options["detail"]->DropDownButtonPhrase = $Language->Phrase("ButtonDetails");
-		$option->UseImageAndText = TRUE;
-		$ar = explode(",", $DetailTableLink);
-		$cnt = count($ar);
-		$option->UseDropDownButton = ($cnt > 1);
-		$option->UseButtonGroup = TRUE;
-		$item = &$option->Add($option->GroupOptionName);
-		$item->Body = "";
-		$item->Visible = FALSE;
 
 		// Set up action default
 		$option = &$options["action"];
@@ -677,10 +573,12 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		$this->Row_Selected($row);
 		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
-		$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
-		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Akun->setDbValue($rs->fields('Akun'));
+		$this->Rekening->setDbValue($rs->fields('Rekening'));
+		$this->Debet->setDbValue($rs->fields('Debet'));
+		$this->Kredit->setDbValue($rs->fields('Kredit'));
+		$this->Saldo->setDbValue($rs->fields('Saldo'));
 	}
 
 	// Load DbValue from recordset
@@ -688,10 +586,12 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->Tanggal->DbValue = $row['Tanggal'];
-		$this->NomorTransaksi->DbValue = $row['NomorTransaksi'];
-		$this->Keterangan->DbValue = $row['Keterangan'];
 		$this->Periode->DbValue = $row['Periode'];
+		$this->Akun->DbValue = $row['Akun'];
+		$this->Rekening->DbValue = $row['Rekening'];
+		$this->Debet->DbValue = $row['Debet'];
+		$this->Kredit->DbValue = $row['Kredit'];
+		$this->Saldo->DbValue = $row['Saldo'];
 	}
 
 	// Render row values based on field settings
@@ -706,15 +606,29 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		$this->ListUrl = $this->GetListUrl();
 		$this->SetupOtherOptions();
 
+		// Convert decimal values if posted back
+		if ($this->Debet->FormValue == $this->Debet->CurrentValue && is_numeric(ew_StrToFloat($this->Debet->CurrentValue)))
+			$this->Debet->CurrentValue = ew_StrToFloat($this->Debet->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Kredit->FormValue == $this->Kredit->CurrentValue && is_numeric(ew_StrToFloat($this->Kredit->CurrentValue)))
+			$this->Kredit->CurrentValue = ew_StrToFloat($this->Kredit->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Saldo->FormValue == $this->Saldo->CurrentValue && is_numeric(ew_StrToFloat($this->Saldo->CurrentValue)))
+			$this->Saldo->CurrentValue = ew_StrToFloat($this->Saldo->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// Tanggal
-		// NomorTransaksi
-		// Keterangan
 		// Periode
+		// Akun
+		// Rekening
+		// Debet
+		// Kredit
+		// Saldo
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -722,42 +636,65 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Tanggal
-		$this->Tanggal->ViewValue = $this->Tanggal->CurrentValue;
-		$this->Tanggal->ViewValue = ew_FormatDateTime($this->Tanggal->ViewValue, 7);
-		$this->Tanggal->ViewCustomAttributes = "";
-
-		// NomorTransaksi
-		$this->NomorTransaksi->ViewValue = $this->NomorTransaksi->CurrentValue;
-		$this->NomorTransaksi->ViewCustomAttributes = "";
-
-		// Keterangan
-		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
-		$this->Keterangan->ViewCustomAttributes = "";
-
 		// Periode
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
+		// Akun
+		$this->Akun->ViewValue = $this->Akun->CurrentValue;
+		$this->Akun->ViewCustomAttributes = "";
 
-			// Tanggal
-			$this->Tanggal->LinkCustomAttributes = "";
-			$this->Tanggal->HrefValue = "";
-			$this->Tanggal->TooltipValue = "";
+		// Rekening
+		$this->Rekening->ViewValue = $this->Rekening->CurrentValue;
+		$this->Rekening->ViewCustomAttributes = "";
 
-			// NomorTransaksi
-			$this->NomorTransaksi->LinkCustomAttributes = "";
-			$this->NomorTransaksi->HrefValue = "";
-			$this->NomorTransaksi->TooltipValue = "";
+		// Debet
+		$this->Debet->ViewValue = $this->Debet->CurrentValue;
+		$this->Debet->ViewValue = ew_FormatNumber($this->Debet->ViewValue, 2, -2, -2, -2);
+		$this->Debet->CellCssStyle .= "text-align: right;";
+		$this->Debet->ViewCustomAttributes = "";
 
-			// Keterangan
-			$this->Keterangan->LinkCustomAttributes = "";
-			$this->Keterangan->HrefValue = "";
-			$this->Keterangan->TooltipValue = "";
+		// Kredit
+		$this->Kredit->ViewValue = $this->Kredit->CurrentValue;
+		$this->Kredit->ViewValue = ew_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
+		$this->Kredit->CellCssStyle .= "text-align: right;";
+		$this->Kredit->ViewCustomAttributes = "";
+
+		// Saldo
+		$this->Saldo->ViewValue = $this->Saldo->CurrentValue;
+		$this->Saldo->ViewValue = ew_FormatNumber($this->Saldo->ViewValue, 2, -2, -2, -2);
+		$this->Saldo->CellCssStyle .= "text-align: right;";
+		$this->Saldo->ViewCustomAttributes = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
+
+			// Akun
+			$this->Akun->LinkCustomAttributes = "";
+			$this->Akun->HrefValue = "";
+			$this->Akun->TooltipValue = "";
+
+			// Rekening
+			$this->Rekening->LinkCustomAttributes = "";
+			$this->Rekening->HrefValue = "";
+			$this->Rekening->TooltipValue = "";
+
+			// Debet
+			$this->Debet->LinkCustomAttributes = "";
+			$this->Debet->HrefValue = "";
+			$this->Debet->TooltipValue = "";
+
+			// Kredit
+			$this->Kredit->LinkCustomAttributes = "";
+			$this->Kredit->HrefValue = "";
+			$this->Kredit->TooltipValue = "";
+
+			// Saldo
+			$this->Saldo->LinkCustomAttributes = "";
+			$this->Saldo->HrefValue = "";
+			$this->Saldo->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -765,41 +702,12 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 			$this->Row_Rendered();
 	}
 
-	// Set up detail parms based on QueryString
-	function SetUpDetailParms() {
-
-		// Get the keys for master table
-		if (isset($_GET[EW_TABLE_SHOW_DETAIL])) {
-			$sDetailTblVar = $_GET[EW_TABLE_SHOW_DETAIL];
-			$this->setCurrentDetailTable($sDetailTblVar);
-		} else {
-			$sDetailTblVar = $this->getCurrentDetailTable();
-		}
-		if ($sDetailTblVar <> "") {
-			$DetailTblVar = explode(",", $sDetailTblVar);
-			if (in_array("t12_jurnaldetail", $DetailTblVar)) {
-				if (!isset($GLOBALS["t12_jurnaldetail_grid"]))
-					$GLOBALS["t12_jurnaldetail_grid"] = new ct12_jurnaldetail_grid;
-				if ($GLOBALS["t12_jurnaldetail_grid"]->DetailView) {
-					$GLOBALS["t12_jurnaldetail_grid"]->CurrentMode = "view";
-
-					// Save current master table to detail table
-					$GLOBALS["t12_jurnaldetail_grid"]->setCurrentMasterTable($this->TableVar);
-					$GLOBALS["t12_jurnaldetail_grid"]->setStartRecordNumber(1);
-					$GLOBALS["t12_jurnaldetail_grid"]->jurnalmaster_id->FldIsDetailKey = TRUE;
-					$GLOBALS["t12_jurnaldetail_grid"]->jurnalmaster_id->CurrentValue = $this->id->CurrentValue;
-					$GLOBALS["t12_jurnaldetail_grid"]->jurnalmaster_id->setSessionValue($GLOBALS["t12_jurnaldetail_grid"]->jurnalmaster_id->CurrentValue);
-				}
-			}
-		}
-	}
-
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t11_jurnalmasterlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t84_saldoawallist.php"), "", $this->TableVar, TRUE);
 		$PageId = "view";
 		$Breadcrumb->Add("view", $PageId, $url);
 	}
@@ -911,29 +819,29 @@ class ct11_jurnalmaster_view extends ct11_jurnalmaster {
 <?php
 
 // Create page object
-if (!isset($t11_jurnalmaster_view)) $t11_jurnalmaster_view = new ct11_jurnalmaster_view();
+if (!isset($t84_saldoawal_view)) $t84_saldoawal_view = new ct84_saldoawal_view();
 
 // Page init
-$t11_jurnalmaster_view->Page_Init();
+$t84_saldoawal_view->Page_Init();
 
 // Page main
-$t11_jurnalmaster_view->Page_Main();
+$t84_saldoawal_view->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t11_jurnalmaster_view->Page_Render();
+$t84_saldoawal_view->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "view";
-var CurrentForm = ft11_jurnalmasterview = new ew_Form("ft11_jurnalmasterview", "view");
+var CurrentForm = ft84_saldoawalview = new ew_Form("ft84_saldoawalview", "view");
 
 // Form_CustomValidate event
-ft11_jurnalmasterview.Form_CustomValidate = 
+ft84_saldoawalview.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -942,9 +850,9 @@ ft11_jurnalmasterview.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft11_jurnalmasterview.ValidateRequired = true;
+ft84_saldoawalview.ValidateRequired = true;
 <?php } else { ?>
-ft11_jurnalmasterview.ValidateRequired = false; 
+ft84_saldoawalview.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -956,91 +864,105 @@ ft11_jurnalmasterview.ValidateRequired = false;
 // Write your client script here, no need to add script tags.
 </script>
 <div class="ewToolbar">
-<?php if (!$t11_jurnalmaster_view->IsModal) { ?>
+<?php if (!$t84_saldoawal_view->IsModal) { ?>
 <?php $Breadcrumb->Render(); ?>
 <?php } ?>
-<?php $t11_jurnalmaster_view->ExportOptions->Render("body") ?>
+<?php $t84_saldoawal_view->ExportOptions->Render("body") ?>
 <?php
-	foreach ($t11_jurnalmaster_view->OtherOptions as &$option)
+	foreach ($t84_saldoawal_view->OtherOptions as &$option)
 		$option->Render("body");
 ?>
-<?php if (!$t11_jurnalmaster_view->IsModal) { ?>
+<?php if (!$t84_saldoawal_view->IsModal) { ?>
 <?php echo $Language->SelectionForm(); ?>
 <?php } ?>
 <div class="clearfix"></div>
 </div>
-<?php $t11_jurnalmaster_view->ShowPageHeader(); ?>
+<?php $t84_saldoawal_view->ShowPageHeader(); ?>
 <?php
-$t11_jurnalmaster_view->ShowMessage();
+$t84_saldoawal_view->ShowMessage();
 ?>
-<form name="ft11_jurnalmasterview" id="ft11_jurnalmasterview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t11_jurnalmaster_view->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t11_jurnalmaster_view->Token ?>">
+<form name="ft84_saldoawalview" id="ft84_saldoawalview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t84_saldoawal_view->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t84_saldoawal_view->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t11_jurnalmaster">
-<?php if ($t11_jurnalmaster_view->IsModal) { ?>
+<input type="hidden" name="t" value="t84_saldoawal">
+<?php if ($t84_saldoawal_view->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t11_jurnalmaster->id->Visible) { // id ?>
-	<tr id="r_id">
-		<td><span id="elh_t11_jurnalmaster_id"><?php echo $t11_jurnalmaster->id->FldCaption() ?></span></td>
-		<td data-name="id"<?php echo $t11_jurnalmaster->id->CellAttributes() ?>>
-<span id="el_t11_jurnalmaster_id">
-<span<?php echo $t11_jurnalmaster->id->ViewAttributes() ?>>
-<?php echo $t11_jurnalmaster->id->ViewValue ?></span>
+<?php if ($t84_saldoawal->Periode->Visible) { // Periode ?>
+	<tr id="r_Periode">
+		<td><span id="elh_t84_saldoawal_Periode"><?php echo $t84_saldoawal->Periode->FldCaption() ?></span></td>
+		<td data-name="Periode"<?php echo $t84_saldoawal->Periode->CellAttributes() ?>>
+<span id="el_t84_saldoawal_Periode">
+<span<?php echo $t84_saldoawal->Periode->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Periode->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t11_jurnalmaster->Tanggal->Visible) { // Tanggal ?>
-	<tr id="r_Tanggal">
-		<td><span id="elh_t11_jurnalmaster_Tanggal"><?php echo $t11_jurnalmaster->Tanggal->FldCaption() ?></span></td>
-		<td data-name="Tanggal"<?php echo $t11_jurnalmaster->Tanggal->CellAttributes() ?>>
-<span id="el_t11_jurnalmaster_Tanggal">
-<span<?php echo $t11_jurnalmaster->Tanggal->ViewAttributes() ?>>
-<?php echo $t11_jurnalmaster->Tanggal->ViewValue ?></span>
+<?php if ($t84_saldoawal->Akun->Visible) { // Akun ?>
+	<tr id="r_Akun">
+		<td><span id="elh_t84_saldoawal_Akun"><?php echo $t84_saldoawal->Akun->FldCaption() ?></span></td>
+		<td data-name="Akun"<?php echo $t84_saldoawal->Akun->CellAttributes() ?>>
+<span id="el_t84_saldoawal_Akun">
+<span<?php echo $t84_saldoawal->Akun->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Akun->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t11_jurnalmaster->NomorTransaksi->Visible) { // NomorTransaksi ?>
-	<tr id="r_NomorTransaksi">
-		<td><span id="elh_t11_jurnalmaster_NomorTransaksi"><?php echo $t11_jurnalmaster->NomorTransaksi->FldCaption() ?></span></td>
-		<td data-name="NomorTransaksi"<?php echo $t11_jurnalmaster->NomorTransaksi->CellAttributes() ?>>
-<span id="el_t11_jurnalmaster_NomorTransaksi">
-<span<?php echo $t11_jurnalmaster->NomorTransaksi->ViewAttributes() ?>>
-<?php echo $t11_jurnalmaster->NomorTransaksi->ViewValue ?></span>
+<?php if ($t84_saldoawal->Rekening->Visible) { // Rekening ?>
+	<tr id="r_Rekening">
+		<td><span id="elh_t84_saldoawal_Rekening"><?php echo $t84_saldoawal->Rekening->FldCaption() ?></span></td>
+		<td data-name="Rekening"<?php echo $t84_saldoawal->Rekening->CellAttributes() ?>>
+<span id="el_t84_saldoawal_Rekening">
+<span<?php echo $t84_saldoawal->Rekening->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Rekening->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t11_jurnalmaster->Keterangan->Visible) { // Keterangan ?>
-	<tr id="r_Keterangan">
-		<td><span id="elh_t11_jurnalmaster_Keterangan"><?php echo $t11_jurnalmaster->Keterangan->FldCaption() ?></span></td>
-		<td data-name="Keterangan"<?php echo $t11_jurnalmaster->Keterangan->CellAttributes() ?>>
-<span id="el_t11_jurnalmaster_Keterangan">
-<span<?php echo $t11_jurnalmaster->Keterangan->ViewAttributes() ?>>
-<?php echo $t11_jurnalmaster->Keterangan->ViewValue ?></span>
+<?php if ($t84_saldoawal->Debet->Visible) { // Debet ?>
+	<tr id="r_Debet">
+		<td><span id="elh_t84_saldoawal_Debet"><?php echo $t84_saldoawal->Debet->FldCaption() ?></span></td>
+		<td data-name="Debet"<?php echo $t84_saldoawal->Debet->CellAttributes() ?>>
+<span id="el_t84_saldoawal_Debet">
+<span<?php echo $t84_saldoawal->Debet->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Debet->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t84_saldoawal->Kredit->Visible) { // Kredit ?>
+	<tr id="r_Kredit">
+		<td><span id="elh_t84_saldoawal_Kredit"><?php echo $t84_saldoawal->Kredit->FldCaption() ?></span></td>
+		<td data-name="Kredit"<?php echo $t84_saldoawal->Kredit->CellAttributes() ?>>
+<span id="el_t84_saldoawal_Kredit">
+<span<?php echo $t84_saldoawal->Kredit->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Kredit->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t84_saldoawal->Saldo->Visible) { // Saldo ?>
+	<tr id="r_Saldo">
+		<td><span id="elh_t84_saldoawal_Saldo"><?php echo $t84_saldoawal->Saldo->FldCaption() ?></span></td>
+		<td data-name="Saldo"<?php echo $t84_saldoawal->Saldo->CellAttributes() ?>>
+<span id="el_t84_saldoawal_Saldo">
+<span<?php echo $t84_saldoawal->Saldo->ViewAttributes() ?>>
+<?php echo $t84_saldoawal->Saldo->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
 </table>
-<?php
-	if (in_array("t12_jurnaldetail", explode(",", $t11_jurnalmaster->getCurrentDetailTable())) && $t12_jurnaldetail->DetailView) {
-?>
-<?php if ($t11_jurnalmaster->getCurrentDetailTable() <> "") { ?>
-<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t12_jurnaldetail", "TblCaption") ?></h4>
-<?php } ?>
-<?php include_once "t12_jurnaldetailgrid.php" ?>
-<?php } ?>
 </form>
 <script type="text/javascript">
-ft11_jurnalmasterview.Init();
+ft84_saldoawalview.Init();
 </script>
 <?php
-$t11_jurnalmaster_view->ShowPageFooter();
+$t84_saldoawal_view->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1052,5 +974,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t11_jurnalmaster_view->Page_Terminate();
+$t84_saldoawal_view->Page_Terminate();
 ?>
