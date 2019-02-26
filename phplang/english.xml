@@ -670,14 +670,14 @@
     <menu id="35">
       <phrase id="menutext" value="Setup" />
     </menu>
+    <menu id="14">
+      <phrase id="menutext" value="Marketing" />
+    </menu>
     <menu id="1">
       <phrase id="menutext" value="Nasabah" />
     </menu>
     <menu id="2">
       <phrase id="menutext" value="Jaminan" />
-    </menu>
-    <menu id="14">
-      <phrase id="menutext" value="Marketing" />
     </menu>
     <menu id="17">
       <phrase id="menutext" value="Tutup Buku" />

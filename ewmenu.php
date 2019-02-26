@@ -17,8 +17,8 @@ $RootMenu->AddMenuItem(10168, "mi_cf05_labarugi_php", $Language->MenuPhrase("101
 $RootMenu->AddMenuItem(10173, "mi_cf07_neraca_php", $Language->MenuPhrase("10173", "MenuText"), "cf07_neraca.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf07_neraca.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(36, "mi_t99_audittrail", $Language->MenuPhrase("36", "MenuText"), "t99_audittraillist.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t99_audittrail'), FALSE, FALSE);
 $RootMenu->AddMenuItem(35, "mci_Setup", $Language->MenuPhrase("35", "MenuText"), "", -1, "", IsLoggedIn(), TRUE, TRUE);
-$RootMenu->AddMenuItem(1, "mi_t01_nasabah", $Language->MenuPhrase("1", "MenuText"), "t01_nasabahlist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t01_nasabah'), FALSE, FALSE);
 $RootMenu->AddMenuItem(14, "mi_t07_marketing", $Language->MenuPhrase("14", "MenuText"), "t07_marketinglist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t07_marketing'), FALSE, FALSE);
+$RootMenu->AddMenuItem(1, "mi_t01_nasabah", $Language->MenuPhrase("1", "MenuText"), "t01_nasabahlist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t01_nasabah'), FALSE, FALSE);
 $RootMenu->AddMenuItem(17, "mi_cf02_tutupbuku_php", $Language->MenuPhrase("17", "MenuText"), "cf02_tutupbuku.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf02_tutupbuku.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(7, "mi_t93_periode", $Language->MenuPhrase("7", "MenuText"), "t93_periodelist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t93_periode'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10179, "mi_t84_saldoawal", $Language->MenuPhrase("10179", "MenuText"), "t84_saldoawallist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t84_saldoawal'), FALSE, FALSE);
