@@ -1114,7 +1114,7 @@ class ct10_jurnal extends cTable {
 
 		if (
 			(date_format(date_create($rsnew["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
-			or
+			and
 			(date_format(date_create($rsold["Tanggal"]),"Ym") <> $GLOBALS["Periode"])
 			) {
 			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");

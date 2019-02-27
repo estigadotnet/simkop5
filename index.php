@@ -308,8 +308,6 @@ class cdefault {
 			$this->Page_Terminate("t11_jurnalmasterlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't12_jurnaldetail'))
 			$this->Page_Terminate("t12_jurnaldetaillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't84_saldoawal'))
-			$this->Page_Terminate("t84_saldoawallist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't85_neraca2'))
 			$this->Page_Terminate("t85_neraca2list.php");
 		if ($Security->AllowList(CurrentProjectID() . 't86_labarugi2'))

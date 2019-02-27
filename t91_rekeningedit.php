@@ -292,6 +292,8 @@ class ct91_rekening_edit extends ct91_rekening {
 		$this->keterangan->SetVisibility();
 		$this->tipe->SetVisibility();
 		$this->status->SetVisibility();
+		$this->Saldo->SetVisibility();
+		$this->Periode->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -520,6 +522,12 @@ class ct91_rekening_edit extends ct91_rekening {
 		if (!$this->status->FldIsDetailKey) {
 			$this->status->setFormValue($objForm->GetValue("x_status"));
 		}
+		if (!$this->Saldo->FldIsDetailKey) {
+			$this->Saldo->setFormValue($objForm->GetValue("x_Saldo"));
+		}
+		if (!$this->Periode->FldIsDetailKey) {
+			$this->Periode->setFormValue($objForm->GetValue("x_Periode"));
+		}
 		if (!$this->id->FldIsDetailKey)
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -536,6 +544,8 @@ class ct91_rekening_edit extends ct91_rekening {
 		$this->keterangan->CurrentValue = $this->keterangan->FormValue;
 		$this->tipe->CurrentValue = $this->tipe->FormValue;
 		$this->status->CurrentValue = $this->status->FormValue;
+		$this->Saldo->CurrentValue = $this->Saldo->FormValue;
+		$this->Periode->CurrentValue = $this->Periode->FormValue;
 	}
 
 	// Load row based on key values
@@ -581,6 +591,8 @@ class ct91_rekening_edit extends ct91_rekening {
 		$this->status->setDbValue($rs->fields('status'));
 		$this->active->setDbValue($rs->fields('active'));
 		$this->group2->setDbValue($rs->fields('group2'));
+		$this->Saldo->setDbValue($rs->fields('Saldo'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -601,6 +613,8 @@ class ct91_rekening_edit extends ct91_rekening {
 		$this->status->DbValue = $row['status'];
 		$this->active->DbValue = $row['active'];
 		$this->group2->DbValue = $row['group2'];
+		$this->Saldo->DbValue = $row['Saldo'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Render row values based on field settings
@@ -608,8 +622,12 @@ class ct91_rekening_edit extends ct91_rekening {
 		global $Security, $Language, $gsLanguage;
 
 		// Initialize URLs
-		// Call Row_Rendering event
+		// Convert decimal values if posted back
 
+		if ($this->Saldo->FormValue == $this->Saldo->CurrentValue && is_numeric(ew_StrToFloat($this->Saldo->CurrentValue)))
+			$this->Saldo->CurrentValue = ew_StrToFloat($this->Saldo->CurrentValue);
+
+		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
@@ -627,6 +645,8 @@ class ct91_rekening_edit extends ct91_rekening {
 		// status
 		// active
 		// group2
+		// Saldo
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -744,6 +764,16 @@ class ct91_rekening_edit extends ct91_rekening {
 		$this->group2->ViewValue = $this->group2->CurrentValue;
 		$this->group2->ViewCustomAttributes = "";
 
+		// Saldo
+		$this->Saldo->ViewValue = $this->Saldo->CurrentValue;
+		$this->Saldo->ViewValue = ew_FormatNumber($this->Saldo->ViewValue, 2, -2, -2, -2);
+		$this->Saldo->CellCssStyle .= "text-align: right;";
+		$this->Saldo->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 			// group
 			$this->group->LinkCustomAttributes = "";
 			$this->group->HrefValue = "";
@@ -778,6 +808,16 @@ class ct91_rekening_edit extends ct91_rekening {
 			$this->status->LinkCustomAttributes = "";
 			$this->status->HrefValue = "";
 			$this->status->TooltipValue = "";
+
+			// Saldo
+			$this->Saldo->LinkCustomAttributes = "";
+			$this->Saldo->HrefValue = "";
+			$this->Saldo->TooltipValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// group
@@ -852,6 +892,19 @@ class ct91_rekening_edit extends ct91_rekening {
 			$this->status->EditCustomAttributes = "";
 			$this->status->EditValue = $this->status->Options(FALSE);
 
+			// Saldo
+			$this->Saldo->EditAttrs["class"] = "form-control";
+			$this->Saldo->EditCustomAttributes = "";
+			$this->Saldo->EditValue = ew_HtmlEncode($this->Saldo->CurrentValue);
+			$this->Saldo->PlaceHolder = ew_RemoveHtml($this->Saldo->FldCaption());
+			if (strval($this->Saldo->EditValue) <> "" && is_numeric($this->Saldo->EditValue)) $this->Saldo->EditValue = ew_FormatNumber($this->Saldo->EditValue, -2, -2, -2, -2);
+
+			// Periode
+			$this->Periode->EditAttrs["class"] = "form-control";
+			$this->Periode->EditCustomAttributes = "";
+			$this->Periode->EditValue = ew_HtmlEncode($this->Periode->CurrentValue);
+			$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
+
 			// Edit refer script
 			// group
 
@@ -882,6 +935,14 @@ class ct91_rekening_edit extends ct91_rekening {
 			// status
 			$this->status->LinkCustomAttributes = "";
 			$this->status->HrefValue = "";
+
+			// Saldo
+			$this->Saldo->LinkCustomAttributes = "";
+			$this->Saldo->HrefValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -904,6 +965,15 @@ class ct91_rekening_edit extends ct91_rekening {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
+		if (!$this->Saldo->FldIsDetailKey && !is_null($this->Saldo->FormValue) && $this->Saldo->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Saldo->FldCaption(), $this->Saldo->ReqErrMsg));
+		}
+		if (!ew_CheckNumber($this->Saldo->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Saldo->FldErrMsg());
+		}
+		if (!$this->Periode->FldIsDetailKey && !is_null($this->Periode->FormValue) && $this->Periode->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Periode->FldCaption(), $this->Periode->ReqErrMsg));
+		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -957,6 +1027,12 @@ class ct91_rekening_edit extends ct91_rekening {
 
 			// status
 			$this->status->SetDbValueDef($rsnew, $this->status->CurrentValue, NULL, $this->status->ReadOnly);
+
+			// Saldo
+			$this->Saldo->SetDbValueDef($rsnew, $this->Saldo->CurrentValue, 0, $this->Saldo->ReadOnly);
+
+			// Periode
+			$this->Periode->SetDbValueDef($rsnew, $this->Periode->CurrentValue, "", $this->Periode->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -1150,6 +1226,15 @@ ft91_rekeningedit.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
+			elm = this.GetElements("x" + infix + "_Saldo");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t91_rekening->Saldo->FldCaption(), $t91_rekening->Saldo->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Saldo");
+			if (elm && !ew_CheckNumber(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t91_rekening->Saldo->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Periode");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t91_rekening->Periode->FldCaption(), $t91_rekening->Periode->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1296,6 +1381,26 @@ $t91_rekening_edit->ShowMessage();
 </div></div>
 </span>
 <?php echo $t91_rekening->status->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t91_rekening->Saldo->Visible) { // Saldo ?>
+	<div id="r_Saldo" class="form-group">
+		<label id="elh_t91_rekening_Saldo" for="x_Saldo" class="col-sm-2 control-label ewLabel"><?php echo $t91_rekening->Saldo->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t91_rekening->Saldo->CellAttributes() ?>>
+<span id="el_t91_rekening_Saldo">
+<input type="text" data-table="t91_rekening" data-field="x_Saldo" name="x_Saldo" id="x_Saldo" size="15" placeholder="<?php echo ew_HtmlEncode($t91_rekening->Saldo->getPlaceHolder()) ?>" value="<?php echo $t91_rekening->Saldo->EditValue ?>"<?php echo $t91_rekening->Saldo->EditAttributes() ?>>
+</span>
+<?php echo $t91_rekening->Saldo->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t91_rekening->Periode->Visible) { // Periode ?>
+	<div id="r_Periode" class="form-group">
+		<label id="elh_t91_rekening_Periode" for="x_Periode" class="col-sm-2 control-label ewLabel"><?php echo $t91_rekening->Periode->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t91_rekening->Periode->CellAttributes() ?>>
+<span id="el_t91_rekening_Periode">
+<input type="text" data-table="t91_rekening" data-field="x_Periode" name="x_Periode" id="x_Periode" size="30" maxlength="6" placeholder="<?php echo ew_HtmlEncode($t91_rekening->Periode->getPlaceHolder()) ?>" value="<?php echo $t91_rekening->Periode->EditValue ?>"<?php echo $t91_rekening->Periode->EditAttributes() ?>>
+</span>
+<?php echo $t91_rekening->Periode->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

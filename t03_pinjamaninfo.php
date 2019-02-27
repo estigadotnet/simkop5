@@ -1689,7 +1689,7 @@ class ct03_pinjaman extends cTable {
 
 		if (
 			(date_format(date_create($rsnew["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
-			or
+			and
 			(date_format(date_create($rsold["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
 			) {
 			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
@@ -1749,7 +1749,7 @@ class ct03_pinjaman extends cTable {
 
 		if (
 			(date_format(date_create($rsnew["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
-			or
+			and
 			(date_format(date_create($rsold["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
 			) {
 			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");

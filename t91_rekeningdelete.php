@@ -288,6 +288,8 @@ class ct91_rekening_delete extends ct91_rekening {
 		$this->rekening->SetVisibility();
 		$this->keterangan->SetVisibility();
 		$this->status->SetVisibility();
+		$this->Saldo->SetVisibility();
+		$this->Periode->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -476,6 +478,8 @@ class ct91_rekening_delete extends ct91_rekening {
 		$this->status->setDbValue($rs->fields('status'));
 		$this->active->setDbValue($rs->fields('active'));
 		$this->group2->setDbValue($rs->fields('group2'));
+		$this->Saldo->setDbValue($rs->fields('Saldo'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -496,6 +500,8 @@ class ct91_rekening_delete extends ct91_rekening {
 		$this->status->DbValue = $row['status'];
 		$this->active->DbValue = $row['active'];
 		$this->group2->DbValue = $row['group2'];
+		$this->Saldo->DbValue = $row['Saldo'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Render row values based on field settings
@@ -503,8 +509,12 @@ class ct91_rekening_delete extends ct91_rekening {
 		global $Security, $Language, $gsLanguage;
 
 		// Initialize URLs
-		// Call Row_Rendering event
+		// Convert decimal values if posted back
 
+		if ($this->Saldo->FormValue == $this->Saldo->CurrentValue && is_numeric(ew_StrToFloat($this->Saldo->CurrentValue)))
+			$this->Saldo->CurrentValue = ew_StrToFloat($this->Saldo->CurrentValue);
+
+		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
@@ -522,6 +532,8 @@ class ct91_rekening_delete extends ct91_rekening {
 		// status
 		// active
 		// group2
+		// Saldo
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -639,6 +651,16 @@ class ct91_rekening_delete extends ct91_rekening {
 		$this->group2->ViewValue = $this->group2->CurrentValue;
 		$this->group2->ViewCustomAttributes = "";
 
+		// Saldo
+		$this->Saldo->ViewValue = $this->Saldo->CurrentValue;
+		$this->Saldo->ViewValue = ew_FormatNumber($this->Saldo->ViewValue, 2, -2, -2, -2);
+		$this->Saldo->CellCssStyle .= "text-align: right;";
+		$this->Saldo->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 			// group
 			$this->group->LinkCustomAttributes = "";
 			$this->group->HrefValue = "";
@@ -668,6 +690,16 @@ class ct91_rekening_delete extends ct91_rekening {
 			$this->status->LinkCustomAttributes = "";
 			$this->status->HrefValue = "";
 			$this->status->TooltipValue = "";
+
+			// Saldo
+			$this->Saldo->LinkCustomAttributes = "";
+			$this->Saldo->HrefValue = "";
+			$this->Saldo->TooltipValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -942,6 +974,12 @@ $t91_rekening_delete->ShowMessage();
 <?php if ($t91_rekening->status->Visible) { // status ?>
 		<th><span id="elh_t91_rekening_status" class="t91_rekening_status"><?php echo $t91_rekening->status->FldCaption() ?></span></th>
 <?php } ?>
+<?php if ($t91_rekening->Saldo->Visible) { // Saldo ?>
+		<th><span id="elh_t91_rekening_Saldo" class="t91_rekening_Saldo"><?php echo $t91_rekening->Saldo->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t91_rekening->Periode->Visible) { // Periode ?>
+		<th><span id="elh_t91_rekening_Periode" class="t91_rekening_Periode"><?php echo $t91_rekening->Periode->FldCaption() ?></span></th>
+<?php } ?>
 	</tr>
 	</thead>
 	<tbody>
@@ -1008,6 +1046,22 @@ while (!$t91_rekening_delete->Recordset->EOF) {
 <span id="el<?php echo $t91_rekening_delete->RowCnt ?>_t91_rekening_status" class="t91_rekening_status">
 <span<?php echo $t91_rekening->status->ViewAttributes() ?>>
 <?php echo $t91_rekening->status->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t91_rekening->Saldo->Visible) { // Saldo ?>
+		<td<?php echo $t91_rekening->Saldo->CellAttributes() ?>>
+<span id="el<?php echo $t91_rekening_delete->RowCnt ?>_t91_rekening_Saldo" class="t91_rekening_Saldo">
+<span<?php echo $t91_rekening->Saldo->ViewAttributes() ?>>
+<?php echo $t91_rekening->Saldo->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t91_rekening->Periode->Visible) { // Periode ?>
+		<td<?php echo $t91_rekening->Periode->CellAttributes() ?>>
+<span id="el<?php echo $t91_rekening_delete->RowCnt ?>_t91_rekening_Periode" class="t91_rekening_Periode">
+<span<?php echo $t91_rekening->Periode->ViewAttributes() ?>>
+<?php echo $t91_rekening->Periode->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

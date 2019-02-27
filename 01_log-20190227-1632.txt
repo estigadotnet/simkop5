@@ -1,0 +1,82 @@
+<strong>----- to do --------------------------------------------------------------------------------</strong>
+
+11:00 AM 12/24/2018
+- tutup buku :: apakah semua rekening dibuatkan saldo awalnya ?
+- pend sum deb - sum kre
+- biaya kebalikan
+- 
+
+9:16 AM 12/21/2018
+- daftar transaksi yang harus dijurnalkan
+  - 
+
+<font color="red">1:36 PM 11/30/2018</font>
+- minimize informasi detail di pinjaman yang tidak diperlukan
+
+<font color="red">9:28 AM 11/26/2018</font>
+- jenis pembayaran pinjaman :: - ANGSURAN
+                               - BERJANGKA
+  - form inputan pembayaran :: sama, hanya saja sistem pembayarannya yang berbeda,
+  - angsuran  : seperti yang sudah dibuat saat ini
+  - berjangka : pembayaran per bulannya hanya bunga nya saja, di akhir periode angsuran :: pembayaran pokok pinjaman + bunga
+
+- import excel
+
+- DENDA,
+  - jika tunda pembayaran DENDA, nilai DENDA tetap ditampilkan tapi warna dibedakan
+  - jika ada pembayaran sebagian :: realisasi pembayaran ditulis di kolom DENDA, sisa nya diletakkan di kolom KETERANGAN
+  - nilai realisasi pembayaran DENDA akan ostosmastis terjurnal
+
+- laporan :
+  - KAS TRANSAKSI
+  - KAS BANK
+
+- POTONGAN PINJAMAN ngelink ke KAS BANK
+
+- posting transaksi, sebelum sava form => data jurnal batal diposting,
+                   , setelah save form => data jurnal baru terpostong
+
+- laporan AKUNTANSI ::
+  - Rekap Jurnal
+  - Buku Besar
+  - Laba Rugi
+  - Neraca
+  - Saldo Akhir Piutang
+    - dibuatkan query kolom mana saja yang akan ditampilkan
+    - default :: semua kolom ditampilkan
+
+- input range laporan ::
+    DARI .... [periode aktif - 1] S.D. .... [periode aktif]
+
+- menu REKENING :
+  - Group Rekening, CRUD group rekening
+  - Rekening. CRUD data rekening
+  - Rekening Transaksi, pendefinisian rekening mana salah yang digunakan untuk bertransaksi
+
+- SALDO AWAL REKENING
+
+- NOMOR REKENING : x.xxxx
+
+
+
+
+<font color="red">11:43 AM 11/23/2018</font>
+- simpanan pokok
+- simpanan wajib
+- deposito
+- nasabah deposito
+- lokasi koperasi (cabang / branch office / cabang unit usaha)
+- auto-jurnal
+
+
+
+
+<strong>----- done --------------------------------------------------------------------------------</strong>
+
+11:33 AM 11/26/2018
+- tabel rekgroup
+  -- id 
+  -- Kode 
+  -- NamaRekening 
+  -- Posisi 
+  -- Laporan

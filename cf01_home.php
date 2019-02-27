@@ -312,6 +312,7 @@ Page_Rendering();
 </div>
 <?php } ?>
 <?php
+$GLOBALS["Periode"] = ew_ExecuteScalar("select Tahun_Bulan from t93_periode");
 $db =& DbHelper(); 
 ?>
 

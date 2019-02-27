@@ -39,19 +39,20 @@ Conn()->Execute($q); //echo $q; exit();
 
 
 // --------------------------------------------------
-// tabel saldoawal
-// tabel saldoawalold
+// tabel rekening
+// tabel rekeningold
 // --------------------------------------------------
-// append data dari tabel saldoawal ke saldoawalold
-$q = "insert into t83_saldoawalold (Periode, Akun, Debet, Kredit, Saldo) SELECT Periode, Akun, Debet, Kredit, Saldo FROM `t84_saldoawal`";
+// append data dari tabel t91_rekening ke t80_rekeningold
+$q = "insert into t80_rekeningold select * from `t91_rekening`";
 Conn()->Execute($q);
 
-// truncate tabel saldoawal
-$q = "truncate t84_saldoawal";
+// update data saldo di tabel t91_rekening, update dari v12_saldoakhir
+$q = "update t91_rekening left join v12_saldoakhir on t91_rekening.id = v12_saldoakhir.id
+	set t91_rekening.saldo = v12_saldoakhir.saldo";
 Conn()->Execute($q);
 
-// copy data tabel rekening ke tabel saldoawal
-$q = "insert into t84_saldoawal (periode, akun) select '".$periode_skrg_tahun_bulan."', id from t91_rekening";
+// update data Periode di tabel t91_rekening dengan data periode baru
+$q = "update t91_rekening set Periode = '".$periode_skrg_tahun_bulan."'";
 Conn()->Execute($q);
 // --------------------------------------------------
 

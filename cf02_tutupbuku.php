@@ -330,6 +330,7 @@ Page_Rendering();
 ?>
 
 <?php
+$GLOBALS["Periode"] = ew_ExecuteScalar("select Tahun_Bulan from t93_periode");
 if (isset($_GET["ok"])) {
 	if ($_GET["ok"] == 1) {
 		?>

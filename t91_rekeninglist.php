@@ -416,6 +416,8 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->rekening->SetVisibility();
 		$this->keterangan->SetVisibility();
 		$this->status->SetVisibility();
+		$this->Saldo->SetVisibility();
+		$this->Periode->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -668,10 +670,6 @@ class ct91_rekening_list extends ct91_rekening {
 			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
-		if ($sFilter == "") {
-			$sFilter = "0=101";
-			$this->SearchWhere = $sFilter;
-		}
 
 		// Set up filter in session
 		$this->setSessionWhere($sFilter);
@@ -783,6 +781,8 @@ class ct91_rekening_list extends ct91_rekening {
 		$sFilterList = ew_Concat($sFilterList, $this->status->AdvancedSearch->ToJSON(), ","); // Field status
 		$sFilterList = ew_Concat($sFilterList, $this->active->AdvancedSearch->ToJSON(), ","); // Field active
 		$sFilterList = ew_Concat($sFilterList, $this->group2->AdvancedSearch->ToJSON(), ","); // Field group2
+		$sFilterList = ew_Concat($sFilterList, $this->Saldo->AdvancedSearch->ToJSON(), ","); // Field Saldo
+		$sFilterList = ew_Concat($sFilterList, $this->Periode->AdvancedSearch->ToJSON(), ","); // Field Periode
 		$sFilterList = preg_replace('/,$/', "", $sFilterList);
 
 		// Return filter list in json
@@ -934,6 +934,22 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->group2->AdvancedSearch->SearchValue2 = @$filter["y_group2"];
 		$this->group2->AdvancedSearch->SearchOperator2 = @$filter["w_group2"];
 		$this->group2->AdvancedSearch->Save();
+
+		// Field Saldo
+		$this->Saldo->AdvancedSearch->SearchValue = @$filter["x_Saldo"];
+		$this->Saldo->AdvancedSearch->SearchOperator = @$filter["z_Saldo"];
+		$this->Saldo->AdvancedSearch->SearchCondition = @$filter["v_Saldo"];
+		$this->Saldo->AdvancedSearch->SearchValue2 = @$filter["y_Saldo"];
+		$this->Saldo->AdvancedSearch->SearchOperator2 = @$filter["w_Saldo"];
+		$this->Saldo->AdvancedSearch->Save();
+
+		// Field Periode
+		$this->Periode->AdvancedSearch->SearchValue = @$filter["x_Periode"];
+		$this->Periode->AdvancedSearch->SearchOperator = @$filter["z_Periode"];
+		$this->Periode->AdvancedSearch->SearchCondition = @$filter["v_Periode"];
+		$this->Periode->AdvancedSearch->SearchValue2 = @$filter["y_Periode"];
+		$this->Periode->AdvancedSearch->SearchOperator2 = @$filter["w_Periode"];
+		$this->Periode->AdvancedSearch->Save();
 	}
 
 	// Advanced search WHERE clause based on QueryString
@@ -955,6 +971,8 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->BuildSearchSql($sWhere, $this->status, $Default, TRUE); // status
 		$this->BuildSearchSql($sWhere, $this->active, $Default, FALSE); // active
 		$this->BuildSearchSql($sWhere, $this->group2, $Default, FALSE); // group2
+		$this->BuildSearchSql($sWhere, $this->Saldo, $Default, FALSE); // Saldo
+		$this->BuildSearchSql($sWhere, $this->Periode, $Default, FALSE); // Periode
 
 		// Set up search parm
 		if (!$Default && $sWhere <> "") {
@@ -975,6 +993,8 @@ class ct91_rekening_list extends ct91_rekening {
 			$this->status->AdvancedSearch->Save(); // status
 			$this->active->AdvancedSearch->Save(); // active
 			$this->group2->AdvancedSearch->Save(); // group2
+			$this->Saldo->AdvancedSearch->Save(); // Saldo
+			$this->Periode->AdvancedSearch->Save(); // Periode
 		}
 		return $sWhere;
 	}
@@ -1057,6 +1077,10 @@ class ct91_rekening_list extends ct91_rekening {
 			return TRUE;
 		if ($this->group2->AdvancedSearch->IssetSession())
 			return TRUE;
+		if ($this->Saldo->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Periode->AdvancedSearch->IssetSession())
+			return TRUE;
 		return FALSE;
 	}
 
@@ -1092,6 +1116,8 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->status->AdvancedSearch->UnsetSession();
 		$this->active->AdvancedSearch->UnsetSession();
 		$this->group2->AdvancedSearch->UnsetSession();
+		$this->Saldo->AdvancedSearch->UnsetSession();
+		$this->Periode->AdvancedSearch->UnsetSession();
 	}
 
 	// Restore all search parameters
@@ -1113,6 +1139,8 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->status->AdvancedSearch->Load();
 		$this->active->AdvancedSearch->Load();
 		$this->group2->AdvancedSearch->Load();
+		$this->Saldo->AdvancedSearch->Load();
+		$this->Periode->AdvancedSearch->Load();
 	}
 
 	// Set up sort parameters
@@ -1131,6 +1159,8 @@ class ct91_rekening_list extends ct91_rekening {
 			$this->UpdateSort($this->rekening, $bCtrl); // rekening
 			$this->UpdateSort($this->keterangan, $bCtrl); // keterangan
 			$this->UpdateSort($this->status, $bCtrl); // status
+			$this->UpdateSort($this->Saldo, $bCtrl); // Saldo
+			$this->UpdateSort($this->Periode, $bCtrl); // Periode
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1169,6 +1199,8 @@ class ct91_rekening_list extends ct91_rekening {
 				$this->rekening->setSort("");
 				$this->keterangan->setSort("");
 				$this->status->setSort("");
+				$this->Saldo->setSort("");
+				$this->Periode->setSort("");
 			}
 
 			// Reset start position
@@ -1456,7 +1488,7 @@ class ct91_rekening_list extends ct91_rekening {
 
 		// Show all button
 		$item = &$this->SearchOptions->Add("showall");
-		$item->Body = "<a class=\"btn btn-default ewShowAll\" title=\"" . $Language->Phrase("ResetSearch") . "\" data-caption=\"" . $Language->Phrase("ResetSearch") . "\" href=\"" . $this->PageUrl() . "cmd=reset\">" . $Language->Phrase("ResetSearchBtn") . "</a>";
+		$item->Body = "<a class=\"btn btn-default ewShowAll\" title=\"" . $Language->Phrase("ShowAll") . "\" data-caption=\"" . $Language->Phrase("ShowAll") . "\" href=\"" . $this->PageUrl() . "cmd=reset\">" . $Language->Phrase("ShowAllBtn") . "</a>";
 		$item->Visible = ($this->SearchWhere <> $this->DefaultSearchWhere && $this->SearchWhere <> "0=101");
 
 		// Button group for search
@@ -1601,6 +1633,16 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->group2->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_group2"]);
 		if ($this->group2->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->group2->AdvancedSearch->SearchOperator = @$_GET["z_group2"];
+
+		// Saldo
+		$this->Saldo->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Saldo"]);
+		if ($this->Saldo->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Saldo->AdvancedSearch->SearchOperator = @$_GET["z_Saldo"];
+
+		// Periode
+		$this->Periode->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Periode"]);
+		if ($this->Periode->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Periode->AdvancedSearch->SearchOperator = @$_GET["z_Periode"];
 	}
 
 	// Load recordset
@@ -1672,6 +1714,8 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->status->setDbValue($rs->fields('status'));
 		$this->active->setDbValue($rs->fields('active'));
 		$this->group2->setDbValue($rs->fields('group2'));
+		$this->Saldo->setDbValue($rs->fields('Saldo'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -1692,6 +1736,8 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->status->DbValue = $row['status'];
 		$this->active->DbValue = $row['active'];
 		$this->group2->DbValue = $row['group2'];
+		$this->Saldo->DbValue = $row['Saldo'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Load old record
@@ -1729,6 +1775,10 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->InlineCopyUrl = $this->GetInlineCopyUrl();
 		$this->DeleteUrl = $this->GetDeleteUrl();
 
+		// Convert decimal values if posted back
+		if ($this->Saldo->FormValue == $this->Saldo->CurrentValue && is_numeric(ew_StrToFloat($this->Saldo->CurrentValue)))
+			$this->Saldo->CurrentValue = ew_StrToFloat($this->Saldo->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
@@ -1747,6 +1797,8 @@ class ct91_rekening_list extends ct91_rekening {
 		// status
 		// active
 		// group2
+		// Saldo
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1864,6 +1916,16 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->group2->ViewValue = $this->group2->CurrentValue;
 		$this->group2->ViewCustomAttributes = "";
 
+		// Saldo
+		$this->Saldo->ViewValue = $this->Saldo->CurrentValue;
+		$this->Saldo->ViewValue = ew_FormatNumber($this->Saldo->ViewValue, 2, -2, -2, -2);
+		$this->Saldo->CellCssStyle .= "text-align: right;";
+		$this->Saldo->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 			// group
 			$this->group->LinkCustomAttributes = "";
 			$this->group->HrefValue = "";
@@ -1893,6 +1955,16 @@ class ct91_rekening_list extends ct91_rekening {
 			$this->status->LinkCustomAttributes = "";
 			$this->status->HrefValue = "";
 			$this->status->TooltipValue = "";
+
+			// Saldo
+			$this->Saldo->LinkCustomAttributes = "";
+			$this->Saldo->HrefValue = "";
+			$this->Saldo->TooltipValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
 
 			// group
@@ -1943,6 +2015,18 @@ class ct91_rekening_list extends ct91_rekening {
 			// status
 			$this->status->EditCustomAttributes = "";
 			$this->status->EditValue = $this->status->Options(FALSE);
+
+			// Saldo
+			$this->Saldo->EditAttrs["class"] = "form-control";
+			$this->Saldo->EditCustomAttributes = "";
+			$this->Saldo->EditValue = ew_HtmlEncode($this->Saldo->AdvancedSearch->SearchValue);
+			$this->Saldo->PlaceHolder = ew_RemoveHtml($this->Saldo->FldCaption());
+
+			// Periode
+			$this->Periode->EditAttrs["class"] = "form-control";
+			$this->Periode->EditCustomAttributes = "";
+			$this->Periode->EditValue = ew_HtmlEncode($this->Periode->AdvancedSearch->SearchValue);
+			$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -1994,6 +2078,8 @@ class ct91_rekening_list extends ct91_rekening {
 		$this->status->AdvancedSearch->Load();
 		$this->active->AdvancedSearch->Load();
 		$this->group2->AdvancedSearch->Load();
+		$this->Saldo->AdvancedSearch->Load();
+		$this->Periode->AdvancedSearch->Load();
 	}
 
 	// Set up export options
@@ -2573,6 +2659,24 @@ $t91_rekening_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
+<?php if ($t91_rekening->Saldo->Visible) { // Saldo ?>
+	<?php if ($t91_rekening->SortUrl($t91_rekening->Saldo) == "") { ?>
+		<th data-name="Saldo"><div id="elh_t91_rekening_Saldo" class="t91_rekening_Saldo"><div class="ewTableHeaderCaption"><?php echo $t91_rekening->Saldo->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Saldo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t91_rekening->SortUrl($t91_rekening->Saldo) ?>',2);"><div id="elh_t91_rekening_Saldo" class="t91_rekening_Saldo">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t91_rekening->Saldo->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t91_rekening->Saldo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t91_rekening->Saldo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t91_rekening->Periode->Visible) { // Periode ?>
+	<?php if ($t91_rekening->SortUrl($t91_rekening->Periode) == "") { ?>
+		<th data-name="Periode"><div id="elh_t91_rekening_Periode" class="t91_rekening_Periode"><div class="ewTableHeaderCaption"><?php echo $t91_rekening->Periode->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Periode"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t91_rekening->SortUrl($t91_rekening->Periode) ?>',2);"><div id="elh_t91_rekening_Periode" class="t91_rekening_Periode">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t91_rekening->Periode->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t91_rekening->Periode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t91_rekening->Periode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
 <?php
 
 // Render list options (header, right)
@@ -2683,6 +2787,22 @@ $t91_rekening_list->ListOptions->Render("body", "left", $t91_rekening_list->RowC
 <span id="el<?php echo $t91_rekening_list->RowCnt ?>_t91_rekening_status" class="t91_rekening_status">
 <span<?php echo $t91_rekening->status->ViewAttributes() ?>>
 <?php echo $t91_rekening->status->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t91_rekening->Saldo->Visible) { // Saldo ?>
+		<td data-name="Saldo"<?php echo $t91_rekening->Saldo->CellAttributes() ?>>
+<span id="el<?php echo $t91_rekening_list->RowCnt ?>_t91_rekening_Saldo" class="t91_rekening_Saldo">
+<span<?php echo $t91_rekening->Saldo->ViewAttributes() ?>>
+<?php echo $t91_rekening->Saldo->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t91_rekening->Periode->Visible) { // Periode ?>
+		<td data-name="Periode"<?php echo $t91_rekening->Periode->CellAttributes() ?>>
+<span id="el<?php echo $t91_rekening_list->RowCnt ?>_t91_rekening_Periode" class="t91_rekening_Periode">
+<span<?php echo $t91_rekening->Periode->ViewAttributes() ?>>
+<?php echo $t91_rekening->Periode->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

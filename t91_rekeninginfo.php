@@ -27,6 +27,8 @@ class ct91_rekening extends cTable {
 	var $status;
 	var $active;
 	var $group2;
+	var $Saldo;
+	var $Periode;
 
 	//
 	// Table class constructor
@@ -139,6 +141,17 @@ class ct91_rekening extends cTable {
 		$this->group2->FldIsCustom = TRUE; // Custom field
 		$this->group2->Sortable = TRUE; // Allow sort
 		$this->fields['group2'] = &$this->group2;
+
+		// Saldo
+		$this->Saldo = new cField('t91_rekening', 't91_rekening', 'x_Saldo', 'Saldo', '`Saldo`', '`Saldo`', 4, -1, FALSE, '`Saldo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Saldo->Sortable = TRUE; // Allow sort
+		$this->Saldo->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Saldo'] = &$this->Saldo;
+
+		// Periode
+		$this->Periode = new cField('t91_rekening', 't91_rekening', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Periode->Sortable = TRUE; // Allow sort
+		$this->fields['Periode'] = &$this->Periode;
 	}
 
 	// Set Field Visibility
@@ -247,7 +260,7 @@ class ct91_rekening extends cTable {
 	var $_SqlOrderBy = "";
 
 	function getSqlOrderBy() { // Order By
-		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "";
+		return ($this->_SqlOrderBy <> "") ? $this->_SqlOrderBy : "`id` ASC";
 	}
 
 	function SqlOrderBy() { // For backward compatibility
@@ -657,6 +670,8 @@ class ct91_rekening extends cTable {
 		$this->status->setDbValue($rs->fields('status'));
 		$this->active->setDbValue($rs->fields('active'));
 		$this->group2->setDbValue($rs->fields('group2'));
+		$this->Saldo->setDbValue($rs->fields('Saldo'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Render list row values
@@ -681,6 +696,8 @@ class ct91_rekening extends cTable {
 		// status
 		// active
 		// group2
+		// Saldo
+		// Periode
 		// group
 
 		if (strval($this->group->CurrentValue) <> "") {
@@ -796,6 +813,16 @@ class ct91_rekening extends cTable {
 		$this->group2->ViewValue = $this->group2->CurrentValue;
 		$this->group2->ViewCustomAttributes = "";
 
+		// Saldo
+		$this->Saldo->ViewValue = $this->Saldo->CurrentValue;
+		$this->Saldo->ViewValue = ew_FormatNumber($this->Saldo->ViewValue, 2, -2, -2, -2);
+		$this->Saldo->CellCssStyle .= "text-align: right;";
+		$this->Saldo->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 		// group
 		$this->group->LinkCustomAttributes = "";
 		$this->group->HrefValue = "";
@@ -865,6 +892,16 @@ class ct91_rekening extends cTable {
 		$this->group2->LinkCustomAttributes = "";
 		$this->group2->HrefValue = "";
 		$this->group2->TooltipValue = "";
+
+		// Saldo
+		$this->Saldo->LinkCustomAttributes = "";
+		$this->Saldo->HrefValue = "";
+		$this->Saldo->TooltipValue = "";
+
+		// Periode
+		$this->Periode->LinkCustomAttributes = "";
+		$this->Periode->HrefValue = "";
+		$this->Periode->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -974,6 +1011,19 @@ class ct91_rekening extends cTable {
 		$this->group2->EditValue = $this->group2->CurrentValue;
 		$this->group2->PlaceHolder = ew_RemoveHtml($this->group2->FldCaption());
 
+		// Saldo
+		$this->Saldo->EditAttrs["class"] = "form-control";
+		$this->Saldo->EditCustomAttributes = "";
+		$this->Saldo->EditValue = $this->Saldo->CurrentValue;
+		$this->Saldo->PlaceHolder = ew_RemoveHtml($this->Saldo->FldCaption());
+		if (strval($this->Saldo->EditValue) <> "" && is_numeric($this->Saldo->EditValue)) $this->Saldo->EditValue = ew_FormatNumber($this->Saldo->EditValue, -2, -2, -2, -2);
+
+		// Periode
+		$this->Periode->EditAttrs["class"] = "form-control";
+		$this->Periode->EditCustomAttributes = "";
+		$this->Periode->EditValue = $this->Periode->CurrentValue;
+		$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -1015,6 +1065,8 @@ class ct91_rekening extends cTable {
 					if ($this->status->Exportable) $Doc->ExportCaption($this->status);
 					if ($this->active->Exportable) $Doc->ExportCaption($this->active);
 					if ($this->group2->Exportable) $Doc->ExportCaption($this->group2);
+					if ($this->Saldo->Exportable) $Doc->ExportCaption($this->Saldo);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
 				} else {
 					if ($this->group->Exportable) $Doc->ExportCaption($this->group);
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
@@ -1030,6 +1082,8 @@ class ct91_rekening extends cTable {
 					if ($this->status->Exportable) $Doc->ExportCaption($this->status);
 					if ($this->active->Exportable) $Doc->ExportCaption($this->active);
 					if ($this->group2->Exportable) $Doc->ExportCaption($this->group2);
+					if ($this->Saldo->Exportable) $Doc->ExportCaption($this->Saldo);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1075,6 +1129,8 @@ class ct91_rekening extends cTable {
 						if ($this->status->Exportable) $Doc->ExportField($this->status);
 						if ($this->active->Exportable) $Doc->ExportField($this->active);
 						if ($this->group2->Exportable) $Doc->ExportField($this->group2);
+						if ($this->Saldo->Exportable) $Doc->ExportField($this->Saldo);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
 					} else {
 						if ($this->group->Exportable) $Doc->ExportField($this->group);
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
@@ -1090,6 +1146,8 @@ class ct91_rekening extends cTable {
 						if ($this->status->Exportable) $Doc->ExportField($this->status);
 						if ($this->active->Exportable) $Doc->ExportField($this->active);
 						if ($this->group2->Exportable) $Doc->ExportField($this->group2);
+						if ($this->Saldo->Exportable) $Doc->ExportField($this->Saldo);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
 					}
 					$Doc->EndExportRow();
 				}

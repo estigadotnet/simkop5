@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/2/26" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/2/27" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,9 +583,6 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
-    <menu id="10180">
-      <phrase id="menutext" value="t 83 saldoawalold" />
-    </menu>
     <menu id="10181">
       <phrase id="menutext" value="t 82 jurnalold" />
     </menu>
@@ -696,9 +693,6 @@
     </menu>
     <menu id="18">
       <phrase id="menutext" value="t 92 periodeold" />
-    </menu>
-    <menu id="10179">
-      <phrase id="menutext" value="Saldo Awal" />
     </menu>
     <menu id="10052">
       <phrase id="menutext" value="Rekening" />
@@ -1308,51 +1302,6 @@
         <phrase id="fldcaption" value="Keterangan" />
       </field>
     </table>
-    <table id="t83_saldoawalold">
-      <phrase id="tblcaption" value="t 83 saldoawalold" />
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="periode">
-        <phrase id="fldcaption" value="Periode" />
-      </field>
-      <field id="akun">
-        <phrase id="fldcaption" value="Akun" />
-      </field>
-      <field id="debet">
-        <phrase id="fldcaption" value="Debet" />
-      </field>
-      <field id="kredit">
-        <phrase id="fldcaption" value="Kredit" />
-      </field>
-      <field id="saldo">
-        <phrase id="fldcaption" value="Saldo" />
-      </field>
-    </table>
-    <table id="t84_saldoawal">
-      <phrase id="tblcaption" value="Saldo Awal" />
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="periode">
-        <phrase id="fldcaption" value="Periode" />
-      </field>
-      <field id="akun">
-        <phrase id="fldcaption" value="Akun" />
-      </field>
-      <field id="rekening">
-        <phrase id="fldcaption" value="Rekening" />
-      </field>
-      <field id="debet">
-        <phrase id="fldcaption" value="Debet" />
-      </field>
-      <field id="kredit">
-        <phrase id="fldcaption" value="Kredit" />
-      </field>
-      <field id="saldo">
-        <phrase id="fldcaption" value="Saldo" />
-      </field>
-    </table>
     <table id="t85_neraca2">
       <phrase id="tblcaption" value="Neraca" />
       <field id="field01" />
@@ -1467,6 +1416,12 @@
       </field>
       <field id="group2">
         <phrase id="fldcaption" value="group2" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="Saldo" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
       </field>
     </table>
     <table id="t92_periodeold">
