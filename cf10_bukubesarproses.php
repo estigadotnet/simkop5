@@ -313,11 +313,19 @@ Page_Rendering();
 <?php } ?>
 <?php
 
-$rs = ew_Execute("call spBukuBesar('".$_POST["id"]."')");
+	$rs = ew_Execute("call spBukuBesar('".$_POST["id"]."')");
+	//$r = Conn()->Execute("select Bulan, Tahun from t93_periode");
+	$r = ew_Execute("select Bulan, Tahun from t93_periode"); var_dump($r);
 
+	//echo "1 ".ew_ExecuteScalar("select Bulan from t93_periode");
+	$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
+		"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
 	echo "
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Akun " . $rs->fields["id"] . "</label><br/>
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Nama " . $rs->fields["rekening"] . "</label><br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Buku Besar</label><br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[$r->fields["Bulan"]] . " " . $r->fields["Tahun"] . "</label><br/>
+		&nbsp;<br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Kode " . $rs->fields["id"] . "</label><br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Rekening " . $rs->fields["rekening"] . "</label><br/>
 		<div class='panel panel-default'>			
 		<div>
 		<table class='table table-striped table-hover table-condensed'>

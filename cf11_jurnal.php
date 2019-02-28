@@ -328,7 +328,13 @@ $q = "
 //#where a.id=63
 
 $rs = ew_Execute($q);
-
+	$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
+		"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
+	echo "
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Jurnal</label><br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[ew_ExecuteScalar("select Bulan from t93_periode")] . " " . ew_ExecuteScalar("select Tahun from t93_periode") . "</label><br/>
+		&nbsp;<br/>
+		";
 	echo "
 		<div class='panel panel-default'>
 		<div>
