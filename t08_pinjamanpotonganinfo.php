@@ -1052,8 +1052,8 @@ class ct08_pinjamanpotongan extends cTable {
 		// kodetransaksi = 10
 		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '10'");
 		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '10'");
-		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".PT", $rekdebet, $rsnew["Jumlah"], 0, "Potongan Pinjaman No. Kontrak ".$Kontrak_No);
-		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".PT", $rekkredit, 0, $rsnew["Jumlah"], "Potongan Pinjaman No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".PT", $rekdebet, $rsnew["Jumlah"], 0, "Potongan Pinjaman No. Kontrak ".$Kontrak_No, $rsnew["Tanggal"]);
+		f_buatjurnal($GLOBALS["Periode"], $Kontrak_No.".PT", $rekkredit, 0, $rsnew["Jumlah"], "Potongan Pinjaman No. Kontrak ".$Kontrak_No, $rsnew["Tanggal"]);
 	}
 
 	// Row Updating event

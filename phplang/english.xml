@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/2/27" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/2/28" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,17 +583,104 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
-    <menu id="10181">
-      <phrase id="menutext" value="t 82 jurnalold" />
-    </menu>
-    <menu id="10178">
-      <phrase id="menutext" value="Nasabah Macet" />
-    </menu>
-    <menu id="10160">
-      <phrase id="menutext" value="Main Menu" />
+    <menu id="10182">
+      <phrase id="menutext" value="t 80 rekeningold" />
     </menu>
     <menu id="16">
       <phrase id="menutext" value="Home" />
+    </menu>
+    <menu id="10333">
+      <phrase id="menutext" value="Accounting" />
+    </menu>
+    <menu id="10335">
+      <phrase id="menutext" value="Setup" />
+    </menu>
+    <menu id="7">
+      <phrase id="menutext" value="Periode" />
+    </menu>
+    <menu id="18">
+      <phrase id="menutext" value="t 92 periodeold" />
+    </menu>
+    <menu id="10052">
+      <phrase id="menutext" value="Rekening" />
+    </menu>
+    <menu id="10056">
+      <phrase id="menutext" value="Link Rekening" />
+    </menu>
+    <menu id="10336">
+      <phrase id="menutext" value="Transaksi" />
+    </menu>
+    <menu id="10058">
+      <phrase id="menutext" value="Jurnal" />
+    </menu>
+    <menu id="10164">
+      <phrase id="menutext" value="Jurnal Memorial" />
+    </menu>
+    <menu id="10165">
+      <phrase id="menutext" value="Detail" />
+    </menu>
+    <menu id="17">
+      <phrase id="menutext" value="Tutup Buku" />
+    </menu>
+    <menu id="10337">
+      <phrase id="menutext" value="Laporan" />
+    </menu>
+    <menu id="10187">
+      <phrase id="menutext" value="Jurnal" />
+    </menu>
+    <menu id="10185">
+      <phrase id="menutext" value="Buku Besar" />
+    </menu>
+    <menu id="10186">
+      <phrase id="menutext" value="Buku Besar" />
+    </menu>
+    <menu id="10168">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10169">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10161">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10172">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10173">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10176">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10177">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10334">
+      <phrase id="menutext" value="Koperasi" />
+    </menu>
+    <menu id="35">
+      <phrase id="menutext" value="Setup" />
+    </menu>
+    <menu id="14">
+      <phrase id="menutext" value="Marketing" />
+    </menu>
+    <menu id="1">
+      <phrase id="menutext" value="Nasabah" />
+    </menu>
+    <menu id="2">
+      <phrase id="menutext" value="Jaminan" />
+    </menu>
+    <menu id="10053">
+      <phrase id="menutext" value="Rekening Transaksi" />
+    </menu>
+    <menu id="8">
+      <phrase id="menutext" value="Progress Log" />
+    </menu>
+    <menu id="9">
+      <phrase id="menutext" value="Description" />
+    </menu>
+    <menu id="10265">
+      <phrase id="menutext" value="Transaksi" />
     </menu>
     <menu id="3">
       <phrase id="menutext" value="Pinjaman" />
@@ -613,18 +700,6 @@
     <menu id="5">
       <phrase id="menutext" value="t 05 pinjamanjaminan" />
     </menu>
-    <menu id="10058">
-      <phrase id="menutext" value="Jurnal" />
-    </menu>
-    <menu id="10164">
-      <phrase id="menutext" value="Jurnal Memorial" />
-    </menu>
-    <menu id="10165">
-      <phrase id="menutext" value="Detail" />
-    </menu>
-    <menu id="10174">
-      <phrase id="menutext" value="v 06 nrcper" />
-    </menu>
     <menu id="10113">
       <phrase id="menutext" value="Laporan" />
     </menu>
@@ -640,65 +715,11 @@
     <menu id="10060">
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
-    <menu id="10168">
-      <phrase id="menutext" value="Laba Rugi" />
-    </menu>
-    <menu id="10169">
-      <phrase id="menutext" value="Laba Rugi" />
-    </menu>
-    <menu id="10161">
-      <phrase id="menutext" value="Laba Rugi" />
-    </menu>
-    <menu id="10172">
-      <phrase id="menutext" value="Laba Rugi" />
-    </menu>
     <menu id="10062">
       <phrase id="menutext" value="Neraca" />
     </menu>
-    <menu id="10173">
-      <phrase id="menutext" value="Neraca" />
-    </menu>
-    <menu id="10176">
-      <phrase id="menutext" value="Neraca" />
-    </menu>
-    <menu id="10177">
-      <phrase id="menutext" value="Neraca" />
-    </menu>
-    <menu id="36">
-      <phrase id="menutext" value="Activity Log" />
-    </menu>
-    <menu id="10175">
-      <phrase id="menutext" value="v 07 neraca" />
-    </menu>
-    <menu id="35">
-      <phrase id="menutext" value="Setup" />
-    </menu>
-    <menu id="14">
-      <phrase id="menutext" value="Marketing" />
-    </menu>
-    <menu id="1">
-      <phrase id="menutext" value="Nasabah" />
-    </menu>
-    <menu id="2">
-      <phrase id="menutext" value="Jaminan" />
-    </menu>
-    <menu id="17">
-      <phrase id="menutext" value="Tutup Buku" />
-    </menu>
-    <menu id="10053">
-      <phrase id="menutext" value="Rekening Transaksi" />
-    </menu>
-    <menu id="7">
-      <phrase id="menutext" value="Periode" />
-    </menu>
-    <menu id="18">
-      <phrase id="menutext" value="t 92 periodeold" />
-    </menu>
-    <menu id="10052">
-      <phrase id="menutext" value="Rekening" />
-    </menu>
-    <menu id="10056">
-      <phrase id="menutext" value="Link Rekening" />
+    <menu id="10338">
+      <phrase id="menutext" value="General" />
     </menu>
     <menu id="10">
       <phrase id="menutext" value="Users" />
@@ -709,11 +730,26 @@
     <menu id="12">
       <phrase id="menutext" value="Daftar Menu" />
     </menu>
-    <menu id="8">
-      <phrase id="menutext" value="Progress Log" />
+    <menu id="36">
+      <phrase id="menutext" value="Activity Log" />
     </menu>
-    <menu id="9">
-      <phrase id="menutext" value="Description" />
+    <menu id="10183">
+      <phrase id="menutext" value="v 11 mutasi" />
+    </menu>
+    <menu id="10184">
+      <phrase id="menutext" value="v 12 saldoakhir" />
+    </menu>
+    <menu id="10181">
+      <phrase id="menutext" value="t 82 jurnalold" />
+    </menu>
+    <menu id="10178">
+      <phrase id="menutext" value="Nasabah Macet" />
+    </menu>
+    <menu id="10174">
+      <phrase id="menutext" value="v 06 nrcper" />
+    </menu>
+    <menu id="10175">
+      <phrase id="menutext" value="v 07 neraca" />
     </menu>
     <menu id="10059">
       <phrase id="menutext" value="v 01 labarugi" />
@@ -1275,6 +1311,49 @@
         <phrase id="fldcaption" value="Kredit" />
       </field>
     </table>
+    <table id="t80_rekeningold">
+      <phrase id="tblcaption" value="t 80 rekeningold" />
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="tipe">
+        <phrase id="fldcaption" value="tipe" />
+      </field>
+      <field id="posisi">
+        <phrase id="fldcaption" value="posisi" />
+      </field>
+      <field id="laporan">
+        <phrase id="fldcaption" value="laporan" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="status" />
+      </field>
+      <field id="parent">
+        <phrase id="fldcaption" value="parent" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="keterangan" />
+      </field>
+      <field id="active">
+        <phrase id="fldcaption" value="active" />
+        <phrase id="fldtagvalue1" value="yes" />
+        <phrase id="fldtagcaption1" value="yes" />
+        <phrase id="fldtagvalue2" value="no" />
+        <phrase id="fldtagcaption2" value="no" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="Saldo" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+    </table>
     <table id="t82_jurnalold">
       <phrase id="tblcaption" value="t 82 jurnalold" />
       <field id="id">
@@ -1766,6 +1845,39 @@
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
       </field>
+    </table>
+    <table id="v11_mutasi">
+      <phrase id="tblcaption" value="v 11 mutasi" />
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+    </table>
+    <table id="v12_saldoakhir">
+      <phrase id="tblcaption" value="v 12 saldoakhir" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="saldo" />
+      </field>
+    </table>
+    <table id="cf10_bukubesar_php">
+      <phrase id="tblcaption" value="Buku Besar" />
+    </table>
+    <table id="cf10_bukubesarproses_php">
+      <phrase id="tblcaption" value="Buku Besar" />
+    </table>
+    <table id="cf11_jurnal_php">
+      <phrase id="tblcaption" value="Jurnal" />
     </table>
   </project>
 </ew-language>

@@ -291,7 +291,10 @@ function f_hapusjurnal($Periode, $NomorTransaksi, $Rekening, $Keterangan) {
 }
 
 //-------------------------------------------------------------------------
-function f_buatjurnal($Periode, $NomorTransaksi, $Rekening, $Debet, $Kredit, $Keterangan) {
+function f_buatjurnal($Periode, $NomorTransaksi, $Rekening, $Debet, $Kredit, $Keterangan, $pTanggal = null) {
+	if (is_null($pTanggal)) {
+		$pTanggal = date("Y-m-d");
+	}
 	$q = "
 		insert into t10_jurnal (
 			Tanggal,
@@ -302,7 +305,7 @@ function f_buatjurnal($Periode, $NomorTransaksi, $Rekening, $Debet, $Kredit, $Ke
 			Kredit,
 			Keterangan
 		) values (
-			'".date("Y-m-d")."',
+			'".$pTanggal."',
 			'".$Periode."',
 			'".$NomorTransaksi."',
 			'".$Rekening."',
@@ -327,7 +330,7 @@ function f_buat_jurnal_manual($rsnew) {
 			Kredit,
 			Keterangan
 		) values (
-			'".date("Y-m-d")."',
+			'".$rsnew["Kontrak_Tgl"]."',
 			'".$rsnew["Periode"]."',
 			'".$rsnew["Kontrak_No"]."',
 			'".$rekdebet."',
@@ -347,7 +350,7 @@ function f_buat_jurnal_manual($rsnew) {
 			Kredit,
 			Keterangan
 		) values (
-			'".date("Y-m-d")."',
+			'".$rsnew["Kontrak_Tgl"]."',
 			'".$rsnew["Periode"]."',
 			'".$rsnew["Kontrak_No"]."',
 			'".$rekkredit."',
