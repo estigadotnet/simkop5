@@ -312,10 +312,16 @@ Page_Rendering();
 </div>
 <?php } ?>
 <?php
+
+// hapus t79_jurnallap
+$q = "delete from t79_jurnallap";
+Conn()->Execute($q);
+
 $q = "
 	SELECT
 		j.Tanggal,
 		j.NomorTransaksi,
+		j.Keterangan,
 		r.id,
 		r.rekening,
 		case when isnull(j.Debet) then 0 else j.Debet end as debet,
@@ -325,10 +331,10 @@ $q = "
 		left join t91_rekening r on r.id = j.rekening
 	ORDER BY
 		j.Tanggal";
-//#where a.id=63
+	//#where a.id=63
 
 $rs = ew_Execute($q);
-	$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
+$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
 		"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
 	echo "
 		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Jurnal</label><br/>
@@ -355,6 +361,7 @@ $rs = ew_Execute($q);
 		<tr>
 			<th>Tanggal</th>
 			<th>No. Transaksi</th>
+			<th>Keterangan</th>
 			<th>Kode Akun</th>
 			<th>Akun</th>
 			<th align='right'>Debet</th>
@@ -365,11 +372,31 @@ $rs = ew_Execute($q);
 		<tr>
 			<td>" . date_format(date_create($rs->fields["Tanggal"]), "d-m-Y") . "</td>
 			<td>" . $rs->fields["NomorTransaksi"] . "</td>
+			<td>" . $rs->fields["Keterangan"] . "</td>
 			<td>" . $rs->fields["id"] . "</td>
 			<td>" . $rs->fields["rekening"] . "</td>
 			<td align='right'>" . number_format($rs->fields["debet"]) . "</td>
 			<td align='right'>" . number_format($rs->fields["kredit"]) . "</td>
 		</tr>";
+		// insert ke t79_jurnallap
+		$q = "insert into t79_jurnallap (
+			Tanggal,
+			NomorTransaksi,
+			Keterangan,
+			AkunKode,
+			AkunNama,
+			Debet,
+			Kredit
+			) values (
+			'".$rs->fields["Tanggal"]."',
+			'".$rs->fields["NomorTransaksi"]."',
+			'".$rs->fields["Keterangan"]."',
+			'".$rs->fields["id"]."',
+			'".$rs->fields["rekening"]."',
+			".$rs->fields["debet"].",
+			".$rs->fields["kredit"]."
+			)";
+		Conn()->Execute($q);
 		$rs->MoveNext();
 	}
 	$rs->Close();
@@ -378,7 +405,7 @@ $rs = ew_Execute($q);
 		</table>
 		</div>
 		</div>";
-
+header("Location: t79_jurnallaplist.php");
 ?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>

@@ -312,12 +312,8 @@ Page_Rendering();
 </div>
 <?php } ?>
 <?php
-
+	$r = ew_Execute("select Bulan, Tahun from t93_periode"); //var_dump($r);
 	$rs = ew_Execute("call spBukuBesar('".$_POST["id"]."')");
-	//$r = Conn()->Execute("select Bulan, Tahun from t93_periode");
-	$r = ew_Execute("select Bulan, Tahun from t93_periode"); var_dump($r);
-
-	//echo "1 ".ew_ExecuteScalar("select Bulan from t93_periode");
 	$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
 		"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
 	echo "

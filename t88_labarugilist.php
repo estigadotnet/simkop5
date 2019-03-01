@@ -1414,10 +1414,12 @@ class ct88_labarugi_list extends ct88_labarugi {
 
 		// Example:
 		//$header = "your header";
-		//$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
-		//$header = "Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode");
-		//$header = "Periode ".$_GET["periode"];
 
+		$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
+		$header = "<strong>Laporan Laba Rugi<br/>
+	Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode")."</strong>";
+
+		//$header = "Periode ".$_GET["periode"];
 	}
 
 	// Page Data Rendered event

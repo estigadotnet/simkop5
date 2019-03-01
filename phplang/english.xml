@@ -628,6 +628,9 @@
     <menu id="10187">
       <phrase id="menutext" value="Jurnal" />
     </menu>
+    <menu id="10339">
+      <phrase id="menutext" value="Jurnal" />
+    </menu>
     <menu id="10185">
       <phrase id="menutext" value="Buku Besar" />
     </menu>
@@ -879,6 +882,15 @@
     </table>
     <table id="cf09_nasabahmacet_php">
       <phrase id="tblcaption" value="Nasabah Macet" />
+    </table>
+    <table id="cf10_bukubesar_php">
+      <phrase id="tblcaption" value="Buku Besar" />
+    </table>
+    <table id="cf10_bukubesarproses_php">
+      <phrase id="tblcaption" value="Buku Besar" />
+    </table>
+    <table id="cf11_jurnal_php">
+      <phrase id="tblcaption" value="Jurnal" />
     </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
@@ -1303,6 +1315,30 @@
       </field>
       <field id="rekening">
         <phrase id="fldcaption" value="Rekening" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="t79_jurnallap">
+      <phrase id="tblcaption" value="Jurnal" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="akunkode">
+        <phrase id="fldcaption" value="Akun Kode" />
+      </field>
+      <field id="akunnama">
+        <phrase id="fldcaption" value="Akun Nama" />
       </field>
       <field id="debet">
         <phrase id="fldcaption" value="Debet" />
@@ -1869,15 +1905,6 @@
       <field id="saldo">
         <phrase id="fldcaption" value="saldo" />
       </field>
-    </table>
-    <table id="cf10_bukubesar_php">
-      <phrase id="tblcaption" value="Buku Besar" />
-    </table>
-    <table id="cf10_bukubesarproses_php">
-      <phrase id="tblcaption" value="Buku Besar" />
-    </table>
-    <table id="cf11_jurnal_php">
-      <phrase id="tblcaption" value="Jurnal" />
     </table>
   </project>
 </ew-language>
