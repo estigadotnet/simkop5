@@ -39,6 +39,26 @@ Conn()->Execute($q); //echo $q; exit();
 
 
 // --------------------------------------------------
+// view v22_labarugi
+// tabel labarugiold
+// --------------------------------------------------
+// append data dari view labarugi ke labarugiold
+$q = "insert into t77_labarugiold SELECT * FROM `v22_labarugi`";
+Conn()->Execute($q);
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+// view v23_neraca
+// tabel neracaold
+// --------------------------------------------------
+// append data dari view neraca ke neracaold
+$q = "insert into t76_neracaold SELECT * FROM `v23_neraca`";
+Conn()->Execute($q);
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 // tabel rekening
 // tabel rekeningold
 // --------------------------------------------------

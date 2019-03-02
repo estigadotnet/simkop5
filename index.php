@@ -290,6 +290,8 @@ class cdefault {
 			$this->Page_Terminate("cf10_bukubesarproses.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf11_jurnal.php'))
 			$this->Page_Terminate("cf11_jurnal.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf12_labarugi.php'))
+			$this->Page_Terminate("cf12_labarugi.php");
 		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
 			$this->Page_Terminate("t01_nasabahlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))

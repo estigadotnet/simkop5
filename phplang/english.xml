@@ -583,14 +583,8 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
-    <menu id="10341">
-      <phrase id="menutext" value="Buku Besar" />
-    </menu>
     <menu id="16">
       <phrase id="menutext" value="Home" />
-    </menu>
-    <menu id="10182">
-      <phrase id="menutext" value="t 80 rekeningold" />
     </menu>
     <menu id="10333">
       <phrase id="menutext" value="Accounting" />
@@ -637,6 +631,9 @@
     <menu id="10185">
       <phrase id="menutext" value="Buku Besar" />
     </menu>
+    <menu id="10341">
+      <phrase id="menutext" value="Buku Besar" />
+    </menu>
     <menu id="10340">
       <phrase id="menutext" value="Buku Besar" />
     </menu>
@@ -653,6 +650,9 @@
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
     <menu id="10172">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10342">
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
     <menu id="10173">
@@ -726,6 +726,9 @@
     </menu>
     <menu id="10062">
       <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10182">
+      <phrase id="menutext" value="t 80 rekeningold" />
     </menu>
     <menu id="10338">
       <phrase id="menutext" value="General" />
@@ -897,6 +900,9 @@
     </table>
     <table id="cf11_jurnal_php">
       <phrase id="tblcaption" value="Jurnal" />
+    </table>
+    <table id="cf12_labarugi_php">
+      <phrase id="tblcaption" value="Laba Rugi" />
     </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />

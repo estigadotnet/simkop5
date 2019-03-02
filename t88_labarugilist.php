@@ -1428,6 +1428,10 @@ class ct88_labarugi_list extends ct88_labarugi {
 		// Example:
 		//$footer = "your footer";
 
+		echo "
+		<div id='xsr_2' class='ewRow'>
+			<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick=\"window.location.href='.'\">Selesai</button>
+		</div>";
 	}
 
 	// Form Custom Validate event

@@ -1488,7 +1488,8 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		//$header = "your header";
 
 		$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
-		$header = "<strong>Laporan Jurnal<br/>
+		$header = "<strong>
+	Laporan Jurnal<br/>
 	Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode")."</strong>";
 	}
 
