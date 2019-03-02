@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t79_jurnallapinfo.php" ?>
+<?php include_once "t78_bukubesarlapinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t79_jurnallap_list = NULL; // Initialize page object first
+$t78_bukubesarlap_list = NULL; // Initialize page object first
 
-class ct79_jurnallap_list extends ct79_jurnallap {
+class ct78_bukubesarlap_list extends ct78_bukubesarlap {
 
 	// Page ID
 	var $PageID = 'list';
@@ -25,13 +25,13 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't79_jurnallap';
+	var $TableName = 't78_bukubesarlap';
 
 	// Page object name
-	var $PageObjName = 't79_jurnallap_list';
+	var $PageObjName = 't78_bukubesarlap_list';
 
 	// Grid form hidden field names
-	var $FormName = 'ft79_jurnallaplist';
+	var $FormName = 'ft78_bukubesarlaplist';
 	var $FormActionName = 'k_action';
 	var $FormKeyName = 'k_key';
 	var $FormOldKeyName = 'k_oldkey';
@@ -266,10 +266,10 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t79_jurnallap)
-		if (!isset($GLOBALS["t79_jurnallap"]) || get_class($GLOBALS["t79_jurnallap"]) == "ct79_jurnallap") {
-			$GLOBALS["t79_jurnallap"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t79_jurnallap"];
+		// Table object (t78_bukubesarlap)
+		if (!isset($GLOBALS["t78_bukubesarlap"]) || get_class($GLOBALS["t78_bukubesarlap"]) == "ct78_bukubesarlap") {
+			$GLOBALS["t78_bukubesarlap"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t78_bukubesarlap"];
 		}
 
 		// Initialize URLs
@@ -280,12 +280,12 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		$this->ExportXmlUrl = $this->PageUrl() . "export=xml";
 		$this->ExportCsvUrl = $this->PageUrl() . "export=csv";
 		$this->ExportPdfUrl = $this->PageUrl() . "export=pdf";
-		$this->AddUrl = "t79_jurnallapadd.php";
+		$this->AddUrl = "t78_bukubesarlapadd.php";
 		$this->InlineAddUrl = $this->PageUrl() . "a=add";
 		$this->GridAddUrl = $this->PageUrl() . "a=gridadd";
 		$this->GridEditUrl = $this->PageUrl() . "a=gridedit";
-		$this->MultiDeleteUrl = "t79_jurnallapdelete.php";
-		$this->MultiUpdateUrl = "t79_jurnallapupdate.php";
+		$this->MultiDeleteUrl = "t78_bukubesarlapdelete.php";
+		$this->MultiUpdateUrl = "t78_bukubesarlapupdate.php";
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -296,7 +296,7 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't79_jurnallap', TRUE);
+			define("EW_TABLE_NAME", 't78_bukubesarlap', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -333,7 +333,7 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		// Filter options
 		$this->FilterOptions = new cListOptions();
 		$this->FilterOptions->Tag = "div";
-		$this->FilterOptions->TagClassName = "ewFilterOption ft79_jurnallaplistsrch";
+		$this->FilterOptions->TagClassName = "ewFilterOption ft78_bukubesarlaplistsrch";
 
 		// List actions
 		$this->ListActions = new cListActions();
@@ -413,10 +413,9 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		$this->Tanggal->SetVisibility();
 		$this->NomorTransaksi->SetVisibility();
 		$this->Keterangan->SetVisibility();
-		$this->AkunKode->SetVisibility();
-		$this->AkunNama->SetVisibility();
 		$this->Debet->SetVisibility();
 		$this->Kredit->SetVisibility();
+		$this->Saldo->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -477,13 +476,13 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t79_jurnallap;
+		global $EW_EXPORT, $t78_bukubesarlap;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t79_jurnallap);
+				$doc = new $class($t78_bukubesarlap);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -718,10 +717,9 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 			$this->UpdateSort($this->Tanggal, $bCtrl); // Tanggal
 			$this->UpdateSort($this->NomorTransaksi, $bCtrl); // NomorTransaksi
 			$this->UpdateSort($this->Keterangan, $bCtrl); // Keterangan
-			$this->UpdateSort($this->AkunKode, $bCtrl); // AkunKode
-			$this->UpdateSort($this->AkunNama, $bCtrl); // AkunNama
 			$this->UpdateSort($this->Debet, $bCtrl); // Debet
 			$this->UpdateSort($this->Kredit, $bCtrl); // Kredit
+			$this->UpdateSort($this->Saldo, $bCtrl); // Saldo
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -753,10 +751,9 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 				$this->Tanggal->setSort("");
 				$this->NomorTransaksi->setSort("");
 				$this->Keterangan->setSort("");
-				$this->AkunKode->setSort("");
-				$this->AkunNama->setSort("");
 				$this->Debet->setSort("");
 				$this->Kredit->setSort("");
+				$this->Saldo->setSort("");
 			}
 
 			// Reset start position
@@ -872,10 +869,10 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 
 		// Filter button
 		$item = &$this->FilterOptions->Add("savecurrentfilter");
-		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"ft79_jurnallaplistsrch\" href=\"#\">" . $Language->Phrase("SaveCurrentFilter") . "</a>";
+		$item->Body = "<a class=\"ewSaveFilter\" data-form=\"ft78_bukubesarlaplistsrch\" href=\"#\">" . $Language->Phrase("SaveCurrentFilter") . "</a>";
 		$item->Visible = FALSE;
 		$item = &$this->FilterOptions->Add("deletefilter");
-		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"ft79_jurnallaplistsrch\" href=\"#\">" . $Language->Phrase("DeleteFilter") . "</a>";
+		$item->Body = "<a class=\"ewDeleteFilter\" data-form=\"ft78_bukubesarlaplistsrch\" href=\"#\">" . $Language->Phrase("DeleteFilter") . "</a>";
 		$item->Visible = FALSE;
 		$this->FilterOptions->UseDropDownButton = TRUE;
 		$this->FilterOptions->UseButtonGroup = !$this->FilterOptions->UseDropDownButton;
@@ -899,7 +896,7 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 					$item = &$option->Add("custom_" . $listaction->Action);
 					$caption = $listaction->Caption;
 					$icon = ($listaction->Icon <> "") ? "<span class=\"" . ew_HtmlEncode($listaction->Icon) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\"></span> " : $caption;
-					$item->Body = "<a class=\"ewAction ewListAction\" title=\"" . ew_HtmlEncode($caption) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\" href=\"\" onclick=\"ew_SubmitAction(event,jQuery.extend({f:document.ft79_jurnallaplist}," . $listaction->ToJson(TRUE) . "));return false;\">" . $icon . "</a>";
+					$item->Body = "<a class=\"ewAction ewListAction\" title=\"" . ew_HtmlEncode($caption) . "\" data-caption=\"" . ew_HtmlEncode($caption) . "\" href=\"\" onclick=\"ew_SubmitAction(event,jQuery.extend({f:document.ft78_bukubesarlaplist}," . $listaction->ToJson(TRUE) . "));return false;\">" . $icon . "</a>";
 					$item->Visible = $listaction->Allow;
 				}
 			}
@@ -1123,10 +1120,11 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		$this->Tanggal->setDbValue($rs->fields('Tanggal'));
 		$this->NomorTransaksi->setDbValue($rs->fields('NomorTransaksi'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
-		$this->AkunKode->setDbValue($rs->fields('AkunKode'));
-		$this->AkunNama->setDbValue($rs->fields('AkunNama'));
 		$this->Debet->setDbValue($rs->fields('Debet'));
 		$this->Kredit->setDbValue($rs->fields('Kredit'));
+		$this->Saldo->setDbValue($rs->fields('Saldo'));
+		$this->AkunKode->setDbValue($rs->fields('AkunKode'));
+		$this->AkunNama->setDbValue($rs->fields('AkunNama'));
 	}
 
 	// Load DbValue from recordset
@@ -1136,10 +1134,11 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		$this->Tanggal->DbValue = $row['Tanggal'];
 		$this->NomorTransaksi->DbValue = $row['NomorTransaksi'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
-		$this->AkunKode->DbValue = $row['AkunKode'];
-		$this->AkunNama->DbValue = $row['AkunNama'];
 		$this->Debet->DbValue = $row['Debet'];
 		$this->Kredit->DbValue = $row['Kredit'];
+		$this->Saldo->DbValue = $row['Saldo'];
+		$this->AkunKode->DbValue = $row['AkunKode'];
+		$this->AkunNama->DbValue = $row['AkunNama'];
 	}
 
 	// Load old record
@@ -1181,6 +1180,10 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		if ($this->Kredit->FormValue == $this->Kredit->CurrentValue && is_numeric(ew_StrToFloat($this->Kredit->CurrentValue)))
 			$this->Kredit->CurrentValue = ew_StrToFloat($this->Kredit->CurrentValue);
 
+		// Convert decimal values if posted back
+		if ($this->Saldo->FormValue == $this->Saldo->CurrentValue && is_numeric(ew_StrToFloat($this->Saldo->CurrentValue)))
+			$this->Saldo->CurrentValue = ew_StrToFloat($this->Saldo->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
@@ -1188,10 +1191,11 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		// Tanggal
 		// NomorTransaksi
 		// Keterangan
-		// AkunKode
-		// AkunNama
 		// Debet
 		// Kredit
+		// Saldo
+		// AkunKode
+		// AkunNama
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1208,14 +1212,6 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
 
-		// AkunKode
-		$this->AkunKode->ViewValue = $this->AkunKode->CurrentValue;
-		$this->AkunKode->ViewCustomAttributes = "";
-
-		// AkunNama
-		$this->AkunNama->ViewValue = $this->AkunNama->CurrentValue;
-		$this->AkunNama->ViewCustomAttributes = "";
-
 		// Debet
 		$this->Debet->ViewValue = $this->Debet->CurrentValue;
 		$this->Debet->ViewValue = ew_FormatNumber($this->Debet->ViewValue, 2, -2, -2, -2);
@@ -1227,6 +1223,20 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		$this->Kredit->ViewValue = ew_FormatNumber($this->Kredit->ViewValue, 2, -2, -2, -2);
 		$this->Kredit->CellCssStyle .= "text-align: right;";
 		$this->Kredit->ViewCustomAttributes = "";
+
+		// Saldo
+		$this->Saldo->ViewValue = $this->Saldo->CurrentValue;
+		$this->Saldo->ViewValue = ew_FormatNumber($this->Saldo->ViewValue, 2, -2, -2, -2);
+		$this->Saldo->CellCssStyle .= "text-align: right;";
+		$this->Saldo->ViewCustomAttributes = "";
+
+		// AkunKode
+		$this->AkunKode->ViewValue = $this->AkunKode->CurrentValue;
+		$this->AkunKode->ViewCustomAttributes = "";
+
+		// AkunNama
+		$this->AkunNama->ViewValue = $this->AkunNama->CurrentValue;
+		$this->AkunNama->ViewCustomAttributes = "";
 
 			// Tanggal
 			$this->Tanggal->LinkCustomAttributes = "";
@@ -1243,16 +1253,6 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
 
-			// AkunKode
-			$this->AkunKode->LinkCustomAttributes = "";
-			$this->AkunKode->HrefValue = "";
-			$this->AkunKode->TooltipValue = "";
-
-			// AkunNama
-			$this->AkunNama->LinkCustomAttributes = "";
-			$this->AkunNama->HrefValue = "";
-			$this->AkunNama->TooltipValue = "";
-
 			// Debet
 			$this->Debet->LinkCustomAttributes = "";
 			$this->Debet->HrefValue = "";
@@ -1262,6 +1262,11 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 			$this->Kredit->LinkCustomAttributes = "";
 			$this->Kredit->HrefValue = "";
 			$this->Kredit->TooltipValue = "";
+
+			// Saldo
+			$this->Saldo->LinkCustomAttributes = "";
+			$this->Saldo->HrefValue = "";
+			$this->Saldo->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1311,7 +1316,7 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		// Export to Email
 		$item = &$this->ExportOptions->Add("email");
 		$url = "";
-		$item->Body = "<button id=\"emf_t79_jurnallap\" class=\"ewExportLink ewEmail\" title=\"" . $Language->Phrase("ExportToEmailText") . "\" data-caption=\"" . $Language->Phrase("ExportToEmailText") . "\" onclick=\"ew_EmailDialogShow({lnk:'emf_t79_jurnallap',hdr:ewLanguage.Phrase('ExportToEmailText'),f:document.ft79_jurnallaplist,sel:false" . $url . "});\">" . $Language->Phrase("ExportToEmail") . "</button>";
+		$item->Body = "<button id=\"emf_t78_bukubesarlap\" class=\"ewExportLink ewEmail\" title=\"" . $Language->Phrase("ExportToEmailText") . "\" data-caption=\"" . $Language->Phrase("ExportToEmailText") . "\" onclick=\"ew_EmailDialogShow({lnk:'emf_t78_bukubesarlap',hdr:ewLanguage.Phrase('ExportToEmailText'),f:document.ft78_bukubesarlaplist,sel:false" . $url . "});\">" . $Language->Phrase("ExportToEmail") . "</button>";
 		$item->Visible = FALSE;
 
 		// Drop down button for export
@@ -1488,8 +1493,12 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 		//$header = "your header";
 
 		$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
-		$header = "<strong>Laporan Jurnal<br/>
-	Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode")."</strong>";
+		$header = "<strong>
+	Laporan Buku Besar<br/>
+	Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode")."<br/>
+	&nbsp;<br/>
+	Kode ".$_GET["akunkode"]."<br/>
+	Rekening ".$_GET["akunnama"]."</strong>";
 	}
 
 	// Page Data Rendered event
@@ -1500,7 +1509,7 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 
 		echo "
 		<div id='xsr_2' class='ewRow'>
-			<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick=\"window.location.href='.'\">Selesai</button>
+			<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick=\"window.location.href='cf10_bukubesar.php'\">Selesai</button>
 		</div>";
 	}
 
@@ -1568,31 +1577,31 @@ class ct79_jurnallap_list extends ct79_jurnallap {
 <?php
 
 // Create page object
-if (!isset($t79_jurnallap_list)) $t79_jurnallap_list = new ct79_jurnallap_list();
+if (!isset($t78_bukubesarlap_list)) $t78_bukubesarlap_list = new ct78_bukubesarlap_list();
 
 // Page init
-$t79_jurnallap_list->Page_Init();
+$t78_bukubesarlap_list->Page_Init();
 
 // Page main
-$t79_jurnallap_list->Page_Main();
+$t78_bukubesarlap_list->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t79_jurnallap_list->Page_Render();
+$t78_bukubesarlap_list->Page_Render();
 ?>
 <?php include_once "header.php" ?>
-<?php if ($t79_jurnallap->Export == "") { ?>
+<?php if ($t78_bukubesarlap->Export == "") { ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "list";
-var CurrentForm = ft79_jurnallaplist = new ew_Form("ft79_jurnallaplist", "list");
-ft79_jurnallaplist.FormKeyCountName = '<?php echo $t79_jurnallap_list->FormKeyCountName ?>';
+var CurrentForm = ft78_bukubesarlaplist = new ew_Form("ft78_bukubesarlaplist", "list");
+ft78_bukubesarlaplist.FormKeyCountName = '<?php echo $t78_bukubesarlap_list->FormKeyCountName ?>';
 
 // Form_CustomValidate event
-ft79_jurnallaplist.Form_CustomValidate = 
+ft78_bukubesarlaplist.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -1601,9 +1610,9 @@ ft79_jurnallaplist.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft79_jurnallaplist.ValidateRequired = true;
+ft78_bukubesarlaplist.ValidateRequired = true;
 <?php } else { ?>
-ft79_jurnallaplist.ValidateRequired = false; 
+ft78_bukubesarlaplist.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -1615,276 +1624,259 @@ ft79_jurnallaplist.ValidateRequired = false;
 // Write your client script here, no need to add script tags.
 </script>
 <?php } ?>
-<?php if ($t79_jurnallap->Export == "") { ?>
+<?php if ($t78_bukubesarlap->Export == "") { ?>
 <div class="ewToolbar">
-<?php if ($t79_jurnallap->Export == "") { ?>
+<?php if ($t78_bukubesarlap->Export == "") { ?>
 <?php $Breadcrumb->Render(); ?>
 <?php } ?>
-<?php if ($t79_jurnallap_list->TotalRecs > 0 && $t79_jurnallap_list->ExportOptions->Visible()) { ?>
-<?php $t79_jurnallap_list->ExportOptions->Render("body") ?>
+<?php if ($t78_bukubesarlap_list->TotalRecs > 0 && $t78_bukubesarlap_list->ExportOptions->Visible()) { ?>
+<?php $t78_bukubesarlap_list->ExportOptions->Render("body") ?>
 <?php } ?>
-<?php if ($t79_jurnallap->Export == "") { ?>
+<?php if ($t78_bukubesarlap->Export == "") { ?>
 <?php echo $Language->SelectionForm(); ?>
 <?php } ?>
 <div class="clearfix"></div>
 </div>
 <?php } ?>
 <?php
-	$bSelectLimit = $t79_jurnallap_list->UseSelectLimit;
+	$bSelectLimit = $t78_bukubesarlap_list->UseSelectLimit;
 	if ($bSelectLimit) {
-		if ($t79_jurnallap_list->TotalRecs <= 0)
-			$t79_jurnallap_list->TotalRecs = $t79_jurnallap->SelectRecordCount();
+		if ($t78_bukubesarlap_list->TotalRecs <= 0)
+			$t78_bukubesarlap_list->TotalRecs = $t78_bukubesarlap->SelectRecordCount();
 	} else {
-		if (!$t79_jurnallap_list->Recordset && ($t79_jurnallap_list->Recordset = $t79_jurnallap_list->LoadRecordset()))
-			$t79_jurnallap_list->TotalRecs = $t79_jurnallap_list->Recordset->RecordCount();
+		if (!$t78_bukubesarlap_list->Recordset && ($t78_bukubesarlap_list->Recordset = $t78_bukubesarlap_list->LoadRecordset()))
+			$t78_bukubesarlap_list->TotalRecs = $t78_bukubesarlap_list->Recordset->RecordCount();
 	}
-	$t79_jurnallap_list->StartRec = 1;
-	if ($t79_jurnallap_list->DisplayRecs <= 0 || ($t79_jurnallap->Export <> "" && $t79_jurnallap->ExportAll)) // Display all records
-		$t79_jurnallap_list->DisplayRecs = $t79_jurnallap_list->TotalRecs;
-	if (!($t79_jurnallap->Export <> "" && $t79_jurnallap->ExportAll))
-		$t79_jurnallap_list->SetUpStartRec(); // Set up start record position
+	$t78_bukubesarlap_list->StartRec = 1;
+	if ($t78_bukubesarlap_list->DisplayRecs <= 0 || ($t78_bukubesarlap->Export <> "" && $t78_bukubesarlap->ExportAll)) // Display all records
+		$t78_bukubesarlap_list->DisplayRecs = $t78_bukubesarlap_list->TotalRecs;
+	if (!($t78_bukubesarlap->Export <> "" && $t78_bukubesarlap->ExportAll))
+		$t78_bukubesarlap_list->SetUpStartRec(); // Set up start record position
 	if ($bSelectLimit)
-		$t79_jurnallap_list->Recordset = $t79_jurnallap_list->LoadRecordset($t79_jurnallap_list->StartRec-1, $t79_jurnallap_list->DisplayRecs);
+		$t78_bukubesarlap_list->Recordset = $t78_bukubesarlap_list->LoadRecordset($t78_bukubesarlap_list->StartRec-1, $t78_bukubesarlap_list->DisplayRecs);
 
 	// Set no record found message
-	if ($t79_jurnallap->CurrentAction == "" && $t79_jurnallap_list->TotalRecs == 0) {
+	if ($t78_bukubesarlap->CurrentAction == "" && $t78_bukubesarlap_list->TotalRecs == 0) {
 		if (!$Security->CanList())
-			$t79_jurnallap_list->setWarningMessage(ew_DeniedMsg());
-		if ($t79_jurnallap_list->SearchWhere == "0=101")
-			$t79_jurnallap_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
+			$t78_bukubesarlap_list->setWarningMessage(ew_DeniedMsg());
+		if ($t78_bukubesarlap_list->SearchWhere == "0=101")
+			$t78_bukubesarlap_list->setWarningMessage($Language->Phrase("EnterSearchCriteria"));
 		else
-			$t79_jurnallap_list->setWarningMessage($Language->Phrase("NoRecord"));
+			$t78_bukubesarlap_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
-$t79_jurnallap_list->RenderOtherOptions();
+$t78_bukubesarlap_list->RenderOtherOptions();
 ?>
-<?php $t79_jurnallap_list->ShowPageHeader(); ?>
+<?php $t78_bukubesarlap_list->ShowPageHeader(); ?>
 <?php
-$t79_jurnallap_list->ShowMessage();
+$t78_bukubesarlap_list->ShowMessage();
 ?>
-<?php if ($t79_jurnallap_list->TotalRecs > 0 || $t79_jurnallap->CurrentAction <> "") { ?>
-<div class="panel panel-default ewGrid t79_jurnallap">
-<form name="ft79_jurnallaplist" id="ft79_jurnallaplist" class="form-inline ewForm ewListForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t79_jurnallap_list->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t79_jurnallap_list->Token ?>">
+<?php if ($t78_bukubesarlap_list->TotalRecs > 0 || $t78_bukubesarlap->CurrentAction <> "") { ?>
+<div class="panel panel-default ewGrid t78_bukubesarlap">
+<form name="ft78_bukubesarlaplist" id="ft78_bukubesarlaplist" class="form-inline ewForm ewListForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t78_bukubesarlap_list->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t78_bukubesarlap_list->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t79_jurnallap">
-<div id="gmp_t79_jurnallap" class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
-<?php if ($t79_jurnallap_list->TotalRecs > 0 || $t79_jurnallap->CurrentAction == "gridedit") { ?>
-<table id="tbl_t79_jurnallaplist" class="table ewTable">
-<?php echo $t79_jurnallap->TableCustomInnerHtml ?>
+<input type="hidden" name="t" value="t78_bukubesarlap">
+<div id="gmp_t78_bukubesarlap" class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
+<?php if ($t78_bukubesarlap_list->TotalRecs > 0 || $t78_bukubesarlap->CurrentAction == "gridedit") { ?>
+<table id="tbl_t78_bukubesarlaplist" class="table ewTable">
+<?php echo $t78_bukubesarlap->TableCustomInnerHtml ?>
 <thead><!-- Table header -->
 	<tr class="ewTableHeader">
 <?php
 
 // Header row
-$t79_jurnallap_list->RowType = EW_ROWTYPE_HEADER;
+$t78_bukubesarlap_list->RowType = EW_ROWTYPE_HEADER;
 
 // Render list options
-$t79_jurnallap_list->RenderListOptions();
+$t78_bukubesarlap_list->RenderListOptions();
 
 // Render list options (header, left)
-$t79_jurnallap_list->ListOptions->Render("header", "left");
+$t78_bukubesarlap_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t79_jurnallap->Tanggal->Visible) { // Tanggal ?>
-	<?php if ($t79_jurnallap->SortUrl($t79_jurnallap->Tanggal) == "") { ?>
-		<th data-name="Tanggal"><div id="elh_t79_jurnallap_Tanggal" class="t79_jurnallap_Tanggal"><div class="ewTableHeaderCaption"><?php echo $t79_jurnallap->Tanggal->FldCaption() ?></div></div></th>
+<?php if ($t78_bukubesarlap->Tanggal->Visible) { // Tanggal ?>
+	<?php if ($t78_bukubesarlap->SortUrl($t78_bukubesarlap->Tanggal) == "") { ?>
+		<th data-name="Tanggal"><div id="elh_t78_bukubesarlap_Tanggal" class="t78_bukubesarlap_Tanggal"><div class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Tanggal->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Tanggal"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t79_jurnallap->SortUrl($t79_jurnallap->Tanggal) ?>',2);"><div id="elh_t79_jurnallap_Tanggal" class="t79_jurnallap_Tanggal">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t79_jurnallap->Tanggal->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t79_jurnallap->Tanggal->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t79_jurnallap->Tanggal->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="Tanggal"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t78_bukubesarlap->SortUrl($t78_bukubesarlap->Tanggal) ?>',2);"><div id="elh_t78_bukubesarlap_Tanggal" class="t78_bukubesarlap_Tanggal">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Tanggal->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t78_bukubesarlap->Tanggal->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t78_bukubesarlap->Tanggal->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t79_jurnallap->NomorTransaksi->Visible) { // NomorTransaksi ?>
-	<?php if ($t79_jurnallap->SortUrl($t79_jurnallap->NomorTransaksi) == "") { ?>
-		<th data-name="NomorTransaksi"><div id="elh_t79_jurnallap_NomorTransaksi" class="t79_jurnallap_NomorTransaksi"><div class="ewTableHeaderCaption"><?php echo $t79_jurnallap->NomorTransaksi->FldCaption() ?></div></div></th>
+<?php if ($t78_bukubesarlap->NomorTransaksi->Visible) { // NomorTransaksi ?>
+	<?php if ($t78_bukubesarlap->SortUrl($t78_bukubesarlap->NomorTransaksi) == "") { ?>
+		<th data-name="NomorTransaksi"><div id="elh_t78_bukubesarlap_NomorTransaksi" class="t78_bukubesarlap_NomorTransaksi"><div class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->NomorTransaksi->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="NomorTransaksi"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t79_jurnallap->SortUrl($t79_jurnallap->NomorTransaksi) ?>',2);"><div id="elh_t79_jurnallap_NomorTransaksi" class="t79_jurnallap_NomorTransaksi">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t79_jurnallap->NomorTransaksi->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t79_jurnallap->NomorTransaksi->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t79_jurnallap->NomorTransaksi->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="NomorTransaksi"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t78_bukubesarlap->SortUrl($t78_bukubesarlap->NomorTransaksi) ?>',2);"><div id="elh_t78_bukubesarlap_NomorTransaksi" class="t78_bukubesarlap_NomorTransaksi">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->NomorTransaksi->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t78_bukubesarlap->NomorTransaksi->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t78_bukubesarlap->NomorTransaksi->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t79_jurnallap->Keterangan->Visible) { // Keterangan ?>
-	<?php if ($t79_jurnallap->SortUrl($t79_jurnallap->Keterangan) == "") { ?>
-		<th data-name="Keterangan"><div id="elh_t79_jurnallap_Keterangan" class="t79_jurnallap_Keterangan"><div class="ewTableHeaderCaption"><?php echo $t79_jurnallap->Keterangan->FldCaption() ?></div></div></th>
+<?php if ($t78_bukubesarlap->Keterangan->Visible) { // Keterangan ?>
+	<?php if ($t78_bukubesarlap->SortUrl($t78_bukubesarlap->Keterangan) == "") { ?>
+		<th data-name="Keterangan"><div id="elh_t78_bukubesarlap_Keterangan" class="t78_bukubesarlap_Keterangan"><div class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Keterangan->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t79_jurnallap->SortUrl($t79_jurnallap->Keterangan) ?>',2);"><div id="elh_t79_jurnallap_Keterangan" class="t79_jurnallap_Keterangan">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t79_jurnallap->Keterangan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t79_jurnallap->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t79_jurnallap->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="Keterangan"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t78_bukubesarlap->SortUrl($t78_bukubesarlap->Keterangan) ?>',2);"><div id="elh_t78_bukubesarlap_Keterangan" class="t78_bukubesarlap_Keterangan">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Keterangan->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t78_bukubesarlap->Keterangan->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t78_bukubesarlap->Keterangan->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t79_jurnallap->AkunKode->Visible) { // AkunKode ?>
-	<?php if ($t79_jurnallap->SortUrl($t79_jurnallap->AkunKode) == "") { ?>
-		<th data-name="AkunKode"><div id="elh_t79_jurnallap_AkunKode" class="t79_jurnallap_AkunKode"><div class="ewTableHeaderCaption"><?php echo $t79_jurnallap->AkunKode->FldCaption() ?></div></div></th>
+<?php if ($t78_bukubesarlap->Debet->Visible) { // Debet ?>
+	<?php if ($t78_bukubesarlap->SortUrl($t78_bukubesarlap->Debet) == "") { ?>
+		<th data-name="Debet"><div id="elh_t78_bukubesarlap_Debet" class="t78_bukubesarlap_Debet"><div class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Debet->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="AkunKode"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t79_jurnallap->SortUrl($t79_jurnallap->AkunKode) ?>',2);"><div id="elh_t79_jurnallap_AkunKode" class="t79_jurnallap_AkunKode">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t79_jurnallap->AkunKode->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t79_jurnallap->AkunKode->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t79_jurnallap->AkunKode->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="Debet"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t78_bukubesarlap->SortUrl($t78_bukubesarlap->Debet) ?>',2);"><div id="elh_t78_bukubesarlap_Debet" class="t78_bukubesarlap_Debet">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Debet->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t78_bukubesarlap->Debet->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t78_bukubesarlap->Debet->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t79_jurnallap->AkunNama->Visible) { // AkunNama ?>
-	<?php if ($t79_jurnallap->SortUrl($t79_jurnallap->AkunNama) == "") { ?>
-		<th data-name="AkunNama"><div id="elh_t79_jurnallap_AkunNama" class="t79_jurnallap_AkunNama"><div class="ewTableHeaderCaption"><?php echo $t79_jurnallap->AkunNama->FldCaption() ?></div></div></th>
+<?php if ($t78_bukubesarlap->Kredit->Visible) { // Kredit ?>
+	<?php if ($t78_bukubesarlap->SortUrl($t78_bukubesarlap->Kredit) == "") { ?>
+		<th data-name="Kredit"><div id="elh_t78_bukubesarlap_Kredit" class="t78_bukubesarlap_Kredit"><div class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Kredit->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="AkunNama"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t79_jurnallap->SortUrl($t79_jurnallap->AkunNama) ?>',2);"><div id="elh_t79_jurnallap_AkunNama" class="t79_jurnallap_AkunNama">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t79_jurnallap->AkunNama->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t79_jurnallap->AkunNama->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t79_jurnallap->AkunNama->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="Kredit"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t78_bukubesarlap->SortUrl($t78_bukubesarlap->Kredit) ?>',2);"><div id="elh_t78_bukubesarlap_Kredit" class="t78_bukubesarlap_Kredit">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Kredit->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t78_bukubesarlap->Kredit->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t78_bukubesarlap->Kredit->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t79_jurnallap->Debet->Visible) { // Debet ?>
-	<?php if ($t79_jurnallap->SortUrl($t79_jurnallap->Debet) == "") { ?>
-		<th data-name="Debet"><div id="elh_t79_jurnallap_Debet" class="t79_jurnallap_Debet"><div class="ewTableHeaderCaption"><?php echo $t79_jurnallap->Debet->FldCaption() ?></div></div></th>
+<?php if ($t78_bukubesarlap->Saldo->Visible) { // Saldo ?>
+	<?php if ($t78_bukubesarlap->SortUrl($t78_bukubesarlap->Saldo) == "") { ?>
+		<th data-name="Saldo"><div id="elh_t78_bukubesarlap_Saldo" class="t78_bukubesarlap_Saldo"><div class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Saldo->FldCaption() ?></div></div></th>
 	<?php } else { ?>
-		<th data-name="Debet"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t79_jurnallap->SortUrl($t79_jurnallap->Debet) ?>',2);"><div id="elh_t79_jurnallap_Debet" class="t79_jurnallap_Debet">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t79_jurnallap->Debet->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t79_jurnallap->Debet->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t79_jurnallap->Debet->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t79_jurnallap->Kredit->Visible) { // Kredit ?>
-	<?php if ($t79_jurnallap->SortUrl($t79_jurnallap->Kredit) == "") { ?>
-		<th data-name="Kredit"><div id="elh_t79_jurnallap_Kredit" class="t79_jurnallap_Kredit"><div class="ewTableHeaderCaption"><?php echo $t79_jurnallap->Kredit->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Kredit"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t79_jurnallap->SortUrl($t79_jurnallap->Kredit) ?>',2);"><div id="elh_t79_jurnallap_Kredit" class="t79_jurnallap_Kredit">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t79_jurnallap->Kredit->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t79_jurnallap->Kredit->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t79_jurnallap->Kredit->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+		<th data-name="Saldo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t78_bukubesarlap->SortUrl($t78_bukubesarlap->Saldo) ?>',2);"><div id="elh_t78_bukubesarlap_Saldo" class="t78_bukubesarlap_Saldo">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t78_bukubesarlap->Saldo->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t78_bukubesarlap->Saldo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t78_bukubesarlap->Saldo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
 <?php
 
 // Render list options (header, right)
-$t79_jurnallap_list->ListOptions->Render("header", "right");
+$t78_bukubesarlap_list->ListOptions->Render("header", "right");
 ?>
 	</tr>
 </thead>
 <tbody>
 <?php
-if ($t79_jurnallap->ExportAll && $t79_jurnallap->Export <> "") {
-	$t79_jurnallap_list->StopRec = $t79_jurnallap_list->TotalRecs;
+if ($t78_bukubesarlap->ExportAll && $t78_bukubesarlap->Export <> "") {
+	$t78_bukubesarlap_list->StopRec = $t78_bukubesarlap_list->TotalRecs;
 } else {
 
 	// Set the last record to display
-	if ($t79_jurnallap_list->TotalRecs > $t79_jurnallap_list->StartRec + $t79_jurnallap_list->DisplayRecs - 1)
-		$t79_jurnallap_list->StopRec = $t79_jurnallap_list->StartRec + $t79_jurnallap_list->DisplayRecs - 1;
+	if ($t78_bukubesarlap_list->TotalRecs > $t78_bukubesarlap_list->StartRec + $t78_bukubesarlap_list->DisplayRecs - 1)
+		$t78_bukubesarlap_list->StopRec = $t78_bukubesarlap_list->StartRec + $t78_bukubesarlap_list->DisplayRecs - 1;
 	else
-		$t79_jurnallap_list->StopRec = $t79_jurnallap_list->TotalRecs;
+		$t78_bukubesarlap_list->StopRec = $t78_bukubesarlap_list->TotalRecs;
 }
-$t79_jurnallap_list->RecCnt = $t79_jurnallap_list->StartRec - 1;
-if ($t79_jurnallap_list->Recordset && !$t79_jurnallap_list->Recordset->EOF) {
-	$t79_jurnallap_list->Recordset->MoveFirst();
-	$bSelectLimit = $t79_jurnallap_list->UseSelectLimit;
-	if (!$bSelectLimit && $t79_jurnallap_list->StartRec > 1)
-		$t79_jurnallap_list->Recordset->Move($t79_jurnallap_list->StartRec - 1);
-} elseif (!$t79_jurnallap->AllowAddDeleteRow && $t79_jurnallap_list->StopRec == 0) {
-	$t79_jurnallap_list->StopRec = $t79_jurnallap->GridAddRowCount;
+$t78_bukubesarlap_list->RecCnt = $t78_bukubesarlap_list->StartRec - 1;
+if ($t78_bukubesarlap_list->Recordset && !$t78_bukubesarlap_list->Recordset->EOF) {
+	$t78_bukubesarlap_list->Recordset->MoveFirst();
+	$bSelectLimit = $t78_bukubesarlap_list->UseSelectLimit;
+	if (!$bSelectLimit && $t78_bukubesarlap_list->StartRec > 1)
+		$t78_bukubesarlap_list->Recordset->Move($t78_bukubesarlap_list->StartRec - 1);
+} elseif (!$t78_bukubesarlap->AllowAddDeleteRow && $t78_bukubesarlap_list->StopRec == 0) {
+	$t78_bukubesarlap_list->StopRec = $t78_bukubesarlap->GridAddRowCount;
 }
 
 // Initialize aggregate
-$t79_jurnallap->RowType = EW_ROWTYPE_AGGREGATEINIT;
-$t79_jurnallap->ResetAttrs();
-$t79_jurnallap_list->RenderRow();
-while ($t79_jurnallap_list->RecCnt < $t79_jurnallap_list->StopRec) {
-	$t79_jurnallap_list->RecCnt++;
-	if (intval($t79_jurnallap_list->RecCnt) >= intval($t79_jurnallap_list->StartRec)) {
-		$t79_jurnallap_list->RowCnt++;
+$t78_bukubesarlap->RowType = EW_ROWTYPE_AGGREGATEINIT;
+$t78_bukubesarlap->ResetAttrs();
+$t78_bukubesarlap_list->RenderRow();
+while ($t78_bukubesarlap_list->RecCnt < $t78_bukubesarlap_list->StopRec) {
+	$t78_bukubesarlap_list->RecCnt++;
+	if (intval($t78_bukubesarlap_list->RecCnt) >= intval($t78_bukubesarlap_list->StartRec)) {
+		$t78_bukubesarlap_list->RowCnt++;
 
 		// Set up key count
-		$t79_jurnallap_list->KeyCount = $t79_jurnallap_list->RowIndex;
+		$t78_bukubesarlap_list->KeyCount = $t78_bukubesarlap_list->RowIndex;
 
 		// Init row class and style
-		$t79_jurnallap->ResetAttrs();
-		$t79_jurnallap->CssClass = "";
-		if ($t79_jurnallap->CurrentAction == "gridadd") {
+		$t78_bukubesarlap->ResetAttrs();
+		$t78_bukubesarlap->CssClass = "";
+		if ($t78_bukubesarlap->CurrentAction == "gridadd") {
 		} else {
-			$t79_jurnallap_list->LoadRowValues($t79_jurnallap_list->Recordset); // Load row values
+			$t78_bukubesarlap_list->LoadRowValues($t78_bukubesarlap_list->Recordset); // Load row values
 		}
-		$t79_jurnallap->RowType = EW_ROWTYPE_VIEW; // Render view
+		$t78_bukubesarlap->RowType = EW_ROWTYPE_VIEW; // Render view
 
 		// Set up row id / data-rowindex
-		$t79_jurnallap->RowAttrs = array_merge($t79_jurnallap->RowAttrs, array('data-rowindex'=>$t79_jurnallap_list->RowCnt, 'id'=>'r' . $t79_jurnallap_list->RowCnt . '_t79_jurnallap', 'data-rowtype'=>$t79_jurnallap->RowType));
+		$t78_bukubesarlap->RowAttrs = array_merge($t78_bukubesarlap->RowAttrs, array('data-rowindex'=>$t78_bukubesarlap_list->RowCnt, 'id'=>'r' . $t78_bukubesarlap_list->RowCnt . '_t78_bukubesarlap', 'data-rowtype'=>$t78_bukubesarlap->RowType));
 
 		// Render row
-		$t79_jurnallap_list->RenderRow();
+		$t78_bukubesarlap_list->RenderRow();
 
 		// Render list options
-		$t79_jurnallap_list->RenderListOptions();
+		$t78_bukubesarlap_list->RenderListOptions();
 ?>
-	<tr<?php echo $t79_jurnallap->RowAttributes() ?>>
+	<tr<?php echo $t78_bukubesarlap->RowAttributes() ?>>
 <?php
 
 // Render list options (body, left)
-$t79_jurnallap_list->ListOptions->Render("body", "left", $t79_jurnallap_list->RowCnt);
+$t78_bukubesarlap_list->ListOptions->Render("body", "left", $t78_bukubesarlap_list->RowCnt);
 ?>
-	<?php if ($t79_jurnallap->Tanggal->Visible) { // Tanggal ?>
-		<td data-name="Tanggal"<?php echo $t79_jurnallap->Tanggal->CellAttributes() ?>>
-<span id="el<?php echo $t79_jurnallap_list->RowCnt ?>_t79_jurnallap_Tanggal" class="t79_jurnallap_Tanggal">
-<span<?php echo $t79_jurnallap->Tanggal->ViewAttributes() ?>>
-<?php echo $t79_jurnallap->Tanggal->ListViewValue() ?></span>
+	<?php if ($t78_bukubesarlap->Tanggal->Visible) { // Tanggal ?>
+		<td data-name="Tanggal"<?php echo $t78_bukubesarlap->Tanggal->CellAttributes() ?>>
+<span id="el<?php echo $t78_bukubesarlap_list->RowCnt ?>_t78_bukubesarlap_Tanggal" class="t78_bukubesarlap_Tanggal">
+<span<?php echo $t78_bukubesarlap->Tanggal->ViewAttributes() ?>>
+<?php echo $t78_bukubesarlap->Tanggal->ListViewValue() ?></span>
 </span>
-<a id="<?php echo $t79_jurnallap_list->PageObjName . "_row_" . $t79_jurnallap_list->RowCnt ?>"></a></td>
+<a id="<?php echo $t78_bukubesarlap_list->PageObjName . "_row_" . $t78_bukubesarlap_list->RowCnt ?>"></a></td>
 	<?php } ?>
-	<?php if ($t79_jurnallap->NomorTransaksi->Visible) { // NomorTransaksi ?>
-		<td data-name="NomorTransaksi"<?php echo $t79_jurnallap->NomorTransaksi->CellAttributes() ?>>
-<span id="el<?php echo $t79_jurnallap_list->RowCnt ?>_t79_jurnallap_NomorTransaksi" class="t79_jurnallap_NomorTransaksi">
-<span<?php echo $t79_jurnallap->NomorTransaksi->ViewAttributes() ?>>
-<?php echo $t79_jurnallap->NomorTransaksi->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t79_jurnallap->Keterangan->Visible) { // Keterangan ?>
-		<td data-name="Keterangan"<?php echo $t79_jurnallap->Keterangan->CellAttributes() ?>>
-<span id="el<?php echo $t79_jurnallap_list->RowCnt ?>_t79_jurnallap_Keterangan" class="t79_jurnallap_Keterangan">
-<span<?php echo $t79_jurnallap->Keterangan->ViewAttributes() ?>>
-<?php echo $t79_jurnallap->Keterangan->ListViewValue() ?></span>
+	<?php if ($t78_bukubesarlap->NomorTransaksi->Visible) { // NomorTransaksi ?>
+		<td data-name="NomorTransaksi"<?php echo $t78_bukubesarlap->NomorTransaksi->CellAttributes() ?>>
+<span id="el<?php echo $t78_bukubesarlap_list->RowCnt ?>_t78_bukubesarlap_NomorTransaksi" class="t78_bukubesarlap_NomorTransaksi">
+<span<?php echo $t78_bukubesarlap->NomorTransaksi->ViewAttributes() ?>>
+<?php echo $t78_bukubesarlap->NomorTransaksi->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t79_jurnallap->AkunKode->Visible) { // AkunKode ?>
-		<td data-name="AkunKode"<?php echo $t79_jurnallap->AkunKode->CellAttributes() ?>>
-<span id="el<?php echo $t79_jurnallap_list->RowCnt ?>_t79_jurnallap_AkunKode" class="t79_jurnallap_AkunKode">
-<span<?php echo $t79_jurnallap->AkunKode->ViewAttributes() ?>>
-<?php echo $t79_jurnallap->AkunKode->ListViewValue() ?></span>
+	<?php if ($t78_bukubesarlap->Keterangan->Visible) { // Keterangan ?>
+		<td data-name="Keterangan"<?php echo $t78_bukubesarlap->Keterangan->CellAttributes() ?>>
+<span id="el<?php echo $t78_bukubesarlap_list->RowCnt ?>_t78_bukubesarlap_Keterangan" class="t78_bukubesarlap_Keterangan">
+<span<?php echo $t78_bukubesarlap->Keterangan->ViewAttributes() ?>>
+<?php echo $t78_bukubesarlap->Keterangan->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t79_jurnallap->AkunNama->Visible) { // AkunNama ?>
-		<td data-name="AkunNama"<?php echo $t79_jurnallap->AkunNama->CellAttributes() ?>>
-<span id="el<?php echo $t79_jurnallap_list->RowCnt ?>_t79_jurnallap_AkunNama" class="t79_jurnallap_AkunNama">
-<span<?php echo $t79_jurnallap->AkunNama->ViewAttributes() ?>>
-<?php echo $t79_jurnallap->AkunNama->ListViewValue() ?></span>
+	<?php if ($t78_bukubesarlap->Debet->Visible) { // Debet ?>
+		<td data-name="Debet"<?php echo $t78_bukubesarlap->Debet->CellAttributes() ?>>
+<span id="el<?php echo $t78_bukubesarlap_list->RowCnt ?>_t78_bukubesarlap_Debet" class="t78_bukubesarlap_Debet">
+<span<?php echo $t78_bukubesarlap->Debet->ViewAttributes() ?>>
+<?php echo $t78_bukubesarlap->Debet->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t79_jurnallap->Debet->Visible) { // Debet ?>
-		<td data-name="Debet"<?php echo $t79_jurnallap->Debet->CellAttributes() ?>>
-<span id="el<?php echo $t79_jurnallap_list->RowCnt ?>_t79_jurnallap_Debet" class="t79_jurnallap_Debet">
-<span<?php echo $t79_jurnallap->Debet->ViewAttributes() ?>>
-<?php echo $t79_jurnallap->Debet->ListViewValue() ?></span>
+	<?php if ($t78_bukubesarlap->Kredit->Visible) { // Kredit ?>
+		<td data-name="Kredit"<?php echo $t78_bukubesarlap->Kredit->CellAttributes() ?>>
+<span id="el<?php echo $t78_bukubesarlap_list->RowCnt ?>_t78_bukubesarlap_Kredit" class="t78_bukubesarlap_Kredit">
+<span<?php echo $t78_bukubesarlap->Kredit->ViewAttributes() ?>>
+<?php echo $t78_bukubesarlap->Kredit->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t79_jurnallap->Kredit->Visible) { // Kredit ?>
-		<td data-name="Kredit"<?php echo $t79_jurnallap->Kredit->CellAttributes() ?>>
-<span id="el<?php echo $t79_jurnallap_list->RowCnt ?>_t79_jurnallap_Kredit" class="t79_jurnallap_Kredit">
-<span<?php echo $t79_jurnallap->Kredit->ViewAttributes() ?>>
-<?php echo $t79_jurnallap->Kredit->ListViewValue() ?></span>
+	<?php if ($t78_bukubesarlap->Saldo->Visible) { // Saldo ?>
+		<td data-name="Saldo"<?php echo $t78_bukubesarlap->Saldo->CellAttributes() ?>>
+<span id="el<?php echo $t78_bukubesarlap_list->RowCnt ?>_t78_bukubesarlap_Saldo" class="t78_bukubesarlap_Saldo">
+<span<?php echo $t78_bukubesarlap->Saldo->ViewAttributes() ?>>
+<?php echo $t78_bukubesarlap->Saldo->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
 <?php
 
 // Render list options (body, right)
-$t79_jurnallap_list->ListOptions->Render("body", "right", $t79_jurnallap_list->RowCnt);
+$t78_bukubesarlap_list->ListOptions->Render("body", "right", $t78_bukubesarlap_list->RowCnt);
 ?>
 	</tr>
 <?php
 	}
-	if ($t79_jurnallap->CurrentAction <> "gridadd")
-		$t79_jurnallap_list->Recordset->MoveNext();
+	if ($t78_bukubesarlap->CurrentAction <> "gridadd")
+		$t78_bukubesarlap_list->Recordset->MoveNext();
 }
 ?>
 </tbody>
 </table>
 <?php } ?>
-<?php if ($t79_jurnallap->CurrentAction == "") { ?>
+<?php if ($t78_bukubesarlap->CurrentAction == "") { ?>
 <input type="hidden" name="a_list" id="a_list" value="">
 <?php } ?>
 </div>
@@ -1892,63 +1884,63 @@ $t79_jurnallap_list->ListOptions->Render("body", "right", $t79_jurnallap_list->R
 <?php
 
 // Close recordset
-if ($t79_jurnallap_list->Recordset)
-	$t79_jurnallap_list->Recordset->Close();
+if ($t78_bukubesarlap_list->Recordset)
+	$t78_bukubesarlap_list->Recordset->Close();
 ?>
-<?php if ($t79_jurnallap->Export == "") { ?>
+<?php if ($t78_bukubesarlap->Export == "") { ?>
 <div class="panel-footer ewGridLowerPanel">
-<?php if ($t79_jurnallap->CurrentAction <> "gridadd" && $t79_jurnallap->CurrentAction <> "gridedit") { ?>
+<?php if ($t78_bukubesarlap->CurrentAction <> "gridadd" && $t78_bukubesarlap->CurrentAction <> "gridedit") { ?>
 <form name="ewPagerForm" class="ewForm form-inline ewPagerForm" action="<?php echo ew_CurrentPage() ?>">
-<?php if (!isset($t79_jurnallap_list->Pager)) $t79_jurnallap_list->Pager = new cPrevNextPager($t79_jurnallap_list->StartRec, $t79_jurnallap_list->DisplayRecs, $t79_jurnallap_list->TotalRecs) ?>
-<?php if ($t79_jurnallap_list->Pager->RecordCount > 0 && $t79_jurnallap_list->Pager->Visible) { ?>
+<?php if (!isset($t78_bukubesarlap_list->Pager)) $t78_bukubesarlap_list->Pager = new cPrevNextPager($t78_bukubesarlap_list->StartRec, $t78_bukubesarlap_list->DisplayRecs, $t78_bukubesarlap_list->TotalRecs) ?>
+<?php if ($t78_bukubesarlap_list->Pager->RecordCount > 0 && $t78_bukubesarlap_list->Pager->Visible) { ?>
 <div class="ewPager">
 <span><?php echo $Language->Phrase("Page") ?>&nbsp;</span>
 <div class="ewPrevNext"><div class="input-group">
 <div class="input-group-btn">
 <!--first page button-->
-	<?php if ($t79_jurnallap_list->Pager->FirstButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t79_jurnallap_list->PageUrl() ?>start=<?php echo $t79_jurnallap_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
+	<?php if ($t78_bukubesarlap_list->Pager->FirstButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerFirst") ?>" href="<?php echo $t78_bukubesarlap_list->PageUrl() ?>start=<?php echo $t78_bukubesarlap_list->Pager->FirstButton->Start ?>"><span class="icon-first ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerFirst") ?>"><span class="icon-first ewIcon"></span></a>
 	<?php } ?>
 <!--previous page button-->
-	<?php if ($t79_jurnallap_list->Pager->PrevButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t79_jurnallap_list->PageUrl() ?>start=<?php echo $t79_jurnallap_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
+	<?php if ($t78_bukubesarlap_list->Pager->PrevButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerPrevious") ?>" href="<?php echo $t78_bukubesarlap_list->PageUrl() ?>start=<?php echo $t78_bukubesarlap_list->Pager->PrevButton->Start ?>"><span class="icon-prev ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerPrevious") ?>"><span class="icon-prev ewIcon"></span></a>
 	<?php } ?>
 </div>
 <!--current page number-->
-	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t79_jurnallap_list->Pager->CurrentPage ?>">
+	<input class="form-control input-sm" type="text" name="<?php echo EW_TABLE_PAGE_NO ?>" value="<?php echo $t78_bukubesarlap_list->Pager->CurrentPage ?>">
 <div class="input-group-btn">
 <!--next page button-->
-	<?php if ($t79_jurnallap_list->Pager->NextButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t79_jurnallap_list->PageUrl() ?>start=<?php echo $t79_jurnallap_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
+	<?php if ($t78_bukubesarlap_list->Pager->NextButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerNext") ?>" href="<?php echo $t78_bukubesarlap_list->PageUrl() ?>start=<?php echo $t78_bukubesarlap_list->Pager->NextButton->Start ?>"><span class="icon-next ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerNext") ?>"><span class="icon-next ewIcon"></span></a>
 	<?php } ?>
 <!--last page button-->
-	<?php if ($t79_jurnallap_list->Pager->LastButton->Enabled) { ?>
-	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t79_jurnallap_list->PageUrl() ?>start=<?php echo $t79_jurnallap_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
+	<?php if ($t78_bukubesarlap_list->Pager->LastButton->Enabled) { ?>
+	<a class="btn btn-default btn-sm" title="<?php echo $Language->Phrase("PagerLast") ?>" href="<?php echo $t78_bukubesarlap_list->PageUrl() ?>start=<?php echo $t78_bukubesarlap_list->Pager->LastButton->Start ?>"><span class="icon-last ewIcon"></span></a>
 	<?php } else { ?>
 	<a class="btn btn-default btn-sm disabled" title="<?php echo $Language->Phrase("PagerLast") ?>"><span class="icon-last ewIcon"></span></a>
 	<?php } ?>
 </div>
 </div>
 </div>
-<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t79_jurnallap_list->Pager->PageCount ?></span>
+<span>&nbsp;<?php echo $Language->Phrase("of") ?>&nbsp;<?php echo $t78_bukubesarlap_list->Pager->PageCount ?></span>
 </div>
 <div class="ewPager ewRec">
-	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $t79_jurnallap_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $t79_jurnallap_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $t79_jurnallap_list->Pager->RecordCount ?></span>
+	<span><?php echo $Language->Phrase("Record") ?>&nbsp;<?php echo $t78_bukubesarlap_list->Pager->FromIndex ?>&nbsp;<?php echo $Language->Phrase("To") ?>&nbsp;<?php echo $t78_bukubesarlap_list->Pager->ToIndex ?>&nbsp;<?php echo $Language->Phrase("Of") ?>&nbsp;<?php echo $t78_bukubesarlap_list->Pager->RecordCount ?></span>
 </div>
 <?php } ?>
-<?php if ($t79_jurnallap_list->TotalRecs > 0 && (!EW_AUTO_HIDE_PAGE_SIZE_SELECTOR || $t79_jurnallap_list->Pager->Visible)) { ?>
+<?php if ($t78_bukubesarlap_list->TotalRecs > 0 && (!EW_AUTO_HIDE_PAGE_SIZE_SELECTOR || $t78_bukubesarlap_list->Pager->Visible)) { ?>
 <div class="ewPager">
-<input type="hidden" name="t" value="t79_jurnallap">
+<input type="hidden" name="t" value="t78_bukubesarlap">
 <select name="<?php echo EW_TABLE_REC_PER_PAGE ?>" class="form-control input-sm ewTooltip" title="<?php echo $Language->Phrase("RecordsPerPage") ?>" onchange="this.form.submit();">
-<option value="50"<?php if ($t79_jurnallap_list->DisplayRecs == 50) { ?> selected<?php } ?>>50</option>
-<option value="100"<?php if ($t79_jurnallap_list->DisplayRecs == 100) { ?> selected<?php } ?>>100</option>
-<option value="ALL"<?php if ($t79_jurnallap->getRecordsPerPage() == -1) { ?> selected<?php } ?>><?php echo $Language->Phrase("AllRecords") ?></option>
+<option value="50"<?php if ($t78_bukubesarlap_list->DisplayRecs == 50) { ?> selected<?php } ?>>50</option>
+<option value="100"<?php if ($t78_bukubesarlap_list->DisplayRecs == 100) { ?> selected<?php } ?>>100</option>
+<option value="ALL"<?php if ($t78_bukubesarlap->getRecordsPerPage() == -1) { ?> selected<?php } ?>><?php echo $Language->Phrase("AllRecords") ?></option>
 </select>
 </div>
 <?php } ?>
@@ -1956,7 +1948,7 @@ if ($t79_jurnallap_list->Recordset)
 <?php } ?>
 <div class="ewListOtherOptions">
 <?php
-	foreach ($t79_jurnallap_list->OtherOptions as &$option)
+	foreach ($t78_bukubesarlap_list->OtherOptions as &$option)
 		$option->Render("body", "bottom");
 ?>
 </div>
@@ -1965,10 +1957,10 @@ if ($t79_jurnallap_list->Recordset)
 <?php } ?>
 </div>
 <?php } ?>
-<?php if ($t79_jurnallap_list->TotalRecs == 0 && $t79_jurnallap->CurrentAction == "") { // Show other options ?>
+<?php if ($t78_bukubesarlap_list->TotalRecs == 0 && $t78_bukubesarlap->CurrentAction == "") { // Show other options ?>
 <div class="ewListOtherOptions">
 <?php
-	foreach ($t79_jurnallap_list->OtherOptions as &$option) {
+	foreach ($t78_bukubesarlap_list->OtherOptions as &$option) {
 		$option->ButtonClass = "";
 		$option->Render("body", "");
 	}
@@ -1976,17 +1968,17 @@ if ($t79_jurnallap_list->Recordset)
 </div>
 <div class="clearfix"></div>
 <?php } ?>
-<?php if ($t79_jurnallap->Export == "") { ?>
+<?php if ($t78_bukubesarlap->Export == "") { ?>
 <script type="text/javascript">
-ft79_jurnallaplist.Init();
+ft78_bukubesarlaplist.Init();
 </script>
 <?php } ?>
 <?php
-$t79_jurnallap_list->ShowPageFooter();
+$t78_bukubesarlap_list->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
-<?php if ($t79_jurnallap->Export == "") { ?>
+<?php if ($t78_bukubesarlap->Export == "") { ?>
 <script type="text/javascript">
 
 // Write your table-specific startup script here
@@ -1996,5 +1988,5 @@ if (EW_DEBUG_ENABLED)
 <?php } ?>
 <?php include_once "footer.php" ?>
 <?php
-$t79_jurnallap_list->Page_Terminate();
+$t78_bukubesarlap_list->Page_Terminate();
 ?>

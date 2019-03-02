@@ -312,112 +312,117 @@ Page_Rendering();
 </div>
 <?php } ?>
 <?php
-	$r = ew_Execute("select Bulan, Tahun from t93_periode"); //var_dump($r);
-	$rs = ew_Execute("call spBukuBesar('".$_POST["id"]."')");
-	$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
-		"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
-	echo "
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Buku Besar</label><br/>
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[$r->fields["Bulan"]] . " " . $r->fields["Tahun"] . "</label><br/>
-		&nbsp;<br/>
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Kode " . $rs->fields["id"] . "</label><br/>
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Rekening " . $rs->fields["rekening"] . "</label><br/>
-		<div class='panel panel-default'>			
-		<div>
-		<table class='table table-striped table-hover table-condensed'>
-		<tbody>";
 
-	/*echo "
-		<tr>
-			<th>Aktiva</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-		</tr>";*/
+// hapus t78_bukubesarlap
+$q = "delete from t78_bukubesarlap";
+Conn()->Execute($q);
 
+$r = ew_Execute("select Bulan, Tahun from t93_periode");
+
+$q = "
+	insert into t78_bukubesarlap (
+		AkunKode,
+		AkunNama,
+		Tanggal,
+		NomorTransaksi,
+		Keterangan,
+		Debet,
+		Kredit,
+		Saldo)
+	select
+		id,
+		rekening,
+		tanggal,
+		no_tran,
+		keterangan,
+		debet,
+		kredit,
+		@st := @st + saldo
+	from (
+		select
+			r.id
+			, r.rekening
+			, '0000-00-00 00:00:00' as tanggal
+			, '' as no_tran
+			, 'Saldo Awal' as keterangan
+			, 0 as debet
+			, 0 as kredit
+			, saldo
+		from
+			t91_rekening r
+	
+		union
+
+		select
+			r.id
+			, r.rekening
+			, case when isnull(j.tanggal) then '0000-01-01 00:00:00' else j.tanggal end as tanggal
+			, j.nomortransaksi as no_tran
+			, j.keterangan as keterangan
+			, case when isnull(j.debet) then 0 else j.debet end as debet
+			, case when isnull(j.kredit) then 0 else j.kredit end as kredit
+			, case when isnull(j.debet) then 0 else j.debet end - case when isnull(j.kredit) then 0 else j.kredit end as saldo
+		from
+			t91_rekening r
+			left join t10_jurnal j on r.id = j.rekening
+		) bb
+		join (select @st := 0) stx
+	where
+		bb.id = '".$_POST["id"]."'
+	order by
+		bb.tanggal
+	;";
+Conn()->Execute($q);
+$rs = ew_Execute("select * from t78_bukubesarlap");
+$AkunKode = $rs->fields["AkunKode"];
+$AkunNama = $rs->fields["AkunNama"];
+
+$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
+	"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
+echo "
+	<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Buku Besar</label><br/>
+	<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[$r->fields["Bulan"]] . " " . $r->fields["Tahun"] . "</label><br/>
+	&nbsp;<br/>
+	<label for='sv_Periode' class='ewSearchCaption ewLabel'>Kode " . $rs->fields["AkunKode"] . "</label><br/>
+	<label for='sv_Periode' class='ewSearchCaption ewLabel'>Rekening " . $rs->fields["AkunNama"] . "</label><br/>
+	<div class='panel panel-default'>			
+	<div>
+	<table class='table table-striped table-hover table-condensed'>
+	<tbody>";
+
+echo "
+	<tr>
+		<th>Tanggal</th>
+		<th>No. Transaksi</th>
+		<th>Keterangan</th>
+		<th align='right'>Debet</th>
+		<th align='right'>Kredit</th>
+		<th align='right'>Saldo</th>
+	</tr>";
+
+while (!$rs->EOF) {
 	echo "
-		<tr>
-			<th>Tanggal</th>
-			<th>No. Transaksi</th>
-			<th>Keterangan</th>
-			<th align='right'>Debet</th>
-			<th align='right'>Kredit</th>
-			<th align='right'>Saldo</th>
-		</tr>";
-	while (!$rs->EOF) {
-		echo "
-		<tr>
-			<td>" . $rs->fields["tanggal"] . "</td>
-			<td>" . $rs->fields["no_tran"] . "</td>
-			<td>" . $rs->fields["keterangan"] . "</td>
-			<td align='right'>" . number_format($rs->fields["debet"]) . "</td>
-			<td align='right'>" . number_format($rs->fields["kredit"]) . "</td>
-			<td align='right'>" . number_format($rs->fields["saldo2"]) . "</td>
-		</tr>";
-		$rs->MoveNext();
-	}
-	$rs->Close();
-	echo "
-		</tbody>
-		</table>
-		</div>
-		</div>
+	<tr>
+		<td>" . $rs->fields["tanggal"] . "</td>
+		<td>" . $rs->fields["no_tran"] . "</td>
+		<td>" . $rs->fields["keterangan"] . "</td>
+		<td align='right'>" . number_format($rs->fields["debet"]) . "</td>
+		<td align='right'>" . number_format($rs->fields["kredit"]) . "</td>
+		<td align='right'>" . number_format($rs->fields["saldo2"]) . "</td>
+	</tr>";
+	$rs->MoveNext();
+}
+	
+echo "
+	</tbody>
+	</table>
+	</div>
+	</div>
 	<div id='xsr_2' class='ewRow'>
 		<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick=\"window.location.href='cf10_bukubesar.php'\">Selesai</button>
-	</div>
-		";
-/*
-//Conn()->next_result();
+	</div>";
 
-//$rs2 = Conn()->Execute("call spPASIVA");
-$rs2 = ew_Execute("call spPASIVA");
-
-	echo "
-		<div class='panel panel-default'>
-		<div>
-		<table class='table table-striped table-hover table-condensed'>
-		<tbody>";
-
-	echo "
-		<tr>
-			<th>Pasiva</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-		</tr>";
-
-	echo "
-		<tr>
-			<th>Akun</th>
-			<th align='right'>Saldo Awal</th>
-			<th align='right'>Debet</th>
-			<th align='right'>Kredit</th>
-			<th align='right'>Saldo Akhir</th>
-			<th align='right'>Laba Rugi</th>
-		</tr>";
-	while (!$rs2->EOF) {
-		echo "
-		<tr>
-			<td>" . $rs2->fields["nama"] . "</td>
-			<td align='right'>" . number_format($rs2->fields["saldoAwal"]) . "</td>
-			<td align='right'>" . number_format($rs2->fields["jDebet"]) . "</td>
-			<td align='right'>" . number_format($rs2->fields["jKredit"]) . "</td>
-			<td align='right'>" . number_format($rs2->fields["SaldoAkhir"]) . "</td>
-			<td align='right'>" . number_format($rs2->fields["labarugi"]) . "</td>
-		</tr>";
-		$rs2->MoveNext();
-	}
-	$rs2->Close();
-	echo "
-		</tbody>
-		</table>
-		</div>
-		</div>";
-*/
+header("Location: t78_bukubesarlaplist.php?akunkode=".$AkunKode."&akunnama=".$AkunNama."");
 ?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>

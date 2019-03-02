@@ -314,6 +314,8 @@ class cdefault {
 			$this->Page_Terminate("t11_jurnalmasterlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't12_jurnaldetail'))
 			$this->Page_Terminate("t12_jurnaldetaillist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't78_bukubesarlap'))
+			$this->Page_Terminate("t78_bukubesarlaplist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't79_jurnallap'))
 			$this->Page_Terminate("t79_jurnallaplist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't85_neraca2'))

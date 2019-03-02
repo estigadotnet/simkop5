@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/3/1" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/3/2" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,11 +583,14 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
-    <menu id="10182">
-      <phrase id="menutext" value="t 80 rekeningold" />
+    <menu id="10341">
+      <phrase id="menutext" value="Buku Besar" />
     </menu>
     <menu id="16">
       <phrase id="menutext" value="Home" />
+    </menu>
+    <menu id="10182">
+      <phrase id="menutext" value="t 80 rekeningold" />
     </menu>
     <menu id="10333">
       <phrase id="menutext" value="Accounting" />
@@ -632,6 +635,9 @@
       <phrase id="menutext" value="Jurnal" />
     </menu>
     <menu id="10185">
+      <phrase id="menutext" value="Buku Besar" />
+    </menu>
+    <menu id="10340">
       <phrase id="menutext" value="Buku Besar" />
     </menu>
     <menu id="10186">
@@ -1323,6 +1329,33 @@
         <phrase id="fldcaption" value="Kredit" />
       </field>
     </table>
+    <table id="t78_bukubesarlap">
+      <phrase id="tblcaption" value="Buku Besar" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="Saldo" />
+      </field>
+      <field id="akunkode">
+        <phrase id="fldcaption" value="Akun Kode" />
+      </field>
+      <field id="akunnama">
+        <phrase id="fldcaption" value="Akun Nama" />
+      </field>
+    </table>
     <table id="t79_jurnallap">
       <phrase id="tblcaption" value="Jurnal" />
       <field id="tanggal">
@@ -1904,6 +1937,18 @@
       </field>
       <field id="saldo">
         <phrase id="fldcaption" value="saldo" />
+      </field>
+    </table>
+    <table id="v13_labarugi">
+      <phrase id="tblcaption" value="Buku Besar" />
+      <field id="nomorurut">
+        <phrase id="fldcaption" value="Nomor Urut" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="mutasi">
+        <phrase id="fldcaption" value="mutasi" />
       </field>
     </table>
   </project>
