@@ -324,15 +324,14 @@ $r = Conn()->Execute($q);
 if ($r->EOF) {
 	// jika tidak ada data
 
-	$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
-	$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '".$periode."')"; Conn()->Execute($q);
-
-	// tampilkan baris periode
-	$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
-
 	// hapus t88_labarugi
 	$q = "delete from t88_labarugi";
 	Conn()->Execute($q);
+
+	// tampilkan baris periode
+	$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
+	$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
+	$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '".$periode."')"; Conn()->Execute($q);
 
 	$mtotal = 0;
 	$a_akun = array(3, 5);
