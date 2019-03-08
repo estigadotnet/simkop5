@@ -55,6 +55,22 @@ Conn()->Execute($q);
 // append data dari view neraca ke neracaold
 $q = "insert into t76_neracaold SELECT * FROM `v23_neraca`";
 Conn()->Execute($q);
+
+// ambil nilai akun dari rumus untuk SHU
+// kodetransaksi = 11
+$q = "select DebetRekening from t89_rektran where KodeTransaksi = '11'";
+$r = Conn()->Execute($q); echo $q."<br/>";
+$rekdebet  = $r->fields["DebetRekening"]; echo $rekdebet."<br/>";
+
+// update nilai akun "shu tahun berjalan" dari akun "shu bulan berjalan"
+// cari nilai laba rugi
+$q = "select sum(kredit) - sum(debet) as LabaRugi from v22_labarugi where
+	periode = '".$periode_skrg."' ";
+$r = Conn()->Execute($q);
+$LabaRugi = $r->fields["LabaRugi"];
+$q = "update t76_neracaold set saldoawal = ".$LabaRugi.", saldoakhir = ".$LabaRugi." where periode = '".$periode_skrg."'
+	and id = '".$rekdebet."'"; echo $q; //die();
+Conn()->Execute($q);
 // --------------------------------------------------
 
 
@@ -66,6 +82,11 @@ Conn()->Execute($q);
 $q = "insert into t80_rekeningold select * from `t91_rekening`";
 Conn()->Execute($q);
 
+// update t80_rekeningold
+$q = "update t80_rekeningold set saldo = ".$LabaRugi." where periode = '".$periode_skrg."'
+	and id = '".$rekdebet."'"; echo $q; //die();
+Conn()->Execute($q);
+
 // update data saldo di tabel t91_rekening, update dari v12_saldoakhir
 $q = "update t91_rekening left join v12_saldoakhir on t91_rekening.id = v12_saldoakhir.id
 	set t91_rekening.saldo = v12_saldoakhir.saldo";
@@ -73,6 +94,15 @@ Conn()->Execute($q);
 
 // update data Periode di tabel t91_rekening dengan data periode baru
 $q = "update t91_rekening set Periode = '".$periode_skrg_tahun_bulan."'";
+Conn()->Execute($q);
+
+// update SHU TAHUN BERJALAN
+// ambil nilai akun dari rumus untuk SHU
+// kodetransaksi = 13
+$q = "select DebetRekening from t89_rektran where KodeTransaksi = '13'";
+$r = Conn()->Execute($q); echo $q."<br/>";
+$rekdebet  = $r->fields["DebetRekening"]; echo $rekdebet."<br/>";
+$q = "update t91_rekening set saldo = ".$LabaRugi." where id = '".$rekdebet."'"; echo $q; //die();
 Conn()->Execute($q);
 // --------------------------------------------------
 

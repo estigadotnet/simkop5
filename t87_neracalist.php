@@ -1417,6 +1417,9 @@ class ct87_neraca_list extends ct87_neraca {
 		//$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
 		//$header = "Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode");
 
+		$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
+		$header = "<strong>Laporan Neraca<br/>
+	Periode ".$a_bulan[ew_ExecuteScalar("select Bulan from t93_periode")]." ".ew_ExecuteScalar("select Tahun from t93_periode")."</strong>";
 	}
 
 	// Page Data Rendered event
@@ -1425,6 +1428,10 @@ class ct87_neraca_list extends ct87_neraca {
 		// Example:
 		//$footer = "your footer";
 
+		echo "
+		<div id='xsr_2' class='ewRow'>
+			<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick=\"window.location.href='.'\">Selesai</button>
+		</div>";
 	}
 
 	// Form Custom Validate event

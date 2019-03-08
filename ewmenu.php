@@ -18,7 +18,7 @@ $RootMenu->AddMenuItem(10337, "mci_Laporan", $Language->MenuPhrase("10337", "Men
 $RootMenu->AddMenuItem(10187, "mi_cf11_jurnal_php", $Language->MenuPhrase("10187", "MenuText"), "cf11_jurnal.php", 10337, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf11_jurnal.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10185, "mi_cf10_bukubesar_php", $Language->MenuPhrase("10185", "MenuText"), "cf10_bukubesar.php", 10337, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf10_bukubesar.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10342, "mi_cf12_labarugi_php", $Language->MenuPhrase("10342", "MenuText"), "cf12_labarugi.php", 10337, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf12_labarugi.php'), FALSE, TRUE);
-$RootMenu->AddMenuItem(10173, "mi_cf07_neraca_php", $Language->MenuPhrase("10173", "MenuText"), "cf07_neraca.php", 10337, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf07_neraca.php'), FALSE, TRUE);
+$RootMenu->AddMenuItem(10348, "mi_cf13_neraca_php", $Language->MenuPhrase("10348", "MenuText"), "cf13_neraca.php", 10337, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf13_neraca.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10334, "mci_Koperasi", $Language->MenuPhrase("10334", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(35, "mci_Setup", $Language->MenuPhrase("35", "MenuText"), "", 10334, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(14, "mi_t07_marketing", $Language->MenuPhrase("14", "MenuText"), "t07_marketinglist.php", 35, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t07_marketing'), FALSE, FALSE);

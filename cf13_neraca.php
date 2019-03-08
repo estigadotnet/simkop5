@@ -3,6 +3,7 @@ if (session_id() == "") session_start(); // Init session data
 ob_start(); // Turn on output buffering
 ?>
 <?php include_once "ewcfg13.php" ?>
+<?php $EW_ROOT_RELATIVE_PATH = ""; ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
@@ -13,18 +14,21 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$default = NULL; // Initialize page object first
+$cf13_neraca_php = NULL; // Initialize page object first
 
-class cdefault {
+class ccf13_neraca_php {
 
 	// Page ID
-	var $PageID = 'default';
+	var $PageID = 'custom';
 
 	// Project ID
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
+	// Table name
+	var $TableName = 'cf13_neraca.php';
+
 	// Page object name
-	var $PageObjName = 'default';
+	var $PageObjName = 'cf13_neraca_php';
 
 	// Page name
 	function PageName() {
@@ -187,7 +191,11 @@ class cdefault {
 
 		// Page ID
 		if (!defined("EW_PAGE_ID"))
-			define("EW_PAGE_ID", 'default', TRUE);
+			define("EW_PAGE_ID", 'custom', TRUE);
+
+		// Table name (for backward compatibility)
+		if (!defined("EW_TABLE_NAME"))
+			define("EW_TABLE_NAME", 'cf13_neraca.php', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -210,12 +218,23 @@ class cdefault {
 
 		// Security
 		$Security = new cAdvancedSecurity();
+		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loading();
+		$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName);
+		if ($Security->IsLoggedIn()) $Security->TablePermission_Loaded();
+		if (!$Security->CanReport()) {
+			$Security->SaveLastUrl();
+			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
+			$this->Page_Terminate(ew_GetUrl("index.php"));
+		}
+		if ($Security->IsLoggedIn()) {
+			$Security->UserID_Loading();
+			$Security->LoadUserID();
+			$Security->UserID_Loaded();
+		}
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
-
-		// Page Load event
-		$this->Page_Load();
 
 		// Check token
 		if (!$this->ValidPost()) {
@@ -234,16 +253,12 @@ class cdefault {
 	function Page_Terminate($url = "") {
 		global $gsExportFile, $gTmpImages;
 
-		// Page Unload event
-		$this->Page_Unload();
-
 		// Global Page Unloaded event (in userfn*.php)
 		Page_Unloaded();
 
 		// Export
-		$this->Page_Redirecting($url);
-
 		 // Close connection
+
 		ew_CloseConn();
 
 		// Go to URL if specified
@@ -259,131 +274,17 @@ class cdefault {
 	// Page main
 	//
 	function Page_Main() {
-		global $Security, $Language;
 
-		// If session expired, show session expired message
-		if (@$_GET["expired"] == "1")
-			$this->setFailureMessage($Language->Phrase("SessionExpired"));
-		if (!$Security->IsLoggedIn()) $Security->AutoLogin();
-		$Security->LoadUserLevel(); // Load User Level
-		if ($Security->AllowList(CurrentProjectID() . 'cf01_home.php'))
-		$this->Page_Terminate("cf01_home.php"); // Exit and go to default page
-		if ($Security->AllowList(CurrentProjectID() . 'cf02_tutupbuku.php'))
-			$this->Page_Terminate("cf02_tutupbuku.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf04_neraca.php'))
-			$this->Page_Terminate("cf04_neraca.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf05_labarugi.php'))
-			$this->Page_Terminate("cf05_labarugi.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf06_labarugiproses.php'))
-			$this->Page_Terminate("cf06_labarugiproses.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf07_neraca.php'))
-			$this->Page_Terminate("cf07_neraca.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf08_neracaproses.php'))
-			$this->Page_Terminate("cf08_neracaproses.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf09_nasabahmacet.php'))
-			$this->Page_Terminate("cf09_nasabahmacet.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf10_bukubesar.php'))
-			$this->Page_Terminate("cf10_bukubesar.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf10_bukubesarproses.php'))
-			$this->Page_Terminate("cf10_bukubesarproses.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf11_jurnal.php'))
-			$this->Page_Terminate("cf11_jurnal.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf12_labarugi.php'))
-			$this->Page_Terminate("cf12_labarugi.php");
-		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
-			$this->Page_Terminate("t01_nasabahlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))
-			$this->Page_Terminate("t02_jaminanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't03_pinjaman'))
-			$this->Page_Terminate("t03_pinjamanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't04_pinjamanangsuran'))
-			$this->Page_Terminate("t04_pinjamanangsuranlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't04_pinjamanangsurantemp'))
-			$this->Page_Terminate("t04_pinjamanangsurantemplist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't05_pinjamanjaminan'))
-			$this->Page_Terminate("t05_pinjamanjaminanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't06_pinjamantitipan'))
-			$this->Page_Terminate("t06_pinjamantitipanlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't07_marketing'))
-			$this->Page_Terminate("t07_marketinglist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't08_pinjamanpotongan'))
-			$this->Page_Terminate("t08_pinjamanpotonganlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't10_jurnal'))
-			$this->Page_Terminate("t10_jurnallist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't11_jurnalmaster'))
-			$this->Page_Terminate("t11_jurnalmasterlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't12_jurnaldetail'))
-			$this->Page_Terminate("t12_jurnaldetaillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't78_bukubesarlap'))
-			$this->Page_Terminate("t78_bukubesarlaplist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't79_jurnallap'))
-			$this->Page_Terminate("t79_jurnallaplist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't85_neraca2'))
-			$this->Page_Terminate("t85_neraca2list.php");
-		if ($Security->AllowList(CurrentProjectID() . 't86_labarugi2'))
-			$this->Page_Terminate("t86_labarugi2list.php");
-		if ($Security->AllowList(CurrentProjectID() . 't87_neraca'))
-			$this->Page_Terminate("t87_neracalist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't88_labarugi'))
-			$this->Page_Terminate("t88_labarugilist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't89_rektran'))
-			$this->Page_Terminate("t89_rektranlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't90_rektran'))
-			$this->Page_Terminate("t90_rektranlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't91_rekening'))
-			$this->Page_Terminate("t91_rekeninglist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't92_periodeold'))
-			$this->Page_Terminate("t92_periodeoldlist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't93_periode'))
-			$this->Page_Terminate("t93_periodelist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't94_log'))
-			$this->Page_Terminate("t94_loglist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't95_logdesc'))
-			$this->Page_Terminate("t95_logdesclist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't96_employees'))
-			$this->Page_Terminate("t96_employeeslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't97_userlevels'))
-			$this->Page_Terminate("t97_userlevelslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't98_userlevelpermissions'))
-			$this->Page_Terminate("t98_userlevelpermissionslist.php");
-		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
-			$this->Page_Terminate("t99_audittraillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf13_neraca.php'))
-			$this->Page_Terminate("cf13_neraca.php");
-		if ($Security->IsLoggedIn()) {
-			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
-		} else {
-			$this->Page_Terminate("login.php"); // Exit and go to login page
-		}
+		// Set up Breadcrumb
+		$this->SetupBreadcrumb();
 	}
 
-	// Page Load event
-	function Page_Load() {
-
-		//echo "Page Load";
-	}
-
-	// Page Unload event
-	function Page_Unload() {
-
-		//echo "Page Unload";
-	}
-
-	// Page Redirecting event
-	function Page_Redirecting(&$url) {
-
-		// Example:
-		//$url = "your URL";
-
-	}
-
-	// Message Showing event
-	// $type = ''|'success'|'failure'
-	function Message_Showing(&$msg, $type) {
-
-		// Example:
-		//if ($type == 'success') $msg = "your success message";
-
+	// Set up Breadcrumb
+	function SetupBreadcrumb() {
+		global $Breadcrumb;
+		$Breadcrumb = new cBreadcrumb();
+		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
+		$Breadcrumb->Add("custom", "cf13_neraca_php", $url, "", "cf13_neraca_php", TRUE);
 	}
 }
 ?>
@@ -391,19 +292,97 @@ class cdefault {
 <?php
 
 // Create page object
-if (!isset($default)) $default = new cdefault();
+if (!isset($cf13_neraca_php)) $cf13_neraca_php = new ccf13_neraca_php();
 
 // Page init
-$default->Page_Init();
+$cf13_neraca_php->Page_Init();
 
 // Page main
-$default->Page_Main();
+$cf13_neraca_php->Page_Main();
+
+// Global Page Rendering event (in userfn*.php)
+Page_Rendering();
 ?>
 <?php include_once "header.php" ?>
+<?php if (!@$gbSkipHeaderFooter) { ?>
+<div class="ewToolbar">
+<?php $Breadcrumb->Render(); ?>
+<?php echo $Language->SelectionForm(); ?>
+<div class="clearfix"></div>
+</div>
+<?php } ?>
 <?php
-$default->ShowMessage();
+// echo $_POST["periode"];
+
+// mencari data periode sebelum periode terpilih
+/*$q = "select *
+	from t76_neracaold
+	where periode < '".$GLOBALS["Periode"]."'
+	limit 1";
+$r = Conn()->Execute($q);*/
+
+// check apakah ada data sebelumnya
+//if ($r->EOF) {
+	// jika tidak ada data
+
+	// hapus t87_neraca
+	$q = "delete from t87_neraca";
+	Conn()->Execute($q);
+
+	// tampilkan baris periode
+	$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
+	$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
+	$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '".$periode."')"; Conn()->Execute($q);
+
+	// kodetransaksi = 11
+	$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '11'");
+	$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '11'");
+
+	// id 1
+	$mtotal = 0;
+	$q = "select * from v23_neraca where `group` = '1' order by id"; //echo $q;
+	$r = Conn()->Execute($q);
+	$q2 = "insert into t87_neraca (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
+	while (!$r->EOF) {
+		$nilai = $r->fields["saldoakhir"];
+		$mtotal += $nilai;
+		$q = "insert into t87_neraca (field01, field02, field03) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
+		$r->MoveNext();
+	}
+
+	$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal, 2)."</strong>')"; Conn()->Execute($q);
+	$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '')"; Conn()->Execute($q);
+
+
+	// id 2
+	$mtotal2 = 0;
+	$q = "select * from v23_neraca where `group` = '2' order by id"; //echo $q;
+	$r = Conn()->Execute($q);
+	$q2 = "insert into t87_neraca (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
+	while (!$r->EOF) {
+		if ($r->fields["id"] == $rekdebet) { 
+			$nilai = f_hitunglabarugi2($GLOBALS["Periode"]); 
+		}
+		else { 
+			$nilai = $r->fields["saldoakhir"];
+		}
+		//$nilai = $r->fields["jumlah"];
+		$mtotal2 += $nilai;
+		$q = "insert into t87_neraca (field01, field02, field03) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
+		$r->MoveNext();
+	}
+
+	$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+	$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '')"; Conn()->Execute($q);
+
+	$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+
+	//header("Location: r05_labarugismry.php");
+	header("Location: t87_neracalist.php?periode=".$_POST["periode"]);
+
 ?>
+<?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
-$default->Page_Terminate();
+$cf13_neraca_php->Page_Terminate();
 ?>
