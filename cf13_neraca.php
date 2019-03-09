@@ -340,7 +340,7 @@ $r = Conn()->Execute($q);*/
 
 	// id 1
 	$mtotal = 0;
-	$q = "select * from v23_neraca where `group` = '1' order by id"; //echo $q;
+	$q = "select * from v33_neraca where `group` = '1' order by id"; //echo $q;
 	$r = Conn()->Execute($q);
 	$q2 = "insert into t87_neraca (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
 	while (!$r->EOF) {
@@ -356,7 +356,7 @@ $r = Conn()->Execute($q);*/
 
 	// id 2
 	$mtotal2 = 0;
-	$q = "select * from v23_neraca where `group` = '2' order by id"; //echo $q;
+	$q = "select * from v33_neraca where `group` = '2' order by id"; //echo $q;
 	$r = Conn()->Execute($q);
 	$q2 = "insert into t87_neraca (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
 	while (!$r->EOF) {

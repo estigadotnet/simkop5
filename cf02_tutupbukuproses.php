@@ -38,40 +38,17 @@ Conn()->Execute($q); //echo $q; exit();
 // --------------------------------------------------
 
 
-// --------------------------------------------------
-// view v22_labarugi
-// tabel labarugiold
-// --------------------------------------------------
-// append data dari view labarugi ke labarugiold
-$q = "insert into t77_labarugiold SELECT * FROM `v22_labarugi`";
-Conn()->Execute($q);
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// view v23_neraca
-// tabel neracaold
-// --------------------------------------------------
-// append data dari view neraca ke neracaold
-$q = "insert into t76_neracaold SELECT * FROM `v23_neraca`";
-Conn()->Execute($q);
-
-// ambil nilai akun dari rumus untuk SHU
+// ambil nilai akun SHU BULAN BERJALAN
 // kodetransaksi = 11
 $q = "select DebetRekening from t89_rektran where KodeTransaksi = '11'";
 $r = Conn()->Execute($q); echo $q."<br/>";
 $rekdebet  = $r->fields["DebetRekening"]; echo $rekdebet."<br/>";
 
-// update nilai akun "shu tahun berjalan" dari akun "shu bulan berjalan"
 // cari nilai laba rugi
-$q = "select sum(kredit) - sum(debet) as LabaRugi from v22_labarugi where
+$q = "select sum(kredit) - sum(debet) as LabaRugi from v32_labarugi where
 	periode = '".$periode_skrg."' ";
 $r = Conn()->Execute($q);
 $LabaRugi = $r->fields["LabaRugi"];
-$q = "update t76_neracaold set saldoawal = ".$LabaRugi.", saldoakhir = ".$LabaRugi." where periode = '".$periode_skrg."'
-	and id = '".$rekdebet."'"; echo $q; //die();
-Conn()->Execute($q);
-// --------------------------------------------------
 
 
 // --------------------------------------------------
@@ -82,14 +59,14 @@ Conn()->Execute($q);
 $q = "insert into t80_rekeningold select * from `t91_rekening`";
 Conn()->Execute($q);
 
-// update t80_rekeningold
+// update nilai akun SHU BULAN BERJALAN di tabel t80_rekeningold
 $q = "update t80_rekeningold set saldo = ".$LabaRugi." where periode = '".$periode_skrg."'
 	and id = '".$rekdebet."'"; echo $q; //die();
 Conn()->Execute($q);
 
-// update data saldo di tabel t91_rekening, update dari v12_saldoakhir
-$q = "update t91_rekening left join v12_saldoakhir on t91_rekening.id = v12_saldoakhir.id
-	set t91_rekening.saldo = v12_saldoakhir.saldo";
+// update nilai saldo di tabel t91_rekening, update dari v34_saldoakhir
+$q = "update t91_rekening left join v34_saldoakhir on t91_rekening.id = v34_saldoakhir.id
+	set t91_rekening.saldo = v34_saldoakhir.saldo";
 Conn()->Execute($q);
 
 // update data Periode di tabel t91_rekening dengan data periode baru
@@ -97,11 +74,13 @@ $q = "update t91_rekening set Periode = '".$periode_skrg_tahun_bulan."'";
 Conn()->Execute($q);
 
 // update SHU TAHUN BERJALAN
-// ambil nilai akun dari rumus untuk SHU
+// ambil nilai akun SHU TAHUN BERJALAN
 // kodetransaksi = 13
 $q = "select DebetRekening from t89_rektran where KodeTransaksi = '13'";
 $r = Conn()->Execute($q); echo $q."<br/>";
 $rekdebet  = $r->fields["DebetRekening"]; echo $rekdebet."<br/>";
+
+// update nilai akun SHU TAHUN BERJALAN di tabel t91_rekening
 $q = "update t91_rekening set saldo = ".$LabaRugi." where id = '".$rekdebet."'"; echo $q; //die();
 Conn()->Execute($q);
 // --------------------------------------------------

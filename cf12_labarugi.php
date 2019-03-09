@@ -337,7 +337,7 @@ $r = Conn()->Execute($q);*/
 	$a_akun = array(3, 5);
 	for($i = 0; $i < count($a_akun); $i++) {
 		// id 3 dan 5
-		$q = "select * from v22_labarugi where `group` = '".$a_akun[$i]."'"; //echo $q;
+		$q = "select * from v32_labarugi where `group` = '".$a_akun[$i]."'"; //echo $q;
 		$r = Conn()->Execute($q);
 		$q2 = "insert into t88_labarugi (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
 		while (!$r->EOF) {
@@ -356,7 +356,7 @@ $r = Conn()->Execute($q);*/
 	$a_akun = array(4, 6);
 	for($i = 0; $i < count($a_akun); $i++) {
 		// id 4 dan 6
-		$q = "select * from v22_labarugi where `group` = '".$a_akun[$i]."'"; echo $q;
+		$q = "select * from v32_labarugi where `group` = '".$a_akun[$i]."'"; echo $q;
 		$r = Conn()->Execute($q);
 		$q2 = "insert into t88_labarugi (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
 		while (!$r->EOF) {
