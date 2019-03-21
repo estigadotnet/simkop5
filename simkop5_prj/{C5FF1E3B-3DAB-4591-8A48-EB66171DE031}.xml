@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration date="2019/03/09" author="e.World Technology Ltd.">
-  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2019/03/09 13:57:05" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+<configuration date="2019/03/21" author="e.World Technology Ltd.">
+  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2019/03/21 14:56:03" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="cf01_home_php" name="cf01_home.php" caption="Home" userlevel="-2,&quot;Anonymous&quot;,8;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf02_tutupbuku_php" name="cf02_tutupbuku.php" caption="Tutup Buku" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf04_neraca_php" name="cf04_neraca.php" caption="Neraca" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -23,6 +23,7 @@
     <table id="t10_jurnal" name="t10_jurnal" caption="Jurnal" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t11_jurnalmaster" name="t11_jurnalmaster" caption="Jurnal Memorial" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t12_jurnaldetail" name="t12_jurnaldetail" caption="Detail" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t75_company" name="t75_company" caption="Company" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t76_neracaold" name="t76_neracaold" caption="t 76 neracaold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t77_labarugiold" name="t77_labarugiold" caption="t 77 labarugiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t78_bukubesarlap" name="t78_bukubesarlap" caption="Buku Besar" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -55,5 +56,7 @@
     <table id="v41_mutasiold" name="v41_mutasiold" caption="v 41 mutasiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v42_labarugiold" name="v42_labarugiold" caption="v 42 labarugiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v43_neracaold" name="v43_neracaold" caption="v 43 neracaold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="cf14_backup_php" name="cf14_backup.php" caption="Backup" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="cf15_restore_php" name="cf15_restore.php" caption="Restore" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
   </project>
 </configuration>

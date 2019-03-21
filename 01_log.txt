@@ -1,12 +1,8 @@
 <strong>----- to do --------------------------------------------------------------------------------</strong>
 
-4:31 PM 2/27/2019
-- t91_rekening, tambah field,
-  - Saldo float 14,2
-  - Periode varchar 6
+11:10 AM 3/21/2019
+- tambah tabel, t75_company
 
-- tabel, tambah tabel,
-  - t80_rekeningold
 
 
 

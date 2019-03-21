@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/3/9" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/3/21" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,37 +583,16 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
+    <menu id="10452">
+      <phrase id="menutext" value="Restore" />
+    </menu>
     <menu id="10349">
       <phrase id="menutext" value="v 30 mutasi" />
-    </menu>
-    <menu id="10350">
-      <phrase id="menutext" value="v 31 mutasi" />
-    </menu>
-    <menu id="10351">
-      <phrase id="menutext" value="v 32 labarugi" />
-    </menu>
-    <menu id="10352">
-      <phrase id="menutext" value="v 33 neraca" />
-    </menu>
-    <menu id="10353">
-      <phrase id="menutext" value="v 34 saldoakhir" />
-    </menu>
-    <menu id="10354">
-      <phrase id="menutext" value="v 40 mutasiold" />
-    </menu>
-    <menu id="10355">
-      <phrase id="menutext" value="v 41 mutasiold" />
-    </menu>
-    <menu id="10356">
-      <phrase id="menutext" value="v 42 labarugiold" />
-    </menu>
-    <menu id="10357">
-      <phrase id="menutext" value="v 43 neracaold" />
     </menu>
     <menu id="16">
       <phrase id="menutext" value="Home" />
     </menu>
-    <menu id="10333">
+    <menu id="10451">
       <phrase id="menutext" value="Accounting" />
     </menu>
     <menu id="10335">
@@ -679,6 +658,9 @@
     <menu id="10177">
       <phrase id="menutext" value="Neraca" />
     </menu>
+    <menu id="10350">
+      <phrase id="menutext" value="v 31 mutasi" />
+    </menu>
     <menu id="10334">
       <phrase id="menutext" value="Koperasi" />
     </menu>
@@ -742,6 +724,12 @@
     <menu id="10338">
       <phrase id="menutext" value="General" />
     </menu>
+    <menu id="10358">
+      <phrase id="menutext" value="Company" />
+    </menu>
+    <menu id="10359">
+      <phrase id="menutext" value="Backup" />
+    </menu>
     <menu id="10">
       <phrase id="menutext" value="Users" />
     </menu>
@@ -753,6 +741,30 @@
     </menu>
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
+    </menu>
+    <menu id="10351">
+      <phrase id="menutext" value="v 32 labarugi" />
+    </menu>
+    <menu id="10352">
+      <phrase id="menutext" value="v 33 neraca" />
+    </menu>
+    <menu id="10353">
+      <phrase id="menutext" value="v 34 saldoakhir" />
+    </menu>
+    <menu id="10354">
+      <phrase id="menutext" value="v 40 mutasiold" />
+    </menu>
+    <menu id="10355">
+      <phrase id="menutext" value="v 41 mutasiold" />
+    </menu>
+    <menu id="10356">
+      <phrase id="menutext" value="v 42 labarugiold" />
+    </menu>
+    <menu id="10357">
+      <phrase id="menutext" value="v 43 neracaold" />
+    </menu>
+    <menu id="10333">
+      <phrase id="menutext" value="Accounting" />
     </menu>
     <menu id="10178">
       <phrase id="menutext" value="Nasabah Macet" />
@@ -1318,6 +1330,21 @@
       </field>
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="t75_company">
+      <phrase id="tblcaption" value="Company" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="nama">
+        <phrase id="fldcaption" value="Nama" />
+      </field>
+      <field id="alamat">
+        <phrase id="fldcaption" value="Alamat" />
+      </field>
+      <field id="notelp">
+        <phrase id="fldcaption" value="No Telp" />
       </field>
     </table>
     <table id="t76_neracaold">
@@ -2100,6 +2127,12 @@
       <field id="saldoakhir">
         <phrase id="fldcaption" value="saldoakhir" />
       </field>
+    </table>
+    <table id="cf14_backup_php">
+      <phrase id="tblcaption" value="Backup" />
+    </table>
+    <table id="cf15_restore_php">
+      <phrase id="tblcaption" value="Restore" />
     </table>
   </project>
 </ew-language>

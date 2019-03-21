@@ -335,7 +335,32 @@ $db =& DbHelper();
 ?>
 
 
+<!-- daily info -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#dailyinfo">Daily Info</a></strong></div>
+	<div id="dailyinfo" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div>
+				<table  ><!-- class='table table-striped table-hover table-condensed' -->
+					<tbody>
+					<tr>
+						<td><ul><li>Periode, <?php echo ew_ExecuteScalar("select Bulan from t93_periode")." - ".ew_ExecuteScalar("select Tahun from t93_periode"); ?></li></ul></td>
+					</tr>
+					<tr>
+						<td><ul><li>Company, <?php echo ew_ExecuteScalar("select Nama from t75_company"); ?>, <?php echo ew_ExecuteScalar("select Alamat from t75_company"); ?></li></ul></td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
 <!-- periode -->
+<!--
 <div class="panel panel-default">
 	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#periode">Periode</a></strong></div>
 	<div id="periode" class="panel-collapse collapse in">
@@ -352,6 +377,7 @@ $db =& DbHelper();
 		</div>
 	</div>
 </div>
+-->
 
 
 <!-- jatuh tempo -->
