@@ -311,81 +311,146 @@ Page_Rendering();
 <div class="clearfix"></div>
 </div>
 <?php } ?>
-<div class="ewContentColumn">
+<style>
+/*body {
+	max-width: 550px;
+	font-family: "Segoe UI", Optima, Helvetica, Arial, sans-serif;
+}*/
 
-	<form action="upload.php" method="post" enctype="multipart/form-data" class="form-horizontal ewForm ewEditForm">
-<span>Pilih file hasil backup yang akan di-restore</span><br/>
-<span title="" class="btn btn-default btn-sm fileinput-button ewTooltip" data-original-title="Choose file">
-	<span>Choose...</span><input type="file" name="x_Pekerjaan" class="form-control">
-</span>
-		<!--Pilih file: <input type="file" name="berkas" />
-		<input type="submit" name="upload" value="upload" />-->
-	</form>
-
-<?php /*
-  $dirname = '.';
-  $files = array();  
-  $dir = opendir($dirname);  
-  while(($file = readdir($dir)) !== false) {  
-	  if($file !== '.' && $file !== '..' && !is_dir($file)) {  
-		  $files[] = $file;  
-	  }  
-  }  
-  closedir($dir);  
-  sort($files); 
-  
-  echo '<select>';
-  for($i=0; $i<count($files); $i++) {  
-	  echo '<option>' . $files[$i] . '</option>';  
-  }
-  echo '</select>';   */
-  ?>
-
-
-<?php /*
-$db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
-
-// cari nama company
-$q = "select Nama from t75_company";
-$r = Conn()->Execute($q);
-$nama_file = trim($r->fields["Nama"]);
-
-$sql = "show tables ";
-$tables = array();
-$result = $db->Execute("SHOW TABLES");
-while (!$result->EOF) {
-	$tables[] = $result->fields[0];
-	$result->MoveNext();
+#frm-restore {
+	background: #aee5ef;
+	padding: 20px;
+	border-radius: 2px;
+	border: #a3d7e0 1px solid;
 }
-$return = '';
-foreach($tables as $table){
-	$result = $db->Execute("SELECT * FROM ".$table);
-	$num_fields = $result->fieldCount();
-	$return .= 'DROP TABLE '.$table.';';
-	$row2 = $db->Execute("SHOW CREATE TABLE ".$table);
-	$return .= "\n\n".$row2->fields[1].";\n\n";
 
-	for($i=0;$i<$num_fields;$i++){
-		while (!$result->EOF) {
-			$return .= "INSERT INTO ".$table." VALUES(";
-			for($j=0;$j<$num_fields;$j++){
-				$result->fields[$j] = addslashes($result->fields[$j]);
-				if(isset($result->fields[$j])){ $return .= '"'.$result->fields[$j].'"';}
-				else{ $return .= '""';}
-				if($j<$num_fields-1){ $return .= ',';}
-			}
-			$return .= ");\n";
-			$result->MoveNext();
+.form-row {
+	margin-bottom: 20px;
+}
+
+.input-file {
+	background: #FFF;
+	padding: 10px;
+	margin-top: 5px;
+	border-radius: 2px;
+}
+
+.btn-action {
+	background: #333;
+	border: 0;
+	padding: 10px 40px;
+	color: #FFF;
+	border-radius: 2px;
+}
+
+.response {
+	padding: 10px;
+	margin-bottom: 20px;
+	border-radius: 2px;
+}
+
+.error {
+	background: #fbd3d3;
+	border: #efc7c7 1px solid;
+}
+
+.success {
+	background: #cdf3e6;
+	border: #bee2d6 1px solid;
+}
+</style>
+<?php
+//$conn = mysqli_connect("localhost", "root", "test", "phppot_examples");
+if (! empty($_FILES)) {
+	// Validating SQL file type by extensions
+	if (! in_array(strtolower(pathinfo($_FILES["backup_file"]["name"], PATHINFO_EXTENSION)), array(
+		"sql"
+	))) {
+		$response = array(
+			"type" => "error",
+			"message" => "Invalid File Type"
+		);
+	} else {
+		if (is_uploaded_file($_FILES["backup_file"]["tmp_name"])) {
+			move_uploaded_file($_FILES["backup_file"]["tmp_name"], $_FILES["backup_file"]["name"]);
+			//$response = restoreMysqlDB($_FILES["backup_file"]["name"], $conn);
+			$response = restoreMysqlDB($_FILES["backup_file"]["name"]);
+			//var_dump($response);
 		}
 	}
-	$return .= "\n\n\n";
 }
-//save file
-$handle = fopen($nama_file . ".sql","w+");
-fwrite($handle,$return);
-fclose($handle);
-echo "Successfully backed up"; */
+
+function restoreMysqlDB($filePath)
+{
+	$sql = '';
+	$error = '';
+	
+	if (file_exists($filePath)) {
+		$lines = file($filePath);
+		
+		foreach ($lines as $line) {
+			
+			// Ignoring comments from the SQL script
+			if (substr($line, 0, 2) == '--' || $line == '') {
+				continue;
+			}
+			
+			$sql .= $line;
+			
+			if (substr(trim($line), - 1, 1) == ';') {
+				//$result = mysqli_query($conn, $sql);
+				$result = Conn()->Execute($sql);
+				if (! $result) {
+					//$error .= mysqli_error($conn) . "\n";
+					$error .= Conn()->ErrorMsg() . "\n";
+				}
+				$sql = '';
+			}
+		} // end foreach
+		//header("Location: .");
+		//echo "1- ".$error; exit;
+		if ($error) {
+			$response = array(
+				"type" => "error",
+				"message" => $error
+			);
+		} else {
+			$response = array(
+				"type" => "success",
+				"message" => "Database Restore Completed Successfully."
+			);
+		}
+		//exec('rm ' . $filePath);
+	} // end if file exists
+	//var_dump($response); die();
+	return $response;
+}
+
 ?>
+
+<div class="ewContentColumn">
+<?php
+if (! empty($response)) {
+	?>
+<div class="response <?php echo $response["type"]; ?>">
+<?php echo nl2br($response["message"]); ?>
+</div>
+<?php
+}
+?>
+	<form method="post" action="" enctype="multipart/form-data"
+		id="frm-restore">
+		<div class="form-row">
+			<div>Choose Backup File</div>
+			<div>
+				<input type="file" name="backup_file" class="input-file" />
+			</div>
+		</div>
+		<div>
+			<input type="submit" name="restore" value="Restore"
+				class="btn-action" />
+		</div>
+	</form>
 </div>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>

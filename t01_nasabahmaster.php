@@ -55,7 +55,8 @@
 			<td<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
 <span id="el_t01_nasabah_Pekerjaan">
 <span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan->ListViewValue() ?></span>
+<?php echo ew_GetFileViewTag($t01_nasabah->Pekerjaan, $t01_nasabah->Pekerjaan->ListViewValue()) ?>
+</span>
 </span>
 </td>
 		</tr>

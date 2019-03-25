@@ -1710,7 +1710,8 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Nama->setDbValue($rs->fields('Nama'));
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
 		$this->No_Telp_Hp->setDbValue($rs->fields('No_Telp_Hp'));
-		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
+		$this->Pekerjaan->Upload->DbValue = $rs->fields('Pekerjaan');
+		$this->Pekerjaan->CurrentValue = $this->Pekerjaan->Upload->DbValue;
 		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
 		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
 		$this->Status->setDbValue($rs->fields('Status'));
@@ -1726,7 +1727,7 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->Nama->DbValue = $row['Nama'];
 		$this->Alamat->DbValue = $row['Alamat'];
 		$this->No_Telp_Hp->DbValue = $row['No_Telp_Hp'];
-		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
+		$this->Pekerjaan->Upload->DbValue = $row['Pekerjaan'];
 		$this->Pekerjaan_Alamat->DbValue = $row['Pekerjaan_Alamat'];
 		$this->Pekerjaan_No_Telp_Hp->DbValue = $row['Pekerjaan_No_Telp_Hp'];
 		$this->Status->DbValue = $row['Status'];
@@ -1803,7 +1804,11 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$this->No_Telp_Hp->ViewCustomAttributes = "";
 
 		// Pekerjaan
-		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
+		if (!ew_Empty($this->Pekerjaan->Upload->DbValue)) {
+			$this->Pekerjaan->ViewValue = $this->Pekerjaan->Upload->DbValue;
+		} else {
+			$this->Pekerjaan->ViewValue = "";
+		}
 		$this->Pekerjaan->ViewCustomAttributes = "";
 
 		// Pekerjaan_Alamat
@@ -1868,6 +1873,7 @@ class ct01_nasabah_list extends ct01_nasabah {
 			// Pekerjaan
 			$this->Pekerjaan->LinkCustomAttributes = "";
 			$this->Pekerjaan->HrefValue = "";
+			$this->Pekerjaan->HrefValue2 = $this->Pekerjaan->UploadPath . $this->Pekerjaan->Upload->DbValue;
 			$this->Pekerjaan->TooltipValue = "";
 
 			// Pekerjaan_Alamat
@@ -2540,7 +2546,8 @@ $t01_nasabah_list->ListOptions->Render("body", "left", $t01_nasabah_list->RowCnt
 		<td data-name="Pekerjaan"<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
 <span id="el<?php echo $t01_nasabah_list->RowCnt ?>_t01_nasabah_Pekerjaan" class="t01_nasabah_Pekerjaan">
 <span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan->ListViewValue() ?></span>
+<?php echo ew_GetFileViewTag($t01_nasabah->Pekerjaan, $t01_nasabah->Pekerjaan->ListViewValue()) ?>
+</span>
 </span>
 </td>
 	<?php } ?>

@@ -324,7 +324,10 @@ $sql = "show tables ";
 $tables = array();
 $result = $db->Execute("SHOW TABLES");
 while (!$result->EOF) {
+	if (substr($result->fields[0],0,1) == "t") {
+	
 	$tables[] = $result->fields[0];
+	}
 	$result->MoveNext();
 }
 $return = '';
@@ -351,7 +354,7 @@ foreach($tables as $table){
 	$return .= "\n\n\n";
 }
 //save file
-$handle = fopen($nama_file . ".sql","w+");
+$handle = fopen("d:\\".$nama_file . ".sql","w+");
 fwrite($handle,$return);
 fclose($handle);
 echo "Successfully backed up";

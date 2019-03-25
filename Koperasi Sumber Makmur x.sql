@@ -267,7 +267,7 @@ CREATE TABLE `t75_company` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
-INSERT INTO t75_company VALUES("1","Koperasi Sumber Makmur","Sidoarjo","0318889999");
+INSERT INTO t75_company VALUES("1","Koperasi Sumber Makmur x","Sidoarjo","0318889999");
 
 
 
@@ -895,7 +895,7 @@ CREATE TABLE `t99_audittrail` (
   `oldvalue` longtext,
   `newvalue` longtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 INSERT INTO t99_audittrail VALUES("1","2019-03-09 09:08:13","/simkop5/t03_pinjamanadd.php","1","A","t03_pinjaman","Kontrak_No","1","","60001");
 INSERT INTO t99_audittrail VALUES("2","2019-03-09 09:08:13","/simkop5/t03_pinjamanadd.php","1","A","t03_pinjaman","Kontrak_Tgl","1","","2019-03-09");
@@ -931,6 +931,7 @@ INSERT INTO t99_audittrail VALUES("31","2019-03-21 11:01:39","/simkop5/t75_compa
 INSERT INTO t99_audittrail VALUES("32","2019-03-21 11:01:39","/simkop5/t75_companyadd.php","1","A","t75_company","NoTelp","1","","0318889999");
 INSERT INTO t99_audittrail VALUES("33","2019-03-21 11:01:39","/simkop5/t75_companyadd.php","1","A","t75_company","id","1","","1");
 INSERT INTO t99_audittrail VALUES("34","2019-03-25 12:42:10","/simkop5/login.php","admin","login","::1","","","","");
+INSERT INTO t99_audittrail VALUES("35","2019-03-25 20:35:04","/simkop5/t75_companyedit.php","1","U","t75_company","Nama","1","Koperasi Sumber Makmur","Koperasi Sumber Makmur x");
 
 
 
