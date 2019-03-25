@@ -895,7 +895,7 @@ CREATE TABLE `t99_audittrail` (
   `oldvalue` longtext,
   `newvalue` longtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
 
 INSERT INTO t99_audittrail VALUES("1","2019-03-09 09:08:13","/simkop5/t03_pinjamanadd.php","1","A","t03_pinjaman","Kontrak_No","1","","60001");
 INSERT INTO t99_audittrail VALUES("2","2019-03-09 09:08:13","/simkop5/t03_pinjamanadd.php","1","A","t03_pinjaman","Kontrak_Tgl","1","","2019-03-09");
@@ -930,6 +930,7 @@ INSERT INTO t99_audittrail VALUES("30","2019-03-21 11:01:39","/simkop5/t75_compa
 INSERT INTO t99_audittrail VALUES("31","2019-03-21 11:01:39","/simkop5/t75_companyadd.php","1","A","t75_company","Alamat","1","","Sidoarjo");
 INSERT INTO t99_audittrail VALUES("32","2019-03-21 11:01:39","/simkop5/t75_companyadd.php","1","A","t75_company","NoTelp","1","","0318889999");
 INSERT INTO t99_audittrail VALUES("33","2019-03-21 11:01:39","/simkop5/t75_companyadd.php","1","A","t75_company","id","1","","1");
+INSERT INTO t99_audittrail VALUES("34","2019-03-25 12:42:10","/simkop5/login.php","admin","login","::1","","","","");
 
 
 
@@ -1202,28 +1203,28 @@ DROP TABLE v42_labarugiold;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v42_labarugiold` AS select `m`.`periode` AS `periode`,`m`.`group` AS `group`,`m`.`group_rekening` AS `group_rekening`,`m`.`id` AS `id`,`m`.`rekening` AS `rekening`,`m`.`saldoawal` AS `saldoawal`,`m`.`debet` AS `debet`,`m`.`kredit` AS `kredit`,`m`.`saldoakhir` AS `saldoakhir`,(`m`.`kredit` - `m`.`debet`) AS `jumlah` from `v41_mutasiold` `m` where (`m`.`group` = '3') union select `m`.`periode` AS `periode`,`m`.`group` AS `group`,`m`.`group_rekening` AS `group_rekening`,`m`.`id` AS `id`,`m`.`rekening` AS `rekening`,`m`.`saldoawal` AS `saldoawal`,`m`.`debet` AS `debet`,`m`.`kredit` AS `kredit`,`m`.`saldoakhir` AS `saldoakhir`,(`m`.`kredit` - `m`.`debet`) AS `jumlah` from `v41_mutasiold` `m` where (`m`.`group` = '5') union select `m`.`periode` AS `periode`,`m`.`group` AS `group`,`m`.`group_rekening` AS `group_rekening`,`m`.`id` AS `id`,`m`.`rekening` AS `rekening`,`m`.`saldoawal` AS `saldoawal`,`m`.`debet` AS `debet`,`m`.`kredit` AS `kredit`,`m`.`saldoakhir` AS `saldoakhir`,(`m`.`debet` - `m`.`kredit`) AS `jumlah` from `v41_mutasiold` `m` where (`m`.`group` = '4') union select `m`.`periode` AS `periode`,`m`.`group` AS `group`,`m`.`group_rekening` AS `group_rekening`,`m`.`id` AS `id`,`m`.`rekening` AS `rekening`,`m`.`saldoawal` AS `saldoawal`,`m`.`debet` AS `debet`,`m`.`kredit` AS `kredit`,`m`.`saldoakhir` AS `saldoakhir`,(`m`.`debet` - `m`.`kredit`) AS `jumlah` from `v41_mutasiold` `m` where (`m`.`group` = '6') order by `id`;
 
-INSERT INTO v42_labarugiold VALUES("201904","3","PENDAPATAN","3.1000","PENDAPATAN BUNGA PINJAMAN","0.00","0.00","233000.00","233000.00","233000.00");
 INSERT INTO v42_labarugiold VALUES("201903","3","PENDAPATAN","3.1000","PENDAPATAN BUNGA PINJAMAN","0.00","0.00","233000.00","233000.00","233000.00");
-INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.1000","BIAYA KARYAWAN","0.00","0.00","0.00","0.00","0.00");
+INSERT INTO v42_labarugiold VALUES("201904","3","PENDAPATAN","3.1000","PENDAPATAN BUNGA PINJAMAN","0.00","0.00","233000.00","233000.00","233000.00");
 INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.1000","BIAYA KARYAWAN","0.00","0.00","0.00","0.00","0.00");
-INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.2000","BIAYA PERKANTORAN & UMUM","0.00","0.00","0.00","0.00","0.00");
+INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.1000","BIAYA KARYAWAN","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.2000","BIAYA PERKANTORAN & UMUM","0.00","0.00","0.00","0.00","0.00");
+INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.2000","BIAYA PERKANTORAN & UMUM","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.3000","BIAYA KOMISI MAKELAR / FEE","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.3000","BIAYA KOMISI MAKELAR / FEE","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.4000","BIAYA ADMINISTRASI BANK","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.4000","BIAYA ADMINISTRASI BANK","0.00","0.00","0.00","0.00","0.00");
-INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.5000","BIAYA PENYUSUTAN","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.5000","BIAYA PENYUSUTAN","0.00","0.00","0.00","0.00","0.00");
+INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.5000","BIAYA PENYUSUTAN","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.6000","BIAYA IKLAN","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.6000","BIAYA IKLAN","0.00","0.00","0.00","0.00","0.00");
-INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.7000","POTONGAN","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201904","4","BIAYA","4.7000","POTONGAN","0.00","0.00","0.00","0.00","0.00");
-INSERT INTO v42_labarugiold VALUES("201904","5","PENDAPATAN LAIN","5.1000","PENDAPATAN ADMINISTRASI PINJAMAN","0.00","0.00","0.00","0.00","0.00");
+INSERT INTO v42_labarugiold VALUES("201903","4","BIAYA","4.7000","POTONGAN","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201903","5","PENDAPATAN LAIN","5.1000","PENDAPATAN ADMINISTRASI PINJAMAN","0.00","0.00","0.00","0.00","0.00");
-INSERT INTO v42_labarugiold VALUES("201903","5","PENDAPATAN LAIN","5.2000","PENDAPATAN BUNGA BANK","0.00","0.00","0.00","0.00","0.00");
+INSERT INTO v42_labarugiold VALUES("201904","5","PENDAPATAN LAIN","5.1000","PENDAPATAN ADMINISTRASI PINJAMAN","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201904","5","PENDAPATAN LAIN","5.2000","PENDAPATAN BUNGA BANK","0.00","0.00","0.00","0.00","0.00");
-INSERT INTO v42_labarugiold VALUES("201903","5","PENDAPATAN LAIN","5.3000","PENDAPATAN DENDA","0.00","0.00","0.00","0.00","0.00");
+INSERT INTO v42_labarugiold VALUES("201903","5","PENDAPATAN LAIN","5.2000","PENDAPATAN BUNGA BANK","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201904","5","PENDAPATAN LAIN","5.3000","PENDAPATAN DENDA","0.00","0.00","0.00","0.00","0.00");
+INSERT INTO v42_labarugiold VALUES("201903","5","PENDAPATAN LAIN","5.3000","PENDAPATAN DENDA","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201903","5","PENDAPATAN LAIN","5.4000","PENDAPATAN LAIN-LAIN / MATERAI","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201904","5","PENDAPATAN LAIN","5.4000","PENDAPATAN LAIN-LAIN / MATERAI","0.00","0.00","0.00","0.00","0.00");
 INSERT INTO v42_labarugiold VALUES("201903","6","BIAYA LAIN","6.1000","BIAYA LAIN-LAIN","0.00","0.00","0.00","0.00","0.00");

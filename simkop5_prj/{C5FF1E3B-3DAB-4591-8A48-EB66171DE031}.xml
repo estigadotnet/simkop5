@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration date="2019/03/21" author="e.World Technology Ltd.">
-  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2019/03/21 14:56:03" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+<configuration date="2019/03/25" author="e.World Technology Ltd.">
+  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2019/03/25 14:07:37" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="cf01_home_php" name="cf01_home.php" caption="Home" userlevel="-2,&quot;Anonymous&quot;,8;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf02_tutupbuku_php" name="cf02_tutupbuku.php" caption="Tutup Buku" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf04_neraca_php" name="cf04_neraca.php" caption="Neraca" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -47,6 +47,7 @@
     <table id="t99_audittrail" name="t99_audittrail" caption="Activity Log" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v02_nasabahjaminan" name="v02_nasabahjaminan" caption="v 02 nasabahjaminan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v03_jurnalmemorial" name="v03_jurnalmemorial" caption="v 03 jurnalmemorial" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="v0301_pinjamannasabah" name="v0301_pinjamannasabah" caption="v 0301 pinjamannasabah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v30_mutasi" name="v30_mutasi" caption="v 30 mutasi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v31_mutasi" name="v31_mutasi" caption="v 31 mutasi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v32_labarugi" name="v32_labarugi" caption="v 32 labarugi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />

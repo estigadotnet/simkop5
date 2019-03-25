@@ -311,7 +311,7 @@ Page_Rendering();
 <div class="clearfix"></div>
 </div>
 <?php } ?>
-<div class="panel panel-default">
+<div class="ewContentColumn">
 <?php
 $db =& DbHelper(); // Create instance of the database helper class by DbHelper() (for main database) or DbHelper("<dbname>") (for linked databases) where <dbname> is database variable name
 

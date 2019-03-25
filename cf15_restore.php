@@ -311,11 +311,15 @@ Page_Rendering();
 <div class="clearfix"></div>
 </div>
 <?php } ?>
-<div class="panel panel-default">
+<div class="ewContentColumn">
 
-	<form action="upload.php" method="post" enctype="multipart/form-data">
-		Pilih file: <input type="file" name="berkas" />
-		<input type="submit" name="upload" value="upload" />
+	<form action="upload.php" method="post" enctype="multipart/form-data" class="form-horizontal ewForm ewEditForm">
+<span>Pilih file hasil backup yang akan di-restore</span><br/>
+<span title="" class="btn btn-default btn-sm fileinput-button ewTooltip" data-original-title="Choose file">
+	<span>Choose...</span><input type="file" name="x_Pekerjaan" class="form-control">
+</span>
+		<!--Pilih file: <input type="file" name="berkas" />
+		<input type="submit" name="upload" value="upload" />-->
 	</form>
 
 <?php /*
