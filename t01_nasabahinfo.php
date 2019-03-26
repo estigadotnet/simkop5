@@ -76,7 +76,7 @@ class ct01_nasabah extends cTable {
 		$this->fields['No_Telp_Hp'] = &$this->No_Telp_Hp;
 
 		// Pekerjaan
-		$this->Pekerjaan = new cField('t01_nasabah', 't01_nasabah', 'x_Pekerjaan', 'Pekerjaan', '`Pekerjaan`', '`Pekerjaan`', 200, -1, TRUE, '`Pekerjaan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'FILE');
+		$this->Pekerjaan = new cField('t01_nasabah', 't01_nasabah', 'x_Pekerjaan', 'Pekerjaan', '`Pekerjaan`', '`Pekerjaan`', 200, -1, FALSE, '`Pekerjaan`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Pekerjaan->Sortable = TRUE; // Allow sort
 		$this->fields['Pekerjaan'] = &$this->Pekerjaan;
 
@@ -685,7 +685,7 @@ class ct01_nasabah extends cTable {
 		$this->Nama->setDbValue($rs->fields('Nama'));
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
 		$this->No_Telp_Hp->setDbValue($rs->fields('No_Telp_Hp'));
-		$this->Pekerjaan->Upload->DbValue = $rs->fields('Pekerjaan');
+		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
 		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
 		$this->Status->setDbValue($rs->fields('Status'));
@@ -729,11 +729,7 @@ class ct01_nasabah extends cTable {
 		$this->No_Telp_Hp->ViewCustomAttributes = "";
 
 		// Pekerjaan
-		if (!ew_Empty($this->Pekerjaan->Upload->DbValue)) {
-			$this->Pekerjaan->ViewValue = $this->Pekerjaan->Upload->DbValue;
-		} else {
-			$this->Pekerjaan->ViewValue = "";
-		}
+		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
 		$this->Pekerjaan->ViewCustomAttributes = "";
 
 		// Pekerjaan_Alamat
@@ -803,7 +799,6 @@ class ct01_nasabah extends cTable {
 		// Pekerjaan
 		$this->Pekerjaan->LinkCustomAttributes = "";
 		$this->Pekerjaan->HrefValue = "";
-		$this->Pekerjaan->HrefValue2 = $this->Pekerjaan->UploadPath . $this->Pekerjaan->Upload->DbValue;
 		$this->Pekerjaan->TooltipValue = "";
 
 		// Pekerjaan_Alamat
@@ -869,13 +864,8 @@ class ct01_nasabah extends cTable {
 		// Pekerjaan
 		$this->Pekerjaan->EditAttrs["class"] = "form-control";
 		$this->Pekerjaan->EditCustomAttributes = "";
-		if (!ew_Empty($this->Pekerjaan->Upload->DbValue)) {
-			$this->Pekerjaan->EditValue = $this->Pekerjaan->Upload->DbValue;
-		} else {
-			$this->Pekerjaan->EditValue = "";
-		}
-		if (!ew_Empty($this->Pekerjaan->CurrentValue))
-			$this->Pekerjaan->Upload->FileName = $this->Pekerjaan->CurrentValue;
+		$this->Pekerjaan->EditValue = $this->Pekerjaan->CurrentValue;
+		$this->Pekerjaan->PlaceHolder = ew_RemoveHtml($this->Pekerjaan->FldCaption());
 
 		// Pekerjaan_Alamat
 		$this->Pekerjaan_Alamat->EditAttrs["class"] = "form-control";

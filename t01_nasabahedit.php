@@ -515,9 +515,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		global $objForm, $Language;
 
 		// Get upload data
-		$this->Pekerjaan->Upload->Index = $objForm->Index;
-		$this->Pekerjaan->Upload->UploadFile();
-		$this->Pekerjaan->CurrentValue = $this->Pekerjaan->Upload->FileName;
 	}
 
 	// Load form values
@@ -525,7 +522,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 
 		// Load from form
 		global $objForm;
-		$this->GetUploadFiles(); // Get upload files
 		if (!$this->Nama->FldIsDetailKey) {
 			$this->Nama->setFormValue($objForm->GetValue("x_Nama"));
 		}
@@ -534,6 +530,9 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		}
 		if (!$this->No_Telp_Hp->FldIsDetailKey) {
 			$this->No_Telp_Hp->setFormValue($objForm->GetValue("x_No_Telp_Hp"));
+		}
+		if (!$this->Pekerjaan->FldIsDetailKey) {
+			$this->Pekerjaan->setFormValue($objForm->GetValue("x_Pekerjaan"));
 		}
 		if (!$this->Pekerjaan_Alamat->FldIsDetailKey) {
 			$this->Pekerjaan_Alamat->setFormValue($objForm->GetValue("x_Pekerjaan_Alamat"));
@@ -562,6 +561,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->Nama->CurrentValue = $this->Nama->FormValue;
 		$this->Alamat->CurrentValue = $this->Alamat->FormValue;
 		$this->No_Telp_Hp->CurrentValue = $this->No_Telp_Hp->FormValue;
+		$this->Pekerjaan->CurrentValue = $this->Pekerjaan->FormValue;
 		$this->Pekerjaan_Alamat->CurrentValue = $this->Pekerjaan_Alamat->FormValue;
 		$this->Pekerjaan_No_Telp_Hp->CurrentValue = $this->Pekerjaan_No_Telp_Hp->FormValue;
 		$this->Status->CurrentValue = $this->Status->FormValue;
@@ -602,8 +602,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->Nama->setDbValue($rs->fields('Nama'));
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
 		$this->No_Telp_Hp->setDbValue($rs->fields('No_Telp_Hp'));
-		$this->Pekerjaan->Upload->DbValue = $rs->fields('Pekerjaan');
-		$this->Pekerjaan->CurrentValue = $this->Pekerjaan->Upload->DbValue;
+		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
 		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
 		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
 		$this->Status->setDbValue($rs->fields('Status'));
@@ -619,7 +618,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->Nama->DbValue = $row['Nama'];
 		$this->Alamat->DbValue = $row['Alamat'];
 		$this->No_Telp_Hp->DbValue = $row['No_Telp_Hp'];
-		$this->Pekerjaan->Upload->DbValue = $row['Pekerjaan'];
+		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
 		$this->Pekerjaan_Alamat->DbValue = $row['Pekerjaan_Alamat'];
 		$this->Pekerjaan_No_Telp_Hp->DbValue = $row['Pekerjaan_No_Telp_Hp'];
 		$this->Status->DbValue = $row['Status'];
@@ -667,11 +666,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->No_Telp_Hp->ViewCustomAttributes = "";
 
 		// Pekerjaan
-		if (!ew_Empty($this->Pekerjaan->Upload->DbValue)) {
-			$this->Pekerjaan->ViewValue = $this->Pekerjaan->Upload->DbValue;
-		} else {
-			$this->Pekerjaan->ViewValue = "";
-		}
+		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
 		$this->Pekerjaan->ViewCustomAttributes = "";
 
 		// Pekerjaan_Alamat
@@ -736,7 +731,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			// Pekerjaan
 			$this->Pekerjaan->LinkCustomAttributes = "";
 			$this->Pekerjaan->HrefValue = "";
-			$this->Pekerjaan->HrefValue2 = $this->Pekerjaan->UploadPath . $this->Pekerjaan->Upload->DbValue;
 			$this->Pekerjaan->TooltipValue = "";
 
 			// Pekerjaan_Alamat
@@ -786,14 +780,8 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			// Pekerjaan
 			$this->Pekerjaan->EditAttrs["class"] = "form-control";
 			$this->Pekerjaan->EditCustomAttributes = "";
-			if (!ew_Empty($this->Pekerjaan->Upload->DbValue)) {
-				$this->Pekerjaan->EditValue = $this->Pekerjaan->Upload->DbValue;
-			} else {
-				$this->Pekerjaan->EditValue = "";
-			}
-			if (!ew_Empty($this->Pekerjaan->CurrentValue))
-				$this->Pekerjaan->Upload->FileName = $this->Pekerjaan->CurrentValue;
-			if ($this->CurrentAction == "I" && !$this->EventCancelled) ew_RenderUploadField($this->Pekerjaan);
+			$this->Pekerjaan->EditValue = ew_HtmlEncode($this->Pekerjaan->CurrentValue);
+			$this->Pekerjaan->PlaceHolder = ew_RemoveHtml($this->Pekerjaan->FldCaption());
 
 			// Pekerjaan_Alamat
 			$this->Pekerjaan_Alamat->EditAttrs["class"] = "form-control";
@@ -854,7 +842,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			// Pekerjaan
 			$this->Pekerjaan->LinkCustomAttributes = "";
 			$this->Pekerjaan->HrefValue = "";
-			$this->Pekerjaan->HrefValue2 = $this->Pekerjaan->UploadPath . $this->Pekerjaan->Upload->DbValue;
 
 			// Pekerjaan_Alamat
 			$this->Pekerjaan_Alamat->LinkCustomAttributes = "";
@@ -906,7 +893,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		if (!$this->No_Telp_Hp->FldIsDetailKey && !is_null($this->No_Telp_Hp->FormValue) && $this->No_Telp_Hp->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->No_Telp_Hp->FldCaption(), $this->No_Telp_Hp->ReqErrMsg));
 		}
-		if ($this->Pekerjaan->Upload->FileName == "" && !$this->Pekerjaan->Upload->KeepFile) {
+		if (!$this->Pekerjaan->FldIsDetailKey && !is_null($this->Pekerjaan->FormValue) && $this->Pekerjaan->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Pekerjaan->FldCaption(), $this->Pekerjaan->ReqErrMsg));
 		}
 		if (!$this->Pekerjaan_Alamat->FldIsDetailKey && !is_null($this->Pekerjaan_Alamat->FormValue) && $this->Pekerjaan_Alamat->FormValue == "") {
@@ -978,14 +965,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			$this->No_Telp_Hp->SetDbValueDef($rsnew, $this->No_Telp_Hp->CurrentValue, "", $this->No_Telp_Hp->ReadOnly);
 
 			// Pekerjaan
-			if ($this->Pekerjaan->Visible && !$this->Pekerjaan->ReadOnly && !$this->Pekerjaan->Upload->KeepFile) {
-				$this->Pekerjaan->Upload->DbValue = $rsold['Pekerjaan']; // Get original value
-				if ($this->Pekerjaan->Upload->FileName == "") {
-					$rsnew['Pekerjaan'] = NULL;
-				} else {
-					$rsnew['Pekerjaan'] = $this->Pekerjaan->Upload->FileName;
-				}
-			}
+			$this->Pekerjaan->SetDbValueDef($rsnew, $this->Pekerjaan->CurrentValue, "", $this->Pekerjaan->ReadOnly);
 
 			// Pekerjaan_Alamat
 			$this->Pekerjaan_Alamat->SetDbValueDef($rsnew, $this->Pekerjaan_Alamat->CurrentValue, "", $this->Pekerjaan_Alamat->ReadOnly);
@@ -1001,11 +981,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 
 			// marketing_id
 			$this->marketing_id->SetDbValueDef($rsnew, $this->marketing_id->CurrentValue, 0, $this->marketing_id->ReadOnly);
-			if ($this->Pekerjaan->Visible && !$this->Pekerjaan->Upload->KeepFile) {
-				if (!ew_Empty($this->Pekerjaan->Upload->Value)) {
-					$rsnew['Pekerjaan'] = ew_UploadFileNameEx(ew_UploadPathEx(TRUE, $this->Pekerjaan->UploadPath), $rsnew['Pekerjaan']); // Get new file name
-				}
-			}
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -1017,14 +992,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 					$EditRow = TRUE; // No field to update
 				$conn->raiseErrorFn = '';
 				if ($EditRow) {
-					if ($this->Pekerjaan->Visible && !$this->Pekerjaan->Upload->KeepFile) {
-						if (!ew_Empty($this->Pekerjaan->Upload->Value)) {
-							if (!$this->Pekerjaan->Upload->SaveToFile($this->Pekerjaan->UploadPath, $rsnew['Pekerjaan'], TRUE)) {
-								$this->setFailureMessage($Language->Phrase("UploadErrMsg7"));
-								return FALSE;
-							}
-						}
-					}
 				}
 
 				// Update detail records
@@ -1064,9 +1031,6 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		if ($EditRow)
 			$this->Row_Updated($rsold, $rsnew);
 		$rs->Close();
-
-		// Pekerjaan
-		ew_CleanUploadTempPath($this->Pekerjaan, $this->Pekerjaan->Upload->Index);
 		return $EditRow;
 	}
 
@@ -1255,10 +1219,9 @@ ft01_nasabahedit.Validate = function() {
 			elm = this.GetElements("x" + infix + "_No_Telp_Hp");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->No_Telp_Hp->FldCaption(), $t01_nasabah->No_Telp_Hp->ReqErrMsg)) ?>");
-			felm = this.GetElements("x" + infix + "_Pekerjaan");
-			elm = this.GetElements("fn_x" + infix + "_Pekerjaan");
-			if (felm && elm && !ew_HasValue(elm))
-				return this.OnError(felm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->Pekerjaan->FldCaption(), $t01_nasabah->Pekerjaan->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Pekerjaan");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->Pekerjaan->FldCaption(), $t01_nasabah->Pekerjaan->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Pekerjaan_Alamat");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t01_nasabah->Pekerjaan_Alamat->FldCaption(), $t01_nasabah->Pekerjaan_Alamat->ReqErrMsg)) ?>");
@@ -1367,25 +1330,10 @@ $t01_nasabah_edit->ShowMessage();
 <?php } ?>
 <?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
 	<div id="r_Pekerjaan" class="form-group">
-		<label id="elh_t01_nasabah_Pekerjaan" class="col-sm-2 control-label ewLabel"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t01_nasabah_Pekerjaan" for="x_Pekerjaan" class="col-sm-2 control-label ewLabel"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
 <span id="el_t01_nasabah_Pekerjaan">
-<div id="fd_x_Pekerjaan">
-<span title="<?php echo $t01_nasabah->Pekerjaan->FldTitle() ? $t01_nasabah->Pekerjaan->FldTitle() : $Language->Phrase("ChooseFile") ?>" class="btn btn-default btn-sm fileinput-button ewTooltip<?php if ($t01_nasabah->Pekerjaan->ReadOnly || $t01_nasabah->Pekerjaan->Disabled) echo " hide"; ?>">
-	<span><?php echo $Language->Phrase("ChooseFileBtn") ?></span>
-	<input type="file" title=" " data-table="t01_nasabah" data-field="x_Pekerjaan" name="x_Pekerjaan" id="x_Pekerjaan"<?php echo $t01_nasabah->Pekerjaan->EditAttributes() ?>>
-</span>
-<input type="hidden" name="fn_x_Pekerjaan" id= "fn_x_Pekerjaan" value="<?php echo $t01_nasabah->Pekerjaan->Upload->FileName ?>">
-<?php if (@$_POST["fa_x_Pekerjaan"] == "0") { ?>
-<input type="hidden" name="fa_x_Pekerjaan" id= "fa_x_Pekerjaan" value="0">
-<?php } else { ?>
-<input type="hidden" name="fa_x_Pekerjaan" id= "fa_x_Pekerjaan" value="1">
-<?php } ?>
-<input type="hidden" name="fs_x_Pekerjaan" id= "fs_x_Pekerjaan" value="50">
-<input type="hidden" name="fx_x_Pekerjaan" id= "fx_x_Pekerjaan" value="<?php echo $t01_nasabah->Pekerjaan->UploadAllowedFileExt ?>">
-<input type="hidden" name="fm_x_Pekerjaan" id= "fm_x_Pekerjaan" value="<?php echo $t01_nasabah->Pekerjaan->UploadMaxFileSize ?>">
-</div>
-<table id="ft_x_Pekerjaan" class="table table-condensed pull-left ewUploadTable"><tbody class="files"></tbody></table>
+<input type="text" data-table="t01_nasabah" data-field="x_Pekerjaan" name="x_Pekerjaan" id="x_Pekerjaan" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t01_nasabah->Pekerjaan->getPlaceHolder()) ?>" value="<?php echo $t01_nasabah->Pekerjaan->EditValue ?>"<?php echo $t01_nasabah->Pekerjaan->EditAttributes() ?>>
 </span>
 <?php echo $t01_nasabah->Pekerjaan->CustomMsg ?></div></div>
 	</div>

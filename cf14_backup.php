@@ -325,8 +325,7 @@ $tables = array();
 $result = $db->Execute("SHOW TABLES");
 while (!$result->EOF) {
 	if (substr($result->fields[0],0,1) == "t") {
-	
-	$tables[] = $result->fields[0];
+		$tables[] = $result->fields[0];
 	}
 	$result->MoveNext();
 }
@@ -357,7 +356,9 @@ foreach($tables as $table){
 $handle = fopen("d:\\".$nama_file . ".sql","w+");
 fwrite($handle,$return);
 fclose($handle);
-echo "Successfully backed up";
+//echo "Successfully backed up";
+CurrentPage()->ShowMessage();
+CurrentPage()->setSuccessMessage("Successfully backed up");
 ?>
 </div>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>

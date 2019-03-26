@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/2/19" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/3/26" version="10.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -350,6 +350,51 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2018 Selaras Solusindo. All rights reserved." />
+    <menu id="42">
+      <phrase id="menutext" value="t 76 neracaold" />
+    </menu>
+    <menu id="43">
+      <phrase id="menutext" value="t 77 labarugiold" />
+    </menu>
+    <menu id="44">
+      <phrase id="menutext" value="t 78 bukubesarlap" />
+    </menu>
+    <menu id="45">
+      <phrase id="menutext" value="t 79 jurnallap" />
+    </menu>
+    <menu id="46">
+      <phrase id="menutext" value="t 80 rekeningold" />
+    </menu>
+    <menu id="47">
+      <phrase id="menutext" value="t 82 jurnalold" />
+    </menu>
+    <menu id="48">
+      <phrase id="menutext" value="v 30 mutasi" />
+    </menu>
+    <menu id="49">
+      <phrase id="menutext" value="v 31 mutasi" />
+    </menu>
+    <menu id="50">
+      <phrase id="menutext" value="v 32 labarugi" />
+    </menu>
+    <menu id="51">
+      <phrase id="menutext" value="v 33 neraca" />
+    </menu>
+    <menu id="52">
+      <phrase id="menutext" value="v 34 saldoakhir" />
+    </menu>
+    <menu id="53">
+      <phrase id="menutext" value="v 40 mutasiold" />
+    </menu>
+    <menu id="54">
+      <phrase id="menutext" value="v 41 mutasiold" />
+    </menu>
+    <menu id="55">
+      <phrase id="menutext" value="v 42 labarugiold" />
+    </menu>
+    <menu id="56">
+      <phrase id="menutext" value="v 43 neracaold" />
+    </menu>
     <menu id="30">
       <phrase id="menutext" value="t 87 neraca" />
     </menu>
@@ -365,12 +410,6 @@
     <menu id="35">
       <phrase id="menutext" value="v 03 jurnalmemorial" />
     </menu>
-    <menu id="36">
-      <phrase id="menutext" value="v 04 lrper" />
-    </menu>
-    <menu id="37">
-      <phrase id="menutext" value="v 05 labarugi" />
-    </menu>
     <menu id="38">
       <phrase id="menutext" value="t 86 labarugi 2" />
     </menu>
@@ -378,10 +417,10 @@
       <phrase id="menutext" value="t 85 neraca 2" />
     </menu>
     <menu id="40">
-      <phrase id="menutext" value="v 06 nrcper" />
+      <phrase id="menutext" value="v 0301 pinjamannasabah" />
     </menu>
     <menu id="41">
-      <phrase id="menutext" value="v 07 neraca" />
+      <phrase id="menutext" value="r 0301 pinjamannasabah" />
     </menu>
     <menu id="29">
       <phrase id="menutext" value="t 88 labarugi" />
@@ -400,9 +439,6 @@
     </menu>
     <menu id="26">
       <phrase id="menutext" value="Buku Besar" />
-    </menu>
-    <menu id="27">
-      <phrase id="menutext" value="v 01 labarugi" />
     </menu>
     <menu id="19">
       <phrase id="menutext" value="t 91 rekening" />
@@ -1195,6 +1231,12 @@
       <field id="active">
         <phrase id="fldcaption" value="active" />
       </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="Saldo" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
     </table>
     <table id="t92_periodeold">
       <phrase id="tblcaption" value="t 92 periodeold" />
@@ -1382,30 +1424,6 @@
         <phrase id="fldcaption" value="newvalue" />
       </field>
     </table>
-    <table id="v01_labarugi">
-      <phrase id="tblcaption" value="v 01 labarugi" />
-      <field id="idhead">
-        <phrase id="fldcaption" value="idhead" />
-      </field>
-      <field id="rekeninghead">
-        <phrase id="fldcaption" value="rekeninghead" />
-      </field>
-      <field id="iddetail">
-        <phrase id="fldcaption" value="iddetail" />
-      </field>
-      <field id="rekeningdetail">
-        <phrase id="fldcaption" value="rekeningdetail" />
-      </field>
-      <field id="debet">
-        <phrase id="fldcaption" value="debet" />
-      </field>
-      <field id="kredit">
-        <phrase id="fldcaption" value="kredit" />
-      </field>
-      <field id="periode">
-        <phrase id="fldcaption" value="periode" />
-      </field>
-    </table>
     <table id="v02_nasabahjaminan">
       <phrase id="tblcaption" value="v 02 nasabahjaminan" />
       <field id="id">
@@ -1469,28 +1487,85 @@
         <phrase id="fldcaption" value="Kredit" />
       </field>
     </table>
-    <table id="v04_lrper">
-      <phrase id="tblcaption" value="v 04 lrper" />
-      <field id="tahun_bulan">
-        <phrase id="fldcaption" value="Tahun Bulan" />
+    <table id="t76_neracaold">
+      <phrase id="tblcaption" value="t 76 neracaold" />
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="group_rekening">
+        <phrase id="fldcaption" value="group rekening" />
       </field>
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
-      <field id="nourut">
-        <phrase id="fldcaption" value="No Urut" />
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldoawal">
+        <phrase id="fldcaption" value="saldoawal" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="saldoakhir">
+        <phrase id="fldcaption" value="saldoakhir" />
       </field>
     </table>
-    <table id="v05_labarugi">
-      <phrase id="tblcaption" value="v 05 labarugi" />
-      <field id="tahun_bulan">
-        <phrase id="fldcaption" value="Tahun Bulan" />
+    <table id="t77_labarugiold">
+      <phrase id="tblcaption" value="t 77 labarugiold" />
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="group_rekening">
+        <phrase id="fldcaption" value="group rekening" />
       </field>
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
-      <field id="nourut">
-        <phrase id="fldcaption" value="No Urut" />
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldoawal">
+        <phrase id="fldcaption" value="saldoawal" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="saldoakhir">
+        <phrase id="fldcaption" value="saldoakhir" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="jumlah" />
+      </field>
+    </table>
+    <table id="t78_bukubesarlap">
+      <phrase id="tblcaption" value="t 78 bukubesarlap" />
+      <field id="akunkode">
+        <phrase id="fldcaption" value="Akun Kode" />
+      </field>
+      <field id="akunnama">
+        <phrase id="fldcaption" value="Akun Nama" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
       </field>
       <field id="debet">
         <phrase id="fldcaption" value="Debet" />
@@ -1498,41 +1573,488 @@
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
       </field>
-      <field id="rekening">
-        <phrase id="fldcaption" value="Rekening" />
+      <field id="saldo">
+        <phrase id="fldcaption" value="Saldo" />
       </field>
     </table>
-    <table id="v06_nrcper">
-      <phrase id="tblcaption" value="v 06 nrcper" />
-      <field id="tahun_bulan">
-        <phrase id="fldcaption" value="Tahun Bulan" />
+    <table id="t79_jurnallap">
+      <phrase id="tblcaption" value="t 79 jurnallap" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
       </field>
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
       </field>
-      <field id="nourut">
-        <phrase id="fldcaption" value="No Urut" />
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
       </field>
-    </table>
-    <table id="v07_neraca">
-      <phrase id="tblcaption" value="v 07 neraca" />
-      <field id="tahun_bulan">
-        <phrase id="fldcaption" value="Tahun Bulan" />
+      <field id="akunkode">
+        <phrase id="fldcaption" value="Akun Kode" />
       </field>
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="rekening">
-        <phrase id="fldcaption" value="Rekening" />
-      </field>
-      <field id="nourut">
-        <phrase id="fldcaption" value="No Urut" />
+      <field id="akunnama">
+        <phrase id="fldcaption" value="Akun Nama" />
       </field>
       <field id="debet">
         <phrase id="fldcaption" value="Debet" />
       </field>
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="t80_rekeningold">
+      <phrase id="tblcaption" value="t 80 rekeningold" />
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="tipe">
+        <phrase id="fldcaption" value="tipe" />
+      </field>
+      <field id="posisi">
+        <phrase id="fldcaption" value="posisi" />
+      </field>
+      <field id="laporan">
+        <phrase id="fldcaption" value="laporan" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="status" />
+      </field>
+      <field id="parent">
+        <phrase id="fldcaption" value="parent" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="keterangan" />
+      </field>
+      <field id="active">
+        <phrase id="fldcaption" value="active" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="Saldo" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+    </table>
+    <table id="t82_jurnalold">
+      <phrase id="tblcaption" value="t 82 jurnalold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="Rekening" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+    </table>
+    <table id="v30_mutasi">
+      <phrase id="tblcaption" value="v 30 mutasi" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+    </table>
+    <table id="v31_mutasi">
+      <phrase id="tblcaption" value="v 31 mutasi" />
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="group_rekening">
+        <phrase id="fldcaption" value="group rekening" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldoawal">
+        <phrase id="fldcaption" value="saldoawal" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="saldoakhir">
+        <phrase id="fldcaption" value="saldoakhir" />
+      </field>
+    </table>
+    <table id="v32_labarugi">
+      <phrase id="tblcaption" value="v 32 labarugi" />
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="group_rekening">
+        <phrase id="fldcaption" value="group rekening" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldoawal">
+        <phrase id="fldcaption" value="saldoawal" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="saldoakhir">
+        <phrase id="fldcaption" value="saldoakhir" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="jumlah" />
+      </field>
+    </table>
+    <table id="v33_neraca">
+      <phrase id="tblcaption" value="v 33 neraca" />
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="group_rekening">
+        <phrase id="fldcaption" value="group rekening" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldoawal">
+        <phrase id="fldcaption" value="saldoawal" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="saldoakhir">
+        <phrase id="fldcaption" value="saldoakhir" />
+      </field>
+    </table>
+    <table id="v34_saldoakhir">
+      <phrase id="tblcaption" value="v 34 saldoakhir" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldo">
+        <phrase id="fldcaption" value="saldo" />
+      </field>
+    </table>
+    <table id="v40_mutasiold">
+      <phrase id="tblcaption" value="v 40 mutasiold" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+    </table>
+    <table id="v41_mutasiold">
+      <phrase id="tblcaption" value="v 41 mutasiold" />
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="group_rekening">
+        <phrase id="fldcaption" value="group rekening" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldoawal">
+        <phrase id="fldcaption" value="saldoawal" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="saldoakhir">
+        <phrase id="fldcaption" value="saldoakhir" />
+      </field>
+    </table>
+    <table id="v42_labarugiold">
+      <phrase id="tblcaption" value="v 42 labarugiold" />
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="group_rekening">
+        <phrase id="fldcaption" value="group rekening" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldoawal">
+        <phrase id="fldcaption" value="saldoawal" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="saldoakhir">
+        <phrase id="fldcaption" value="saldoakhir" />
+      </field>
+      <field id="jumlah">
+        <phrase id="fldcaption" value="jumlah" />
+      </field>
+    </table>
+    <table id="v43_neracaold">
+      <phrase id="tblcaption" value="v 43 neracaold" />
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="group">
+        <phrase id="fldcaption" value="group" />
+      </field>
+      <field id="group_rekening">
+        <phrase id="fldcaption" value="group rekening" />
+      </field>
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="rekening">
+        <phrase id="fldcaption" value="rekening" />
+      </field>
+      <field id="saldoawal">
+        <phrase id="fldcaption" value="saldoawal" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="kredit" />
+      </field>
+      <field id="saldoakhir">
+        <phrase id="fldcaption" value="saldoakhir" />
+      </field>
+    </table>
+    <table id="v0301_pinjamannasabah">
+      <phrase id="tblcaption" value="v 0301 pinjamannasabah" />
+      <field id="pinjaman_id">
+        <phrase id="fldcaption" value="pinjaman id" />
+      </field>
+      <field id="kontrak_no">
+        <phrase id="fldcaption" value="Kontrak No" />
+      </field>
+      <field id="kontrak_tgl">
+        <phrase id="fldcaption" value="Kontrak Tgl" />
+      </field>
+      <field id="nasabah_id">
+        <phrase id="fldcaption" value="nasabah id" />
+      </field>
+      <field id="jaminan_id">
+        <phrase id="fldcaption" value="jaminan id" />
+      </field>
+      <field id="pinjaman">
+        <phrase id="fldcaption" value="Pinjaman" />
+      </field>
+      <field id="angsuran_lama">
+        <phrase id="fldcaption" value="Angsuran Lama" />
+      </field>
+      <field id="angsuran_bunga_prosen">
+        <phrase id="fldcaption" value="Angsuran Bunga Prosen" />
+      </field>
+      <field id="angsuran_denda">
+        <phrase id="fldcaption" value="Angsuran Denda" />
+      </field>
+      <field id="dispensasi_denda">
+        <phrase id="fldcaption" value="Dispensasi Denda" />
+      </field>
+      <field id="angsuran_pokok">
+        <phrase id="fldcaption" value="Angsuran Pokok" />
+      </field>
+      <field id="angsuran_bunga">
+        <phrase id="fldcaption" value="Angsuran Bunga" />
+      </field>
+      <field id="angsuran_total">
+        <phrase id="fldcaption" value="Angsuran Total" />
+      </field>
+      <field id="no_ref">
+        <phrase id="fldcaption" value="No Ref" />
+      </field>
+      <field id="biaya_administrasi">
+        <phrase id="fldcaption" value="Biaya Administrasi" />
+      </field>
+      <field id="biaya_materai">
+        <phrase id="fldcaption" value="Biaya Materai" />
+      </field>
+      <field id="marketing_id">
+        <phrase id="fldcaption" value="marketing id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="macet">
+        <phrase id="fldcaption" value="Macet" />
+      </field>
+      <field id="nama">
+        <phrase id="fldcaption" value="Nama" />
+      </field>
+      <field id="alamat">
+        <phrase id="fldcaption" value="Alamat" />
+      </field>
+      <field id="no_telp_hp">
+        <phrase id="fldcaption" value="No Telp Hp" />
+      </field>
+      <field id="pekerjaan">
+        <phrase id="fldcaption" value="Pekerjaan" />
+      </field>
+      <field id="pekerjaan_alamat">
+        <phrase id="fldcaption" value="Pekerjaan Alamat" />
+      </field>
+      <field id="pekerjaan_no_telp_hp">
+        <phrase id="fldcaption" value="Pekerjaan No Telp Hp" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Status" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+    </table>
+    <table id="r0301_pinjamannasabah">
+      <phrase id="tblcaption" value="r 0301 pinjamannasabah" />
+      <field id="pinjaman_id">
+        <phrase id="fldcaption" value="pinjaman id" />
+      </field>
+      <field id="kontrak_no">
+        <phrase id="fldcaption" value="Kontrak No" />
+      </field>
+      <field id="kontrak_tgl">
+        <phrase id="fldcaption" value="Kontrak Tgl" />
+      </field>
+      <field id="nasabah_id">
+        <phrase id="fldcaption" value="nasabah id" />
+      </field>
+      <field id="jaminan_id">
+        <phrase id="fldcaption" value="jaminan id" />
+      </field>
+      <field id="pinjaman">
+        <phrase id="fldcaption" value="Pinjaman" />
+      </field>
+      <field id="angsuran_lama">
+        <phrase id="fldcaption" value="Angsuran Lama" />
+      </field>
+      <field id="angsuran_bunga_prosen">
+        <phrase id="fldcaption" value="Angsuran Bunga Prosen" />
+      </field>
+      <field id="angsuran_denda">
+        <phrase id="fldcaption" value="Angsuran Denda" />
+      </field>
+      <field id="dispensasi_denda">
+        <phrase id="fldcaption" value="Dispensasi Denda" />
+      </field>
+      <field id="angsuran_pokok">
+        <phrase id="fldcaption" value="Angsuran Pokok" />
+      </field>
+      <field id="angsuran_bunga">
+        <phrase id="fldcaption" value="Angsuran Bunga" />
+      </field>
+      <field id="angsuran_total">
+        <phrase id="fldcaption" value="Angsuran Total" />
+      </field>
+      <field id="no_ref">
+        <phrase id="fldcaption" value="No Ref" />
+      </field>
+      <field id="biaya_administrasi">
+        <phrase id="fldcaption" value="Biaya Administrasi" />
+      </field>
+      <field id="biaya_materai">
+        <phrase id="fldcaption" value="Biaya Materai" />
+      </field>
+      <field id="marketing_id">
+        <phrase id="fldcaption" value="marketing id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="macet">
+        <phrase id="fldcaption" value="Macet" />
+      </field>
+      <field id="nama">
+        <phrase id="fldcaption" value="Nama" />
+      </field>
+      <field id="alamat">
+        <phrase id="fldcaption" value="Alamat" />
+      </field>
+      <field id="no_telp_hp">
+        <phrase id="fldcaption" value="No Telp Hp" />
+      </field>
+      <field id="pekerjaan">
+        <phrase id="fldcaption" value="Pekerjaan" />
+      </field>
+      <field id="pekerjaan_alamat">
+        <phrase id="fldcaption" value="Pekerjaan Alamat" />
+      </field>
+      <field id="pekerjaan_no_telp_hp">
+        <phrase id="fldcaption" value="Pekerjaan No Telp Hp" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Status" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
       </field>
     </table>
   </project>
