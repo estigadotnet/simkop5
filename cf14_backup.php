@@ -357,8 +357,9 @@ $handle = fopen("d:\\".$nama_file . ".sql","w+");
 fwrite($handle,$return);
 fclose($handle);
 //echo "Successfully backed up";
-CurrentPage()->ShowMessage();
+//CurrentPage()->ShowMessage();
 CurrentPage()->setSuccessMessage("Successfully backed up");
+CurrentPage()->ShowMessage();
 ?>
 </div>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
