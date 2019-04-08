@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/3/26" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/4/8" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -652,6 +652,15 @@
     <menu id="10177">
       <phrase id="menutext" value="Neraca" />
     </menu>
+    <menu id="10548">
+      <phrase id="menutext" value="Laporan (Closed)" />
+    </menu>
+    <menu id="10549">
+      <phrase id="menutext" value="Jurnal" />
+    </menu>
+    <menu id="10550">
+      <phrase id="menutext" value="Jurnal (Closed)" />
+    </menu>
     <menu id="10334">
       <phrase id="menutext" value="Koperasi" />
     </menu>
@@ -903,6 +912,15 @@
     </table>
     <table id="cf13_neraca_php">
       <phrase id="tblcaption" value="Neraca" />
+    </table>
+    <table id="cf14_backup_php">
+      <phrase id="tblcaption" value="Backup" />
+    </table>
+    <table id="cf15_restore_php">
+      <phrase id="tblcaption" value="Restore" />
+    </table>
+    <table id="cf21_jurnalclosed_php">
+      <phrase id="tblcaption" value="Jurnal" />
     </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
@@ -1327,6 +1345,30 @@
       </field>
       <field id="rekening">
         <phrase id="fldcaption" value="Rekening" />
+      </field>
+      <field id="debet">
+        <phrase id="fldcaption" value="Debet" />
+      </field>
+      <field id="kredit">
+        <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="t74_jurnallapclosed">
+      <phrase id="tblcaption" value="Jurnal (Closed)" />
+      <field id="tanggal">
+        <phrase id="fldcaption" value="Tanggal" />
+      </field>
+      <field id="nomortransaksi">
+        <phrase id="fldcaption" value="Nomor Transaksi" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+      <field id="akunkode">
+        <phrase id="fldcaption" value="Akun Kode" />
+      </field>
+      <field id="akunnama">
+        <phrase id="fldcaption" value="Akun Nama" />
       </field>
       <field id="debet">
         <phrase id="fldcaption" value="Debet" />
@@ -2218,12 +2260,6 @@
       <field id="saldoakhir">
         <phrase id="fldcaption" value="saldoakhir" />
       </field>
-    </table>
-    <table id="cf14_backup_php">
-      <phrase id="tblcaption" value="Backup" />
-    </table>
-    <table id="cf15_restore_php">
-      <phrase id="tblcaption" value="Restore" />
     </table>
   </project>
 </ew-language>
