@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$cf31_jurnal_php = NULL; // Initialize page object first
+$cf32_bukubesar_php = NULL; // Initialize page object first
 
-class ccf31_jurnal_php {
+class ccf32_bukubesar_php {
 
 	// Page ID
 	var $PageID = 'custom';
@@ -25,10 +25,10 @@ class ccf31_jurnal_php {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 'cf31_jurnal.php';
+	var $TableName = 'cf32_bukubesar.php';
 
 	// Page object name
-	var $PageObjName = 'cf31_jurnal_php';
+	var $PageObjName = 'cf32_bukubesar_php';
 
 	// Page name
 	function PageName() {
@@ -195,7 +195,7 @@ class ccf31_jurnal_php {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'cf31_jurnal.php', TRUE);
+			define("EW_TABLE_NAME", 'cf32_bukubesar.php', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -284,7 +284,7 @@ class ccf31_jurnal_php {
 		global $Breadcrumb;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("custom", "cf31_jurnal_php", $url, "", "cf31_jurnal_php", TRUE);
+		$Breadcrumb->Add("custom", "cf32_bukubesar_php", $url, "", "cf32_bukubesar_php", TRUE);
 	}
 }
 ?>
@@ -292,13 +292,13 @@ class ccf31_jurnal_php {
 <?php
 
 // Create page object
-if (!isset($cf31_jurnal_php)) $cf31_jurnal_php = new ccf31_jurnal_php();
+if (!isset($cf32_bukubesar_php)) $cf32_bukubesar_php = new ccf32_bukubesar_php();
 
 // Page init
-$cf31_jurnal_php->Page_Init();
+$cf32_bukubesar_php->Page_Init();
 
 // Page main
-$cf31_jurnal_php->Page_Main();
+$cf32_bukubesar_php->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
@@ -318,7 +318,7 @@ $abulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Ju
 <form name="frm_input_periode" class="form-horizontal ewForm ewExtFilterForm" method="post">
 <div>
 	<div id="r_1" class="form-group">
-		<label for="sv_Bulan" class="col-sm-2 control-label ewLabel">Periode</label>
+		<label class="col-sm-2 control-label ewLabel">Periode</label>
 		<div class="col-sm-10">
 			<div>
 			<span>
@@ -349,7 +349,7 @@ $abulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Ju
 		</div>
 	</div>
 	<div id="r_2" class="form-group">
-		<label for="sv_Bulan" class="col-sm-2 control-label ewLabel">Tahun</label>
+		<label class="col-sm-2 control-label ewLabel">Tahun</label>
 		<div class="col-sm-10">
 			<div>
 			<span>
@@ -360,6 +360,35 @@ $abulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Ju
 			while(!$r->EOF) {
 			?>
 			<option value="<?php echo $r->fields["Tahun"]?>"><?php echo $r->fields["Tahun"]; ?></option>
+			<?php
+			$r->MoveNext();
+			}
+			?>
+			</select>
+			</span>
+			</div>
+		</div>
+	</div>
+	<div id="r_1" class="form-group">
+		<label class="col-sm-2 control-label ewLabel">Akun</label>
+		<div class="col-sm-10">
+			<div>
+			<span>
+			<select name="id" class="form-control">
+			<!-- <option value="">Please select</option>
+			<option value="201812">201812</option>
+			<option value="201901">201901</option>
+			<option value="201902">201902</option> -->
+			<?php
+			$q = "select id, rekening from t91_rekening where length(id) > 1 order by id";
+			$r = Conn()->Execute($q);
+			while(!$r->EOF) {
+			?>
+			<option value="<?php echo $r->fields["id"]?>"
+				<?php if (isset($_POST["id"])) {?>
+				<?php echo ($r->fields['id'] == $_POST['id'] ? 'selected' : ''); ?>
+				<?php }?>
+			><?php echo $r->fields["id"].' - '.$r->fields["rekening"]?></option>
 			<?php
 			$r->MoveNext();
 			}
@@ -388,208 +417,162 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	$periode_input = $_POST["tahun"].substr("00" . $_POST["bulan"], -2);
 	//echo $periode_aktif . " - " . $periode_input;
 
-	if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
+	//if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
 
-		// hapus t79_jurnallap
-		$q = "delete from t79_jurnallap";
+		// hapus t78_bukubesarlap
+		$q = "delete from t78_bukubesarlap";
 		Conn()->Execute($q);
 
-		$q = "
-		SELECT
-			j.Tanggal,
-			j.NomorTransaksi,
-			j.Keterangan,
-			r.id,
-			r.rekening,
-			case when isnull(j.Debet) then 0 else j.Debet end as debet,
-			case when isnull(j.Kredit) then 0 else j.Kredit end as kredit
-		from
-			t10_jurnal as j
-			left join t91_rekening r on r.id = j.rekening
-		ORDER BY
-			j.Tanggal";
-		//#where a.id=63
+		$r = ew_Execute("select Bulan, Tahun from t93_periode");
 
-		$rs = ew_Execute($q);
-		$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
-			"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
-		echo "
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Jurnal</label><br/>
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[ew_ExecuteScalar("select Bulan from t93_periode")] . " " . ew_ExecuteScalar("select Tahun from t93_periode") . "</label><br/>
-		&nbsp;<br/>";
-		echo "
-		<div class='panel panel-default'>
-		<div>
-		<table class='table table-striped table-hover table-condensed'>
-		<tbody>";
-		/*
-		echo "
-		<tr>
-			<th>Aktiva</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-		</tr>";
-		*/
-		echo "
-		<tr>
-			<th>Tanggal</th>
-			<th>No. Transaksi</th>
-			<th>Keterangan</th>
-			<th>Kode Akun</th>
-			<th>Akun</th>
-			<th align='right'>Debet</th>
-			<th align='right'>Kredit</th>
-		</tr>";
-		while (!$rs->EOF) {
-			echo "
-			<tr>
-				<td>" . date_format(date_create($rs->fields["Tanggal"]), "d-m-Y") . "</td>
-				<td>" . $rs->fields["NomorTransaksi"] . "</td>
-				<td>" . $rs->fields["Keterangan"] . "</td>
-				<td>" . $rs->fields["id"] . "</td>
-				<td>" . $rs->fields["rekening"] . "</td>
-				<td align='right'>" . number_format($rs->fields["debet"]) . "</td>
-				<td align='right'>" . number_format($rs->fields["kredit"]) . "</td>
-			</tr>";
-			// insert ke t79_jurnallap
-			$q = "
-			insert into t79_jurnallap (
-				Tanggal,
-				NomorTransaksi,
-				Keterangan,
-				AkunKode,
-				AkunNama,
-				Debet,
-				Kredit
-			) values (
-				'".$rs->fields["Tanggal"]."',
-				'".$rs->fields["NomorTransaksi"]."',
-				'".$rs->fields["Keterangan"]."',
-				'".$rs->fields["id"]."',
-				'".$rs->fields["rekening"]."',
-				".$rs->fields["debet"].",
-				".$rs->fields["kredit"]."
-			)";
-			Conn()->Execute($q);
-			$rs->MoveNext();
+		$q = "
+		insert into t78_bukubesarlap (
+		AkunKode,
+		AkunNama,
+		Tanggal,
+		NomorTransaksi,
+		Keterangan,
+		Debet,
+		Kredit,
+		Saldo)
+		select
+		id,
+		rekening,
+		tanggal,
+		no_tran,
+		keterangan,
+		debet,
+		kredit,
+		@st := @st + saldo
+		from (
+		select
+			r.id
+			, r.rekening
+			, '".$_POST["tahun"]."-".substr("00".$_POST["bulan"],-2)."-01' as tanggal
+			, '' as no_tran
+			, 'Saldo Awal' as keterangan
+			, 0 as debet
+			, 0 as kredit
+			, saldo
+		from ";
+		if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
+			$q .= "
+			t91_rekening r
+			";
 		}
-		$rs->Close();
-		echo "
-		</tbody>
-		</table>
-		</div>
-		</div>";
-		//header("Location: t79_jurnallaplist.php");
-	} // end tabel periode sekarang
+		else {
+			$q .= "
+			t80_rekeningold r where r.Periode = '".$periode_input."'
+			";
+		}
+			//t91_rekening r
+		$q .="
+		union
 
-	else { // begin tabel periode closed
+		select
+			r.id
+			, r.rekening
+			, case when isnull(j.tanggal) then '".$_POST["tahun"]."-".substr("00".$_POST["bulan"],-2)."-01' else j.tanggal end as tanggal
+			, j.nomortransaksi as no_tran
+			, j.keterangan as keterangan
+			, case when isnull(j.debet) then 0 else j.debet end as debet
+			, case when isnull(j.kredit) then 0 else j.kredit end as kredit
+			, case when isnull(j.debet) then 0 else j.debet end - case when isnull(j.kredit) then 0 else j.kredit end as saldo
+		from";
 
-		// hapus t74_jurnallapclsoed
-		$q = "delete from t74_jurnallapclosed";
-		Conn()->Execute($q);
+		if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
+			$q .= "
+			t91_rekening r
+			left join t10_jurnal j on r.id = j.rekening
+			";
+		}
+		else {
+			$q .= "
+			t80_rekeningold r
+			left join t82_jurnalold j on r.id = j.rekening
+			where r.Periode = '".$periode_input."' and j.Periode = '".$periode_input."'
+			";
+		}
 
-		$q = "
-		SELECT
-			j.Tanggal,
-			j.NomorTransaksi,
-			j.Keterangan,
-			r.id,
-			r.rekening,
-			case when isnull(j.Debet) then 0 else j.Debet end as debet,
-			case when isnull(j.Kredit) then 0 else j.Kredit end as kredit
-		from
-			t82_jurnalold as j
-			left join t91_rekening r on r.id = j.rekening
+		/*$q .= "
+			t91_rekening r
+			left join t10_jurnal j on r.id = j.rekening
+			";*/
+
+		$q .= "
+		) bb
+		join (select @st := 0) stx
 		where
-			j.Periode = '".$periode_input."'
-		ORDER BY
-			j.Tanggal";
-		//#where a.id=63
+		bb.id = '".$_POST["id"]."'";
+		if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
+		}
+		else {
+			//$q .= " and ";
+		}
+		$q .= "
+		order by
+		bb.tanggal
+		;";
+		//echo $q;
+		Conn()->Execute($q);
+		$rs = ew_Execute("select * from t78_bukubesarlap");
+		$AkunKode = $rs->fields["AkunKode"];
+		$AkunNama = $rs->fields["AkunNama"];
 
-		$rs = ew_Execute($q);
 		$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
 		"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
+		//<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[$r->fields["Bulan"]] . " " . $r->fields["Tahun"] . "</label><br/>
 		echo "
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Jurnal</label><br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Buku Besar</label><br/>
 		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[$_POST["bulan"]] . " " . $_POST["tahun"] . "</label><br/>
 		&nbsp;<br/>
-		";
-		echo "
-		<div class='panel panel-default'>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Kode " . $rs->fields["AkunKode"] . "</label><br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Rekening " . $rs->fields["AkunNama"] . "</label><br/>
+		<div class='panel panel-default'>			
 		<div>
 		<table class='table table-striped table-hover table-condensed'>
 		<tbody>";
 
-		/*
 		echo "
 		<tr>
-			<th>Aktiva</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
+		<th>Tanggal</th>
+		<th>No. Transaksi</th>
+		<th>Keterangan</th>
+		<th align='right'>Debet</th>
+		<th align='right'>Kredit</th>
+		<th align='right'>Saldo</th>
 		</tr>";
-		*/
 
-		echo "
-		<tr>
-			<th>Tanggal</th>
-			<th>No. Transaksi</th>
-			<th>Keterangan</th>
-			<th>Kode Akun</th>
-			<th>Akun</th>
-			<th align='right'>Debet</th>
-			<th align='right'>Kredit</th>
-		</tr>";
 		while (!$rs->EOF) {
 			echo "
 			<tr>
-				<td>" . date_format(date_create($rs->fields["Tanggal"]), "d-m-Y") . "</td>
-				<td>" . $rs->fields["NomorTransaksi"] . "</td>
-				<td>" . $rs->fields["Keterangan"] . "</td>
-				<td>" . $rs->fields["id"] . "</td>
-				<td>" . $rs->fields["rekening"] . "</td>
-				<td align='right'>" . number_format($rs->fields["debet"]) . "</td>
-				<td align='right'>" . number_format($rs->fields["kredit"]) . "</td>
+			<td>" . date_format(date_create($rs->fields["Tanggal"]), "d-m-Y") . "</td>
+			<td>" . $rs->fields["NomorTransaksi"] . "</td>
+			<td>" . $rs->fields["Keterangan"] . "</td>
+			<td align='right'>" . number_format($rs->fields["Debet"]) . "</td>
+			<td align='right'>" . number_format($rs->fields["Kredit"]) . "</td>
+			<td align='right'>" . number_format($rs->fields["Saldo"]) . "</td>
 			</tr>";
-			// insert ke t74_jurnallapclosed
-			$q = "
-			insert into t74_jurnallapclosed (
-			Tanggal,
-			NomorTransaksi,
-			Keterangan,
-			AkunKode,
-			AkunNama,
-			Debet,
-			Kredit
-			) values (
-			'".$rs->fields["Tanggal"]."',
-			'".$rs->fields["NomorTransaksi"]."',
-			'".$rs->fields["Keterangan"]."',
-			'".$rs->fields["id"]."',
-			'".$rs->fields["rekening"]."',
-			".$rs->fields["debet"].",
-			".$rs->fields["kredit"]."
-			)";
-			Conn()->Execute($q);
 			$rs->MoveNext();
 		}
-		$rs->Close();
+	
 		echo "
 		</tbody>
 		</table>
 		</div>
 		</div>";
-		//header("Location: t74_jurnallapclosedlist.php");
-	} // end tabel periode closed
+		/*<div id='xsr_2' class='ewRow'>
+		<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick=\"window.location.href='cf10_bukubesar.php'\">Selesai</button>
+		</div>*/
+
+		//header("Location: t78_bukubesarlaplist.php?akunkode=".$AkunKode."&akunnama=".$AkunNama."");
+
+	//} // end tabel periode sekarang
+
 } // end proses
 ?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
-$cf31_jurnal_php->Page_Terminate();
+$cf32_bukubesar_php->Page_Terminate();
 ?>

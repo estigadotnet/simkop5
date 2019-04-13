@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/4/10" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/4/13" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -586,6 +586,12 @@
     <menu id="16">
       <phrase id="menutext" value="Home" />
     </menu>
+    <menu id="10549">
+      <phrase id="menutext" value="Jurnal" />
+    </menu>
+    <menu id="10550">
+      <phrase id="menutext" value="Jurnal (Closed)" />
+    </menu>
     <menu id="10451">
       <phrase id="menutext" value="Accounting" />
     </menu>
@@ -622,6 +628,12 @@
     <menu id="10551">
       <phrase id="menutext" value="Jurnal" />
     </menu>
+    <menu id="10552">
+      <phrase id="menutext" value="Buku Besar" />
+    </menu>
+    <menu id="10553">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
     <menu id="10187">
       <phrase id="menutext" value="Jurnal" />
     </menu>
@@ -654,15 +666,6 @@
     </menu>
     <menu id="10177">
       <phrase id="menutext" value="Neraca" />
-    </menu>
-    <menu id="10548">
-      <phrase id="menutext" value="Laporan (Closed)" />
-    </menu>
-    <menu id="10549">
-      <phrase id="menutext" value="Jurnal" />
-    </menu>
-    <menu id="10550">
-      <phrase id="menutext" value="Jurnal (Closed)" />
     </menu>
     <menu id="10334">
       <phrase id="menutext" value="Koperasi" />
@@ -2266,6 +2269,12 @@
     </table>
     <table id="cf31_jurnal_php">
       <phrase id="tblcaption" value="Jurnal" />
+    </table>
+    <table id="cf32_bukubesar_php">
+      <phrase id="tblcaption" value="Buku Besar" />
+    </table>
+    <table id="cf33_labarugi_php">
+      <phrase id="tblcaption" value="Laba Rugi" />
     </table>
   </project>
 </ew-language>

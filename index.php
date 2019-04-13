@@ -354,6 +354,10 @@ class cdefault {
 			$this->Page_Terminate("t99_audittraillist.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf31_jurnal.php'))
 			$this->Page_Terminate("cf31_jurnal.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf32_bukubesar.php'))
+			$this->Page_Terminate("cf32_bukubesar.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf33_labarugi.php'))
+			$this->Page_Terminate("cf33_labarugi.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {

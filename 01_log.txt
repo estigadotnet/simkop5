@@ -1,7 +1,14 @@
 <strong>----- to do --------------------------------------------------------------------------------</strong>
 
-11:10 AM 3/21/2019
-- tambah tabel, t75_company
+1:04 PM 4/13/2019
+- t88_labarugi,
+  - tambah field ::
+    - field04
+    - field05
+  - ubah lebar field ::
+    - field03
+    - field04
+    - field05
 
 
 
