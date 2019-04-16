@@ -16,6 +16,8 @@ class ct88_labarugi extends cTable {
 	var $field01;
 	var $field02;
 	var $field03;
+	var $field04;
+	var $field05;
 
 	//
 	// Table class constructor
@@ -61,6 +63,16 @@ class ct88_labarugi extends cTable {
 		$this->field03 = new cField('t88_labarugi', 't88_labarugi', 'x_field03', 'field03', '`field03`', '`field03`', 200, -1, FALSE, '`field03`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->field03->Sortable = TRUE; // Allow sort
 		$this->fields['field03'] = &$this->field03;
+
+		// field04
+		$this->field04 = new cField('t88_labarugi', 't88_labarugi', 'x_field04', 'field04', '`field04`', '`field04`', 200, -1, FALSE, '`field04`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->field04->Sortable = TRUE; // Allow sort
+		$this->fields['field04'] = &$this->field04;
+
+		// field05
+		$this->field05 = new cField('t88_labarugi', 't88_labarugi', 'x_field05', 'field05', '`field05`', '`field05`', 200, -1, FALSE, '`field05`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->field05->Sortable = TRUE; // Allow sort
+		$this->fields['field05'] = &$this->field05;
 	}
 
 	// Set Field Visibility
@@ -550,6 +562,8 @@ class ct88_labarugi extends cTable {
 		$this->field01->setDbValue($rs->fields('field01'));
 		$this->field02->setDbValue($rs->fields('field02'));
 		$this->field03->setDbValue($rs->fields('field03'));
+		$this->field04->setDbValue($rs->fields('field04'));
+		$this->field05->setDbValue($rs->fields('field05'));
 	}
 
 	// Render list row values
@@ -563,6 +577,8 @@ class ct88_labarugi extends cTable {
 		// field01
 		// field02
 		// field03
+		// field04
+		// field05
 		// field01
 
 		$this->field01->ViewValue = $this->field01->CurrentValue;
@@ -576,6 +592,14 @@ class ct88_labarugi extends cTable {
 		$this->field03->ViewValue = $this->field03->CurrentValue;
 		$this->field03->CellCssStyle .= "text-align: right;";
 		$this->field03->ViewCustomAttributes = "";
+
+		// field04
+		$this->field04->ViewValue = $this->field04->CurrentValue;
+		$this->field04->ViewCustomAttributes = "";
+
+		// field05
+		$this->field05->ViewValue = $this->field05->CurrentValue;
+		$this->field05->ViewCustomAttributes = "";
 
 		// field01
 		$this->field01->LinkCustomAttributes = "";
@@ -591,6 +615,16 @@ class ct88_labarugi extends cTable {
 		$this->field03->LinkCustomAttributes = "";
 		$this->field03->HrefValue = "";
 		$this->field03->TooltipValue = "";
+
+		// field04
+		$this->field04->LinkCustomAttributes = "";
+		$this->field04->HrefValue = "";
+		$this->field04->TooltipValue = "";
+
+		// field05
+		$this->field05->LinkCustomAttributes = "";
+		$this->field05->HrefValue = "";
+		$this->field05->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -620,6 +654,18 @@ class ct88_labarugi extends cTable {
 		$this->field03->EditCustomAttributes = "";
 		$this->field03->EditValue = $this->field03->CurrentValue;
 		$this->field03->PlaceHolder = ew_RemoveHtml($this->field03->FldCaption());
+
+		// field04
+		$this->field04->EditAttrs["class"] = "form-control";
+		$this->field04->EditCustomAttributes = "";
+		$this->field04->EditValue = $this->field04->CurrentValue;
+		$this->field04->PlaceHolder = ew_RemoveHtml($this->field04->FldCaption());
+
+		// field05
+		$this->field05->EditAttrs["class"] = "form-control";
+		$this->field05->EditCustomAttributes = "";
+		$this->field05->EditValue = $this->field05->CurrentValue;
+		$this->field05->PlaceHolder = ew_RemoveHtml($this->field05->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -651,10 +697,14 @@ class ct88_labarugi extends cTable {
 					if ($this->field01->Exportable) $Doc->ExportCaption($this->field01);
 					if ($this->field02->Exportable) $Doc->ExportCaption($this->field02);
 					if ($this->field03->Exportable) $Doc->ExportCaption($this->field03);
+					if ($this->field04->Exportable) $Doc->ExportCaption($this->field04);
+					if ($this->field05->Exportable) $Doc->ExportCaption($this->field05);
 				} else {
 					if ($this->field01->Exportable) $Doc->ExportCaption($this->field01);
 					if ($this->field02->Exportable) $Doc->ExportCaption($this->field02);
 					if ($this->field03->Exportable) $Doc->ExportCaption($this->field03);
+					if ($this->field04->Exportable) $Doc->ExportCaption($this->field04);
+					if ($this->field05->Exportable) $Doc->ExportCaption($this->field05);
 				}
 				$Doc->EndExportRow();
 			}
@@ -689,10 +739,14 @@ class ct88_labarugi extends cTable {
 						if ($this->field01->Exportable) $Doc->ExportField($this->field01);
 						if ($this->field02->Exportable) $Doc->ExportField($this->field02);
 						if ($this->field03->Exportable) $Doc->ExportField($this->field03);
+						if ($this->field04->Exportable) $Doc->ExportField($this->field04);
+						if ($this->field05->Exportable) $Doc->ExportField($this->field05);
 					} else {
 						if ($this->field01->Exportable) $Doc->ExportField($this->field01);
 						if ($this->field02->Exportable) $Doc->ExportField($this->field02);
 						if ($this->field03->Exportable) $Doc->ExportField($this->field03);
+						if ($this->field04->Exportable) $Doc->ExportField($this->field04);
+						if ($this->field05->Exportable) $Doc->ExportField($this->field05);
 					}
 					$Doc->EndExportRow();
 				}

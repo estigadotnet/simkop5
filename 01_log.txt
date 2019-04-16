@@ -1,5 +1,19 @@
 <strong>----- to do --------------------------------------------------------------------------------</strong>
 
+11:57 AM 4/15/2019
+- update view v40_mutasiold
+- t87_neraca,
+  - tambah field ::
+    - field04
+    - field05
+  - ubah lebar field ::
+    - field03
+    - field04
+    - field05
+
+7:52 AM 4/15/2019
+- update view v41_mutasiold
+
 1:04 PM 4/13/2019
 - t88_labarugi,
   - tambah field ::

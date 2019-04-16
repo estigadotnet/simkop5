@@ -413,6 +413,8 @@ class ct88_labarugi_list extends ct88_labarugi {
 		$this->field01->SetVisibility();
 		$this->field02->SetVisibility();
 		$this->field03->SetVisibility();
+		$this->field04->SetVisibility();
+		$this->field05->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -714,6 +716,8 @@ class ct88_labarugi_list extends ct88_labarugi {
 			$this->UpdateSort($this->field01, $bCtrl); // field01
 			$this->UpdateSort($this->field02, $bCtrl); // field02
 			$this->UpdateSort($this->field03, $bCtrl); // field03
+			$this->UpdateSort($this->field04, $bCtrl); // field04
+			$this->UpdateSort($this->field05, $bCtrl); // field05
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -745,6 +749,8 @@ class ct88_labarugi_list extends ct88_labarugi {
 				$this->field01->setSort("");
 				$this->field02->setSort("");
 				$this->field03->setSort("");
+				$this->field04->setSort("");
+				$this->field05->setSort("");
 			}
 
 			// Reset start position
@@ -1111,6 +1117,8 @@ class ct88_labarugi_list extends ct88_labarugi {
 		$this->field01->setDbValue($rs->fields('field01'));
 		$this->field02->setDbValue($rs->fields('field02'));
 		$this->field03->setDbValue($rs->fields('field03'));
+		$this->field04->setDbValue($rs->fields('field04'));
+		$this->field05->setDbValue($rs->fields('field05'));
 	}
 
 	// Load DbValue from recordset
@@ -1120,6 +1128,8 @@ class ct88_labarugi_list extends ct88_labarugi {
 		$this->field01->DbValue = $row['field01'];
 		$this->field02->DbValue = $row['field02'];
 		$this->field03->DbValue = $row['field03'];
+		$this->field04->DbValue = $row['field04'];
+		$this->field05->DbValue = $row['field05'];
 	}
 
 	// Load old record
@@ -1160,6 +1170,8 @@ class ct88_labarugi_list extends ct88_labarugi {
 		// field01
 		// field02
 		// field03
+		// field04
+		// field05
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1176,6 +1188,14 @@ class ct88_labarugi_list extends ct88_labarugi {
 		$this->field03->CellCssStyle .= "text-align: right;";
 		$this->field03->ViewCustomAttributes = "";
 
+		// field04
+		$this->field04->ViewValue = $this->field04->CurrentValue;
+		$this->field04->ViewCustomAttributes = "";
+
+		// field05
+		$this->field05->ViewValue = $this->field05->CurrentValue;
+		$this->field05->ViewCustomAttributes = "";
+
 			// field01
 			$this->field01->LinkCustomAttributes = "";
 			$this->field01->HrefValue = "";
@@ -1190,6 +1210,16 @@ class ct88_labarugi_list extends ct88_labarugi {
 			$this->field03->LinkCustomAttributes = "";
 			$this->field03->HrefValue = "";
 			$this->field03->TooltipValue = "";
+
+			// field04
+			$this->field04->LinkCustomAttributes = "";
+			$this->field04->HrefValue = "";
+			$this->field04->TooltipValue = "";
+
+			// field05
+			$this->field05->LinkCustomAttributes = "";
+			$this->field05->HrefValue = "";
+			$this->field05->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -1642,6 +1672,24 @@ $t88_labarugi_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
+<?php if ($t88_labarugi->field04->Visible) { // field04 ?>
+	<?php if ($t88_labarugi->SortUrl($t88_labarugi->field04) == "") { ?>
+		<th data-name="field04"><div id="elh_t88_labarugi_field04" class="t88_labarugi_field04"><div class="ewTableHeaderCaption"><?php echo $t88_labarugi->field04->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="field04"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t88_labarugi->SortUrl($t88_labarugi->field04) ?>',2);"><div id="elh_t88_labarugi_field04" class="t88_labarugi_field04">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t88_labarugi->field04->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t88_labarugi->field04->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t88_labarugi->field04->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t88_labarugi->field05->Visible) { // field05 ?>
+	<?php if ($t88_labarugi->SortUrl($t88_labarugi->field05) == "") { ?>
+		<th data-name="field05"><div id="elh_t88_labarugi_field05" class="t88_labarugi_field05"><div class="ewTableHeaderCaption"><?php echo $t88_labarugi->field05->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="field05"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t88_labarugi->SortUrl($t88_labarugi->field05) ?>',2);"><div id="elh_t88_labarugi_field05" class="t88_labarugi_field05">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t88_labarugi->field05->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t88_labarugi->field05->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t88_labarugi->field05->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
 <?php
 
 // Render list options (header, right)
@@ -1728,6 +1776,22 @@ $t88_labarugi_list->ListOptions->Render("body", "left", $t88_labarugi_list->RowC
 <span id="el<?php echo $t88_labarugi_list->RowCnt ?>_t88_labarugi_field03" class="t88_labarugi_field03">
 <span<?php echo $t88_labarugi->field03->ViewAttributes() ?>>
 <?php echo $t88_labarugi->field03->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t88_labarugi->field04->Visible) { // field04 ?>
+		<td data-name="field04"<?php echo $t88_labarugi->field04->CellAttributes() ?>>
+<span id="el<?php echo $t88_labarugi_list->RowCnt ?>_t88_labarugi_field04" class="t88_labarugi_field04">
+<span<?php echo $t88_labarugi->field04->ViewAttributes() ?>>
+<?php echo $t88_labarugi->field04->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t88_labarugi->field05->Visible) { // field05 ?>
+		<td data-name="field05"<?php echo $t88_labarugi->field05->CellAttributes() ?>>
+<span id="el<?php echo $t88_labarugi_list->RowCnt ?>_t88_labarugi_field05" class="t88_labarugi_field05">
+<span<?php echo $t88_labarugi->field05->ViewAttributes() ?>>
+<?php echo $t88_labarugi->field05->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

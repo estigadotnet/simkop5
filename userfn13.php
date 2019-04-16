@@ -88,6 +88,14 @@ function f_hitungdenda($hari_terlambat) {
 	return $total_denda;
 }
 
+function f_hitunglabarugiold2($periode) {
+	$q = "select sum(kredit) - sum(debet) as LabaRugi from v42_labarugiold where
+		periode = '".$periode."' ";
+	$r = Conn()->Execute($q);
+	$LabaRugi = $r->fields["LabaRugi"];
+	return $LabaRugi;
+}
+
 function f_hitunglabarugi2($periode) {
 	$q = "select sum(kredit) - sum(debet) as LabaRugi from v32_labarugi where
 		periode = '".$periode."' ";

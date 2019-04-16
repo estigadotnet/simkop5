@@ -358,6 +358,10 @@ class cdefault {
 			$this->Page_Terminate("cf32_bukubesar.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf33_labarugi.php'))
 			$this->Page_Terminate("cf33_labarugi.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf34_neraca.php'))
+			$this->Page_Terminate("cf34_neraca.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf35_neracasaldo.php'))
+			$this->Page_Terminate("cf35_neracasaldo.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {

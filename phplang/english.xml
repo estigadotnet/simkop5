@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/4/13" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/4/16" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -631,6 +631,9 @@
     <menu id="10552">
       <phrase id="menutext" value="Buku Besar" />
     </menu>
+    <menu id="10555">
+      <phrase id="menutext" value="Neraca Saldo" />
+    </menu>
     <menu id="10553">
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
@@ -639,6 +642,9 @@
     </menu>
     <menu id="10339">
       <phrase id="menutext" value="Jurnal" />
+    </menu>
+    <menu id="10554">
+      <phrase id="menutext" value="Neraca" />
     </menu>
     <menu id="10185">
       <phrase id="menutext" value="Buku Besar" />
@@ -649,15 +655,6 @@
     <menu id="10186">
       <phrase id="menutext" value="Buku Besar" />
     </menu>
-    <menu id="10342">
-      <phrase id="menutext" value="Laba Rugi" />
-    </menu>
-    <menu id="10161">
-      <phrase id="menutext" value="Laba Rugi" />
-    </menu>
-    <menu id="10172">
-      <phrase id="menutext" value="Laba Rugi" />
-    </menu>
     <menu id="10348">
       <phrase id="menutext" value="Neraca" />
     </menu>
@@ -666,6 +663,15 @@
     </menu>
     <menu id="10177">
       <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10342">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10161">
+      <phrase id="menutext" value="Laba Rugi" />
+    </menu>
+    <menu id="10172">
+      <phrase id="menutext" value="Laba Rugi" />
     </menu>
     <menu id="10334">
       <phrase id="menutext" value="Koperasi" />
@@ -1603,12 +1609,24 @@
       <field id="field01" />
       <field id="field02" />
       <field id="field03" />
+      <field id="field04">
+        <phrase id="fldcaption" value="field 04" />
+      </field>
+      <field id="field05">
+        <phrase id="fldcaption" value="field 05" />
+      </field>
     </table>
     <table id="t88_labarugi">
       <phrase id="tblcaption" value="Laba Rugi" />
       <field id="field01" />
       <field id="field02" />
       <field id="field03" />
+      <field id="field04">
+        <phrase id="fldcaption" value="field 04" />
+      </field>
+      <field id="field05">
+        <phrase id="fldcaption" value="field 05" />
+      </field>
     </table>
     <table id="t89_rektran">
       <phrase id="tblcaption" value="Link Rekening" />
@@ -2173,6 +2191,9 @@
       <field id="kredit">
         <phrase id="fldcaption" value="kredit" />
       </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
     </table>
     <table id="v41_mutasiold">
       <phrase id="tblcaption" value="v 41 mutasiold" />
@@ -2275,6 +2296,12 @@
     </table>
     <table id="cf33_labarugi_php">
       <phrase id="tblcaption" value="Laba Rugi" />
+    </table>
+    <table id="cf34_neraca_php">
+      <phrase id="tblcaption" value="Neraca" />
+    </table>
+    <table id="cf35_neracasaldo_php">
+      <phrase id="tblcaption" value="Neraca Saldo" />
     </table>
   </project>
 </ew-language>

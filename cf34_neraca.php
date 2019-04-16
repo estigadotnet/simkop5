@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$cf33_labarugi_php = NULL; // Initialize page object first
+$cf34_neraca_php = NULL; // Initialize page object first
 
-class ccf33_labarugi_php {
+class ccf34_neraca_php {
 
 	// Page ID
 	var $PageID = 'custom';
@@ -25,10 +25,10 @@ class ccf33_labarugi_php {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 'cf33_labarugi.php';
+	var $TableName = 'cf34_neraca.php';
 
 	// Page object name
-	var $PageObjName = 'cf33_labarugi_php';
+	var $PageObjName = 'cf34_neraca_php';
 
 	// Page name
 	function PageName() {
@@ -195,7 +195,7 @@ class ccf33_labarugi_php {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'cf33_labarugi.php', TRUE);
+			define("EW_TABLE_NAME", 'cf34_neraca.php', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -284,7 +284,7 @@ class ccf33_labarugi_php {
 		global $Breadcrumb;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("custom", "cf33_labarugi_php", $url, "", "cf33_labarugi_php", TRUE);
+		$Breadcrumb->Add("custom", "cf34_neraca_php", $url, "", "cf34_neraca_php", TRUE);
 	}
 }
 ?>
@@ -292,13 +292,13 @@ class ccf33_labarugi_php {
 <?php
 
 // Create page object
-if (!isset($cf33_labarugi_php)) $cf33_labarugi_php = new ccf33_labarugi_php();
+if (!isset($cf34_neraca_php)) $cf34_neraca_php = new ccf34_neraca_php();
 
 // Page init
-$cf33_labarugi_php->Page_Init();
+$cf34_neraca_php->Page_Init();
 
 // Page main
-$cf33_labarugi_php->Page_Main();
+$cf34_neraca_php->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
@@ -360,7 +360,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	// ambil datanya dari tabel t92_periodeold
 	$a_periode_lalu = array();
 	$q = "select Tahun_Bulan from t92_periodeold where Tahun = '".$r["Tahun"]."'
-		order by Tahun_Bulan desc limit 2";
+		order by Tahun_Bulan limit 2";
 	$q = "select * from (SELECT * FROM `t92_periodeold` where Tahun = '".$r["Tahun"]."' order by tahun_bulan desc limit 2) rs2 order by tahun_bulan";
 	$r = Conn()->Execute($q);
 	while(!$r->EOF) {
@@ -370,24 +370,10 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 
 	//var_dump($a_periode_lalu);
 
-	// mencari data periode sebelum periode terpilih
-	/*$q = "select *
-	from t77_labarugiold
-	where periode < '".$GLOBALS["Periode"]."'
-	limit 1";
-	$r = Conn()->Execute($q);*/
-
-	// check apakah ada data sebelumnya
-	//if ($r->EOF) {
-	// jika tidak ada data
-
-	// hapus t88_labarugi
-	$q = "delete from t88_labarugi";
-	Conn()->Execute($q);
-
+	// begin of create table
 	// tampilkan header laporan
 	echo "
-	<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Laba Rugi</label><br/>
+	<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Neraca</label><br/>
 	<label for='sv_Periode' class='ewSearchCaption ewLabel'>Tahun " . $_POST["tahun"] . "</label><br/>
 	&nbsp;<br/>
 	<div class='panel panel-default'>			
@@ -395,121 +381,125 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	<table class='table table-striped table-hover table-condensed'>
 	<tbody>";
 
+	// hapus t87_neraca
+	$q = "delete from t87_neraca";
+	Conn()->Execute($q);
+
+	// tampilkan baris periode
 	echo "
 	<tr>
 	<th>&nbsp;</th>
 	<th>&nbsp;</th>";
-
-	// tampilkan baris periode
 	$a_bulan = array("","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember");
 	if (count($a_periode_lalu) == 0) {
 		$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
-		$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '".$periode."')"; Conn()->Execute($q);
+		$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '".$periode."')"; Conn()->Execute($q);
 		echo "<th>".$periode."</th>";
 	}
 	elseif (count($a_periode_lalu) == 1) {
 		$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
 		$periodeold[0] = $a_bulan[intval(substr($a_periode_lalu[0], -2))] . " " . substr($a_periode_lalu[0], 0, 4);
-		$q = "insert into t88_labarugi (field01, field02, field03, field04) values ('', '', '".$periodeold[0]."', '".$periode."')"; Conn()->Execute($q);
+		$q = "insert into t87_neraca (field01, field02, field03, field04) values ('', '', '".$periodeold[0]."', '".$periode."')"; Conn()->Execute($q);
 		echo "<th>".$periodeold[0]."</th><th>".$periode."</th>";
 	}
 	elseif (count($a_periode_lalu) == 2) {
 		$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
 		$periodeold[0] = $a_bulan[intval(substr($a_periode_lalu[0], -2))] . " " . substr($a_periode_lalu[0], 0, 4);
 		$periodeold[1] = $a_bulan[intval(substr($a_periode_lalu[1], -2))] . " " . substr($a_periode_lalu[1], 0, 4);
-		$q = "insert into t88_labarugi (field01, field02, field03, field04, field05) values ('', '', '".$periodeold[0]."', '".$periodeold[1]."', '".$periode."')"; Conn()->Execute($q);
+		$q = "insert into t87_neraca (field01, field02, field03, field04, field05) values ('', '', '".$periodeold[0]."', '".$periodeold[1]."', '".$periode."')"; Conn()->Execute($q);
 		echo "<th>".$periodeold[0]."</th><th>".$periodeold[1]."</th><th>".$periode."</th>";
 	}
 	echo "
 	</tr>";
 
+	// kodetransaksi = 11
+	$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '11'");
+	$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '11'");
+
+	// id 1
 	$mtotal = 0;
 	$mtotalold[0] = 0;
 	$mtotalold[1] = 0;
-	$a_akun = array(3, 5);
-	for($i = 0; $i < count($a_akun); $i++) {
-		// id 3 dan 5
-		$q = "select * from v32_labarugi where `group` = '".$a_akun[$i]."'"; //echo $q;
-		$r = Conn()->Execute($q);
-		$q2 = "insert into t88_labarugi (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
-		echo "
-		<tr>
-		<td><strong>".$r->fields["group_rekening"]."</strong></td>";
-		if (count($a_periode_lalu) == 0) {
-			echo "<td colspan='2'>&nbsp;</td>";
-		}
-		elseif (count($a_periode_lalu) == 1) {
-			echo "<td colspan='3'>&nbsp;</td>";
-		}
-		elseif (count($a_periode_lalu) == 2) {
-			echo "<td colspan='4'>&nbsp;</td>";
-		}
-		echo "
-		</tr>
-		";
-		while (!$r->EOF) {
-			$nilai = $r->fields["jumlah"];
-			$mtotal += $nilai;
-			if (count($a_periode_lalu) == 0) {
-				$q = "insert into t88_labarugi (field01, field02, field03) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
-				echo "
-				<tr>
-				<td>".$r->fields["id"]."</td>
-				<td>".$r->fields["rekening"]."</td>
-				<td align='right'>".number_format($nilai, 2)."</td>
-				</tr>
-				";
-			}
-			elseif (count($a_periode_lalu) == 1) {
-				$q1 = "select * from v42_labarugiold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[0]."'"; //echo $q1;
-				$r1 = Conn()->Execute($q1);
-				$nilaiold[0] = $r1->fields["jumlah"];
-				$mtotalold[0] += $nilaiold[0];
-				$q = "insert into t88_labarugi (field01, field02, field03, field04) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilaiold[0], 2)."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
-				echo "
-				<tr>
-				<td>".$r->fields["id"]."</td>
-				<td>".$r->fields["rekening"]."</td>
-				<td align='right'>".number_format($nilaiold[0], 2)."</td>
-				<td align='right'>".number_format($nilai, 2)."</td>
-				</tr>
-				";
-			}
-			elseif (count($a_periode_lalu) == 2) {
-				$q1 = "select * from v42_labarugiold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[0]."'"; //echo $q1;
-				$r1 = Conn()->Execute($q1);
-				$nilaiold[0] = $r1->fields["jumlah"];
-				$mtotalold[0] += $nilaiold[0];
-				$q2 = "select * from v42_labarugiold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[1]."'"; //echo $q1;
-				$r2 = Conn()->Execute($q2);
-				$nilaiold[1] = $r2->fields["jumlah"];
-				$mtotalold[1] += $nilaiold[1];
-				$q = "insert into t88_labarugi (field01, field02, field03, field04, field05) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilaiold[0], 2)."', '".number_format($nilaiold[1], 2)."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
-				echo "
-				<tr>
-				<td>".$r->fields["id"]."</td>
-				<td>".$r->fields["rekening"]."</td>
-				<td align='right'>".number_format($nilaiold[0], 2)."</td>
-				<td align='right'>".number_format($nilaiold[1], 2)."</td>
-				<td align='right'>".number_format($nilai, 2)."</td>
-				</tr>
-				";
-			}
-			// $q = "insert into t88_labarugi (field01, field02, field03) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
-			$r->MoveNext();
-		}
-	}
-
-	// sub total id 3 dan 5
+	$q = "select * from v33_neraca where `group` = '1' order by id"; //echo $q;
+	$r = Conn()->Execute($q);
+	$q2 = "insert into t87_neraca (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
+	echo "
+	<tr>
+	<td><strong>".$r->fields["group_rekening"]."</strong></td>";
 	if (count($a_periode_lalu) == 0) {
-		$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal, 2)."</strong>')"; Conn()->Execute($q);
+		echo "<td colspan='2'>&nbsp;</td>";
 	}
 	elseif (count($a_periode_lalu) == 1) {
-		$q = "insert into t88_labarugi (field01, field02, field03, field04) values ('', '', '<strong>".number_format($mtotalold[0], 2)."</strong>', '<strong>".number_format($mtotal, 2)."</strong>')"; Conn()->Execute($q);
+		echo "<td colspan='3'>&nbsp;</td>";
 	}
 	elseif (count($a_periode_lalu) == 2) {
-		$q = "insert into t88_labarugi (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalold[0], 2)."</strong>', '<strong>".number_format($mtotalold[1], 2)."</strong>', '<strong>".number_format($mtotal, 2)."</strong>')"; Conn()->Execute($q);
+		echo "<td colspan='4'>&nbsp;</td>";
 	}
+	echo "
+	</tr>
+	";
+	while (!$r->EOF) {
+		$nilai = $r->fields["saldoakhir"];
+		$mtotal += $nilai;
+		if (count($a_periode_lalu) == 0) {
+			$q = "insert into t87_neraca (field01, field02, field03) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
+			echo "
+			<tr>
+			<td>".$r->fields["id"]."</td>
+			<td>".$r->fields["rekening"]."</td>
+			<td align='right'>".number_format($nilai, 2)."</td>
+			</tr>
+			";
+		}
+		elseif (count($a_periode_lalu) == 1) {
+			$q1 = "select * from v43_neracaold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[0]."'"; //echo $q1;
+			$r1 = Conn()->Execute($q1);
+			$nilaiold[0] = $r1->fields["saldoakhir"];
+			$mtotalold[0] += $nilaiold[0];
+			$q = "insert into t87_neraca (field01, field02, field03, field04) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilaiold[0], 2)."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
+			echo "
+			<tr>
+			<td>".$r->fields["id"]."</td>
+			<td>".$r->fields["rekening"]."</td>
+			<td align='right'>".number_format($nilaiold[0], 2)."</td>
+			<td align='right'>".number_format($nilai, 2)."</td>
+			</tr>
+			";
+		}
+		elseif (count($a_periode_lalu) == 2) {
+			$q1 = "select * from v43_neracaold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[0]."'"; //echo $q1;
+			$r1 = Conn()->Execute($q1);
+			$nilaiold[0] = $r1->fields["saldoakhir"];
+			$mtotalold[0] += $nilaiold[0];
+			$q2 = "select * from v43_neracaold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[1]."'"; //echo $q1;
+			$r2 = Conn()->Execute($q2);
+			$nilaiold[1] = $r2->fields["saldoakhir"];
+			$mtotalold[1] += $nilaiold[1];
+			$q = "insert into t87_neraca (field01, field02, field03, field04, field05) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilaiold[0], 2)."', '".number_format($nilaiold[1], 2)."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
+			echo "
+			<tr>
+			<td>".$r->fields["id"]."</td>
+			<td>".$r->fields["rekening"]."</td>
+			<td align='right'>".number_format($nilaiold[0], 2)."</td>
+			<td align='right'>".number_format($nilaiold[1], 2)."</td>
+			<td align='right'>".number_format($nilai, 2)."</td>
+			</tr>
+			";
+		}
+		$r->MoveNext();
+	}
+
+	// sub total
+	if (count($a_periode_lalu) == 0) {
+		$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal, 2)."</strong>')"; Conn()->Execute($q);
+	}
+	elseif (count($a_periode_lalu) == 1) {
+		$q = "insert into t87_neraca (field01, field02, field03, field04) values ('', '', '<strong>".number_format($mtotalold[0], 2)."</strong>', '<strong>".number_format($mtotal, 2)."</strong>')"; Conn()->Execute($q);
+	}
+	elseif (count($a_periode_lalu) == 2) {
+		$q = "insert into t87_neraca (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalold[0], 2)."</strong>', '<strong>".number_format($mtotalold[1], 2)."</strong>', '<strong>".number_format($mtotal, 2)."</strong>')"; Conn()->Execute($q);
+	}
+
 	echo "
 	<tr>
 	<td colspan='2'>&nbsp;</td>";
@@ -528,98 +518,122 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	echo "
 	</tr>
 	";
-	
-	$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '')"; Conn()->Execute($q);
+	$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '')"; Conn()->Execute($q);
 
 
-
+	// id 2
 	$mtotal2 = 0;
 	$mtotal2old[0] = 0;
 	$mtotal2old[1] = 0;
-	$a_akun = array(4, 6);
-	for($i = 0; $i < count($a_akun); $i++) {
-		// id 4 dan 6
-		$q = "select * from v32_labarugi where `group` = '".$a_akun[$i]."'"; //echo $q;
-		$r = Conn()->Execute($q);
-		$q2 = "insert into t88_labarugi (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
-				echo "
-		<tr>
-		<td><strong>".$r->fields["group_rekening"]."</strong></td>";
-		if (count($a_periode_lalu) == 0) {
-			echo "<td colspan='2'>&nbsp;</td>";
-		}
-		elseif (count($a_periode_lalu) == 1) {
-			echo "<td colspan='3'>&nbsp;</td>";
-		}
-		elseif (count($a_periode_lalu) == 2) {
-			echo "<td colspan='4'>&nbsp;</td>";
-		}
-		echo "
-		</tr>
-		";
-		while (!$r->EOF) {
-			$nilai = $r->fields["jumlah"];
-			$mtotal2 += $nilai;
-			if (count($a_periode_lalu) == 0) {
-				$q = "insert into t88_labarugi (field01, field02, field03) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
-				echo "
-				<tr>
-				<td>".$r->fields["id"]."</td>
-				<td>".$r->fields["rekening"]."</td>
-				<td align='right'>".number_format($nilai, 2)."</td>
-				</tr>
-				";
-			}
-			elseif (count($a_periode_lalu) == 1) {
-				$q1 = "select * from v42_labarugiold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[0]."'"; //echo $q1;
-				$r1 = Conn()->Execute($q1);
-				$nilaiold[0] = $r1->fields["jumlah"];
-				$mtotal2old[0] += $nilaiold[0];
-				$q = "insert into t88_labarugi (field01, field02, field03, field04) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilaiold[0], 2)."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
-				echo "
-				<tr>
-				<td>".$r->fields["id"]."</td>
-				<td>".$r->fields["rekening"]."</td>
-				<td align='right'>".number_format($nilaiold[0], 2)."</td>
-				<td align='right'>".number_format($nilai, 2)."</td>
-				</tr>
-				";
-			}
-			elseif (count($a_periode_lalu) == 2) {
-				$q1 = "select * from v42_labarugiold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[0]."'"; //echo $q1;
-				$r1 = Conn()->Execute($q1);
-				$nilaiold[0] = $r1->fields["jumlah"];
-				$mtotal2old[0] += $nilaiold[0];
-				$q2 = "select * from v42_labarugiold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[1]."'"; //echo $q1;
-				$r2 = Conn()->Execute($q2);
-				$nilaiold[1] = $r2->fields["jumlah"];
-				$mtotal2old[1] += $nilaiold[1];
-				$q = "insert into t88_labarugi (field01, field02, field03, field04, field05) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilaiold[0], 2)."', '".number_format($nilaiold[1], 2)."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
-				echo "
-				<tr>
-				<td>".$r->fields["id"]."</td>
-				<td>".$r->fields["rekening"]."</td>
-				<td align='right'>".number_format($nilaiold[0], 2)."</td>
-				<td align='right'>".number_format($nilaiold[1], 2)."</td>
-				<td align='right'>".number_format($nilai, 2)."</td>
-				</tr>
-				";
-			}
-			// $q = "insert into t88_labarugi (field01, field02, field03) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
-			$r->MoveNext();
-		}
-	}
-
-	// sub total id 4 dan 6
+	$q = "select * from v33_neraca where `group` = '2' order by id"; //echo $q;
+	$r = Conn()->Execute($q);
+	$q2 = "insert into t87_neraca (field01, field02, field03) values ('<strong>".$r->fields["group_rekening"]."</strong>', '', '')"; Conn()->Execute($q2);
+	echo "
+	<tr>
+	<td><strong>".$r->fields["group_rekening"]."</strong></td>";
 	if (count($a_periode_lalu) == 0) {
-		$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+		echo "<td colspan='2'>&nbsp;</td>";
 	}
 	elseif (count($a_periode_lalu) == 1) {
-		$q = "insert into t88_labarugi (field01, field02, field03, field04) values ('', '', '<strong>".number_format($mtotal2old[0], 2)."</strong>', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+		echo "<td colspan='3'>&nbsp;</td>";
 	}
 	elseif (count($a_periode_lalu) == 2) {
-		$q = "insert into t88_labarugi (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotal2old[0], 2)."</strong>', '<strong>".number_format($mtotal2old[1], 2)."</strong>', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+		echo "<td colspan='4'>&nbsp;</td>";
 	}
+	echo "
+	</tr>
+	";
+	while (!$r->EOF) {
+		if ($r->fields["id"] == $rekdebet) {
+			if (count($a_periode_lalu) == 0) {
+				$nilai = f_hitunglabarugi2($GLOBALS["Periode"]);
+			}
+			elseif (count($a_periode_lalu) == 1) {
+				$nilai = f_hitunglabarugi2($GLOBALS["Periode"]);
+				$nilaiold[0] = f_hitunglabarugiold2($a_periode_lalu[0]);
+			}
+			elseif (count($a_periode_lalu) == 2) {
+				$nilai = f_hitunglabarugi2($GLOBALS["Periode"]);
+				$nilaiold[0] = f_hitunglabarugiold2($a_periode_lalu[0]);
+				$nilaiold[1] = f_hitunglabarugiold2($a_periode_lalu[1]);
+			}
+		}
+		else {
+			if (count($a_periode_lalu) == 0) {
+				$nilai = $r->fields["saldoakhir"];
+			}
+			elseif (count($a_periode_lalu) == 1) {
+				$nilai = $r->fields["saldoakhir"];
+				$q1 = "select * from v43_neracaold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[0]."'"; //echo $q1;
+				$r1 = Conn()->Execute($q1);
+				$nilaiold[0] = $r1->fields["saldoakhir"];
+			}
+			elseif (count($a_periode_lalu) == 2) {
+				$nilai = $r->fields["saldoakhir"];
+				$q1 = "select * from v43_neracaold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[0]."'"; //echo $q1;
+				$r1 = Conn()->Execute($q1);
+				$nilaiold[0] = $r1->fields["saldoakhir"];
+				$q2 = "select * from v43_neracaold where id = '".$r->fields["id"]."' and periode = '".$a_periode_lalu[1]."'"; //echo $q1;
+				$r2 = Conn()->Execute($q2);
+				$nilaiold[1] = $r2->fields["saldoakhir"];
+			}
+		}
+		//$nilai = $r->fields["jumlah"];
+		if (count($a_periode_lalu) == 0) {
+			$mtotal2 += $nilai;
+			$q = "insert into t87_neraca (field01, field02, field03) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
+			echo "
+			<tr>
+			<td>".$r->fields["id"]."</td>
+			<td>".$r->fields["rekening"]."</td>
+			<td align='right'>".number_format($nilai, 2)."</td>
+			</tr>
+			";
+		}
+		elseif (count($a_periode_lalu) == 1) {
+			$mtotal2 += $nilai;
+			$mtotal2old[0] += $nilaiold[0];
+			$q = "insert into t87_neraca (field01, field02, field03, field04) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilaiold[0], 2)."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
+			echo "
+			<tr>
+			<td>".$r->fields["id"]."</td>
+			<td>".$r->fields["rekening"]."</td>
+			<td align='right'>".number_format($nilaiold[0], 2)."</td>
+			<td align='right'>".number_format($nilai, 2)."</td>
+			</tr>
+			";
+		}
+		elseif (count($a_periode_lalu) == 2) {
+			$mtotal2 += $nilai;
+			$mtotal2old[0] += $nilaiold[0];
+			$mtotal2old[1] += $nilaiold[1];
+			$q = "insert into t87_neraca (field01, field02, field03, field04, field05) values ('".$r->fields["id"]."', '".$r->fields["rekening"]."', '".number_format($nilaiold[0], 2)."', '".number_format($nilaiold[1], 2)."', '".number_format($nilai, 2)."')"; Conn()->Execute($q);
+			echo "
+			<tr>
+			<td>".$r->fields["id"]."</td>
+			<td>".$r->fields["rekening"]."</td>
+			<td align='right'>".number_format($nilaiold[0], 2)."</td>
+			<td align='right'>".number_format($nilaiold[1], 2)."</td>
+			<td align='right'>".number_format($nilai, 2)."</td>
+			</tr>
+			";
+		}
+
+		$r->MoveNext();
+	}
+
+	//$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+	// sub total
+	if (count($a_periode_lalu) == 0) {
+		$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+	}
+	elseif (count($a_periode_lalu) == 1) {
+		$q = "insert into t87_neraca (field01, field02, field03, field04) values ('', '', '<strong>".number_format($mtotal2old[0], 2)."</strong>', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+	}
+	elseif (count($a_periode_lalu) == 2) {
+		$q = "insert into t87_neraca (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotal2old[0], 2)."</strong>', '<strong>".number_format($mtotal2old[1], 2)."</strong>', '<strong>".number_format($mtotal2, 2)."</strong>')"; Conn()->Execute($q);
+	}
+
 	echo "
 	<tr>
 	<td colspan='2'>&nbsp;</td>";
@@ -638,31 +652,23 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	echo "
 	</tr>
 	";
+	$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '')"; Conn()->Execute($q);
 
-	$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '')"; Conn()->Execute($q);
-
-	// laba rugi
-	if (count($a_periode_lalu) == 0) {
-		$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>')"; Conn()->Execute($q);
-	}
-	elseif (count($a_periode_lalu) == 1) {
-		$q = "insert into t88_labarugi (field01, field02, field03, field04) values ('', '', '<strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong>', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>')"; Conn()->Execute($q);
-	}
-	elseif (count($a_periode_lalu) == 2) {
-		$q = "insert into t88_labarugi (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong>', '<strong>".number_format($mtotalold[1] - $mtotal2old[1], 2)."</strong>', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>')"; Conn()->Execute($q);
-	}
 	echo "
 	<tr>
 	<td colspan='2'>&nbsp;</td>";
 	if (count($a_periode_lalu) == 0) {
+		$q = "insert into t87_neraca (field01, field02, field03) values ('', '', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>')"; Conn()->Execute($q);
 		echo "<td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td>";
 		echo "</tr><tr><td colspan='3'>&nbsp;</td>";
 	}
 	elseif (count($a_periode_lalu) == 1) {
+		$q = "insert into t87_neraca (field01, field02, field03, field04) values ('', '', '<strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong>', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>')"; Conn()->Execute($q);
 		echo "<td align='right'><strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td>";
 		echo "</tr><tr><td colspan='4'>&nbsp;</td>";
 	}
 	elseif (count($a_periode_lalu) == 2) {
+		$q = "insert into t87_neraca (field01, field02, field03, field04, field05) values ('', '', '<strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong>', '<strong>".number_format($mtotalold[1] - $mtotal2old[1], 2)."</strong>', '<strong>".number_format($mtotal - $mtotal2, 2)."</strong>')"; Conn()->Execute($q);
 		echo "<td align='right'><strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotalold[1] - $mtotal2old[1], 2)."</strong></td><td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td>";
 		echo "</tr><tr><td colspan='5'>&nbsp;</td>";
 	}
@@ -670,6 +676,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	</tr>
 	";
 
+	// end of create table
 	echo "
 	</tbody>
 	</table>
@@ -677,13 +684,12 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	</div>";
 
 	//header("Location: r05_labarugismry.php");
-	//header("Location: t88_labarugilist.php?periode=".$_POST["periode"]);
+	//header("Location: t87_neracalist.php?periode=".$_POST["periode"]);
 
-
-} // end -proses-
+}
 ?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
-$cf33_labarugi_php->Page_Terminate();
+$cf34_neraca_php->Page_Terminate();
 ?>
