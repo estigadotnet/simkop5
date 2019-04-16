@@ -13,7 +13,9 @@ class crr01_pinjaman extends crTableBase {
 	var $Kontrak_No;
 	var $Kontrak_Tgl;
 	var $nasabah_id;
+	var $NamaNasabah;
 	var $jaminan_id;
+	var $NamaJaminan;
 	var $Pinjaman;
 	var $Angsuran_Lama;
 	var $Angsuran_Bunga_Prosen;
@@ -26,6 +28,7 @@ class crr01_pinjaman extends crTableBase {
 	var $Biaya_Administrasi;
 	var $Biaya_Materai;
 	var $marketing_id;
+	var $NamaMarketing;
 	var $Periode;
 	var $Macet;
 
@@ -76,6 +79,14 @@ class crr01_pinjaman extends crTableBase {
 		$this->nasabah_id->SqlSelect = "";
 		$this->nasabah_id->SqlOrderBy = "";
 
+		// NamaNasabah
+		$this->NamaNasabah = new crField('r01_pinjaman', 'r01_pinjaman', 'x_NamaNasabah', 'NamaNasabah', '`NamaNasabah`', 200, EWR_DATATYPE_STRING, -1);
+		$this->NamaNasabah->Sortable = TRUE; // Allow sort
+		$this->fields['NamaNasabah'] = &$this->NamaNasabah;
+		$this->NamaNasabah->DateFilter = "";
+		$this->NamaNasabah->SqlSelect = "";
+		$this->NamaNasabah->SqlOrderBy = "";
+
 		// jaminan_id
 		$this->jaminan_id = new crField('r01_pinjaman', 'r01_pinjaman', 'x_jaminan_id', 'jaminan_id', '`jaminan_id`', 200, EWR_DATATYPE_STRING, -1);
 		$this->jaminan_id->Sortable = TRUE; // Allow sort
@@ -83,6 +94,14 @@ class crr01_pinjaman extends crTableBase {
 		$this->jaminan_id->DateFilter = "";
 		$this->jaminan_id->SqlSelect = "";
 		$this->jaminan_id->SqlOrderBy = "";
+
+		// NamaJaminan
+		$this->NamaJaminan = new crField('r01_pinjaman', 'r01_pinjaman', 'x_NamaJaminan', 'NamaJaminan', '`NamaJaminan`', 201, EWR_DATATYPE_MEMO, -1);
+		$this->NamaJaminan->Sortable = TRUE; // Allow sort
+		$this->fields['NamaJaminan'] = &$this->NamaJaminan;
+		$this->NamaJaminan->DateFilter = "";
+		$this->NamaJaminan->SqlSelect = "";
+		$this->NamaJaminan->SqlOrderBy = "";
 
 		// Pinjaman
 		$this->Pinjaman = new crField('r01_pinjaman', 'r01_pinjaman', 'x_Pinjaman', 'Pinjaman', '`Pinjaman`', 4, EWR_DATATYPE_NUMBER, -1);
@@ -191,6 +210,14 @@ class crr01_pinjaman extends crTableBase {
 		$this->marketing_id->SqlSelect = "";
 		$this->marketing_id->SqlOrderBy = "";
 
+		// NamaMarketing
+		$this->NamaMarketing = new crField('r01_pinjaman', 'r01_pinjaman', 'x_NamaMarketing', 'NamaMarketing', '`NamaMarketing`', 200, EWR_DATATYPE_STRING, -1);
+		$this->NamaMarketing->Sortable = TRUE; // Allow sort
+		$this->fields['NamaMarketing'] = &$this->NamaMarketing;
+		$this->NamaMarketing->DateFilter = "";
+		$this->NamaMarketing->SqlSelect = "";
+		$this->NamaMarketing->SqlOrderBy = "";
+
 		// Periode
 		$this->Periode = new crField('r01_pinjaman', 'r01_pinjaman', 'x_Periode', 'Periode', '`Periode`', 200, EWR_DATATYPE_STRING, -1);
 		$this->Periode->Sortable = TRUE; // Allow sort
@@ -292,7 +319,7 @@ class crr01_pinjaman extends crTableBase {
 	var $_SqlSelect = "";
 
 	function getSqlSelect() {
-		return ($this->_SqlSelect <> "") ? $this->_SqlSelect : "SELECT * FROM " . $this->getSqlFrom();
+		return ($this->_SqlSelect <> "") ? $this->_SqlSelect : "SELECT *, (select Nama from t01_nasabah where id = nasabah_id) AS `NamaNasabah`, (select Merk_Type from t02_jaminan where id = jaminan_id) AS `NamaJaminan`, (select Nama from t07_marketing where id = marketing_id) AS `NamaMarketing` FROM " . $this->getSqlFrom();
 	}
 
 	function SqlSelect() { // For backward compatibility

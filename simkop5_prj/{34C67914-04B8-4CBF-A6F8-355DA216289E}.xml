@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration date="2019/03/26" author="e.World Technology Ltd.">
-  <project id="{34C67914-04B8-4CBF-A6F8-355DA216289E}" file="C:\xampp\htdocs\simkop5\simkop5_prj.prp" name="simkop5_prj" product="PHPReportMaker" version="10.0" datetime="2019/03/26 09:58:17" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+<configuration date="2019/04/16" author="e.World Technology Ltd.">
+  <project id="{34C67914-04B8-4CBF-A6F8-355DA216289E}" file="C:\xampp\htdocs\simkop5\simkop5_prj.prp" name="simkop5_prj" product="PHPReportMaker" version="10.0" datetime="2019/04/16 18:54:44" languagefolder="phprptlang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="cfr01_labarugi_php" name="cfr01_labarugi.php" caption="Laba Rugi 2" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r01_pinjaman" name="r01_pinjaman" caption="Pinjaman" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r02_jurnaltransaksi" name="r02_jurnaltransaksi" caption="Jurnal Transaksi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r03_jurnal" name="r03_jurnal" caption="Jurnal" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="r0301_pinjamannasabah" name="r0301_pinjamannasabah" caption="r 0301 pinjamannasabah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="r04_bukubesar" name="r04_bukubesar" caption="Buku Besar" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t01_nasabah" name="t01_nasabah" caption="t 01 nasabah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t02_jaminan" name="t02_jaminan" caption="t 02 jaminan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -19,6 +20,14 @@
     <table id="t10_jurnal" name="t10_jurnal" caption="t 10 jurnal" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t11_jurnalmaster" name="t11_jurnalmaster" caption="t 11 jurnalmaster" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t12_jurnaldetail" name="t12_jurnaldetail" caption="t 12 jurnaldetail" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t74_jurnallapclosed" name="t74_jurnallapclosed" caption="t 74 jurnallapclosed" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t75_company" name="t75_company" caption="t 75 company" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t76_neracaold" name="t76_neracaold" caption="t 76 neracaold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t77_labarugiold" name="t77_labarugiold" caption="t 77 labarugiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t78_bukubesarlap" name="t78_bukubesarlap" caption="t 78 bukubesarlap" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t79_jurnallap" name="t79_jurnallap" caption="t 79 jurnallap" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t80_rekeningold" name="t80_rekeningold" caption="t 80 rekeningold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t82_jurnalold" name="t82_jurnalold" caption="t 82 jurnalold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t85_neraca2" name="t85_neraca2" caption="t 85 neraca 2" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t86_labarugi2" name="t86_labarugi2" caption="t 86 labarugi 2" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t87_neraca" name="t87_neraca" caption="t 87 neraca" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -36,12 +45,7 @@
     <table id="t99_audittrail" name="t99_audittrail" caption="t 99 audittrail" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v02_nasabahjaminan" name="v02_nasabahjaminan" caption="v 02 nasabahjaminan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v03_jurnalmemorial" name="v03_jurnalmemorial" caption="v 03 jurnalmemorial" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="t76_neracaold" name="t76_neracaold" caption="t 76 neracaold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="t77_labarugiold" name="t77_labarugiold" caption="t 77 labarugiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="t78_bukubesarlap" name="t78_bukubesarlap" caption="t 78 bukubesarlap" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="t79_jurnallap" name="t79_jurnallap" caption="t 79 jurnallap" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="t80_rekeningold" name="t80_rekeningold" caption="t 80 rekeningold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="t82_jurnalold" name="t82_jurnalold" caption="t 82 jurnalold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="v0301_pinjamannasabah" name="v0301_pinjamannasabah" caption="v 0301 pinjamannasabah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v30_mutasi" name="v30_mutasi" caption="v 30 mutasi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v31_mutasi" name="v31_mutasi" caption="v 31 mutasi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v32_labarugi" name="v32_labarugi" caption="v 32 labarugi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -51,7 +55,5 @@
     <table id="v41_mutasiold" name="v41_mutasiold" caption="v 41 mutasiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v42_labarugiold" name="v42_labarugiold" caption="v 42 labarugiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v43_neracaold" name="v43_neracaold" caption="v 43 neracaold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="v0301_pinjamannasabah" name="v0301_pinjamannasabah" caption="v 0301 pinjamannasabah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="r0301_pinjamannasabah" name="r0301_pinjamannasabah" caption="r 0301 pinjamannasabah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
   </project>
 </configuration>
