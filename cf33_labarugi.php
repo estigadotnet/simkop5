@@ -405,20 +405,20 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	if (count($a_periode_lalu) == 0) {
 		$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
 		$q = "insert into t88_labarugi (field01, field02, field03) values ('', '', '".$periode."')"; Conn()->Execute($q);
-		echo "<th>".$periode."</th>";
+		echo "<th>".$periode."</th><th>&nbsp;</th>";
 	}
 	elseif (count($a_periode_lalu) == 1) {
 		$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
 		$periodeold[0] = $a_bulan[intval(substr($a_periode_lalu[0], -2))] . " " . substr($a_periode_lalu[0], 0, 4);
 		$q = "insert into t88_labarugi (field01, field02, field03, field04) values ('', '', '".$periodeold[0]."', '".$periode."')"; Conn()->Execute($q);
-		echo "<th>".$periodeold[0]."</th><th>".$periode."</th>";
+		echo "<th>".$periodeold[0]."</th><th>".$periode."</th><th>&nbsp;</th>";
 	}
 	elseif (count($a_periode_lalu) == 2) {
 		$periode = $a_bulan[intval(substr($GLOBALS["Periode"], -2))] . " " . substr($GLOBALS["Periode"], 0, 4);
 		$periodeold[0] = $a_bulan[intval(substr($a_periode_lalu[0], -2))] . " " . substr($a_periode_lalu[0], 0, 4);
 		$periodeold[1] = $a_bulan[intval(substr($a_periode_lalu[1], -2))] . " " . substr($a_periode_lalu[1], 0, 4);
 		$q = "insert into t88_labarugi (field01, field02, field03, field04, field05) values ('', '', '".$periodeold[0]."', '".$periodeold[1]."', '".$periode."')"; Conn()->Execute($q);
-		echo "<th>".$periodeold[0]."</th><th>".$periodeold[1]."</th><th>".$periode."</th>";
+		echo "<th>".$periodeold[0]."</th><th>".$periodeold[1]."</th><th>".$periode."</th><th>&nbsp;</th>";
 	}
 	echo "
 	</tr>";
@@ -436,13 +436,13 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 		<tr>
 		<td><strong>".$r->fields["group_rekening"]."</strong></td>";
 		if (count($a_periode_lalu) == 0) {
-			echo "<td colspan='2'>&nbsp;</td>";
-		}
-		elseif (count($a_periode_lalu) == 1) {
 			echo "<td colspan='3'>&nbsp;</td>";
 		}
-		elseif (count($a_periode_lalu) == 2) {
+		elseif (count($a_periode_lalu) == 1) {
 			echo "<td colspan='4'>&nbsp;</td>";
+		}
+		elseif (count($a_periode_lalu) == 2) {
+			echo "<td colspan='5'>&nbsp;</td>";
 		}
 		echo "
 		</tr>
@@ -456,6 +456,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 				<tr>
 				<td>".$r->fields["id"]."</td>
 				<td>".$r->fields["rekening"]."</td>
+				<td align='right'>".number_format($nilai, 2)."</td>
 				<td align='right'>".number_format($nilai, 2)."</td>
 				</tr>
 				";
@@ -472,6 +473,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 				<td>".$r->fields["rekening"]."</td>
 				<td align='right'>".number_format($nilaiold[0], 2)."</td>
 				<td align='right'>".number_format($nilai, 2)."</td>
+				<td align='right'>".number_format($nilaiold[0] + $nilai, 2)."</td>
 				</tr>
 				";
 			}
@@ -492,6 +494,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 				<td align='right'>".number_format($nilaiold[0], 2)."</td>
 				<td align='right'>".number_format($nilaiold[1], 2)."</td>
 				<td align='right'>".number_format($nilai, 2)."</td>
+				<td align='right'>".number_format($nilaiold[0] + $nilaiold[1] + $nilai, 2)."</td>
 				</tr>
 				";
 			}
@@ -515,15 +518,16 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	<td colspan='2'>&nbsp;</td>";
 	if (count($a_periode_lalu) == 0) {
 		echo "<td align='right'><strong>".number_format($mtotal, 2)."</strong></td>";
-		echo "</tr><tr><td colspan='3'>&nbsp;</td>";
-	}
-	elseif (count($a_periode_lalu) == 1) {
-		echo "<td align='right'><strong>".number_format($mtotalold[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal, 2)."</strong></td>";
+		echo "<td align='right'><strong>".number_format($mtotal, 2)."</strong></td>";
 		echo "</tr><tr><td colspan='4'>&nbsp;</td>";
 	}
-	elseif (count($a_periode_lalu) == 2) {
-		echo "<td align='right'><strong>".number_format($mtotalold[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotalold[1], 2)."</strong></td><td align='right'><strong>".number_format($mtotal, 2)."</strong></td>";
+	elseif (count($a_periode_lalu) == 1) {
+		echo "<td align='right'><strong>".number_format($mtotalold[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal, 2)."</strong></td><td align='right'><strong>".number_format($mtotalold[0] + $mtotal, 2)."</strong></td>";
 		echo "</tr><tr><td colspan='5'>&nbsp;</td>";
+	}
+	elseif (count($a_periode_lalu) == 2) {
+		echo "<td align='right'><strong>".number_format($mtotalold[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotalold[1], 2)."</strong></td><td align='right'><strong>".number_format($mtotal, 2)."</strong></td><td align='right'><strong>".number_format($mtotalold[0] + $mtotalold[1] + $mtotal, 2)."</strong></td>";
+		echo "</tr><tr><td colspan='6'>&nbsp;</td>";
 	}
 	echo "
 	</tr>
@@ -546,13 +550,13 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 		<tr>
 		<td><strong>".$r->fields["group_rekening"]."</strong></td>";
 		if (count($a_periode_lalu) == 0) {
-			echo "<td colspan='2'>&nbsp;</td>";
-		}
-		elseif (count($a_periode_lalu) == 1) {
 			echo "<td colspan='3'>&nbsp;</td>";
 		}
-		elseif (count($a_periode_lalu) == 2) {
+		elseif (count($a_periode_lalu) == 1) {
 			echo "<td colspan='4'>&nbsp;</td>";
+		}
+		elseif (count($a_periode_lalu) == 2) {
+			echo "<td colspan='5'>&nbsp;</td>";
 		}
 		echo "
 		</tr>
@@ -566,6 +570,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 				<tr>
 				<td>".$r->fields["id"]."</td>
 				<td>".$r->fields["rekening"]."</td>
+				<td align='right'>".number_format($nilai, 2)."</td>
 				<td align='right'>".number_format($nilai, 2)."</td>
 				</tr>
 				";
@@ -582,6 +587,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 				<td>".$r->fields["rekening"]."</td>
 				<td align='right'>".number_format($nilaiold[0], 2)."</td>
 				<td align='right'>".number_format($nilai, 2)."</td>
+				<td align='right'>".number_format($nilaiold[0] + $nilai, 2)."</td>
 				</tr>
 				";
 			}
@@ -602,6 +608,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 				<td align='right'>".number_format($nilaiold[0], 2)."</td>
 				<td align='right'>".number_format($nilaiold[1], 2)."</td>
 				<td align='right'>".number_format($nilai, 2)."</td>
+				<td align='right'>".number_format($nilaiold[0] + $nilaiold[1] + $nilai, 2)."</td>
 				</tr>
 				";
 			}
@@ -625,15 +632,16 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	<td colspan='2'>&nbsp;</td>";
 	if (count($a_periode_lalu) == 0) {
 		echo "<td align='right'><strong>".number_format($mtotal2, 2)."</strong></td>";
-		echo "</tr><tr><td colspan='3'>&nbsp;</td>";
-	}
-	elseif (count($a_periode_lalu) == 1) {
-		echo "<td align='right'><strong>".number_format($mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal2, 2)."</strong></td>";
+		echo "<td align='right'><strong>".number_format($mtotal2, 2)."</strong></td>";
 		echo "</tr><tr><td colspan='4'>&nbsp;</td>";
 	}
-	elseif (count($a_periode_lalu) == 2) {
-		echo "<td align='right'><strong>".number_format($mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal2old[1], 2)."</strong></td><td align='right'><strong>".number_format($mtotal2, 2)."</strong></td>";
+	elseif (count($a_periode_lalu) == 1) {
+		echo "<td align='right'><strong>".number_format($mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal2, 2)."</strong></td><td align='right'><strong>".number_format($mtotal2old[0] + $mtotal2, 2)."</strong></td>";
 		echo "</tr><tr><td colspan='5'>&nbsp;</td>";
+	}
+	elseif (count($a_periode_lalu) == 2) {
+		echo "<td align='right'><strong>".number_format($mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal2old[1], 2)."</strong></td><td align='right'><strong>".number_format($mtotal2, 2)."</strong></td><td align='right'><strong>".number_format($mtotal2old[0] + $mtotal2old[1] + $mtotal2, 2)."</strong></td>";
+		echo "</tr><tr><td colspan='6'>&nbsp;</td>";
 	}
 	echo "
 	</tr>
@@ -656,15 +664,16 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	<td colspan='2'>&nbsp;</td>";
 	if (count($a_periode_lalu) == 0) {
 		echo "<td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td>";
-		echo "</tr><tr><td colspan='3'>&nbsp;</td>";
-	}
-	elseif (count($a_periode_lalu) == 1) {
-		echo "<td align='right'><strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td>";
+		echo "<td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td>";
 		echo "</tr><tr><td colspan='4'>&nbsp;</td>";
 	}
-	elseif (count($a_periode_lalu) == 2) {
-		echo "<td align='right'><strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotalold[1] - $mtotal2old[1], 2)."</strong></td><td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td>";
+	elseif (count($a_periode_lalu) == 1) {
+		echo "<td align='right'><strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td><td align='right'><strong>".number_format(($mtotalold[0] - $mtotal2old[0]) + ($mtotal - $mtotal2), 2)."</strong></td>";
 		echo "</tr><tr><td colspan='5'>&nbsp;</td>";
+	}
+	elseif (count($a_periode_lalu) == 2) {
+		echo "<td align='right'><strong>".number_format($mtotalold[0] - $mtotal2old[0], 2)."</strong></td><td align='right'><strong>".number_format($mtotalold[1] - $mtotal2old[1], 2)."</strong></td><td align='right'><strong>".number_format($mtotal - $mtotal2, 2)."</strong></td><td align='right'><strong>".number_format(($mtotalold[0] - $mtotal2old[0]) + ($mtotalold[1] - $mtotal2old[1]) + ($mtotal - $mtotal2), 2)."</strong></td>";
+		echo "</tr><tr><td colspan='6'>&nbsp;</td>";
 	}
 	echo "
 	</tr>

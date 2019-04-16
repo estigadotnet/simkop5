@@ -416,46 +416,19 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 	$kredit = 0;
 	$r = Conn()->Execute($q);
 	while (!$r->EOF) {
-		//echo $r->fields["id"] . " - " . $r->fields["saldoakhir"] . "<br/>";
 		echo "
 		<tr>
 		<td>" . $r->fields["id"] . "</td>
-		<td>" . $r->fields["rekening"] . "</td>";
-		if ($r->fields["group"] == "1" or $r->fields["group"] == "4" or $r->fields["group"] == "6") {
-			echo "
-			<td align='right'>" . number_format($r->fields["saldoakhir"], 2) . "</td>
-			<td>&nbsp;</td>";
-			$debet += $r->fields["saldoakhir"];
-		}
-		else {
-			/*echo "
-			<td>&nbsp;</td>
-			<td>" . $r->fields["saldoakhir"] . "</td>
-			";
-			$kredit += $r->fields["saldoakhir"];*/
-			echo "
-			<td>&nbsp;</td>";
-			if ($r->fields["id"] == $rekdebet) {
-				if ($periode_aktif == $periode_input) {
-					$kredit += f_hitunglabarugi2($GLOBALS["Periode"]);
-					echo "<td align='right'>" . number_format(f_hitunglabarugi2($GLOBALS["Periode"]), 2) . "</td>";
-				}
-				else {
-					$kredit += f_hitunglabarugiold2($periode_input);
-					echo "<td align='right'>" . number_format(f_hitunglabarugiold2($periode_input), 2) . "</td>";
-				}
-			}
-			else {
-				$kredit += $r->fields["saldoakhir"];
-				echo "<td align='right'>" . number_format($r->fields["saldoakhir"], 2) . "</td>";
-			}
-		}
-		
+		<td>" . $r->fields["rekening"] . "</td>
+		<td align='right'>" . number_format($r->fields["debet"], 2) . "</td>
+		<td align='right'>" . number_format($r->fields["kredit"], 2) . "</td>
+		";
+		$debet += $r->fields["debet"];
+		$kredit += $r->fields["kredit"];
 		echo "
 		</tr>";
 		$r->MoveNext();
 	}
-
 	echo "
 	<tr>
 	<td>&nbsp;</td>
