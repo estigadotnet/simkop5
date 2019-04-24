@@ -1400,6 +1400,10 @@ class ct04_pinjamanangsurantemp extends cTable {
 		echo $this->Tanggal_Bayar->CurrentValue . "<br>";
 		echo $_SESSION["Dispensasi_Denda"]."<br>";
 		exit; return false;*/
+		/*
+		penambahan tulisan di kolom keterangan apabila
+		ada denda tapi di-nol-kan
+		*/
 		if ($this->Total_Denda->CurrentValue == 0) {
 
 			//echo $this->Tanggal_Bayar->CurrentValue."<br>";
@@ -1407,17 +1411,56 @@ class ct04_pinjamanangsurantemp extends cTable {
 
 			$start_date = new DateTime($this->Tanggal_Bayar->CurrentValue);
 			$end_date = new DateTime($this->Angsuran_Tanggal->CurrentValue);
-			$hari_terlambat = $start_date->diff($end_date);
-			if ($hari_terlambat->days > $_SESSION["Dispensasi_Denda"]) {
-				$rsnew["Keterangan"] = "Denda Rp. ".number_format(f_hitungdenda($hari_terlambat->days), 2);
+			$hari_terlambat = $start_date->diff($end_date); 
+			if (
+				($hari_terlambat->days > $_SESSION["Dispensasi_Denda"])
+				and
+				($this->Tanggal_Bayar->CurrentValue > $this->Angsuran_Tanggal->CurrentValue)
+			) {
+
+				//echo "$hari_terlambat->days " . $hari_terlambat->days . "<br>";
+				//echo '$_SESSION["Dispensasi_Denda"] ' . $_SESSION["Dispensasi_Denda"] . "<br>"; exit;
+
+				$nilai_denda = f_hitungdenda($hari_terlambat->days);
+
+				// $rsnew["Keterangan"] = "Denda Rp. ".number_format(f_hitungdenda($hari_terlambat->days), 2);
+				$rsnew["Keterangan"] = "Denda Rp. ".number_format($nilai_denda, 2);
+
+				//$rsnew["Total_Denda"] = $nilai_denda;
 			}
 		}
+		/*
+		periksa tanggal pembayaran, karena tanggal pembayaran harus sesuai dengan
+		periode aktif saat ini
+		*/
 		if (
 			(date_format(date_create($rsnew["Tanggal_Bayar"]),"Ym") <> $GLOBALS["Periode"])
 			and
 			(date_format(date_create($rsold["Tanggal_Bayar"]),"Ym") <> $GLOBALS["Periode"])
 			) {
 			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}
+		/*
+		check tanggal pembayaran, harus lebih atau sama dengan tanggal pembayaran
+		sebelumnya
+		*/
+
+		// cari data tanggal pembayaran sebelumnya
+		$r = Conn()->Execute("select
+			Tanggal_Bayar from t04_pinjamanangsurantemp where
+			pinjaman_id = ".$_SESSION["pinjaman_id"]." and Tanggal_Bayar is not null");
+		$tglbayar = new DateTime($this->Tanggal_Bayar->CurrentValue);
+		$tglbayar_lebihkecil = 0;
+		while (!$r->EOF) {
+			if ($tglbayar->format("Y-m-d") < $r->fields["Tanggal_Bayar"]) {
+				$tglbayar_lebihkecil = 1;
+				break;
+			}
+			$r->MoveNext();
+		}
+		if ($tglbayar_lebihkecil == 1) {
+			$this->setFailureMessage("Tanggal Bayar tidak diperkenankan lebih kecil dari Tanggal Bayar sebelumya");
 			return false;
 		}
 		$rsnew["Periode"] = $GLOBALS["Periode"];

@@ -2030,9 +2030,6 @@ function Row_Rendered() {
 	//$this->Bayar_Total->EditValue = (is_null($this->Bayar_Total->CurrentValue) ? $bayar_total : $this->Bayar_Total->CurrentValue);
 	$this->Bayar_Total->EditValue = $bayar_total;
 
-
-
-
 }
 ]]></CustomScript>
   <CustomScript ScriptType="Server" ScriptCodeType="Global" ScriptName="Page_Head" ScriptCtrlID="" ScriptL1Key="" ScriptL2Key=""><![CDATA[
@@ -2076,9 +2073,18 @@ function Row_Updating($rsold, &$rsnew) {
 		//echo $this->Angsuran_Tanggal->CurrentValue."<br>";
 		$start_date = new DateTime($this->Tanggal_Bayar->CurrentValue);
 		$end_date = new DateTime($this->Angsuran_Tanggal->CurrentValue);
-		$hari_terlambat = $start_date->diff($end_date);
-		if ($hari_terlambat->days > $_SESSION["Dispensasi_Denda"]) {
-			$rsnew["Keterangan"] = "Denda Rp. ".number_format(f_hitungdenda($hari_terlambat->days), 2);
+		$hari_terlambat = $start_date->diff($end_date); 
+		if (
+			($hari_terlambat->days > $_SESSION["Dispensasi_Denda"])
+			and
+			($this->Tanggal_Bayar->CurrentValue > $this->Angsuran_Tanggal->CurrentValue)
+		) {
+			//echo "$hari_terlambat->days " . $hari_terlambat->days . "<br>";
+			//echo '$_SESSION["Dispensasi_Denda"] ' . $_SESSION["Dispensasi_Denda"] . "<br>"; exit;
+			$nilai_denda = f_hitungdenda($hari_terlambat->days);
+			// $rsnew["Keterangan"] = "Denda Rp. ".number_format(f_hitungdenda($hari_terlambat->days), 2);
+			$rsnew["Keterangan"] = "Denda Rp. ".number_format($nilai_denda, 2);
+			//$rsnew["Total_Denda"] = $nilai_denda;
 		}
 	}
 
@@ -2180,10 +2186,10 @@ function ListOptions_Rendered() {
 
 
 	$this->ListOptions->Items["rincian_angsuran"]->Body = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\"                          >Rincian Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-	$this->ListOptions->Items["angsuran"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\"   data-caption=\"Bayar Angsuran\"   href=\"t04_pinjamanangsurantempedit.php?id=".$t04_angsuranbaru."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\" >Bayar Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-	$this->ListOptions->Items["edit_angsuran"]->Body    = "<a class=\"ewAddEdit ewAdd\" title=\"Rincian Angsuran\" data-caption=\"Rincian Angsuran\" href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."&edit=1\"                   >Edit Angsuran</a>"; // definisikan link, style, dan caption tombol //"xxx";
-	$this->ListOptions->Items["titipan"]->Body          = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\"    data-caption=\"Setor Titipan\"    href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\"                                           >Setor Titipan</a>"; // definisikan link, style, dan caption tombol //"xxx";
-	$this->ListOptions->Items["potongan"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Potongan\"         data-caption=\"Potongan\"         href=\"t08_pinjamanpotonganlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\"                                          >Potongan</a>"; // definisikan link, style, dan caption tombol //"xxx";
+	$this->ListOptions->Items["angsuran"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Bayar Angsuran\"   data-caption=\"Bayar Angsuran\"   href=\"t04_pinjamanangsurantempedit.php?id=".$t04_angsuranbaru."&showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\" >Bayar Angsuran</a>";   // definisikan link, style, dan caption tombol //"xxx";
+	$this->ListOptions->Items["edit_angsuran"]->Body    = "<a class=\"ewAddEdit ewAdd\" title=\"Edit Angsuran\"    data-caption=\"Edit Angsuran\"    href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."&edit=1\"                   >Edit Angsuran</a>";    // definisikan link, style, dan caption tombol //"xxx";
+	$this->ListOptions->Items["titipan"]->Body          = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\"    data-caption=\"Setor Titipan\"    href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\"                                           >Setor Titipan</a>";    // definisikan link, style, dan caption tombol //"xxx";
+	$this->ListOptions->Items["potongan"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Potongan\"         data-caption=\"Potongan\"         href=\"t08_pinjamanpotonganlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\"                                          >Potongan</a>";         // definisikan link, style, dan caption tombol //"xxx";
 }
 ]]></CustomScript>
   <CustomScript ScriptType="Server" ScriptCodeType="Table" ScriptName="Row_Inserted" ScriptCtrlID="" ScriptL1Key="t06_pinjamantitipan" ScriptL2Key=""><![CDATA[// Row Inserted event
