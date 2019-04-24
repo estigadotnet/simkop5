@@ -724,6 +724,9 @@
     <menu id="10018">
       <phrase id="menutext" value="Pinjaman" />
     </menu>
+    <menu id="10556">
+      <phrase id="menutext" value="Pinjaman" />
+    </menu>
     <menu id="10025">
       <phrase id="menutext" value="Jurnal" />
     </menu>
@@ -2302,6 +2305,9 @@
     </table>
     <table id="cf35_neracasaldo_php">
       <phrase id="tblcaption" value="Neraca Saldo" />
+    </table>
+    <table id="cf41_pinjaman_php">
+      <phrase id="tblcaption" value="Pinjaman" />
     </table>
   </project>
 </ew-language>

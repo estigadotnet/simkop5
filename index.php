@@ -362,6 +362,8 @@ class cdefault {
 			$this->Page_Terminate("cf34_neraca.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf35_neracasaldo.php'))
 			$this->Page_Terminate("cf35_neracasaldo.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf41_pinjaman.php'))
+			$this->Page_Terminate("cf41_pinjaman.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {
