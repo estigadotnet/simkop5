@@ -27,7 +27,7 @@ $RootMenu->AddMenuItem(10265, "mmci_Transaksi", $Language->MenuPhrase("10265", "
 $RootMenu->AddMenuItem(3, "mmi_t03_pinjaman", $Language->MenuPhrase("3", "MenuText"), "t03_pinjamanlist.php", 10265, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t03_pinjaman'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10113, "mmci_Laporan", $Language->MenuPhrase("10113", "MenuText"), "", 10334, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10018, "mmri_r015fpinjaman", $Language->MenuPhrase("10018", "MenuText"), "r01_pinjamansmry.php", 10113, "{34C67914-04B8-4CBF-A6F8-355DA216289E}", AllowListMenu('{34C67914-04B8-4CBF-A6F8-355DA216289E}r01_pinjaman'), FALSE, FALSE);
-$RootMenu->AddMenuItem(10556, "mmi_cf41_pinjaman_php", $Language->MenuPhrase("10556", "MenuText"), "cf41_pinjaman.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf41_pinjaman.php'), FALSE, TRUE);
+$RootMenu->AddMenuItem(10649, "mmi_cf42_pinjaman_php", $Language->MenuPhrase("10649", "MenuText"), "cf42_pinjaman.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf42_pinjaman.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10338, "mmci_General", $Language->MenuPhrase("10338", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10358, "mmi_t75_company", $Language->MenuPhrase("10358", "MenuText"), "t75_companylist.php", 10338, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t75_company'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10359, "mmi_cf14_backup_php", $Language->MenuPhrase("10359", "MenuText"), "cf14_backup.php", 10338, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf14_backup.php'), FALSE, TRUE);

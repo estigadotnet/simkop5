@@ -1447,13 +1447,18 @@ class ct04_pinjamanangsurantemp extends cTable {
 		*/
 
 		// cari data tanggal pembayaran sebelumnya
-		$r = Conn()->Execute("select
+		$q = "select
 			Tanggal_Bayar from t04_pinjamanangsurantemp where
-			pinjaman_id = ".$_SESSION["pinjaman_id"]." and Tanggal_Bayar is not null");
+			pinjaman_id = ".$_SESSION["pinjaman_id"]." and Tanggal_Bayar is not null order by Tanggal_Bayar limit 1";
+
+		//echo $q; exit;
+		$r = Conn()->Execute($q);
 		$tglbayar = new DateTime($this->Tanggal_Bayar->CurrentValue);
 		$tglbayar_lebihkecil = 0;
 		while (!$r->EOF) {
 			if ($tglbayar->format("Y-m-d") < $r->fields["Tanggal_Bayar"]) {
+
+				// echo $tglbayar->format("Y-m-d") . "<br>" . $r->fields["Tanggal_Bayar"]; exit;
 				$tglbayar_lebihkecil = 1;
 				break;
 			}

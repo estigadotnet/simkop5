@@ -290,6 +290,20 @@ class cdefault {
 			$this->Page_Terminate("cf15_restore.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf21_jurnalclosed.php'))
 			$this->Page_Terminate("cf21_jurnalclosed.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf31_jurnal.php'))
+			$this->Page_Terminate("cf31_jurnal.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf32_bukubesar.php'))
+			$this->Page_Terminate("cf32_bukubesar.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf33_labarugi.php'))
+			$this->Page_Terminate("cf33_labarugi.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf34_neraca.php'))
+			$this->Page_Terminate("cf34_neraca.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf35_neracasaldo.php'))
+			$this->Page_Terminate("cf35_neracasaldo.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf41_pinjaman.php'))
+			$this->Page_Terminate("cf41_pinjaman.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf42_pinjaman.php'))
+			$this->Page_Terminate("cf42_pinjaman.php");
 		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
 			$this->Page_Terminate("t01_nasabahlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))
@@ -314,6 +328,8 @@ class cdefault {
 			$this->Page_Terminate("t11_jurnalmasterlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't12_jurnaldetail'))
 			$this->Page_Terminate("t12_jurnaldetaillist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't73_pinjamanlap'))
+			$this->Page_Terminate("t73_pinjamanlaplist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't74_jurnallapclosed'))
 			$this->Page_Terminate("t74_jurnallapclosedlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't75_company'))
@@ -352,18 +368,6 @@ class cdefault {
 			$this->Page_Terminate("t98_userlevelpermissionslist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
 			$this->Page_Terminate("t99_audittraillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf31_jurnal.php'))
-			$this->Page_Terminate("cf31_jurnal.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf32_bukubesar.php'))
-			$this->Page_Terminate("cf32_bukubesar.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf33_labarugi.php'))
-			$this->Page_Terminate("cf33_labarugi.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf34_neraca.php'))
-			$this->Page_Terminate("cf34_neraca.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf35_neracasaldo.php'))
-			$this->Page_Terminate("cf35_neracasaldo.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf41_pinjaman.php'))
-			$this->Page_Terminate("cf41_pinjaman.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {

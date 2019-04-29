@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/4/24" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/4/29" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,14 +583,14 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
+    <menu id="10650">
+      <phrase id="menutext" value="v 0302 pinjamanlap" />
+    </menu>
+    <menu id="10651">
+      <phrase id="menutext" value="v 0303 pinjamanlap 2" />
+    </menu>
     <menu id="16">
       <phrase id="menutext" value="Home" />
-    </menu>
-    <menu id="10549">
-      <phrase id="menutext" value="Jurnal" />
-    </menu>
-    <menu id="10550">
-      <phrase id="menutext" value="Jurnal (Closed)" />
     </menu>
     <menu id="10451">
       <phrase id="menutext" value="Accounting" />
@@ -673,6 +673,12 @@
     <menu id="10172">
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
+    <menu id="10549">
+      <phrase id="menutext" value="Jurnal" />
+    </menu>
+    <menu id="10550">
+      <phrase id="menutext" value="Jurnal (Closed)" />
+    </menu>
     <menu id="10334">
       <phrase id="menutext" value="Koperasi" />
     </menu>
@@ -727,6 +733,15 @@
     <menu id="10556">
       <phrase id="menutext" value="Pinjaman" />
     </menu>
+    <menu id="10557">
+      <phrase id="menutext" value="Laporan Pinjaman" />
+    </menu>
+    <menu id="10648">
+      <phrase id="menutext" value="Pinjaman 3" />
+    </menu>
+    <menu id="10649">
+      <phrase id="menutext" value="Pinjaman" />
+    </menu>
     <menu id="10025">
       <phrase id="menutext" value="Jurnal" />
     </menu>
@@ -759,9 +774,6 @@
     </menu>
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
-    </menu>
-    <menu id="10333">
-      <phrase id="menutext" value="Accounting" />
     </menu>
     <menu id="10178">
       <phrase id="menutext" value="Nasabah Macet" />
@@ -892,14 +904,14 @@
     <menu id="10015">
       <phrase id="menutext" value="t 97 userlevels" />
     </menu>
+    <menu id="10027">
+      <phrase id="menutext" value="v 01 labarugi" />
+    </menu>
     <menu id="10016">
       <phrase id="menutext" value="t 98 userlevelpermissions" />
     </menu>
     <menu id="10017">
       <phrase id="menutext" value="t 99 audittrail" />
-    </menu>
-    <menu id="10027">
-      <phrase id="menutext" value="v 01 labarugi" />
     </menu>
     <table id="cf01_home_php">
       <phrase id="tblcaption" value="Home" />
@@ -936,6 +948,27 @@
     </table>
     <table id="cf21_jurnalclosed_php">
       <phrase id="tblcaption" value="Jurnal" />
+    </table>
+    <table id="cf31_jurnal_php">
+      <phrase id="tblcaption" value="Jurnal" />
+    </table>
+    <table id="cf32_bukubesar_php">
+      <phrase id="tblcaption" value="Buku Besar" />
+    </table>
+    <table id="cf33_labarugi_php">
+      <phrase id="tblcaption" value="Laba Rugi" />
+    </table>
+    <table id="cf34_neraca_php">
+      <phrase id="tblcaption" value="Neraca" />
+    </table>
+    <table id="cf35_neracasaldo_php">
+      <phrase id="tblcaption" value="Neraca Saldo" />
+    </table>
+    <table id="cf41_pinjaman_php">
+      <phrase id="tblcaption" value="Pinjaman" />
+    </table>
+    <table id="cf42_pinjaman_php">
+      <phrase id="tblcaption" value="Pinjaman" />
     </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
@@ -1366,6 +1399,46 @@
       </field>
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="t73_pinjamanlap">
+      <phrase id="tblcaption" value="Laporan Pinjaman" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="field_name">
+        <phrase id="fldcaption" value="Data" />
+      </field>
+      <field id="field_caption">
+        <phrase id="fldcaption" value="Header Kolom" />
+      </field>
+      <field id="field_index">
+        <phrase id="fldcaption" value="Urutan Kolom" />
+      </field>
+      <field id="field_status">
+        <phrase id="fldcaption" value="Kolom Ditampilkan" />
+        <phrase id="fldtagvalue1" value="Y" />
+        <phrase id="fldtagcaption1" value="Ya" />
+        <phrase id="fldtagvalue2" value="N" />
+        <phrase id="fldtagcaption2" value="Tidak" />
+      </field>
+      <field id="field_align">
+        <phrase id="fldcaption" value="Posisi Data" />
+        <phrase id="fldtagvalue1" value="left" />
+        <phrase id="fldtagcaption1" value="Kiri" />
+        <phrase id="fldtagvalue2" value="center" />
+        <phrase id="fldtagcaption2" value="Tengah" />
+        <phrase id="fldtagvalue3" value="right" />
+        <phrase id="fldtagcaption3" value="Kanan" />
+      </field>
+      <field id="field_format">
+        <phrase id="fldcaption" value="Format Kolom" />
+        <phrase id="fldtagvalue1" value="none" />
+        <phrase id="fldtagcaption1" value="Standar" />
+        <phrase id="fldtagvalue2" value="tanggal" />
+        <phrase id="fldtagcaption2" value="Tanggal" />
+        <phrase id="fldtagvalue3" value="numerik" />
+        <phrase id="fldtagcaption3" value="Numerik" />
       </field>
     </table>
     <table id="t74_jurnallapclosed">
@@ -2066,6 +2139,148 @@
         <phrase id="fldcaption" value="Keterangan" />
       </field>
     </table>
+    <table id="v0302_pinjamanlap">
+      <phrase id="tblcaption" value="v 0302 pinjamanlap" />
+      <field id="pinjaman_id">
+        <phrase id="fldcaption" value="pinjaman id" />
+      </field>
+      <field id="kontrak_no">
+        <phrase id="fldcaption" value="Kontrak No" />
+      </field>
+      <field id="kontrak_tgl">
+        <phrase id="fldcaption" value="Kontrak Tgl" />
+      </field>
+      <field id="nasabah_id">
+        <phrase id="fldcaption" value="nasabah id" />
+      </field>
+      <field id="jaminan_id">
+        <phrase id="fldcaption" value="jaminan id" />
+      </field>
+      <field id="pinjaman">
+        <phrase id="fldcaption" value="Pinjaman" />
+      </field>
+      <field id="angsuran_lama">
+        <phrase id="fldcaption" value="Angsuran Lama" />
+      </field>
+      <field id="angsuran_bunga_prosen">
+        <phrase id="fldcaption" value="Angsuran Bunga Prosen" />
+      </field>
+      <field id="angsuran_denda">
+        <phrase id="fldcaption" value="Angsuran Denda" />
+      </field>
+      <field id="dispensasi_denda">
+        <phrase id="fldcaption" value="Dispensasi Denda" />
+      </field>
+      <field id="angsuran_pokok">
+        <phrase id="fldcaption" value="Angsuran Pokok" />
+      </field>
+      <field id="angsuran_bunga">
+        <phrase id="fldcaption" value="Angsuran Bunga" />
+      </field>
+      <field id="angsuran_total">
+        <phrase id="fldcaption" value="Angsuran Total" />
+      </field>
+      <field id="no_ref">
+        <phrase id="fldcaption" value="No Ref" />
+      </field>
+      <field id="biaya_administrasi">
+        <phrase id="fldcaption" value="Biaya Administrasi" />
+      </field>
+      <field id="biaya_materai">
+        <phrase id="fldcaption" value="Biaya Materai" />
+      </field>
+      <field id="marketing_id">
+        <phrase id="fldcaption" value="marketing id" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="macet">
+        <phrase id="fldcaption" value="Macet" />
+        <phrase id="fldtagvalue1" value="Y" />
+        <phrase id="fldtagcaption1" value="Y" />
+        <phrase id="fldtagvalue2" value="N" />
+        <phrase id="fldtagcaption2" value="N" />
+      </field>
+      <field id="nasabahnama">
+        <phrase id="fldcaption" value="Nasabah Nama" />
+      </field>
+      <field id="nasabahalamat">
+        <phrase id="fldcaption" value="Nasabah Alamat" />
+      </field>
+      <field id="no_telp_hp">
+        <phrase id="fldcaption" value="No Telp Hp" />
+      </field>
+      <field id="pekerjaan">
+        <phrase id="fldcaption" value="Pekerjaan" />
+      </field>
+      <field id="pekerjaan_alamat">
+        <phrase id="fldcaption" value="Pekerjaan Alamat" />
+      </field>
+      <field id="pekerjaan_no_telp_hp">
+        <phrase id="fldcaption" value="Pekerjaan No Telp Hp" />
+      </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Status" />
+      </field>
+      <field id="nasabahketerangan">
+        <phrase id="fldcaption" value="Nasabah Keterangan" />
+      </field>
+      <field id="merk_type">
+        <phrase id="fldcaption" value="Merk Type" />
+      </field>
+      <field id="no_rangka">
+        <phrase id="fldcaption" value="No Rangka" />
+      </field>
+      <field id="no_mesin">
+        <phrase id="fldcaption" value="No Mesin" />
+      </field>
+      <field id="warna">
+        <phrase id="fldcaption" value="Warna" />
+      </field>
+      <field id="no_pol">
+        <phrase id="fldcaption" value="No Pol" />
+      </field>
+      <field id="jaminanketerangan">
+        <phrase id="fldcaption" value="Jaminan Keterangan" />
+      </field>
+      <field id="atas_nama">
+        <phrase id="fldcaption" value="Atas Nama" />
+      </field>
+      <field id="marketingnama">
+        <phrase id="fldcaption" value="Marketing Nama" />
+      </field>
+      <field id="marketingalamat">
+        <phrase id="fldcaption" value="Marketing Alamat" />
+      </field>
+      <field id="nohp">
+        <phrase id="fldcaption" value="No HP" />
+      </field>
+      <field id="akhirkontrak">
+        <phrase id="fldcaption" value="Akhir Kontrak" />
+      </field>
+      <field id="sudah_bayar">
+        <phrase id="fldcaption" value="sudah bayar" />
+      </field>
+      <field id="pd_angsuran_pokok">
+        <phrase id="fldcaption" value="pd Angsuran Pokok" />
+      </field>
+      <field id="pd_angsuran_bunga">
+        <phrase id="fldcaption" value="pd Angsuran Bunga" />
+      </field>
+      <field id="pd_angsuran_total">
+        <phrase id="fldcaption" value="pd Angsuran Total" />
+      </field>
+    </table>
+    <table id="v0303_pinjamanlap2">
+      <phrase id="tblcaption" value="v 0303 pinjamanlap 2" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="angsuran_tanggal">
+        <phrase id="fldcaption" value="angsuran tanggal" />
+      </field>
+    </table>
     <table id="v30_mutasi">
       <phrase id="tblcaption" value="v 30 mutasi" />
       <field id="id">
@@ -2290,24 +2505,6 @@
       <field id="saldoakhir">
         <phrase id="fldcaption" value="saldoakhir" />
       </field>
-    </table>
-    <table id="cf31_jurnal_php">
-      <phrase id="tblcaption" value="Jurnal" />
-    </table>
-    <table id="cf32_bukubesar_php">
-      <phrase id="tblcaption" value="Buku Besar" />
-    </table>
-    <table id="cf33_labarugi_php">
-      <phrase id="tblcaption" value="Laba Rugi" />
-    </table>
-    <table id="cf34_neraca_php">
-      <phrase id="tblcaption" value="Neraca" />
-    </table>
-    <table id="cf35_neracasaldo_php">
-      <phrase id="tblcaption" value="Neraca Saldo" />
-    </table>
-    <table id="cf41_pinjaman_php">
-      <phrase id="tblcaption" value="Pinjaman" />
     </table>
   </project>
 </ew-language>

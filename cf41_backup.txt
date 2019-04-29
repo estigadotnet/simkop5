@@ -1,0 +1,156 @@
+<?php
+$a_caption = array(
+	"id" => "ID",
+	"Kontrak_No" => "No. Kontrak",
+	"Kontrak_Tgl" => "Tgl. Kontrak",
+	"nasabah_id" => "Nasabah",
+	"jaminan_id" => "Jaminan",
+	"Pinjaman" => "Pinjaman",
+	"Angsuran_Lama" => "Lama Angsuran",
+	"Angsuran_Bunga_Prosen" => "Bunga (%)",
+	"Angsuran_Denda" => "Denda (%)",
+	"Dispensasi_Denda" => "Dispensasi",
+	"Angsuran_Pokok" => "Pokok",
+	"Angsuran_Bunga" => "Bunga",
+	"Angsuran_Total" => "Total",
+	"No_Ref" => "No. Ref.",
+	"Biaya_Administrasi" => "Administrasi",
+	"Biaya_Materai" => "Materai",
+	"marketing_id" => "Marketing",
+	"Periode" => "Periode",
+	"Macet" => "Macet"
+);
+
+$a_caption2 = array(
+	"id" => "ID",
+	"Kontrak_No" => "No. Kontrak",
+	"Kontrak_Tgl" => "Tgl. Kontrak",
+	"nasabah_id" => "Nasabah",
+	"jaminan_id" => "Jaminan",
+	"Pinjaman" => "Pinjaman",
+	"Angsuran_Lama" => "Lama Angsuran",
+	"Angsuran_Bunga_Prosen" => "Bunga (%)",
+	"Angsuran_Denda" => "Denda (%)",
+	"Dispensasi_Denda" => "Dispensasi",
+	"Angsuran_Pokok" => "Pokok",
+	"Angsuran_Bunga" => "Bunga",
+	"Angsuran_Total" => "Total",
+	"No_Ref" => "No. Ref.",
+	"Biaya_Administrasi" => "Administrasi",
+	"Biaya_Materai" => "Materai",
+	"marketing_id" => "Marketing",
+	"Periode" => "Periode",
+	"Macet" => "Macet"
+);
+
+$q = "
+	SELECT
+		COLUMN_NAME
+	FROM
+		INFORMATION_SCHEMA.COLUMNS
+	WHERE
+		TABLE_SCHEMA = 'db_simkop5'
+		AND TABLE_NAME = 't03_pinjaman'
+";
+if (isset($_POST["btnproses"])) { // begin -proses-
+	$a_nama_field = $_POST['nama_field'];
+	//var_dump($a_nama_field);
+	if(empty($a_nama_field)) {
+		echo("You didn't select any field.");
+	} 
+	else {
+		$N = count($a_nama_field);
+		// echo("You selected $N field(s): ");
+		$select = "";
+		for($i=0; $i < $N; $i++) {
+			//echo($a_nama_field[$i] . " ");
+			$select .= $a_nama_field[$i] . ", "; //echo $select;
+		}
+		$select = substr($select, 0, strlen($select) - 2);
+		$q = "select " . $select . " from t03_pinjaman "; //echo $q;
+		$r = Conn()->Execute($q);
+		echo "
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Data Pinjaman</label><br/>
+		&nbsp;<br/>
+		<div class='panel panel-default'>			
+		<div>
+		<table class='table table-striped table-hover table-condensed'>
+		<tbody>";
+		echo "
+		<tr>";
+		for($i=0; $i < $N; $i++) {
+			echo "
+			<th>" . $a_caption[$a_nama_field[$i]] . "</th>";
+		}
+		echo "
+		</tr>";
+		while (!$r->EOF) {
+			echo "
+			<tr>";
+			for($i=0; $i < $N; $i++) {
+				echo "
+				<td>" . $r->fields[$a_nama_field[$i]] . "</td>";
+			}
+			echo "
+			</tr>";
+			$r->MoveNext();
+		}
+		echo "
+		<tr>";
+		for($i=0; $i < $N; $i++) {
+			echo "
+			<td>&nbsp;</td>";
+		}
+		echo "
+		</tr>";
+		echo "
+		</tbody>
+		</table>
+		</div>
+		</div>";
+	}
+	?>
+	<div>
+	<div id="r_1" class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+		<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='cf41_pinjaman.php'">Selesai</button>
+	</div>
+	</div>
+	</div>
+	<?php
+}
+else {
+?>
+
+<form name="frm_input_periode" class="form-horizontal ewForm ewExtFilterForm" method="post">
+<div>
+	<div id="r_1" class="form-group">
+		<label class="col-sm-2 control-label ewLabel">Kolom</label>
+		<div class="col-sm-10">
+			<div>
+			<span>
+			<?php
+			$r = Conn()->Execute($q);
+			while (!$r->EOF) {
+				?>
+				<input type="checkbox" name="nama_field[]" value="<?php echo $r->fields["COLUMN_NAME"]?>" /><?php echo $r->fields["COLUMN_NAME"]?><br />
+				<?php
+				$r->MoveNext();
+			}
+			?>
+			</span>
+			</div>
+		</div>
+	</div>
+	<div id="r_1" class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+		<button class="btn btn-primary ewButton" name="btnproses" id="btnsubmit" type="submit">Proses</button>
+		<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='.'">Selesai</button>
+	</div>
+	</div>
+</div>
+</form>
+
+<?php
+}
+?>

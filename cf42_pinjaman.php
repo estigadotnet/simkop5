@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$cf41_pinjaman_php = NULL; // Initialize page object first
+$cf42_pinjaman_php = NULL; // Initialize page object first
 
-class ccf41_pinjaman_php {
+class ccf42_pinjaman_php {
 
 	// Page ID
 	var $PageID = 'custom';
@@ -25,10 +25,10 @@ class ccf41_pinjaman_php {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 'cf41_pinjaman.php';
+	var $TableName = 'cf42_pinjaman.php';
 
 	// Page object name
-	var $PageObjName = 'cf41_pinjaman_php';
+	var $PageObjName = 'cf42_pinjaman_php';
 
 	// Page name
 	function PageName() {
@@ -195,7 +195,7 @@ class ccf41_pinjaman_php {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 'cf41_pinjaman.php', TRUE);
+			define("EW_TABLE_NAME", 'cf42_pinjaman.php', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -284,7 +284,7 @@ class ccf41_pinjaman_php {
 		global $Breadcrumb;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("custom", "cf41_pinjaman_php", $url, "", "cf41_pinjaman_php", TRUE);
+		$Breadcrumb->Add("custom", "cf42_pinjaman_php", $url, "", "cf42_pinjaman_php", TRUE);
 	}
 }
 ?>
@@ -292,13 +292,13 @@ class ccf41_pinjaman_php {
 <?php
 
 // Create page object
-if (!isset($cf41_pinjaman_php)) $cf41_pinjaman_php = new ccf41_pinjaman_php();
+if (!isset($cf42_pinjaman_php)) $cf42_pinjaman_php = new ccf42_pinjaman_php();
 
 // Page init
-$cf41_pinjaman_php->Page_Init();
+$cf42_pinjaman_php->Page_Init();
 
 // Page main
-$cf41_pinjaman_php->Page_Main();
+$cf42_pinjaman_php->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
@@ -312,190 +312,126 @@ Page_Rendering();
 </div>
 <?php } ?>
 <?php
-$a_caption = array(
-	"id" => "ID",
-	"Kontrak_No" => "No. Kontrak",
-	"Kontrak_Tgl" => "Tgl. Kontrak",
-	"nasabah_id" => "Nasabah",
-	"jaminan_id" => "Jaminan",
-	"Pinjaman" => "Pinjaman",
-	"Angsuran_Lama" => "Lama Angsuran",
-	"Angsuran_Bunga_Prosen" => "Bunga (%)",
-	"Angsuran_Denda" => "Denda (%)",
-	"Dispensasi_Denda" => "Dispensasi",
-	"Angsuran_Pokok" => "Pokok",
-	"Angsuran_Bunga" => "Bunga",
-	"Angsuran_Total" => "Total",
-	"No_Ref" => "No. Ref.",
-	"Biaya_Administrasi" => "Administrasi",
-	"Biaya_Materai" => "Materai",
-	"marketing_id" => "Marketing",
-	"Periode" => "Periode",
-	"Macet" => "Macet"
-);
 
-$a_caption2 = array(
-	"id" => "ID",
-	"Kontrak_No" => "No. Kontrak",
-	"Kontrak_Tgl" => "Tgl. Kontrak",
-	"nasabah_id" => "Nasabah",
-	"jaminan_id" => "Jaminan",
-	"Pinjaman" => "Pinjaman",
-	"Angsuran_Lama" => "Lama Angsuran",
-	"Angsuran_Bunga_Prosen" => "Bunga (%)",
-	"Angsuran_Denda" => "Denda (%)",
-	"Dispensasi_Denda" => "Dispensasi",
-	"Angsuran_Pokok" => "Pokok",
-	"Angsuran_Bunga" => "Bunga",
-	"Angsuran_Total" => "Total",
-	"No_Ref" => "No. Ref.",
-	"Biaya_Administrasi" => "Administrasi",
-	"Biaya_Materai" => "Materai",
-	"marketing_id" => "Marketing",
-	"Periode" => "Periode",
-	"Macet" => "Macet"
-);
+/*if (isset($_POST["btnexport"])) {
+	header("Content-type: application/vnd-ms-excel");
+	header("Content-Disposition: attachment; filename=hasil.xls");
+}*/
 
-$q = "
-	SELECT
-		COLUMN_NAME
-	FROM
-		INFORMATION_SCHEMA.COLUMNS
-	WHERE
-		TABLE_SCHEMA = 'db_simkop5'
-		AND TABLE_NAME = 't03_pinjaman'
-";
-if (isset($_POST["btnproses"])) { // begin -proses-
-	$a_nama_field = $_POST['nama_field'];
-	//var_dump($a_nama_field);
-	if(empty($a_nama_field)) {
-		echo("You didn't select any field.");
-	} 
-	else {
-		$N = count($a_nama_field);
-		// echo("You selected $N field(s): ");
-		$select = "";
-		for($i=0; $i < $N; $i++) {
-			//echo($a_nama_field[$i] . " ");
-			$select .= $a_nama_field[$i] . ", "; //echo $select;
-		}
-		$select = substr($select, 0, strlen($select) - 2);
-		$q = "select " . $select . " from t03_pinjaman "; //echo $q;
-		$r = Conn()->Execute($q);
-		echo "
-		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Data Pinjaman</label><br/>
-		&nbsp;<br/>
-		<div class='panel panel-default'>			
-		<div>
-		<table class='table table-striped table-hover table-condensed'>
-		<tbody>";
-		echo "
-		<tr>";
-		for($i=0; $i < $N; $i++) {
-			echo "
-			<th>" . $a_caption[$a_nama_field[$i]] . "</th>";
-		}
-		echo "
-		</tr>";
-		while (!$r->EOF) {
-			echo "
-			<tr>";
-			for($i=0; $i < $N; $i++) {
-				echo "
-				<td>" . $r->fields[$a_nama_field[$i]] . "</td>";
-			}
-			echo "
-			</tr>";
-			$r->MoveNext();
-		}
-		echo "
-		<tr>";
-		for($i=0; $i < $N; $i++) {
-			echo "
-			<td>&nbsp;</td>";
-		}
-		echo "
-		</tr>";
-		echo "
-		</tbody>
-		</table>
-		</div>
-		</div>";
-	}
-	?>
-	<div>
-	<div id="r_1" class="form-group">
-	<div class="col-sm-offset-2 col-sm-10">
-		<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='cf41_pinjaman.php'">Selesai</button>
-	</div>
-	</div>
-	</div>
-	<?php
+$aselect = array();
+
+$q = "select * from t73_pinjamanlap where field_status = 'Y' and field_index <> 0 order by field_index";
+//echo $q;
+$r = Conn()->Execute($q);
+while (!$r->EOF) {
+	$aselect[] = array($r->fields["field_name"], $r->fields["field_caption"], $r->fields["field_align"], $r->fields["field_format"]);
+	$r->MoveNext();
 }
-else {
-?>
 
-<!-- <form name="frm_input_periode" class="form-horizontal ewForm ewExtFilterForm" method="post">
+//var_dump($aselect);
+
+echo "
+<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Data Pinjaman</label><br/>
+&nbsp;<br/>
+<div class='panel panel-default'>			
 <div>
-	<div id="r_1" class="form-group">
-		<label class="col-sm-2 control-label ewLabel">Kolom</label>
-		<div class="col-sm-10">
-			<div>
-			<span>
-			<?php
-			$r = Conn()->Execute($q);
-			while (!$r->EOF) {
-				?>
-				<input type="checkbox" name="nama_field[]" value="<?php echo $r->fields["COLUMN_NAME"]?>" /><?php echo $r->fields["COLUMN_NAME"]?><br />
-				<?php
-				$r->MoveNext();
-			}
-			?>
-			</span>
-			</div>
-		</div>
-	</div>
-	<div id="r_1" class="form-group">
-	<div class="col-sm-offset-2 col-sm-10">
-		<button class="btn btn-primary ewButton" name="btnproses" id="btnsubmit" type="submit">Proses</button>
-		<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='.'">Selesai</button>
-	</div>
-	</div>
-</div>
-</form> -->
+<table class='table table-striped table-hover table-condensed'>
+<tbody>";
 
-<?php
-// check data exist di tabel t73_pinjamanlap
-$q = "select count(id) from t73_pinjamanlap";
-$rec_cnt = ew_ExecuteScalar($q);
-if ($rec_cnt > 0) { // jika sudah ada data
+$html = "
+<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Data Pinjaman</label><br/>
+<br/>
+<div class='panel panel-default'>			
+<div>
+<table class='table table-striped table-hover table-condensed'>
+<tbody>";
+
+$lewat = 0;
+$no = 0;
+
+$q = "select ";
+for ($i = 0; $i < count($aselect); $i++) {
+	$q .= $aselect[$i][0] . ", ";
 }
-else { // jika belum ada data
-	$q = "
-	SELECT
-		COLUMN_NAME
-	FROM
-		INFORMATION_SCHEMA.COLUMNS
-	WHERE
-		TABLE_SCHEMA = 'db_simkop5'
-		AND TABLE_NAME = 't03_pinjaman'
-	";
-	$r = Conn()->Execute($q);
-	while (!$r->EOF) {
-		$q = "insert into t73_pinjamanlap
-			(field_name, field_status) values
-			('".$r->fields["COLUMN_NAME"]."', 'Y')"; echo $q."<br>";
-		Conn()->Execute($q);
-		$r->MoveNext();
+$q = substr($q, 0, strlen($q) - 2);
+$q .= " from v0302_pinjamanlap"; //echo $q;
+$r = Conn()->Execute($q);
+
+while (!$r->EOF) {
+	if ($lewat == 0) {
+		$lewat = 1;
+		echo "
+		<tr>
+		<td>&nbsp;</td>";
+		$html .= "
+		<tr>
+		<td> </td>";
+		for($i = 0; $i < count($aselect); $i++) {
+			echo "
+			<td align='".$aselect[$i][2]."'>" . $aselect[$i][1] . "</td>";
+			$html .= "
+			<td align='".$aselect[$i][2]."'>" . $aselect[$i][1] . "</td>";
+		}
+		echo "
+		</tr>";
+		$html .= "
+		</tr>";
 	}
+
+	echo "
+	<tr>
+	<td>".++$no.".&nbsp;</td>";
+	$html .= "
+	<tr>
+	<td>".$no.".</td>";
+	for ($i = 0; $i < count($aselect); $i++) {
+		//$q .= $aselect[$i] . ", ";
+		//echo $r->fields[$aselect[$i]];
+		if ($aselect[$i][3] == "none") {
+			$data_tampil = $r->fields[$aselect[$i][0]];
+		}
+		elseif ($aselect[$i][3] == "tanggal") {
+			$data_tampil = date_format(date_create($r->fields[$aselect[$i][0]]), "d-m-Y");
+		}
+		elseif ($aselect[$i][3] == "numerik") {
+			$data_tampil = number_format($r->fields[$aselect[$i][0]], 2);
+		}
+		//echo "
+		//<td align='".$aselect[$i][2]."'>" . $r->fields[$aselect[$i][0]] . "</td>";
+		echo "
+		<td align='".$aselect[$i][2]."'>" . $data_tampil . "</td>";
+		$html .= "
+		<td align='".$aselect[$i][2]."'>" . $data_tampil . "</td>";
+	}
+	echo "
+	</tr>";
+	$html .= "
+	</tr>";
+	$r->MoveNext();
 }
+
+echo "
+</tbody>
+</table>
+</div>
+</div>";
+$html .= "
+</tbody>
+</table>
+</div>
+</div>";
 ?>
 
-<?php
-}
-?>
+<form name="frm_input_periode" class="form-horizontal ewForm ewExtFilterForm" method="post" action="cf43_pinjaman.php" target="_blank">
+	<input type="hidden" name="data" value="<?php echo $html?>">
+<div>
+	<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='t73_pinjamanlaplist.php?a=gridedit'">Config</button>
+	<button class='btn btn-primary ewButton' name='btnexport' id='btnsubmit' type='submit'>to Excel</button>
+	<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='.'">Selesai</button>
+</div>
+</form>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php
-$cf41_pinjaman_php->Page_Terminate();
+$cf42_pinjaman_php->Page_Terminate();
 ?>

@@ -1,5 +1,9 @@
 <strong>----- to do --------------------------------------------------------------------------------</strong>
 
+11:29 AM 4/26/2019
+- tambah view v0302_pinjamanlap
+- tambah table t73_pinjamanlap
+
 11:57 AM 4/15/2019
 - update view v40_mutasiold
 - t87_neraca,
