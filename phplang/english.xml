@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/4/29" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/5/15" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,6 +583,12 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
+    <menu id="10652">
+      <phrase id="menutext" value="v 0304 pinjamanlap 3" />
+    </menu>
+    <menu id="10653">
+      <phrase id="menutext" value="v 0305 pinjamanlap 4" />
+    </menu>
     <menu id="10650">
       <phrase id="menutext" value="v 0302 pinjamanlap" />
     </menu>
@@ -2226,27 +2232,6 @@
       <field id="nasabahketerangan">
         <phrase id="fldcaption" value="Nasabah Keterangan" />
       </field>
-      <field id="merk_type">
-        <phrase id="fldcaption" value="Merk Type" />
-      </field>
-      <field id="no_rangka">
-        <phrase id="fldcaption" value="No Rangka" />
-      </field>
-      <field id="no_mesin">
-        <phrase id="fldcaption" value="No Mesin" />
-      </field>
-      <field id="warna">
-        <phrase id="fldcaption" value="Warna" />
-      </field>
-      <field id="no_pol">
-        <phrase id="fldcaption" value="No Pol" />
-      </field>
-      <field id="jaminanketerangan">
-        <phrase id="fldcaption" value="Jaminan Keterangan" />
-      </field>
-      <field id="atas_nama">
-        <phrase id="fldcaption" value="Atas Nama" />
-      </field>
       <field id="marketingnama">
         <phrase id="fldcaption" value="Marketing Nama" />
       </field>
@@ -2279,6 +2264,27 @@
       </field>
       <field id="angsuran_tanggal">
         <phrase id="fldcaption" value="angsuran tanggal" />
+      </field>
+    </table>
+    <table id="v0304_pinjamanlap3">
+      <phrase id="tblcaption" value="v 0304 pinjamanlap 3" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="sudah_bayar">
+        <phrase id="fldcaption" value="sudah bayar" />
+      </field>
+    </table>
+    <table id="v0305_pinjamanlap4">
+      <phrase id="tblcaption" value="v 0305 pinjamanlap 4" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="pd_angsuran_pokok">
+        <phrase id="fldcaption" value="pd Angsuran Pokok" />
+      </field>
+      <field id="pd_angsuran_bunga">
+        <phrase id="fldcaption" value="pd Angsuran Bunga" />
       </field>
     </table>
     <table id="v30_mutasi">
