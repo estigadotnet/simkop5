@@ -524,6 +524,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 		bb.tanggal
 		;";
 		//echo $q;
+		echo $q; exit;
 		Conn()->Execute($q);
 		$rs = ew_Execute("select * from t78_bukubesarlap");
 		$AkunKode = $rs->fields["AkunKode"];
