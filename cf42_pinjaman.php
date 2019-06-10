@@ -312,124 +312,275 @@ Page_Rendering();
 </div>
 <?php } ?>
 <?php
-
-/*if (isset($_POST["btnexport"])) {
-	header("Content-type: application/vnd-ms-excel");
-	header("Content-Disposition: attachment; filename=hasil.xls");
-}*/
-
-$aselect = array();
-
-$q = "select * from t73_pinjamanlap where field_status = 'Y' and field_index <> 0 order by field_index";
-//echo $q;
-$r = Conn()->Execute($q);
-while (!$r->EOF) {
-	$aselect[] = array($r->fields["field_name"], $r->fields["field_caption"], $r->fields["field_align"], $r->fields["field_format"]);
-	$r->MoveNext();
-}
-
-//var_dump($aselect);
-
-echo "
-<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Data Pinjaman</label><br/>
-&nbsp;<br/>
-<div class='panel panel-default'>			
-<div>
-<table class='table table-striped table-hover table-condensed'>
-<tbody>";
-
-$html = "
-<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Data Pinjaman</label><br/>
-<br/>
-<div class='panel panel-default'>			
-<div>
-<table class='table table-striped table-hover table-condensed'>
-<tbody>";
-
-$lewat = 0;
-$no = 0;
-
-$q = "select ";
-for ($i = 0; $i < count($aselect); $i++) {
-	$q .= $aselect[$i][0] . ", ";
-}
-$q = substr($q, 0, strlen($q) - 2);
-$q .= " from v0302_pinjamanlap"; //echo $q;
-$r = Conn()->Execute($q);
-
-while (!$r->EOF) {
-	if ($lewat == 0) {
-		$lewat = 1;
-		echo "
-		<tr>
-		<td>&nbsp;</td>";
-		$html .= "
-		<tr>
-		<td> </td>";
-		for($i = 0; $i < count($aselect); $i++) {
-			echo "
-			<td align='".$aselect[$i][2]."'>" . $aselect[$i][1] . "</td>";
-			$html .= "
-			<td align='".$aselect[$i][2]."'>" . $aselect[$i][1] . "</td>";
-		}
-		echo "
-		</tr>";
-		$html .= "
-		</tr>";
-	}
-
-	echo "
-	<tr>
-	<td>".++$no.".&nbsp;</td>";
-	$html .= "
-	<tr>
-	<td>".$no.".</td>";
-	for ($i = 0; $i < count($aselect); $i++) {
-		//$q .= $aselect[$i] . ", ";
-		//echo $r->fields[$aselect[$i]];
-		if ($aselect[$i][3] == "none") {
-			$data_tampil = $r->fields[$aselect[$i][0]];
-		}
-		elseif ($aselect[$i][3] == "tanggal") {
-			$data_tampil = date_format(date_create($r->fields[$aselect[$i][0]]), "d-m-Y");
-		}
-		elseif ($aselect[$i][3] == "numerik") {
-			$data_tampil = number_format($r->fields[$aselect[$i][0]], 2);
-		}
-		//echo "
-		//<td align='".$aselect[$i][2]."'>" . $r->fields[$aselect[$i][0]] . "</td>";
-		echo "
-		<td align='".$aselect[$i][2]."'>" . $data_tampil . "</td>";
-		$html .= "
-		<td align='".$aselect[$i][2]."'>" . $data_tampil . "</td>";
-	}
-	echo "
-	</tr>";
-	$html .= "
-	</tr>";
-	$r->MoveNext();
-}
-
-echo "
-</tbody>
-</table>
-</div>
-</div>";
-$html .= "
-</tbody>
-</table>
-</div>
-</div>";
+$abulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
 ?>
 
-<form name="frm_input_periode" class="form-horizontal ewForm ewExtFilterForm" method="post" action="cf43_pinjaman.php" target="_blank">
-	<input type="hidden" name="data" value="<?php echo $html?>">
+<form name="frm_input_periode" class="form-horizontal ewForm ewExtFilterForm" method="post">
 <div>
-	<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='t73_pinjamanlaplist.php?a=gridedit'">Config</button>
-	<button class='btn btn-primary ewButton' name='btnexport' id='btnsubmit' type='submit'>to Excel</button>
-	<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='.'">Selesai</button>
+	<div id="r_1" class="form-group">
+		<label class="col-sm-2 control-label ewLabel">Periode</label>
+		<div class="col-sm-10">
+			<div>
+			<span>
+			<select name="bulan" class="form-control">
+			<?php
+			foreach($abulan as $index => $bulan) {
+			?>
+			<option value="<?php echo $index;?>"
+			<?php
+			if (isset($_POST['bulan'])) {
+				if ($index == $_POST['bulan']) {
+					echo "selected";
+				}
+			}
+			elseif ($index == ew_ExecuteScalar('select Bulan from t93_periode')) {
+				echo "selected";
+			}
+			?>
+			>
+			<?php echo $bulan; ?>
+			</option>
+			<?php
+			}
+			?>
+			</select>
+			</span>
+			</div>
+		</div>
+	</div>
+	<div id="r_2" class="form-group">
+		<label class="col-sm-2 control-label ewLabel">Tahun</label>
+		<div class="col-sm-10">
+			<div>
+			<span>
+			<select name="tahun" class="form-control">
+			<?php
+			$q = "select Tahun from t93_periode order by Tahun";
+			$r = Conn()->Execute($q);
+			while(!$r->EOF) {
+			?>
+			<option value="<?php echo $r->fields["Tahun"]?>"><?php echo $r->fields["Tahun"]; ?></option>
+			<?php
+			$r->MoveNext();
+			}
+			?>
+			</select>
+			</span>
+			</div>
+		</div>
+	</div>
+	<div id="r_1" class="form-group">
+		<label class="col-sm-2 control-label ewLabel">Akun</label>
+		<div class="col-sm-10">
+			<div>
+			<span>
+			<select name="id" class="form-control">
+			<option value="0">Semua Akun</option>
+			<!-- <option value="">Please select</option>
+			<option value="201812">201812</option>
+			<option value="201901">201901</option>
+			<option value="201902">201902</option> -->
+			<?php
+			$q = "select id, rekening from t91_rekening where length(id) > 1 order by id";
+			$r = Conn()->Execute($q);
+			while(!$r->EOF) {
+			?>
+			<option value="<?php echo $r->fields["id"]?>"
+				<?php if (isset($_POST["id"])) {?>
+				<?php echo ($r->fields['id'] == $_POST['id'] ? 'selected' : ''); ?>
+				<?php }?>
+			><?php echo $r->fields["id"].' - '.$r->fields["rekening"]?></option>
+			<?php
+			$r->MoveNext();
+			}
+			?>
+			</select>
+			</span>
+			</div>
+		</div>
+	</div>
+	<div id="r_1" class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+		<button class="btn btn-primary ewButton" name="btnproses" id="btnsubmit" type="submit">Proses</button>
+		<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick="window.location.href='.'">Selesai</button>
+	</div>
+	</div>
 </div>
 </form>
+
+<?php
+if (isset($_POST["btnproses"])) { // begin -proses-
+	//echo date('m').substr("00".$_POST['bulan'],-2);
+	// echo "submitted";
+	//echo $abulan[$_POST["bulan"]] . " " . $_POST["tahun"];
+
+	$periode_aktif = ew_ExecuteScalar("select Tahun_Bulan from t93_periode");
+	$periode_input = $_POST["tahun"].substr("00" . $_POST["bulan"], -2);
+	//echo $periode_aktif . " - " . $periode_input;
+
+	//if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
+
+		// hapus t78_bukubesarlap
+		$q = "delete from t78_bukubesarlap";
+		Conn()->Execute($q);
+
+		$r = ew_Execute("select Bulan, Tahun from t93_periode");
+
+		$q = "
+		insert into t78_bukubesarlap (
+		AkunKode,
+		AkunNama,
+		Tanggal,
+		NomorTransaksi,
+		Keterangan,
+		Debet,
+		Kredit,
+		Saldo)
+		select
+		id,
+		rekening,
+		tanggal,
+		no_tran,
+		keterangan,
+		debet,
+		kredit,
+		@st := @st + saldo
+		from (
+		select
+			r.id
+			, r.rekening
+			, '".$_POST["tahun"]."-".substr("00".$_POST["bulan"],-2)."-01' as tanggal
+			, '' as no_tran
+			, 'Saldo Awal' as keterangan
+			, 0 as debet
+			, 0 as kredit
+			, saldo
+		from ";
+		if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
+			$q .= "
+			t91_rekening r
+			";
+		}
+		else {
+			$q .= "
+			t80_rekeningold r where r.Periode = '".$periode_input."'
+			";
+		}
+			//t91_rekening r
+		$q .="
+		union
+
+		select
+			r.id
+			, r.rekening
+			, case when isnull(j.tanggal) then '".$_POST["tahun"]."-".substr("00".$_POST["bulan"],-2)."-01' else j.tanggal end as tanggal
+			, j.nomortransaksi as no_tran
+			, j.keterangan as keterangan
+			, case when isnull(j.debet) then 0 else j.debet end as debet
+			, case when isnull(j.kredit) then 0 else j.kredit end as kredit
+			, case when (left(r.id,1) = '2' or left(r.id,1) = '3' or left(r.id,1) = '5') then
+			(case when isnull(j.kredit) then 0 else j.kredit end
+			-
+			case when isnull(j.debet) then 0 else j.debet end)
+			else
+			(case when isnull(j.debet) then 0 else j.debet end
+			-
+			case when isnull(j.kredit) then 0 else j.kredit end)
+			end
+			as saldo
+		from";
+
+		if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
+			$q .= "
+			t91_rekening r
+			left join t10_jurnal j on r.id = j.rekening
+			";
+		}
+		else {
+			$q .= "
+			t80_rekeningold r
+			left join t82_jurnalold j on r.id = j.rekening
+			where r.Periode = '".$periode_input."' and j.Periode = '".$periode_input."'
+			";
+		}
+
+		/*$q .= "
+			t91_rekening r
+			left join t10_jurnal j on r.id = j.rekening
+			";*/
+
+		$q .= "
+		) bb
+		join (select @st := 0) stx
+		where
+		bb.id = '".$_POST["id"]."'";
+		if ($periode_aktif == $periode_input) { // begin tabel periode sekarang
+		}
+		else {
+			//$q .= " and ";
+		}
+		$q .= "
+		order by
+		bb.tanggal
+		;";
+		//echo $q;
+		Conn()->Execute($q);
+		$rs = ew_Execute("select * from t78_bukubesarlap");
+		$AkunKode = $rs->fields["AkunKode"];
+		$AkunNama = $rs->fields["AkunNama"];
+
+		$a_Bulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei",
+		"Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
+		//<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[$r->fields["Bulan"]] . " " . $r->fields["Tahun"] . "</label><br/>
+		echo "
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Laporan Buku Besar</label><br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Periode " . $a_Bulan[$_POST["bulan"]] . " " . $_POST["tahun"] . "</label><br/>
+		&nbsp;<br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Kode " . $rs->fields["AkunKode"] . "</label><br/>
+		<label for='sv_Periode' class='ewSearchCaption ewLabel'>Rekening " . $rs->fields["AkunNama"] . "</label><br/>
+		<div class='panel panel-default'>			
+		<div>
+		<table class='table table-striped table-hover table-condensed'>
+		<tbody>";
+
+		echo "
+		<tr>
+		<th>Tanggal</th>
+		<th>No. Transaksi</th>
+		<th>Keterangan</th>
+		<th align='right'>Debet</th>
+		<th align='right'>Kredit</th>
+		<th align='right'>Saldo</th>
+		</tr>";
+
+		while (!$rs->EOF) {
+			echo "
+			<tr>
+			<td>" . date_format(date_create($rs->fields["Tanggal"]), "d-m-Y") . "</td>
+			<td>" . $rs->fields["NomorTransaksi"] . "</td>
+			<td>" . $rs->fields["Keterangan"] . "</td>
+			<td align='right'>" . number_format($rs->fields["Debet"]) . "</td>
+			<td align='right'>" . number_format($rs->fields["Kredit"]) . "</td>
+			<td align='right'>" . number_format($rs->fields["Saldo"]) . "</td>
+			</tr>";
+			$rs->MoveNext();
+		}
+	
+		echo "
+		</tbody>
+		</table>
+		</div>
+		</div>";
+		/*<div id='xsr_2' class='ewRow'>
+		<button class='btn btn-primary ewButton' name='btnsubmit' id='btnsubmit' type='button' onclick=\"window.location.href='cf10_bukubesar.php'\">Selesai</button>
+		</div>*/
+
+		//header("Location: t78_bukubesarlaplist.php?akunkode=".$AkunKode."&akunnama=".$AkunNama."");
+
+	//} // end tabel periode sekarang
+
+} // end proses
+?>
 <?php if (EW_DEBUG_ENABLED) echo ew_DebugMsg(); ?>
 <?php include_once "footer.php" ?>
 <?php

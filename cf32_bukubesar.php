@@ -375,6 +375,7 @@ $abulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Ju
 			<div>
 			<span>
 			<select name="id" class="form-control">
+			<option value="0">Semua Akun</option>
 			<!-- <option value="">Please select</option>
 			<option value="201812">201812</option>
 			<option value="201901">201901</option>
@@ -522,7 +523,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 		order by
 		bb.tanggal
 		;";
-		//echo $q;
+		echo $q; exit;
 		Conn()->Execute($q);
 		$rs = ew_Execute("select * from t78_bukubesarlap");
 		$AkunKode = $rs->fields["AkunKode"];

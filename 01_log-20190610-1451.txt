@@ -4,3 +4,6 @@
 - untuk buku besar :: pilihan akun bisa dibuat blank atau per akun
 	- misal combo diisi blank :: semua data di tiap akun akan ditampilkan
 	- misal combo diisi akun tertentu :: yang ditampilkan hanya akun yang terpilih
+- accounting - transaksi - jurnal :: dihilangkan
+- koperasi - laporan - pinjaman-1 :: dihilangkan
+- 
