@@ -6,4 +6,6 @@
 	- misal combo diisi akun tertentu :: yang ditampilkan hanya akun yang terpilih
 - accounting - transaksi - jurnal :: dihilangkan
 - koperasi - laporan - pinjaman-1 :: dihilangkan
-- 
+- kolom marketing juga ditampilkan di laporan pinjaman
+- umur tunggakan juga ditampilkan, dihitung dari tanggal cetak (hari ini) dikurangi dengan tanggal terakhir bayar
+

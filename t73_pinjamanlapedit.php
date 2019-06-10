@@ -695,9 +695,8 @@ class ct73_pinjamanlap_edit extends ct73_pinjamanlap {
 			$this->field_index->PlaceHolder = ew_RemoveHtml($this->field_index->FldCaption());
 
 			// field_status
-			$this->field_status->EditAttrs["class"] = "form-control";
 			$this->field_status->EditCustomAttributes = "";
-			$this->field_status->EditValue = $this->field_status->Options(TRUE);
+			$this->field_status->EditValue = $this->field_status->Options(FALSE);
 
 			// field_align
 			$this->field_align->EditAttrs["class"] = "form-control";
@@ -766,7 +765,7 @@ class ct73_pinjamanlap_edit extends ct73_pinjamanlap {
 		if (!ew_CheckInteger($this->field_index->FormValue)) {
 			ew_AddMessage($gsFormError, $this->field_index->FldErrMsg());
 		}
-		if (!$this->field_status->FldIsDetailKey && !is_null($this->field_status->FormValue) && $this->field_status->FormValue == "") {
+		if ($this->field_status->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->field_status->FldCaption(), $this->field_status->ReqErrMsg));
 		}
 		if (!$this->field_align->FldIsDetailKey && !is_null($this->field_align->FormValue) && $this->field_align->FormValue == "") {
@@ -1111,12 +1110,13 @@ $t73_pinjamanlap_edit->ShowMessage();
 <?php } ?>
 <?php if ($t73_pinjamanlap->field_status->Visible) { // field_status ?>
 	<div id="r_field_status" class="form-group">
-		<label id="elh_t73_pinjamanlap_field_status" for="x_field_status" class="col-sm-2 control-label ewLabel"><?php echo $t73_pinjamanlap->field_status->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<label id="elh_t73_pinjamanlap_field_status" class="col-sm-2 control-label ewLabel"><?php echo $t73_pinjamanlap->field_status->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t73_pinjamanlap->field_status->CellAttributes() ?>>
 <span id="el_t73_pinjamanlap_field_status">
-<select data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" id="x_field_status" name="x_field_status"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>>
-<?php echo $t73_pinjamanlap->field_status->SelectOptionListHtml("x_field_status") ?>
-</select>
+<div id="tp_x_field_status" class="ewTemplate"><input type="radio" data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" name="x_field_status" id="x_field_status" value="{value}"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>></div>
+<div id="dsl_x_field_status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t73_pinjamanlap->field_status->RadioButtonListHtml(FALSE, "x_field_status") ?>
+</div></div>
 </span>
 <?php echo $t73_pinjamanlap->field_status->CustomMsg ?></div></div>
 	</div>

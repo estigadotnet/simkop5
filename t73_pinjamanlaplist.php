@@ -1776,9 +1776,8 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 			$this->field_index->PlaceHolder = ew_RemoveHtml($this->field_index->FldCaption());
 
 			// field_status
-			$this->field_status->EditAttrs["class"] = "form-control";
 			$this->field_status->EditCustomAttributes = "";
-			$this->field_status->EditValue = $this->field_status->Options(TRUE);
+			$this->field_status->EditValue = $this->field_status->Options(FALSE);
 
 			// field_align
 			$this->field_align->EditAttrs["class"] = "form-control";
@@ -1836,9 +1835,8 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 			$this->field_index->PlaceHolder = ew_RemoveHtml($this->field_index->FldCaption());
 
 			// field_status
-			$this->field_status->EditAttrs["class"] = "form-control";
 			$this->field_status->EditCustomAttributes = "";
-			$this->field_status->EditValue = $this->field_status->Options(TRUE);
+			$this->field_status->EditValue = $this->field_status->Options(FALSE);
 
 			// field_align
 			$this->field_align->EditAttrs["class"] = "form-control";
@@ -1910,7 +1908,7 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 		if (!ew_CheckInteger($this->field_index->FormValue)) {
 			ew_AddMessage($gsFormError, $this->field_index->FldErrMsg());
 		}
-		if (!$this->field_status->FldIsDetailKey && !is_null($this->field_status->FormValue) && $this->field_status->FormValue == "") {
+		if ($this->field_status->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->field_status->FldCaption(), $this->field_status->ReqErrMsg));
 		}
 		if (!$this->field_align->FldIsDetailKey && !is_null($this->field_align->FormValue) && $this->field_align->FormValue == "") {
@@ -2852,17 +2850,19 @@ $t73_pinjamanlap_list->ListOptions->Render("body", "left", $t73_pinjamanlap_list
 		<td data-name="field_status"<?php echo $t73_pinjamanlap->field_status->CellAttributes() ?>>
 <?php if ($t73_pinjamanlap->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t73_pinjamanlap_list->RowCnt ?>_t73_pinjamanlap_field_status" class="form-group t73_pinjamanlap_field_status">
-<select data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>>
-<?php echo $t73_pinjamanlap->field_status->SelectOptionListHtml("x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status") ?>
-</select>
+<div id="tp_x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" class="ewTemplate"><input type="radio" data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" value="{value}"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>></div>
+<div id="dsl_x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t73_pinjamanlap->field_status->RadioButtonListHtml(FALSE, "x{$t73_pinjamanlap_list->RowIndex}_field_status") ?>
+</div></div>
 </span>
 <input type="hidden" data-table="t73_pinjamanlap" data-field="x_field_status" name="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" id="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" value="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_status->OldValue) ?>">
 <?php } ?>
 <?php if ($t73_pinjamanlap->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t73_pinjamanlap_list->RowCnt ?>_t73_pinjamanlap_field_status" class="form-group t73_pinjamanlap_field_status">
-<select data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>>
-<?php echo $t73_pinjamanlap->field_status->SelectOptionListHtml("x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status") ?>
-</select>
+<div id="tp_x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" class="ewTemplate"><input type="radio" data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" value="{value}"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>></div>
+<div id="dsl_x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t73_pinjamanlap->field_status->RadioButtonListHtml(FALSE, "x{$t73_pinjamanlap_list->RowIndex}_field_status") ?>
+</div></div>
 </span>
 <?php } ?>
 <?php if ($t73_pinjamanlap->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -2992,9 +2992,10 @@ $t73_pinjamanlap_list->ListOptions->Render("body", "left", $t73_pinjamanlap_list
 	<?php if ($t73_pinjamanlap->field_status->Visible) { // field_status ?>
 		<td data-name="field_status">
 <span id="el$rowindex$_t73_pinjamanlap_field_status" class="form-group t73_pinjamanlap_field_status">
-<select data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>>
-<?php echo $t73_pinjamanlap->field_status->SelectOptionListHtml("x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status") ?>
-</select>
+<div id="tp_x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" class="ewTemplate"><input type="radio" data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" value="{value}"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>></div>
+<div id="dsl_x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t73_pinjamanlap->field_status->RadioButtonListHtml(FALSE, "x{$t73_pinjamanlap_list->RowIndex}_field_status") ?>
+</div></div>
 </span>
 <input type="hidden" data-table="t73_pinjamanlap" data-field="x_field_status" name="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" id="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" value="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_status->OldValue) ?>">
 </td>

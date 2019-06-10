@@ -74,10 +74,8 @@ class ct73_pinjamanlap extends cTable {
 		$this->fields['field_index'] = &$this->field_index;
 
 		// field_status
-		$this->field_status = new cField('t73_pinjamanlap', 't73_pinjamanlap', 'x_field_status', 'field_status', '`field_status`', '`field_status`', 202, -1, FALSE, '`field_status`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->field_status = new cField('t73_pinjamanlap', 't73_pinjamanlap', 'x_field_status', 'field_status', '`field_status`', '`field_status`', 202, -1, FALSE, '`field_status`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'RADIO');
 		$this->field_status->Sortable = TRUE; // Allow sort
-		$this->field_status->UsePleaseSelect = TRUE; // Use PleaseSelect by default
-		$this->field_status->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->field_status->FldDataType = EW_DATATYPE_BOOLEAN;
 		$this->field_status->TrueValue = 'Y';
 		$this->field_status->FalseValue = 'N';
@@ -748,9 +746,8 @@ class ct73_pinjamanlap extends cTable {
 		$this->field_index->PlaceHolder = ew_RemoveHtml($this->field_index->FldCaption());
 
 		// field_status
-		$this->field_status->EditAttrs["class"] = "form-control";
 		$this->field_status->EditCustomAttributes = "";
-		$this->field_status->EditValue = $this->field_status->Options(TRUE);
+		$this->field_status->EditValue = $this->field_status->Options(FALSE);
 
 		// field_align
 		$this->field_align->EditAttrs["class"] = "form-control";
