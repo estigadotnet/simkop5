@@ -11,7 +11,6 @@ $RootMenu->AddMenuItem(7, "mi_t93_periode", $Language->MenuPhrase("7", "MenuText
 $RootMenu->AddMenuItem(10052, "mi_t91_rekening", $Language->MenuPhrase("10052", "MenuText"), "t91_rekeninglist.php", 10335, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t91_rekening'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10056, "mi_t89_rektran", $Language->MenuPhrase("10056", "MenuText"), "t89_rektranlist.php", 10335, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t89_rektran'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10336, "mci_Transaksi", $Language->MenuPhrase("10336", "MenuText"), "", 10451, "", IsLoggedIn(), FALSE, TRUE);
-$RootMenu->AddMenuItem(10058, "mi_t10_jurnal", $Language->MenuPhrase("10058", "MenuText"), "t10_jurnallist.php", 10336, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t10_jurnal'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10164, "mi_t11_jurnalmaster", $Language->MenuPhrase("10164", "MenuText"), "t11_jurnalmasterlist.php", 10336, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t11_jurnalmaster'), FALSE, FALSE);
 $RootMenu->AddMenuItem(17, "mi_cf02_tutupbuku_php", $Language->MenuPhrase("17", "MenuText"), "cf02_tutupbuku.php", 10336, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf02_tutupbuku.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10337, "mci_Laporan", $Language->MenuPhrase("10337", "MenuText"), "", 10451, "", IsLoggedIn(), FALSE, TRUE);

@@ -1,11 +1,11 @@
 1:58 PM 6/10/2019
-- tampilan config :: ya dan tidak dibuat radio button, jangan combo
-- untuk buku besar :: diberi total debet dan kredit
-- untuk buku besar :: pilihan akun bisa dibuat blank atau per akun
-	- misal combo diisi blank :: semua data di tiap akun akan ditampilkan
-	- misal combo diisi akun tertentu :: yang ditampilkan hanya akun yang terpilih
-- accounting - transaksi - jurnal :: dihilangkan
-- koperasi - laporan - pinjaman-1 :: dihilangkan
-- kolom marketing juga ditampilkan di laporan pinjaman
-- umur tunggakan juga ditampilkan, dihitung dari tanggal cetak (hari ini) dikurangi dengan tanggal terakhir bayar
+- [x] tampilan config :: ya dan tidak dibuat radio button, jangan combo
+- [ ] untuk buku besar :: diberi total debet dan kredit
+- [ ] untuk buku besar :: pilihan akun bisa dibuat blank atau per akun
+	- [ ] misal combo diisi blank :: semua data di tiap akun akan ditampilkan
+	- [ ] misal combo diisi akun tertentu :: yang ditampilkan hanya akun yang terpilih
+- [x] accounting - transaksi - jurnal :: dihilangkan
+- [x] koperasi - laporan - pinjaman-1 :: dihilangkan
+- [x] kolom marketing juga ditampilkan di laporan pinjaman
+- [ ] umur tunggakan juga ditampilkan, dihitung dari tanggal cetak (hari ini) dikurangi dengan tanggal terakhir bayar
 
