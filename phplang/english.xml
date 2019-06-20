@@ -2256,6 +2256,9 @@
       <field id="pd_angsuran_total">
         <phrase id="fldcaption" value="pd Angsuran Total" />
       </field>
+      <field id="tanggal_bayar">
+        <phrase id="fldcaption" value="Tanggal Bayar" />
+      </field>
     </table>
     <table id="v0303_pinjamanlap2">
       <phrase id="tblcaption" value="v 0303 pinjamanlap 2" />

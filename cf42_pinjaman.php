@@ -391,7 +391,12 @@ while (!$r->EOF) {
 			$data_tampil = $r->fields[$aselect[$i][0]];
 		}
 		elseif ($aselect[$i][3] == "tanggal") {
-			$data_tampil = date_format(date_create($r->fields[$aselect[$i][0]]), "d-m-Y");
+			if (is_null($r->fields[$aselect[$i][0]])) {
+				$data_tampil = "";
+			}
+			else {
+				$data_tampil = date_format(date_create($r->fields[$aselect[$i][0]]), "d-m-Y");
+			}
 		}
 		elseif ($aselect[$i][3] == "numerik") {
 			$data_tampil = number_format($r->fields[$aselect[$i][0]], 2);

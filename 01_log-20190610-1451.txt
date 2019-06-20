@@ -7,5 +7,12 @@
 - [x] accounting - transaksi - jurnal :: dihilangkan
 - [x] koperasi - laporan - pinjaman-1 :: dihilangkan
 - [x] kolom marketing juga ditampilkan di laporan pinjaman
-- [ ] umur tunggakan juga ditampilkan, dihitung dari tanggal cetak (hari ini) dikurangi dengan tanggal terakhir bayar
+- [x] umur tunggakan juga ditampilkan, dihitung dari tanggal cetak (hari ini) dikurangi dengan tanggal terakhir bayar
 
+
+11:14 AM 6/20/2019
+-------------------------------------------------------
+-                                                     -
+-  dibuatkan view nya dulu, lalu disertakan di view,  -
+-                                                     -
+-------------------------------------------------------

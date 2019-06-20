@@ -285,8 +285,11 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 		// Create form object
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->field_name->SetVisibility();
+		$this->field_caption->SetVisibility();
+		$this->field_index->SetVisibility();
 		$this->field_status->SetVisibility();
+		$this->field_align->SetVisibility();
+		$this->field_format->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -473,9 +476,12 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 
 	// Load default values
 	function LoadDefaultValues() {
-		$this->field_name->CurrentValue = NULL;
-		$this->field_name->OldValue = $this->field_name->CurrentValue;
+		$this->field_caption->CurrentValue = NULL;
+		$this->field_caption->OldValue = $this->field_caption->CurrentValue;
+		$this->field_index->CurrentValue = 0;
 		$this->field_status->CurrentValue = "Y";
+		$this->field_align->CurrentValue = "L";
+		$this->field_format->CurrentValue = "none";
 	}
 
 	// Load form values
@@ -483,11 +489,20 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 
 		// Load from form
 		global $objForm;
-		if (!$this->field_name->FldIsDetailKey) {
-			$this->field_name->setFormValue($objForm->GetValue("x_field_name"));
+		if (!$this->field_caption->FldIsDetailKey) {
+			$this->field_caption->setFormValue($objForm->GetValue("x_field_caption"));
+		}
+		if (!$this->field_index->FldIsDetailKey) {
+			$this->field_index->setFormValue($objForm->GetValue("x_field_index"));
 		}
 		if (!$this->field_status->FldIsDetailKey) {
 			$this->field_status->setFormValue($objForm->GetValue("x_field_status"));
+		}
+		if (!$this->field_align->FldIsDetailKey) {
+			$this->field_align->setFormValue($objForm->GetValue("x_field_align"));
+		}
+		if (!$this->field_format->FldIsDetailKey) {
+			$this->field_format->setFormValue($objForm->GetValue("x_field_format"));
 		}
 	}
 
@@ -495,8 +510,11 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 	function RestoreFormValues() {
 		global $objForm;
 		$this->LoadOldRecord();
-		$this->field_name->CurrentValue = $this->field_name->FormValue;
+		$this->field_caption->CurrentValue = $this->field_caption->FormValue;
+		$this->field_index->CurrentValue = $this->field_index->FormValue;
 		$this->field_status->CurrentValue = $this->field_status->FormValue;
+		$this->field_align->CurrentValue = $this->field_align->FormValue;
+		$this->field_format->CurrentValue = $this->field_format->FormValue;
 	}
 
 	// Load row based on key values
@@ -530,7 +548,11 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
 		$this->field_name->setDbValue($rs->fields('field_name'));
+		$this->field_caption->setDbValue($rs->fields('field_caption'));
+		$this->field_index->setDbValue($rs->fields('field_index'));
 		$this->field_status->setDbValue($rs->fields('field_status'));
+		$this->field_align->setDbValue($rs->fields('field_align'));
+		$this->field_format->setDbValue($rs->fields('field_format'));
 	}
 
 	// Load DbValue from recordset
@@ -539,7 +561,11 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
 		$this->field_name->DbValue = $row['field_name'];
+		$this->field_caption->DbValue = $row['field_caption'];
+		$this->field_index->DbValue = $row['field_index'];
 		$this->field_status->DbValue = $row['field_status'];
+		$this->field_align->DbValue = $row['field_align'];
+		$this->field_format->DbValue = $row['field_format'];
 	}
 
 	// Load old record
@@ -577,7 +603,11 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 		// Common render codes for all row types
 		// id
 		// field_name
+		// field_caption
+		// field_index
 		// field_status
+		// field_align
+		// field_format
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -589,44 +619,112 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 		$this->field_name->ViewValue = $this->field_name->CurrentValue;
 		$this->field_name->ViewCustomAttributes = "";
 
+		// field_caption
+		$this->field_caption->ViewValue = $this->field_caption->CurrentValue;
+		$this->field_caption->ViewCustomAttributes = "";
+
+		// field_index
+		$this->field_index->ViewValue = $this->field_index->CurrentValue;
+		$this->field_index->CellCssStyle .= "text-align: right;";
+		$this->field_index->ViewCustomAttributes = "";
+
 		// field_status
 		if (ew_ConvertToBool($this->field_status->CurrentValue)) {
-			$this->field_status->ViewValue = $this->field_status->FldTagCaption(1) <> "" ? $this->field_status->FldTagCaption(1) : "Y";
+			$this->field_status->ViewValue = $this->field_status->FldTagCaption(1) <> "" ? $this->field_status->FldTagCaption(1) : "Ya";
 		} else {
-			$this->field_status->ViewValue = $this->field_status->FldTagCaption(2) <> "" ? $this->field_status->FldTagCaption(2) : "N";
+			$this->field_status->ViewValue = $this->field_status->FldTagCaption(2) <> "" ? $this->field_status->FldTagCaption(2) : "Tidak";
 		}
 		$this->field_status->ViewCustomAttributes = "";
 
-			// field_name
-			$this->field_name->LinkCustomAttributes = "";
-			$this->field_name->HrefValue = "";
-			$this->field_name->TooltipValue = "";
+		// field_align
+		if (strval($this->field_align->CurrentValue) <> "") {
+			$this->field_align->ViewValue = $this->field_align->OptionCaption($this->field_align->CurrentValue);
+		} else {
+			$this->field_align->ViewValue = NULL;
+		}
+		$this->field_align->ViewCustomAttributes = "";
+
+		// field_format
+		if (strval($this->field_format->CurrentValue) <> "") {
+			$this->field_format->ViewValue = $this->field_format->OptionCaption($this->field_format->CurrentValue);
+		} else {
+			$this->field_format->ViewValue = NULL;
+		}
+		$this->field_format->ViewCustomAttributes = "";
+
+			// field_caption
+			$this->field_caption->LinkCustomAttributes = "";
+			$this->field_caption->HrefValue = "";
+			$this->field_caption->TooltipValue = "";
+
+			// field_index
+			$this->field_index->LinkCustomAttributes = "";
+			$this->field_index->HrefValue = "";
+			$this->field_index->TooltipValue = "";
 
 			// field_status
 			$this->field_status->LinkCustomAttributes = "";
 			$this->field_status->HrefValue = "";
 			$this->field_status->TooltipValue = "";
+
+			// field_align
+			$this->field_align->LinkCustomAttributes = "";
+			$this->field_align->HrefValue = "";
+			$this->field_align->TooltipValue = "";
+
+			// field_format
+			$this->field_format->LinkCustomAttributes = "";
+			$this->field_format->HrefValue = "";
+			$this->field_format->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
-			// field_name
-			$this->field_name->EditAttrs["class"] = "form-control";
-			$this->field_name->EditCustomAttributes = "";
-			$this->field_name->EditValue = ew_HtmlEncode($this->field_name->CurrentValue);
-			$this->field_name->PlaceHolder = ew_RemoveHtml($this->field_name->FldCaption());
+			// field_caption
+			$this->field_caption->EditAttrs["class"] = "form-control";
+			$this->field_caption->EditCustomAttributes = "";
+			$this->field_caption->EditValue = ew_HtmlEncode($this->field_caption->CurrentValue);
+			$this->field_caption->PlaceHolder = ew_RemoveHtml($this->field_caption->FldCaption());
+
+			// field_index
+			$this->field_index->EditAttrs["class"] = "form-control";
+			$this->field_index->EditCustomAttributes = "";
+			$this->field_index->EditValue = ew_HtmlEncode($this->field_index->CurrentValue);
+			$this->field_index->PlaceHolder = ew_RemoveHtml($this->field_index->FldCaption());
 
 			// field_status
 			$this->field_status->EditCustomAttributes = "";
 			$this->field_status->EditValue = $this->field_status->Options(FALSE);
 
-			// Add refer script
-			// field_name
+			// field_align
+			$this->field_align->EditAttrs["class"] = "form-control";
+			$this->field_align->EditCustomAttributes = "";
+			$this->field_align->EditValue = $this->field_align->Options(TRUE);
 
-			$this->field_name->LinkCustomAttributes = "";
-			$this->field_name->HrefValue = "";
+			// field_format
+			$this->field_format->EditAttrs["class"] = "form-control";
+			$this->field_format->EditCustomAttributes = "";
+			$this->field_format->EditValue = $this->field_format->Options(TRUE);
+
+			// Add refer script
+			// field_caption
+
+			$this->field_caption->LinkCustomAttributes = "";
+			$this->field_caption->HrefValue = "";
+
+			// field_index
+			$this->field_index->LinkCustomAttributes = "";
+			$this->field_index->HrefValue = "";
 
 			// field_status
 			$this->field_status->LinkCustomAttributes = "";
 			$this->field_status->HrefValue = "";
+
+			// field_align
+			$this->field_align->LinkCustomAttributes = "";
+			$this->field_align->HrefValue = "";
+
+			// field_format
+			$this->field_format->LinkCustomAttributes = "";
+			$this->field_format->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -649,11 +747,23 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->field_name->FldIsDetailKey && !is_null($this->field_name->FormValue) && $this->field_name->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->field_name->FldCaption(), $this->field_name->ReqErrMsg));
+		if (!$this->field_caption->FldIsDetailKey && !is_null($this->field_caption->FormValue) && $this->field_caption->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->field_caption->FldCaption(), $this->field_caption->ReqErrMsg));
+		}
+		if (!$this->field_index->FldIsDetailKey && !is_null($this->field_index->FormValue) && $this->field_index->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->field_index->FldCaption(), $this->field_index->ReqErrMsg));
+		}
+		if (!ew_CheckInteger($this->field_index->FormValue)) {
+			ew_AddMessage($gsFormError, $this->field_index->FldErrMsg());
 		}
 		if ($this->field_status->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->field_status->FldCaption(), $this->field_status->ReqErrMsg));
+		}
+		if (!$this->field_align->FldIsDetailKey && !is_null($this->field_align->FormValue) && $this->field_align->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->field_align->FldCaption(), $this->field_align->ReqErrMsg));
+		}
+		if (!$this->field_format->FldIsDetailKey && !is_null($this->field_format->FormValue) && $this->field_format->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->field_format->FldCaption(), $this->field_format->ReqErrMsg));
 		}
 
 		// Return validate result
@@ -679,11 +789,20 @@ class ct73_pinjamanlap_add extends ct73_pinjamanlap {
 		}
 		$rsnew = array();
 
-		// field_name
-		$this->field_name->SetDbValueDef($rsnew, $this->field_name->CurrentValue, "", FALSE);
+		// field_caption
+		$this->field_caption->SetDbValueDef($rsnew, $this->field_caption->CurrentValue, "", strval($this->field_caption->CurrentValue) == "");
+
+		// field_index
+		$this->field_index->SetDbValueDef($rsnew, $this->field_index->CurrentValue, 0, strval($this->field_index->CurrentValue) == "");
 
 		// field_status
 		$this->field_status->SetDbValueDef($rsnew, ((strval($this->field_status->CurrentValue) == "Y") ? "Y" : "N"), "N", strval($this->field_status->CurrentValue) == "");
+
+		// field_align
+		$this->field_align->SetDbValueDef($rsnew, $this->field_align->CurrentValue, "", strval($this->field_align->CurrentValue) == "");
+
+		// field_format
+		$this->field_format->SetDbValueDef($rsnew, $this->field_format->CurrentValue, "", strval($this->field_format->CurrentValue) == "");
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -849,12 +968,24 @@ ft73_pinjamanlapadd.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
-			elm = this.GetElements("x" + infix + "_field_name");
+			elm = this.GetElements("x" + infix + "_field_caption");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t73_pinjamanlap->field_name->FldCaption(), $t73_pinjamanlap->field_name->ReqErrMsg)) ?>");
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t73_pinjamanlap->field_caption->FldCaption(), $t73_pinjamanlap->field_caption->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_field_index");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t73_pinjamanlap->field_index->FldCaption(), $t73_pinjamanlap->field_index->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_field_index");
+			if (elm && !ew_CheckInteger(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t73_pinjamanlap->field_index->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_field_status");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t73_pinjamanlap->field_status->FldCaption(), $t73_pinjamanlap->field_status->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_field_align");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t73_pinjamanlap->field_align->FldCaption(), $t73_pinjamanlap->field_align->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_field_format");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t73_pinjamanlap->field_format->FldCaption(), $t73_pinjamanlap->field_format->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -890,6 +1021,10 @@ ft73_pinjamanlapadd.ValidateRequired = false;
 // Dynamic selection lists
 ft73_pinjamanlapadd.Lists["x_field_status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft73_pinjamanlapadd.Lists["x_field_status"].Options = <?php echo json_encode($t73_pinjamanlap->field_status->Options()) ?>;
+ft73_pinjamanlapadd.Lists["x_field_align"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft73_pinjamanlapadd.Lists["x_field_align"].Options = <?php echo json_encode($t73_pinjamanlap->field_align->Options()) ?>;
+ft73_pinjamanlapadd.Lists["x_field_format"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft73_pinjamanlapadd.Lists["x_field_format"].Options = <?php echo json_encode($t73_pinjamanlap->field_format->Options()) ?>;
 
 // Form object for search
 </script>
@@ -918,14 +1053,24 @@ $t73_pinjamanlap_add->ShowMessage();
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <div>
-<?php if ($t73_pinjamanlap->field_name->Visible) { // field_name ?>
-	<div id="r_field_name" class="form-group">
-		<label id="elh_t73_pinjamanlap_field_name" for="x_field_name" class="col-sm-2 control-label ewLabel"><?php echo $t73_pinjamanlap->field_name->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t73_pinjamanlap->field_name->CellAttributes() ?>>
-<span id="el_t73_pinjamanlap_field_name">
-<input type="text" data-table="t73_pinjamanlap" data-field="x_field_name" name="x_field_name" id="x_field_name" size="30" maxlength="32" placeholder="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_name->getPlaceHolder()) ?>" value="<?php echo $t73_pinjamanlap->field_name->EditValue ?>"<?php echo $t73_pinjamanlap->field_name->EditAttributes() ?>>
+<?php if ($t73_pinjamanlap->field_caption->Visible) { // field_caption ?>
+	<div id="r_field_caption" class="form-group">
+		<label id="elh_t73_pinjamanlap_field_caption" for="x_field_caption" class="col-sm-2 control-label ewLabel"><?php echo $t73_pinjamanlap->field_caption->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t73_pinjamanlap->field_caption->CellAttributes() ?>>
+<span id="el_t73_pinjamanlap_field_caption">
+<input type="text" data-table="t73_pinjamanlap" data-field="x_field_caption" name="x_field_caption" id="x_field_caption" size="30" maxlength="32" placeholder="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_caption->getPlaceHolder()) ?>" value="<?php echo $t73_pinjamanlap->field_caption->EditValue ?>"<?php echo $t73_pinjamanlap->field_caption->EditAttributes() ?>>
 </span>
-<?php echo $t73_pinjamanlap->field_name->CustomMsg ?></div></div>
+<?php echo $t73_pinjamanlap->field_caption->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t73_pinjamanlap->field_index->Visible) { // field_index ?>
+	<div id="r_field_index" class="form-group">
+		<label id="elh_t73_pinjamanlap_field_index" for="x_field_index" class="col-sm-2 control-label ewLabel"><?php echo $t73_pinjamanlap->field_index->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t73_pinjamanlap->field_index->CellAttributes() ?>>
+<span id="el_t73_pinjamanlap_field_index">
+<input type="text" data-table="t73_pinjamanlap" data-field="x_field_index" name="x_field_index" id="x_field_index" size="5" placeholder="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_index->getPlaceHolder()) ?>" value="<?php echo $t73_pinjamanlap->field_index->EditValue ?>"<?php echo $t73_pinjamanlap->field_index->EditAttributes() ?>>
+</span>
+<?php echo $t73_pinjamanlap->field_index->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 <?php if ($t73_pinjamanlap->field_status->Visible) { // field_status ?>
@@ -939,6 +1084,30 @@ $t73_pinjamanlap_add->ShowMessage();
 </div></div>
 </span>
 <?php echo $t73_pinjamanlap->field_status->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t73_pinjamanlap->field_align->Visible) { // field_align ?>
+	<div id="r_field_align" class="form-group">
+		<label id="elh_t73_pinjamanlap_field_align" for="x_field_align" class="col-sm-2 control-label ewLabel"><?php echo $t73_pinjamanlap->field_align->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t73_pinjamanlap->field_align->CellAttributes() ?>>
+<span id="el_t73_pinjamanlap_field_align">
+<select data-table="t73_pinjamanlap" data-field="x_field_align" data-value-separator="<?php echo $t73_pinjamanlap->field_align->DisplayValueSeparatorAttribute() ?>" id="x_field_align" name="x_field_align"<?php echo $t73_pinjamanlap->field_align->EditAttributes() ?>>
+<?php echo $t73_pinjamanlap->field_align->SelectOptionListHtml("x_field_align") ?>
+</select>
+</span>
+<?php echo $t73_pinjamanlap->field_align->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t73_pinjamanlap->field_format->Visible) { // field_format ?>
+	<div id="r_field_format" class="form-group">
+		<label id="elh_t73_pinjamanlap_field_format" for="x_field_format" class="col-sm-2 control-label ewLabel"><?php echo $t73_pinjamanlap->field_format->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t73_pinjamanlap->field_format->CellAttributes() ?>>
+<span id="el_t73_pinjamanlap_field_format">
+<select data-table="t73_pinjamanlap" data-field="x_field_format" data-value-separator="<?php echo $t73_pinjamanlap->field_format->DisplayValueSeparatorAttribute() ?>" id="x_field_format" name="x_field_format"<?php echo $t73_pinjamanlap->field_format->EditAttributes() ?>>
+<?php echo $t73_pinjamanlap->field_format->SelectOptionListHtml("x_field_format") ?>
+</select>
+</span>
+<?php echo $t73_pinjamanlap->field_format->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

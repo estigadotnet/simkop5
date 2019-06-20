@@ -596,6 +596,14 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 				// Switch to inline edit mode
 				if ($this->CurrentAction == "edit")
 					$this->InlineEditMode();
+
+				// Switch to inline add mode
+				if ($this->CurrentAction == "add" || $this->CurrentAction == "copy")
+					$this->InlineAddMode();
+
+				// Switch to grid add mode
+				if ($this->CurrentAction == "gridadd")
+					$this->GridAddMode();
 			} else {
 				if (@$_POST["a_list"] <> "") {
 					$this->CurrentAction = $_POST["a_list"]; // Get action
@@ -617,6 +625,24 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 					// Inline Update
 					if (($this->CurrentAction == "update" || $this->CurrentAction == "overwrite") && @$_SESSION[EW_SESSION_INLINE_MODE] == "edit")
 						$this->InlineUpdate();
+
+					// Insert Inline
+					if ($this->CurrentAction == "insert" && @$_SESSION[EW_SESSION_INLINE_MODE] == "add")
+						$this->InlineInsert();
+
+					// Grid Insert
+					if ($this->CurrentAction == "gridinsert" && @$_SESSION[EW_SESSION_INLINE_MODE] == "gridadd") {
+						if ($this->ValidateGridForm()) {
+							$bGridInsert = $this->GridInsert();
+						} else {
+							$bGridInsert = FALSE;
+							$this->setFailureMessage($gsFormError);
+						}
+						if (!$bGridInsert) {
+							$this->EventCancelled = TRUE;
+							$this->CurrentAction = "gridadd"; // Stay in Grid Add mode
+						}
+					}
 				}
 			}
 
@@ -727,6 +753,11 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 		$_SESSION[EW_SESSION_INLINE_MODE] = ""; // Clear inline mode
 	}
 
+	// Switch to Grid Add mode
+	function GridAddMode() {
+		$_SESSION[EW_SESSION_INLINE_MODE] = "gridadd"; // Enabled grid add
+	}
+
 	// Switch to Grid Edit mode
 	function GridEditMode() {
 		$_SESSION[EW_SESSION_INLINE_MODE] = "gridedit"; // Enable grid edit
@@ -793,6 +824,48 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 		if (strval($this->getKey("id")) <> strval($this->id->CurrentValue))
 			return FALSE;
 		return TRUE;
+	}
+
+	// Switch to Inline Add mode
+	function InlineAddMode() {
+		global $Security, $Language;
+		if (!$Security->CanAdd())
+			$this->Page_Terminate("login.php"); // Return to login page
+		if ($this->CurrentAction == "copy") {
+			if (@$_GET["id"] <> "") {
+				$this->id->setQueryStringValue($_GET["id"]);
+				$this->setKey("id", $this->id->CurrentValue); // Set up key
+			} else {
+				$this->setKey("id", ""); // Clear key
+				$this->CurrentAction = "add";
+			}
+		}
+		$_SESSION[EW_SESSION_INLINE_MODE] = "add"; // Enable inline add
+	}
+
+	// Perform update to Inline Add/Copy record
+	function InlineInsert() {
+		global $Language, $objForm, $gsFormError;
+		$this->LoadOldRecord(); // Load old recordset
+		$objForm->Index = 0;
+		$this->LoadFormValues(); // Get form values
+
+		// Validate form
+		if (!$this->ValidateForm()) {
+			$this->setFailureMessage($gsFormError); // Set validation error message
+			$this->EventCancelled = TRUE; // Set event cancelled
+			$this->CurrentAction = "add"; // Stay in add mode
+			return;
+		}
+		$this->SendEmail = TRUE; // Send email on add success
+		if ($this->AddRow($this->OldRecordset)) { // Add record
+			if ($this->getSuccessMessage() == "")
+				$this->setSuccessMessage($Language->Phrase("AddSuccess")); // Set up add success message
+			$this->ClearInlineMode(); // Clear inline add mode
+		} else { // Add failed
+			$this->EventCancelled = TRUE; // Set event cancelled
+			$this->CurrentAction = "add"; // Stay in add mode
+		}
 	}
 
 	// Perform update to grid
@@ -936,6 +1009,100 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 				return FALSE;
 		}
 		return TRUE;
+	}
+
+	// Perform Grid Add
+	function GridInsert() {
+		global $Language, $objForm, $gsFormError;
+		$rowindex = 1;
+		$bGridInsert = FALSE;
+		$conn = &$this->Connection();
+
+		// Call Grid Inserting event
+		if (!$this->Grid_Inserting()) {
+			if ($this->getFailureMessage() == "") {
+				$this->setFailureMessage($Language->Phrase("GridAddCancelled")); // Set grid add cancelled message
+			}
+			return FALSE;
+		}
+
+		// Begin transaction
+		$conn->BeginTrans();
+
+		// Init key filter
+		$sWrkFilter = "";
+		$addcnt = 0;
+		if ($this->AuditTrailOnAdd) $this->WriteAuditTrailDummy($Language->Phrase("BatchInsertBegin")); // Batch insert begin
+		$sKey = "";
+
+		// Get row count
+		$objForm->Index = -1;
+		$rowcnt = strval($objForm->GetValue($this->FormKeyCountName));
+		if ($rowcnt == "" || !is_numeric($rowcnt))
+			$rowcnt = 0;
+
+		// Insert all rows
+		for ($rowindex = 1; $rowindex <= $rowcnt; $rowindex++) {
+
+			// Load current row values
+			$objForm->Index = $rowindex;
+			$rowaction = strval($objForm->GetValue($this->FormActionName));
+			if ($rowaction <> "" && $rowaction <> "insert")
+				continue; // Skip
+			$this->LoadFormValues(); // Get form values
+			if (!$this->EmptyRow()) {
+				$addcnt++;
+				$this->SendEmail = FALSE; // Do not send email on insert success
+
+				// Validate form
+				if (!$this->ValidateForm()) {
+					$bGridInsert = FALSE; // Form error, reset action
+					$this->setFailureMessage($gsFormError);
+				} else {
+					$bGridInsert = $this->AddRow($this->OldRecordset); // Insert this row
+				}
+				if ($bGridInsert) {
+					if ($sKey <> "") $sKey .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
+					$sKey .= $this->id->CurrentValue;
+
+					// Add filter for this record
+					$sFilter = $this->KeyFilter();
+					if ($sWrkFilter <> "") $sWrkFilter .= " OR ";
+					$sWrkFilter .= $sFilter;
+				} else {
+					break;
+				}
+			}
+		}
+		if ($addcnt == 0) { // No record inserted
+			$this->setFailureMessage($Language->Phrase("NoAddRecord"));
+			$bGridInsert = FALSE;
+		}
+		if ($bGridInsert) {
+			$conn->CommitTrans(); // Commit transaction
+
+			// Get new recordset
+			$this->CurrentFilter = $sWrkFilter;
+			$sSql = $this->SQL();
+			if ($rs = $conn->Execute($sSql)) {
+				$rsnew = $rs->GetRows();
+				$rs->Close();
+			}
+
+			// Call Grid_Inserted event
+			$this->Grid_Inserted($rsnew);
+			if ($this->AuditTrailOnAdd) $this->WriteAuditTrailDummy($Language->Phrase("BatchInsertSuccess")); // Batch insert success
+			if ($this->getSuccessMessage() == "")
+				$this->setSuccessMessage($Language->Phrase("InsertSuccess")); // Set up insert success message
+			$this->ClearInlineMode(); // Clear grid add mode
+		} else {
+			$conn->RollbackTrans(); // Rollback transaction
+			if ($this->AuditTrailOnAdd) $this->WriteAuditTrailDummy($Language->Phrase("BatchInsertRollback")); // Batch insert rollback
+			if ($this->getFailureMessage() == "") {
+				$this->setFailureMessage($Language->Phrase("InsertFailed")); // Set insert failed message
+			}
+		}
+		return $bGridInsert;
 	}
 
 	// Check if empty row
@@ -1109,6 +1276,12 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 		$item->Visible = $Security->CanEdit();
 		$item->OnLeft = TRUE;
 
+		// "copy"
+		$item = &$this->ListOptions->Add("copy");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = $Security->CanAdd();
+		$item->OnLeft = TRUE;
+
 		// List actions
 		$item = &$this->ListOptions->Add("listactions");
 		$item->CssStyle = "white-space: nowrap;";
@@ -1191,6 +1364,18 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 		$oListOpt = &$this->ListOptions->Items["sequence"];
 		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
 
+		// "copy"
+		$oListOpt = &$this->ListOptions->Items["copy"];
+		if (($this->CurrentAction == "add" || $this->CurrentAction == "copy") && $this->RowType == EW_ROWTYPE_ADD) { // Inline Add/Copy
+			$this->ListOptions->CustomItem = "copy"; // Show copy column only
+			$cancelurl = $this->AddMasterUrl($this->PageUrl() . "a=cancel");
+			$oListOpt->Body = "<div" . (($oListOpt->OnLeft) ? " style=\"text-align: right\"" : "") . ">" .
+				"<a class=\"ewGridLink ewInlineInsert\" title=\"" . ew_HtmlTitle($Language->Phrase("InsertLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("InsertLink")) . "\" href=\"\" onclick=\"return ewForms(this).Submit('" . $this->PageName() . "');\">" . $Language->Phrase("InsertLink") . "</a>&nbsp;" .
+				"<a class=\"ewGridLink ewInlineCancel\" title=\"" . ew_HtmlTitle($Language->Phrase("CancelLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("CancelLink")) . "\" href=\"" . $cancelurl . "\">" . $Language->Phrase("CancelLink") . "</a>" .
+				"<input type=\"hidden\" name=\"a_list\" id=\"a_list\" value=\"insert\"></div>";
+			return;
+		}
+
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		if ($this->CurrentAction == "edit" && $this->RowType == EW_ROWTYPE_EDIT) { // Inline-Edit
@@ -1210,6 +1395,16 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
 			$oListOpt->Body .= "<a class=\"ewRowLink ewInlineEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("InlineEditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("InlineEditLink")) . "\" href=\"" . ew_HtmlEncode(ew_GetHashUrl($this->InlineEditUrl, $this->PageObjName . "_row_" . $this->RowCnt)) . "\">" . $Language->Phrase("InlineEditLink") . "</a>";
+		} else {
+			$oListOpt->Body = "";
+		}
+
+		// "copy"
+		$oListOpt = &$this->ListOptions->Items["copy"];
+		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
+		if ($Security->CanAdd()) {
+			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
+			$oListOpt->Body .= "<a class=\"ewRowLink ewInlineCopy\" title=\"" . ew_HtmlTitle($Language->Phrase("InlineCopyLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("InlineCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->InlineCopyUrl) . "\">" . $Language->Phrase("InlineCopyLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
 		}
@@ -1259,6 +1454,21 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 	function SetupOtherOptions() {
 		global $Language, $Security;
 		$options = &$this->OtherOptions;
+		$option = $options["addedit"];
+
+		// Add
+		$item = &$option->Add("add");
+		$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
+		$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
+		$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
+
+		// Inline Add
+		$item = &$option->Add("inlineadd");
+		$item->Body = "<a class=\"ewAddEdit ewInlineAdd\" title=\"" . ew_HtmlTitle($Language->Phrase("InlineAddLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("InlineAddLink")) . "\" href=\"" . ew_HtmlEncode($this->InlineAddUrl) . "\">" .$Language->Phrase("InlineAddLink") . "</a>";
+		$item->Visible = ($this->InlineAddUrl <> "" && $Security->CanAdd());
+		$item = &$option->Add("gridadd");
+		$item->Body = "<a class=\"ewAddEdit ewGridAdd\" title=\"" . ew_HtmlTitle($Language->Phrase("GridAddLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("GridAddLink")) . "\" href=\"" . ew_HtmlEncode($this->GridAddUrl) . "\">" . $Language->Phrase("GridAddLink") . "</a>";
+		$item->Visible = ($this->GridAddUrl <> "" && $Security->CanAdd());
 
 		// Add grid edit
 		$option = $options["addedit"];
@@ -1329,6 +1539,30 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 			// Hide all options first
 			foreach ($options as &$option)
 				$option->HideAllOptions();
+			if ($this->CurrentAction == "gridadd") {
+				if ($this->AllowAddDeleteRow) {
+
+					// Add add blank row
+					$option = &$options["addedit"];
+					$option->UseDropDownButton = FALSE;
+					$option->UseImageAndText = TRUE;
+					$item = &$option->Add("addblankrow");
+					$item->Body = "<a class=\"ewAddEdit ewAddBlankRow\" title=\"" . ew_HtmlTitle($Language->Phrase("AddBlankRow")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("AddBlankRow")) . "\" href=\"javascript:void(0);\" onclick=\"ew_AddGridRow(this);\">" . $Language->Phrase("AddBlankRow") . "</a>";
+					$item->Visible = $Security->CanAdd();
+				}
+				$option = &$options["action"];
+				$option->UseDropDownButton = FALSE;
+				$option->UseImageAndText = TRUE;
+
+				// Add grid insert
+				$item = &$option->Add("gridinsert");
+				$item->Body = "<a class=\"ewAction ewGridInsert\" title=\"" . ew_HtmlTitle($Language->Phrase("GridInsertLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("GridInsertLink")) . "\" href=\"\" onclick=\"return ewForms(this).Submit('" . $this->PageName() . "');\">" . $Language->Phrase("GridInsertLink") . "</a>";
+
+				// Add grid cancel
+				$item = &$option->Add("gridcancel");
+				$cancelurl = $this->AddMasterUrl($this->PageUrl() . "a=cancel");
+				$item->Body = "<a class=\"ewAction ewGridCancel\" title=\"" . ew_HtmlTitle($Language->Phrase("GridCancelLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("GridCancelLink")) . "\" href=\"" . $cancelurl . "\">" . $Language->Phrase("GridCancelLink") . "</a>";
+			}
 			if ($this->CurrentAction == "gridedit") {
 				if ($this->AllowAddDeleteRow) {
 
@@ -1338,7 +1572,7 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 					$option->UseImageAndText = TRUE;
 					$item = &$option->Add("addblankrow");
 					$item->Body = "<a class=\"ewAddEdit ewAddBlankRow\" title=\"" . ew_HtmlTitle($Language->Phrase("AddBlankRow")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("AddBlankRow")) . "\" href=\"javascript:void(0);\" onclick=\"ew_AddGridRow(this);\">" . $Language->Phrase("AddBlankRow") . "</a>";
-					$item->Visible = FALSE;
+					$item->Visible = $Security->CanAdd();
 				}
 				$option = &$options["action"];
 				$option->UseDropDownButton = FALSE;
@@ -1527,21 +1761,27 @@ class ct73_pinjamanlap_list extends ct73_pinjamanlap {
 		if (!$this->field_name->FldIsDetailKey) {
 			$this->field_name->setFormValue($objForm->GetValue("x_field_name"));
 		}
+		$this->field_name->setOldValue($objForm->GetValue("o_field_name"));
 		if (!$this->field_caption->FldIsDetailKey) {
 			$this->field_caption->setFormValue($objForm->GetValue("x_field_caption"));
 		}
+		$this->field_caption->setOldValue($objForm->GetValue("o_field_caption"));
 		if (!$this->field_index->FldIsDetailKey) {
 			$this->field_index->setFormValue($objForm->GetValue("x_field_index"));
 		}
+		$this->field_index->setOldValue($objForm->GetValue("o_field_index"));
 		if (!$this->field_status->FldIsDetailKey) {
 			$this->field_status->setFormValue($objForm->GetValue("x_field_status"));
 		}
+		$this->field_status->setOldValue($objForm->GetValue("o_field_status"));
 		if (!$this->field_align->FldIsDetailKey) {
 			$this->field_align->setFormValue($objForm->GetValue("x_field_align"));
 		}
+		$this->field_align->setOldValue($objForm->GetValue("o_field_align"));
 		if (!$this->field_format->FldIsDetailKey) {
 			$this->field_format->setFormValue($objForm->GetValue("x_field_format"));
 		}
+		$this->field_format->setOldValue($objForm->GetValue("o_field_format"));
 		if (!$this->id->FldIsDetailKey && $this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -2476,6 +2716,9 @@ ft73_pinjamanlaplist.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
+		var checkrow = (gridinsert) ? !this.EmptyRow(infix) : true;
+		if (checkrow) {
+			addcnt++;
 			elm = this.GetElements("x" + infix + "_field_name");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t73_pinjamanlap->field_name->FldCaption(), $t73_pinjamanlap->field_name->ReqErrMsg)) ?>");
@@ -2501,7 +2744,24 @@ ft73_pinjamanlaplist.Validate = function() {
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
 				return false;
+		} // End Grid Add checking
 	}
+	if (gridinsert && addcnt == 0) { // No row added
+		ew_Alert(ewLanguage.Phrase("NoAddRecord"));
+		return false;
+	}
+	return true;
+}
+
+// Check empty row
+ft73_pinjamanlaplist.EmptyRow = function(infix) {
+	var fobj = this.Form;
+	if (ew_ValueChanged(fobj, infix, "field_name", false)) return false;
+	if (ew_ValueChanged(fobj, infix, "field_caption", false)) return false;
+	if (ew_ValueChanged(fobj, infix, "field_index", false)) return false;
+	if (ew_ValueChanged(fobj, infix, "field_status", true)) return false;
+	if (ew_ValueChanged(fobj, infix, "field_align", false)) return false;
+	if (ew_ValueChanged(fobj, infix, "field_format", false)) return false;
 	return true;
 }
 
@@ -2550,6 +2810,13 @@ ft73_pinjamanlaplist.Lists["x_field_format"].Options = <?php echo json_encode($t
 </div>
 <?php } ?>
 <?php
+if ($t73_pinjamanlap->CurrentAction == "gridadd") {
+	$t73_pinjamanlap->CurrentFilter = "0=1";
+	$t73_pinjamanlap_list->StartRec = 1;
+	$t73_pinjamanlap_list->DisplayRecs = $t73_pinjamanlap->GridAddRowCount;
+	$t73_pinjamanlap_list->TotalRecs = $t73_pinjamanlap_list->DisplayRecs;
+	$t73_pinjamanlap_list->StopRec = $t73_pinjamanlap_list->DisplayRecs;
+} else {
 	$bSelectLimit = $t73_pinjamanlap_list->UseSelectLimit;
 	if ($bSelectLimit) {
 		if ($t73_pinjamanlap_list->TotalRecs <= 0)
@@ -2575,6 +2842,7 @@ ft73_pinjamanlaplist.Lists["x_field_format"].Options = <?php echo json_encode($t
 		else
 			$t73_pinjamanlap_list->setWarningMessage($Language->Phrase("NoRecord"));
 	}
+}
 $t73_pinjamanlap_list->RenderOtherOptions();
 ?>
 <?php $t73_pinjamanlap_list->ShowPageHeader(); ?>
@@ -2589,7 +2857,7 @@ $t73_pinjamanlap_list->ShowMessage();
 <?php } ?>
 <input type="hidden" name="t" value="t73_pinjamanlap">
 <div id="gmp_t73_pinjamanlap" class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
-<?php if ($t73_pinjamanlap_list->TotalRecs > 0 || $t73_pinjamanlap->CurrentAction == "gridedit") { ?>
+<?php if ($t73_pinjamanlap_list->TotalRecs > 0 || $t73_pinjamanlap->CurrentAction == "add" || $t73_pinjamanlap->CurrentAction == "copy" || $t73_pinjamanlap->CurrentAction == "gridedit") { ?>
 <table id="tbl_t73_pinjamanlaplist" class="table ewTable">
 <?php echo $t73_pinjamanlap->TableCustomInnerHtml ?>
 <thead><!-- Table header -->
@@ -2668,6 +2936,102 @@ $t73_pinjamanlap_list->ListOptions->Render("header", "right");
 </thead>
 <tbody>
 <?php
+	if ($t73_pinjamanlap->CurrentAction == "add" || $t73_pinjamanlap->CurrentAction == "copy") {
+		$t73_pinjamanlap_list->RowIndex = 0;
+		$t73_pinjamanlap_list->KeyCount = $t73_pinjamanlap_list->RowIndex;
+		if ($t73_pinjamanlap->CurrentAction == "copy" && !$t73_pinjamanlap_list->LoadRow())
+				$t73_pinjamanlap->CurrentAction = "add";
+		if ($t73_pinjamanlap->CurrentAction == "add")
+			$t73_pinjamanlap_list->LoadDefaultValues();
+		if ($t73_pinjamanlap->EventCancelled) // Insert failed
+			$t73_pinjamanlap_list->RestoreFormValues(); // Restore form values
+
+		// Set row properties
+		$t73_pinjamanlap->ResetAttrs();
+		$t73_pinjamanlap->RowAttrs = array_merge($t73_pinjamanlap->RowAttrs, array('data-rowindex'=>0, 'id'=>'r0_t73_pinjamanlap', 'data-rowtype'=>EW_ROWTYPE_ADD));
+		$t73_pinjamanlap->RowType = EW_ROWTYPE_ADD;
+
+		// Render row
+		$t73_pinjamanlap_list->RenderRow();
+
+		// Render list options
+		$t73_pinjamanlap_list->RenderListOptions();
+		$t73_pinjamanlap_list->StartRowCnt = 0;
+?>
+	<tr<?php echo $t73_pinjamanlap->RowAttributes() ?>>
+<?php
+
+// Render list options (body, left)
+$t73_pinjamanlap_list->ListOptions->Render("body", "left", $t73_pinjamanlap_list->RowCnt);
+?>
+	<?php if ($t73_pinjamanlap->field_name->Visible) { // field_name ?>
+		<td data-name="field_name">
+<span id="el<?php echo $t73_pinjamanlap_list->RowCnt ?>_t73_pinjamanlap_field_name" class="form-group t73_pinjamanlap_field_name">
+<input type="text" data-table="t73_pinjamanlap" data-field="x_field_name" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_name" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_name" size="30" maxlength="32" placeholder="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_name->getPlaceHolder()) ?>" value="<?php echo $t73_pinjamanlap->field_name->EditValue ?>"<?php echo $t73_pinjamanlap->field_name->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t73_pinjamanlap" data-field="x_field_name" name="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_name" id="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_name" value="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_name->OldValue) ?>">
+</td>
+	<?php } ?>
+	<?php if ($t73_pinjamanlap->field_caption->Visible) { // field_caption ?>
+		<td data-name="field_caption">
+<span id="el<?php echo $t73_pinjamanlap_list->RowCnt ?>_t73_pinjamanlap_field_caption" class="form-group t73_pinjamanlap_field_caption">
+<input type="text" data-table="t73_pinjamanlap" data-field="x_field_caption" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_caption" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_caption" size="30" maxlength="32" placeholder="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_caption->getPlaceHolder()) ?>" value="<?php echo $t73_pinjamanlap->field_caption->EditValue ?>"<?php echo $t73_pinjamanlap->field_caption->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t73_pinjamanlap" data-field="x_field_caption" name="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_caption" id="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_caption" value="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_caption->OldValue) ?>">
+</td>
+	<?php } ?>
+	<?php if ($t73_pinjamanlap->field_index->Visible) { // field_index ?>
+		<td data-name="field_index">
+<span id="el<?php echo $t73_pinjamanlap_list->RowCnt ?>_t73_pinjamanlap_field_index" class="form-group t73_pinjamanlap_field_index">
+<input type="text" data-table="t73_pinjamanlap" data-field="x_field_index" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_index" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_index" size="5" placeholder="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_index->getPlaceHolder()) ?>" value="<?php echo $t73_pinjamanlap->field_index->EditValue ?>"<?php echo $t73_pinjamanlap->field_index->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t73_pinjamanlap" data-field="x_field_index" name="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_index" id="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_index" value="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_index->OldValue) ?>">
+</td>
+	<?php } ?>
+	<?php if ($t73_pinjamanlap->field_status->Visible) { // field_status ?>
+		<td data-name="field_status">
+<span id="el<?php echo $t73_pinjamanlap_list->RowCnt ?>_t73_pinjamanlap_field_status" class="form-group t73_pinjamanlap_field_status">
+<div id="tp_x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" class="ewTemplate"><input type="radio" data-table="t73_pinjamanlap" data-field="x_field_status" data-value-separator="<?php echo $t73_pinjamanlap->field_status->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" value="{value}"<?php echo $t73_pinjamanlap->field_status->EditAttributes() ?>></div>
+<div id="dsl_x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t73_pinjamanlap->field_status->RadioButtonListHtml(FALSE, "x{$t73_pinjamanlap_list->RowIndex}_field_status") ?>
+</div></div>
+</span>
+<input type="hidden" data-table="t73_pinjamanlap" data-field="x_field_status" name="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" id="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_status" value="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_status->OldValue) ?>">
+</td>
+	<?php } ?>
+	<?php if ($t73_pinjamanlap->field_align->Visible) { // field_align ?>
+		<td data-name="field_align">
+<span id="el<?php echo $t73_pinjamanlap_list->RowCnt ?>_t73_pinjamanlap_field_align" class="form-group t73_pinjamanlap_field_align">
+<select data-table="t73_pinjamanlap" data-field="x_field_align" data-value-separator="<?php echo $t73_pinjamanlap->field_align->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_align" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_align"<?php echo $t73_pinjamanlap->field_align->EditAttributes() ?>>
+<?php echo $t73_pinjamanlap->field_align->SelectOptionListHtml("x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_align") ?>
+</select>
+</span>
+<input type="hidden" data-table="t73_pinjamanlap" data-field="x_field_align" name="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_align" id="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_align" value="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_align->OldValue) ?>">
+</td>
+	<?php } ?>
+	<?php if ($t73_pinjamanlap->field_format->Visible) { // field_format ?>
+		<td data-name="field_format">
+<span id="el<?php echo $t73_pinjamanlap_list->RowCnt ?>_t73_pinjamanlap_field_format" class="form-group t73_pinjamanlap_field_format">
+<select data-table="t73_pinjamanlap" data-field="x_field_format" data-value-separator="<?php echo $t73_pinjamanlap->field_format->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_format" name="x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_format"<?php echo $t73_pinjamanlap->field_format->EditAttributes() ?>>
+<?php echo $t73_pinjamanlap->field_format->SelectOptionListHtml("x<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_format") ?>
+</select>
+</span>
+<input type="hidden" data-table="t73_pinjamanlap" data-field="x_field_format" name="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_format" id="o<?php echo $t73_pinjamanlap_list->RowIndex ?>_field_format" value="<?php echo ew_HtmlEncode($t73_pinjamanlap->field_format->OldValue) ?>">
+</td>
+	<?php } ?>
+<?php
+
+// Render list options (body, right)
+$t73_pinjamanlap_list->ListOptions->Render("body", "right", $t73_pinjamanlap_list->RowCnt);
+?>
+<script type="text/javascript">
+ft73_pinjamanlaplist.UpdateOpts(<?php echo $t73_pinjamanlap_list->RowIndex ?>);
+</script>
+	</tr>
+<?php
+}
+?>
+<?php
 if ($t73_pinjamanlap->ExportAll && $t73_pinjamanlap->Export <> "") {
 	$t73_pinjamanlap_list->StopRec = $t73_pinjamanlap_list->TotalRecs;
 } else {
@@ -2704,6 +3068,8 @@ $t73_pinjamanlap_list->RenderRow();
 $t73_pinjamanlap_list->EditRowCnt = 0;
 if ($t73_pinjamanlap->CurrentAction == "edit")
 	$t73_pinjamanlap_list->RowIndex = 1;
+if ($t73_pinjamanlap->CurrentAction == "gridadd")
+	$t73_pinjamanlap_list->RowIndex = 0;
 if ($t73_pinjamanlap->CurrentAction == "gridedit")
 	$t73_pinjamanlap_list->RowIndex = 0;
 while ($t73_pinjamanlap_list->RecCnt < $t73_pinjamanlap_list->StopRec) {
@@ -2733,6 +3099,10 @@ while ($t73_pinjamanlap_list->RecCnt < $t73_pinjamanlap_list->StopRec) {
 			$t73_pinjamanlap_list->LoadRowValues($t73_pinjamanlap_list->Recordset); // Load row values
 		}
 		$t73_pinjamanlap->RowType = EW_ROWTYPE_VIEW; // Render view
+		if ($t73_pinjamanlap->CurrentAction == "gridadd") // Grid add
+			$t73_pinjamanlap->RowType = EW_ROWTYPE_ADD; // Render add
+		if ($t73_pinjamanlap->CurrentAction == "gridadd" && $t73_pinjamanlap->EventCancelled && !$objForm->HasValue("k_blankrow")) // Insert failed
+			$t73_pinjamanlap_list->RestoreCurrentRowFormValues($t73_pinjamanlap_list->RowIndex); // Restore form values
 		if ($t73_pinjamanlap->CurrentAction == "edit") {
 			if ($t73_pinjamanlap_list->CheckInlineEditKey() && $t73_pinjamanlap_list->EditRowCnt == 0) { // Inline edit
 				$t73_pinjamanlap->RowType = EW_ROWTYPE_EDIT; // Render edit
@@ -3034,6 +3404,14 @@ ft73_pinjamanlaplist.UpdateOpts(<?php echo $t73_pinjamanlap_list->RowIndex ?>);
 ?>
 </tbody>
 </table>
+<?php } ?>
+<?php if ($t73_pinjamanlap->CurrentAction == "add" || $t73_pinjamanlap->CurrentAction == "copy") { ?>
+<input type="hidden" name="<?php echo $t73_pinjamanlap_list->FormKeyCountName ?>" id="<?php echo $t73_pinjamanlap_list->FormKeyCountName ?>" value="<?php echo $t73_pinjamanlap_list->KeyCount ?>">
+<?php } ?>
+<?php if ($t73_pinjamanlap->CurrentAction == "gridadd") { ?>
+<input type="hidden" name="a_list" id="a_list" value="gridinsert">
+<input type="hidden" name="<?php echo $t73_pinjamanlap_list->FormKeyCountName ?>" id="<?php echo $t73_pinjamanlap_list->FormKeyCountName ?>" value="<?php echo $t73_pinjamanlap_list->KeyCount ?>">
+<?php echo $t73_pinjamanlap_list->MultiSelectKey ?>
 <?php } ?>
 <?php if ($t73_pinjamanlap->CurrentAction == "edit") { ?>
 <input type="hidden" name="<?php echo $t73_pinjamanlap_list->FormKeyCountName ?>" id="<?php echo $t73_pinjamanlap_list->FormKeyCountName ?>" value="<?php echo $t73_pinjamanlap_list->KeyCount ?>">
