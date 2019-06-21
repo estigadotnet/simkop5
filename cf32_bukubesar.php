@@ -410,6 +410,9 @@ $abulan = array(1 => "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Ju
 
 <?php
 if (isset($_POST["btnproses"])) { // begin -proses-
+
+	if ($_POST["id"] <> "0") { // begin SEMUA AKUN
+
 	//echo date('m').substr("00".$_POST['bulan'],-2);
 	// echo "submitted";
 	//echo $abulan[$_POST["bulan"]] . " " . $_POST["tahun"];
@@ -524,7 +527,7 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 		bb.tanggal
 		;";
 		//echo $q;
-		echo $q; exit;
+		//echo $q; exit;
 		Conn()->Execute($q);
 		$rs = ew_Execute("select * from t78_bukubesarlap");
 		$AkunKode = $rs->fields["AkunKode"];
@@ -554,6 +557,8 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 		<th align='right'>Saldo</th>
 		</tr>";
 
+		$m_debet = 0; $m_kredit = 0; $m_record_pertama = 0;
+
 		while (!$rs->EOF) {
 			echo "
 			<tr>
@@ -564,8 +569,27 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 			<td align='right'>" . number_format($rs->fields["Kredit"]) . "</td>
 			<td align='right'>" . number_format($rs->fields["Saldo"]) . "</td>
 			</tr>";
+
+			if ($m_record_pertama == 0) {
+				$m_record_pertama = 1;
+				$m_debet  += $rs->fields["Saldo"];
+			}
+
+			$m_debet  += $rs->fields["Debet"];
+			$m_kredit += $rs->fields["Kredit"];
 			$rs->MoveNext();
 		}
+
+		echo "
+		<tr>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td align='right'><b>".number_format($m_debet)."</b></td>
+		<td align='right'><b>".number_format($m_kredit)."</b></td>
+		<td>&nbsp;</td>
+		</tr>
+		";
 	
 		echo "
 		</tbody>
@@ -579,6 +603,8 @@ if (isset($_POST["btnproses"])) { // begin -proses-
 		//header("Location: t78_bukubesarlaplist.php?akunkode=".$AkunKode."&akunnama=".$AkunNama."");
 
 	//} // end tabel periode sekarang
+
+	} //end of SEMUA AKUN
 
 } // end proses
 ?>

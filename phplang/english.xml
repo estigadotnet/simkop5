@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/6/20" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/6/21" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,6 +583,9 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
+    <menu id="10654">
+      <phrase id="menutext" value="v 0306 pinjamanlap 5" />
+    </menu>
     <menu id="10652">
       <phrase id="menutext" value="v 0304 pinjamanlap 3" />
     </menu>
@@ -2259,6 +2262,9 @@
       <field id="tanggal_bayar">
         <phrase id="fldcaption" value="Tanggal Bayar" />
       </field>
+      <field id="umur_tunggakan">
+        <phrase id="fldcaption" value="umur tunggakan" />
+      </field>
     </table>
     <table id="v0303_pinjamanlap2">
       <phrase id="tblcaption" value="v 0303 pinjamanlap 2" />
@@ -2513,6 +2519,18 @@
       </field>
       <field id="saldoakhir">
         <phrase id="fldcaption" value="saldoakhir" />
+      </field>
+    </table>
+    <table id="v0306_pinjamanlap5">
+      <phrase id="tblcaption" value="v 0306 pinjamanlap 5" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="tanggal_bayar">
+        <phrase id="fldcaption" value="tanggal bayar" />
+      </field>
+      <field id="umur_tunggakan">
+        <phrase id="fldcaption" value="umur tunggakan" />
       </field>
     </table>
   </project>
