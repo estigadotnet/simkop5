@@ -1,0 +1,387 @@
+<?xml version="1.0"?>
+<theme name="userstyle" version="2017.0.6" author="project@estiga.net">
+	<style id="ThemeSiteHeaderBackColor" value="#A9A9A9"/>
+	<style id="ThemeSiteHeaderTextColor" value=""/>
+	<style id="ThemeSiteLeftBackColor" value="#F5F5F5"/>
+	<style id="ThemeSiteLeftTextColor" value=""/>
+	<style id="ThemeSiteFooterBackColor" value="#A9A9A9"/>
+	<style id="ThemeSiteFooterTextColor" value="#FFFFFF"/>
+	<style id="ThemeTableHeaderBackColor" value="#B1174D"/>
+	<style id="ThemeTableHeaderBorderColor" value="#8A0A37"/>
+	<style id="ThemeTableHeaderTextColor" value="#FFFFFF"/>
+	<style id="ThemeTableBodyRowColor" value="#FFFFFF"/>
+	<style id="ThemeTableBodyRowTextColor" value=""/>
+	<style id="ThemeTableBodyAlternatingRowColor" value="#F8EDEF"/>
+	<style id="ThemeTableBodyAlternatingRowTextColor" value=""/>
+	<style id="ThemeTableBodyEditRowColor" value="#FFE4E1"/>
+	<style id="ThemeTableBodyEditRowTextColor" value=""/>
+	<style id="ThemeTableBodyHighlightRowColor" value="#FFB6C1"/>
+	<style id="ThemeTableBodyHighlightRowTextColor" value=""/>
+	<style id="ThemeTableBodySelectRowColor" value="#747474"/>
+	<style id="ThemeTableBodySelectRowTextColor" value="#FFFFFF"/>
+	<style id="ThemeTableFooterBackColor" value="#F5F5F5"/>
+	<style id="ThemeTableFooterTextColor" value=""/>
+	<style id="ThemeGridPadding" value="3"/>
+	<style id="ThemeGridBorderWidth" value="1"/>
+	<style id="ThemeGridBorderColor" value="#8A0A37"/>
+	<style id="ThemeGridLineWidth" value="1"/>
+	<style id="ThemeGridLineColor" value="#D5D5D5"/>
+	<style id="ThemeGridPagerPanelBackColor" value="#EFEFEF"/>
+	<style id="ThemeGridPagerPanelTextColor" value="#8A0A37"/>
+	<style id="ThemeMobileMenuInverted" value="0"/>
+	<style id="ThemeUseBootstrapTheme" value="1"/>
+	<style id="ThemeBrandPrimary" value="darken(#428bca, 6.5%)"/>
+	<style id="ThemeBrandSuccess" value="#5CB85C"/>
+	<style id="ThemeBrandInfo" value="#5BC0DE"/>
+	<style id="ThemeBrandWarning" value="#F0AD4E"/>
+	<style id="ThemeBrandDanger" value="#D9534F"/>
+	<style id="ThemeBodyBackground" value="#FFFFFF"/>
+	<style id="ThemeTextColor" value="$gray-dark"/>
+	<style id="ThemeLinkColor" value="$brand-primary"/>
+	<style id="ThemeLinkColorHover" value="darken($link-color, 15%)"/>
+	<style id="ThemeSansFontFamily" value="&quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif"/>
+	<style id="ThemeSerifFontFamily" value="Georgia, &quot;Times New Roman&quot;, Times, serif"/>
+	<style id="ThemeMonoFontFamily" value="Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace"/>
+	<style id="ThemeFontSizeLarge" value="ceil(($font-size-base * 1.25))"/>
+	<style id="ThemeFontSizeSmall" value="ceil(($font-size-base * 0.85))"/>
+	<style id="ThemeFontSizeH1" value="floor(($font-size-base * 2.6))"/>
+	<style id="ThemeFontSizeH2" value="floor(($font-size-base * 2.15))"/>
+	<style id="ThemeFontSizeH3" value="ceil(($font-size-base * 1.7))"/>
+	<style id="ThemeFontSizeH4" value="ceil(($font-size-base * 1.25))"/>
+	<style id="ThemeFontSizeH5" value="$font-size-base"/>
+	<style id="ThemeFontSizeH6" value="ceil(($font-size-base * 0.85))"/>
+	<style id="ThemeLineHeightBase" value="1.428571429"/>
+	<style id="ThemeLineHeightComputed" value="floor(($font-size-base * $line-height-base))"/>
+	<style id="ThemeHeadingsFontFamily" value="inherit"/>
+	<style id="ThemeHeadingsFontWeight" value="500"/>
+	<style id="ThemeHeadingsLineHeight" value="1.1"/>
+	<style id="ThemeHeadingsColor" value=""/>
+	<style id="ThemePaddingBaseVertical" value="6"/>
+	<style id="ThemePaddingBaseHorizontal" value="12"/>
+	<style id="ThemePaddingLargeVertical" value="10"/>
+	<style id="ThemePaddingLargeHorizontal" value="16"/>
+	<style id="ThemePaddingSmallVertical" value="5"/>
+	<style id="ThemePaddingSmallHorizontal" value="10"/>
+	<style id="ThemePaddingXsVertical" value="1"/>
+	<style id="ThemePaddingXsHorizontal" value="5"/>
+	<style id="ThemeLineHeightLarge" value="1.3333333"/>
+	<style id="ThemeLineHeightSmall" value="1.5"/>
+	<style id="ThemeBaseBorderRadius" value="4"/>
+	<style id="ThemeBorderRadiusLarge" value="6"/>
+	<style id="ThemeBorderRadiusSmall" value="3"/>
+	<style id="ThemeComponentActiveColor" value="#FFFFFF"/>
+	<style id="ThemeComponentActiveBg" value="$brand-primary"/>
+	<style id="ThemeCaretWidthBase" value="4"/>
+	<style id="ThemeCaretWidthLarge" value="5"/>
+	<style id="ThemeTableCellPadding" value="7"/>
+	<style id="ThemeTableCondensedCellPadding" value="5"/>
+	<style id="ThemeTableBackground" value="transparent"/>
+	<style id="ThemeTableBackgroundAccent" value="#F9F9F9"/>
+	<style id="ThemeTableBackgroundHover" value="#F5F5F5"/>
+	<style id="ThemeTableBackgroundActive" value="$table-bg-hover"/>
+	<style id="ThemeTableBorder" value="#DDDDDD"/>
+	<style id="ThemeBtnFontWeight" value="normal"/>
+	<style id="ThemeBtnDefaultColor" value="#333333"/>
+	<style id="ThemeBtnDefaultBg" value="#FFFFFF"/>
+	<style id="ThemeBtnDefaultBorder" value="#CCCCCC"/>
+	<style id="ThemeBtnPrimaryColor" value="#FFFFFF"/>
+	<style id="ThemeBtnPrimaryBg" value="$brand-primary"/>
+	<style id="ThemeBtnPrimaryBorder" value="darken($btn-primary-bg, 5%)"/>
+	<style id="ThemeBtnSuccessColor" value="#FFFFFF"/>
+	<style id="ThemeBtnSuccessBg" value="$brand-success"/>
+	<style id="ThemeBtnSuccessBorder" value="darken($btn-success-bg, 5%)"/>
+	<style id="ThemeBtnInfoColor" value="#FFFFFF"/>
+	<style id="ThemeBtnInfoBg" value="$brand-info"/>
+	<style id="ThemeBtnInfoBorder" value="darken($btn-info-bg, 5%)"/>
+	<style id="ThemeBtnWarningColor" value="#FFFFFF"/>
+	<style id="ThemeBtnWarningBg" value="$brand-warning"/>
+	<style id="ThemeBtnWarningBorder" value="darken($btn-warning-bg, 5%)"/>
+	<style id="ThemeBtnDangerColor" value="#FFFFFF"/>
+	<style id="ThemeBtnDangerBg" value="$brand-danger"/>
+	<style id="ThemeBtnDangerBorder" value="darken($btn-danger-bg, 5%)"/>
+	<style id="ThemeBtnLinkDisabledColor" value="$gray-light"/>
+	<style id="ThemeBtnBorderRadiusBase" value="$border-radius-base"/>
+	<style id="ThemeBtnBorderRadiusLarge" value="$border-radius-large"/>
+	<style id="ThemeBtnBorderRadiusSmall" value="$border-radius-small"/>
+	<style id="ThemeInputBackground" value="#FFFFFF"/>
+	<style id="ThemeInputDisabledBackground" value="$gray-lighter"/>
+	<style id="ThemeInputColor" value="$gray"/>
+	<style id="ThemeInputBorder" value="#CCCCCC"/>
+	<style id="ThemeInputBorderRadius" value="$border-radius-base"/>
+	<style id="ThemeInputBorderFocus" value="#66AFE9"/>
+	<style id="ThemeInputColorPlaceholder" value="$gray-light"/>
+	<style id="ThemeInputHeightBase" value="($line-height-computed + ($padding-base-vertical * 2) + 2)"/>
+	<style id="ThemeInputHeightLarge" value="(ceil($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 2)"/>
+	<style id="ThemeInputHeightSmall" value="(floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 2)"/>
+	<style id="ThemeFormGroupMarginBottom" value="15"/>
+	<style id="ThemeLegendColor" value="$gray-dark"/>
+	<style id="ThemeLegendBorderColor" value="#E5E5E5"/>
+	<style id="ThemeInputGroupAddonBg" value="$gray-lighter"/>
+	<style id="ThemeInputGroupAddonBorderColor" value="$input-border"/>
+	<style id="ThemeDropdownBg" value="#FFFFFF"/>
+	<style id="ThemeDropdownBorder" value="rgba(0,0,0,.15)"/>
+	<style id="ThemeDropdownFallbackBorder" value="#CCCCCC"/>
+	<style id="ThemeDropdownDividerBg" value="#E5E5E5"/>
+	<style id="ThemeDropdownLinkColor" value="$gray-dark"/>
+	<style id="ThemeDropdownLinkColorHover" value="darken($gray-dark, 5%)"/>
+	<style id="ThemeDropdownLinkHoverBg" value="#EEEEEE"/>
+	<style id="ThemeDropdownLinkActiveColor" value="$component-active-color"/>
+	<style id="ThemeDropdownLinkActiveBg" value="$component-active-bg"/>
+	<style id="ThemeDropdownLinkDisabledColor" value="$gray-light"/>
+	<style id="ThemeDropdownLinkHeaderColor" value="$gray-light"/>
+	<style id="ThemeDropdownCaretColor" value="#000000"/>
+	<style id="ThemeScreenSmMin" value="768"/>
+	<style id="ThemeScreenMdMin" value="992"/>
+	<style id="ThemeScreenLgMin" value="1200"/>
+	<style id="ThemeScreenXsMax" value="($screen-sm-min - 1)"/>
+	<style id="ThemeScreenSmMax" value="($screen-md-min - 1)"/>
+	<style id="ThemeScreenMdMax" value="($screen-lg-min - 1)"/>
+	<style id="ThemeGridColumns" value="12"/>
+	<style id="ThemeGridGutterWidth" value="30"/>
+	<style id="ThemeGridFloatBreakpoint" value="$screen-sm-min"/>
+	<style id="ThemeGridFloatBreakpointMax" value="($grid-float-breakpoint - 1)"/>
+	<style id="ThemeContainerTablet" value="((720px + $grid-gutter-width))"/>
+	<style id="ThemeContainerSm" value="$container-tablet"/>
+	<style id="ThemeContainerDesktop" value="((940px + $grid-gutter-width))"/>
+	<style id="ThemeContainerMd" value="$container-desktop"/>
+	<style id="ThemeContainerLargeDesktop" value="((1140px + $grid-gutter-width))"/>
+	<style id="ThemeContainerLg" value="$container-large-desktop"/>
+	<style id="ThemeNavbarHeight" value="50"/>
+	<style id="ThemeNavbarMarginBottom" value="$line-height-computed"/>
+	<style id="ThemeNavbarBorderRadius" value="$border-radius-base"/>
+	<style id="ThemeNavbarPaddingHorizontal" value="floor(($grid-gutter-width / 2))"/>
+	<style id="ThemeNavbarPaddingVertical" value="(($navbar-height - $line-height-computed) / 2)"/>
+	<style id="ThemeNavbarCollapseMaxHeight" value="340"/>
+	<style id="ThemeNavbarDefaultColor" value="#777777"/>
+	<style id="ThemeNavbarDefaultBg" value="#F8F8F8"/>
+	<style id="ThemeNavbarDefaultBorder" value="darken($navbar-default-bg, 6.5%)"/>
+	<style id="ThemeNavbarDefaultLinkColor" value="#777777"/>
+	<style id="ThemeNavbarDefaultLinkHoverColor" value="#333333"/>
+	<style id="ThemeNavbarDefaultLinkHoverBg" value="transparent"/>
+	<style id="ThemeNavbarDefaultLinkActiveColor" value="#555555"/>
+	<style id="ThemeNavbarDefaultLinkActiveBg" value="darken($navbar-default-bg, 6.5%)"/>
+	<style id="ThemeNavbarDefaultLinkDisabledColor" value="#CCCCCC"/>
+	<style id="ThemeNavbarDefaultLinkDisabledBg" value="transparent"/>
+	<style id="ThemeNavbarDefaultBrandColor" value="$navbar-default-link-color"/>
+	<style id="ThemeNavbarDefaultBrandHoverColor" value="darken($navbar-default-brand-color, 10%)"/>
+	<style id="ThemeNavbarDefaultBrandHoverBg" value="transparent"/>
+	<style id="ThemeNavbarDefaultToggleHoverBg" value="#DDDDDD"/>
+	<style id="ThemeNavbarDefaultToggleIconBarBg" value="#888888"/>
+	<style id="ThemeNavbarDefaultToggleBorderColor" value="#DDDDDD"/>
+	<style id="ThemeNavbarInverseColor" value="$gray-light"/>
+	<style id="ThemeNavbarInverseBg" value="#222222"/>
+	<style id="ThemeNavbarInverseBorder" value="darken($navbar-inverse-bg, 10%)"/>
+	<style id="ThemeNavbarInverseLinkColor" value="$gray-light"/>
+	<style id="ThemeNavbarInverseLinkHoverColor" value="#FFFFFF"/>
+	<style id="ThemeNavbarInverseLinkHoverBg" value="transparent"/>
+	<style id="ThemeNavbarInverseLinkActiveColor" value="$navbar-inverse-link-hover-color"/>
+	<style id="ThemeNavbarInverseLinkActiveBg" value="darken($navbar-inverse-bg, 10%)"/>
+	<style id="ThemeNavbarInverseLinkDisabledColor" value="#444444"/>
+	<style id="ThemeNavbarInverseLinkDisabledBg" value="transparent"/>
+	<style id="ThemeNavbarInverseBrandColor" value="$navbar-inverse-link-color"/>
+	<style id="ThemeNavbarInverseBrandHoverColor" value="#FFFFFF"/>
+	<style id="ThemeNavbarInverseBrandHoverBg" value="transparent"/>
+	<style id="ThemeNavbarInverseToggleHoverBg" value="#333333"/>
+	<style id="ThemeNavbarInverseToggleIconBarBg" value="#FFFFFF"/>
+	<style id="ThemeNavbarInverseToggleBorderColor" value="#333333"/>
+	<style id="ThemeNavLinkPadding" value="10px 15px"/>
+	<style id="ThemeNavLinkHoverBg" value="$gray-lighter"/>
+	<style id="ThemeNavDisabledLinkColor" value="$gray-light"/>
+	<style id="ThemeNavDisabledLinkHoverColor" value="$gray-light"/>
+	<style id="ThemeNavOpenLinkHoverColor" value="#FFFFFF"/>
+	<style id="ThemeNavTabsBorderColor" value="#DDDDDD"/>
+	<style id="ThemeNavTabsLinkHoverBorderColor" value="$gray-lighter"/>
+	<style id="ThemeNavTabsActiveLinkHoverBg" value="$body-bg"/>
+	<style id="ThemeNavTabsActiveLinkHoverColor" value="$gray"/>
+	<style id="ThemeNavTabsActiveLinkHoverBorderColor" value="#DDDDDD"/>
+	<style id="ThemeNavTabsJustifiedLinkBorderColor" value="#DDDDDD"/>
+	<style id="ThemeNavTabsJustifiedActiveLinkBorderColor" value="$body-bg"/>
+	<style id="ThemeNavPillsBorderRadius" value="$border-radius-base"/>
+	<style id="ThemeNavPillsActiveLinkHoverBg" value="$component-active-bg"/>
+	<style id="ThemeNavPillsActiveLinkHoverColor" value="$component-active-color"/>
+	<style id="ThemePaginationColor" value="$link-color"/>
+	<style id="ThemePaginationBg" value="#FFFFFF"/>
+	<style id="ThemePaginationBorder" value="#DDDDDD"/>
+	<style id="ThemePaginationHoverColor" value="$link-hover-color"/>
+	<style id="ThemePaginationHoverBg" value="$gray-lighter"/>
+	<style id="ThemePaginationHoverBorder" value="#DDDDDD"/>
+	<style id="ThemePaginationActiveColor" value="#FFFFFF"/>
+	<style id="ThemePaginationActiveBg" value="$brand-primary"/>
+	<style id="ThemePaginationActiveBorder" value="$brand-primary"/>
+	<style id="ThemePaginationDisabledColor" value="$gray-light"/>
+	<style id="ThemePaginationDisabledBg" value="#FFFFFF"/>
+	<style id="ThemePaginationDisabledBorder" value="#DDDDDD"/>
+	<style id="ThemePagerBg" value="$pagination-bg"/>
+	<style id="ThemePagerBorder" value="$pagination-border"/>
+	<style id="ThemePagerBorderRadius" value="15"/>
+	<style id="ThemePagerHoverBg" value="$pagination-hover-bg"/>
+	<style id="ThemePagerActiveBg" value="$pagination-active-bg"/>
+	<style id="ThemePagerActiveColor" value="$pagination-active-color"/>
+	<style id="ThemePagerDisabledColor" value="$pagination-disabled-color"/>
+	<style id="ThemeJumbotronPadding" value="30"/>
+	<style id="ThemeJumbotronColor" value=""/>
+	<style id="ThemeJumbotronBg" value="$gray-lighter"/>
+	<style id="ThemeJumbotronHeadingColor" value=""/>
+	<style id="ThemeJumbotronFontSize" value="ceil(($font-size-base * 1.5))"/>
+	<style id="ThemeJumbotronHeadingFontSize" value="ceil(($font-size-base * 4.5))"/>
+	<style id="ThemeSuccessText" value="#3C763D"/>
+	<style id="ThemeSuccessBg" value="#DFF0D8"/>
+	<style id="ThemeSuccessBorder" value="darken(adjust-hue($state-success-bg, -10), 5%)"/>
+	<style id="ThemeInfoText" value="#31708F"/>
+	<style id="ThemeInfoBg" value="#D9EDF7"/>
+	<style id="ThemeInfoBorder" value="darken(adjust-hue($state-info-bg, -10), 7%)"/>
+	<style id="ThemeWarningText" value="#8A6D3B"/>
+	<style id="ThemeWarningBg" value="#FCF8E3"/>
+	<style id="ThemeWarningBorder" value="darken(adjust-hue($state-warning-bg, -10), 5%)"/>
+	<style id="ThemeErrorText" value="#A94442"/>
+	<style id="ThemeErrorBg" value="#F2DEDE"/>
+	<style id="ThemeErrorBorder" value="darken(adjust-hue($state-danger-bg, -10), 5%)"/>
+	<style id="ThemeTooltipMaxWidth" value="200"/>
+	<style id="ThemeTooltipColor" value="#FFFFFF"/>
+	<style id="ThemeTooltipBg" value="#000000"/>
+	<style id="ThemeTooltipOpacity" value=".9"/>
+	<style id="ThemeTooltipArrowWidth" value="5"/>
+	<style id="ThemeTooltipArrowColor" value="$tooltip-bg"/>
+	<style id="ThemePopoverBg" value="#FFFFFF"/>
+	<style id="ThemePopoverMaxWidth" value="276"/>
+	<style id="ThemePopoverBorderColor" value="rgba(0,0,0,.2)"/>
+	<style id="ThemePopoverFallbackBorderColor" value="#CCCCCC"/>
+	<style id="ThemePopoverTitleBg" value="darken($popover-bg, 3%)"/>
+	<style id="ThemePopoverArrowWidth" value="10"/>
+	<style id="ThemePopoverArrowColor" value="#FFFFFF"/>
+	<style id="ThemePopoverArrowOuterWidth" value="($popover-arrow-width + 1)"/>
+	<style id="ThemePopoverArrowOuterColor" value="fadein($popover-border-color, 5%)"/>
+	<style id="ThemePopoverArrowOuterFallbackColor" value="darken($popover-fallback-border-color, 20%)"/>
+	<style id="ThemeLabelDefaultBg" value="$gray-light"/>
+	<style id="ThemeLabelPrimaryBg" value="$brand-primary"/>
+	<style id="ThemeLabelSuccessBg" value="$brand-success"/>
+	<style id="ThemeLabelInfoBg" value="$brand-info"/>
+	<style id="ThemeLabelWarningBg" value="$brand-warning"/>
+	<style id="ThemeLabelDangerBg" value="$brand-danger"/>
+	<style id="ThemeLabelColor" value="#FFFFFF"/>
+	<style id="ThemeLabelLinkHoverColor" value="#FFFFFF"/>
+	<style id="ThemeModalInnerPadding" value="15"/>
+	<style id="ThemeModalTitlePadding" value="15"/>
+	<style id="ThemeModalTitleLineHeight" value="$line-height-base"/>
+	<style id="ThemeModalContentBg" value="#FFFFFF"/>
+	<style id="ThemeModalContentBorderColor" value="rgba(0,0,0,.2)"/>
+	<style id="ThemeModalContentFallbackBorderColor" value="#999999"/>
+	<style id="ThemeModalBackdropBg" value="#000000"/>
+	<style id="ThemeModalBackdropOpacity" value=".5"/>
+	<style id="ThemeModalHeaderBorderColor" value="#E5E5E5"/>
+	<style id="ThemeModalFooterBorderColor" value="$modal-header-border-color"/>
+	<style id="ThemeModalLg" value="900"/>
+	<style id="ThemeModalMd" value="600"/>
+	<style id="ThemeModalSm" value="300"/>
+	<style id="ThemeAlertPadding" value="15"/>
+	<style id="ThemeAlertBorderRadius" value="$border-radius-base"/>
+	<style id="ThemeAlertLinkFontWeight" value="bold"/>
+	<style id="ThemeAlertSuccessBg" value="$state-success-bg"/>
+	<style id="ThemeAlertSuccessText" value="$state-success-text"/>
+	<style id="ThemeAlertSuccessBorder" value="$state-success-border"/>
+	<style id="ThemeAlertInfoBg" value="$state-info-bg"/>
+	<style id="ThemeAlertInfoText" value="$state-info-text"/>
+	<style id="ThemeAlertInfoBorder" value="$state-info-border"/>
+	<style id="ThemeAlertWarningBg" value="$state-warning-bg"/>
+	<style id="ThemeAlertWarningText" value="$state-warning-text"/>
+	<style id="ThemeAlertWarningBorder" value="$state-warning-border"/>
+	<style id="ThemeAlertDangerBg" value="$state-danger-bg"/>
+	<style id="ThemeAlertDangerText" value="$state-danger-text"/>
+	<style id="ThemeAlertDangerBorder" value="$state-danger-border"/>
+	<style id="ThemeProgressBg" value="#F5F5F5"/>
+	<style id="ThemeProgressBarColor" value="#FFFFFF"/>
+	<style id="ThemeProgressBarBg" value="$brand-primary"/>
+	<style id="ThemeProgressBarSuccessBg" value="$brand-success"/>
+	<style id="ThemeProgressBarWarningBg" value="$brand-warning"/>
+	<style id="ThemeProgressBarDangerBg" value="$brand-danger"/>
+	<style id="ThemeProgressBarInfoBg" value="$brand-info"/>
+	<style id="ThemeListgroupBg" value="#FFFFFF"/>
+	<style id="ThemeListgroupBorder" value="#DDDDDD"/>
+	<style id="ThemeListgroupBorderRadius" value="$border-radius-base"/>
+	<style id="ThemeListgroupHoverBg" value="#F5F5F5"/>
+	<style id="ThemeListgroupActiveColor" value="$component-active-color"/>
+	<style id="ThemeListgroupActiveBg" value="$component-active-bg"/>
+	<style id="ThemeListgroupActiveBorder" value="$list-group-active-bg"/>
+	<style id="ThemeListgroupActiveTextColor" value="lighten($list-group-active-bg, 40%)"/>
+	<style id="ThemeListgroupDisabledColor" value="$gray-light"/>
+	<style id="ThemeListgroupDisabledBg" value="$gray-lighter"/>
+	<style id="ThemeListgroupDisabledTextColor" value="$list-group-disabled-color"/>
+	<style id="ThemeListgroupLinkColor" value="#555555"/>
+	<style id="ThemeListgroupLinkHoverColor" value="$list-group-link-color"/>
+	<style id="ThemeListgroupLinkHeadingColor" value="#333333"/>
+	<style id="ThemePanelBg" value="#FFFFFF"/>
+	<style id="ThemePanelBodyPadding" value="15"/>
+	<style id="ThemePanelHeadingPadding" value="10px 15px"/>
+	<style id="ThemePanelFooterPadding" value="$panel-heading-padding"/>
+	<style id="ThemePanelBorderRadius" value="$border-radius-base"/>
+	<style id="ThemePanelInnerBorder" value="#DDDDDD"/>
+	<style id="ThemePanelFooterBg" value="#F5F5F5"/>
+	<style id="ThemePanelDefaultText" value="$gray-dark"/>
+	<style id="ThemePanelDefaultBorder" value="#DDDDDD"/>
+	<style id="ThemePanelDefaultHeadingBg" value="#F5F5F5"/>
+	<style id="ThemePanelPrimaryText" value="#FFFFFF"/>
+	<style id="ThemePanelPrimaryBorder" value="$brand-primary"/>
+	<style id="ThemePanelPrimaryHeadingBg" value="$brand-primary"/>
+	<style id="ThemePanelSuccessText" value="$state-success-text"/>
+	<style id="ThemePanelSuccessBorder" value="$state-success-border"/>
+	<style id="ThemePanelSuccessHeadingBg" value="$state-success-bg"/>
+	<style id="ThemePanelInfoText" value="$state-info-text"/>
+	<style id="ThemePanelInfoBorder" value="$state-info-border"/>
+	<style id="ThemePanelInfoHeadingBg" value="$state-info-bg"/>
+	<style id="ThemePanelWarningText" value="$state-warning-text"/>
+	<style id="ThemePanelWarningBorder" value="$state-warning-border"/>
+	<style id="ThemePanelWarningHeadingBg" value="$state-warning-bg"/>
+	<style id="ThemePanelDangerText" value="$state-danger-text"/>
+	<style id="ThemePanelDangerBorder" value="$state-danger-border"/>
+	<style id="ThemePanelDangerHeadingBg" value="$state-danger-bg"/>
+	<style id="ThemeThumbnailPadding" value="4"/>
+	<style id="ThemeThumbnailBg" value="$body-bg"/>
+	<style id="ThemeThumbnailBorder" value="#DDDDDD"/>
+	<style id="ThemeThumbnailBorderRadius" value="$border-radius-base"/>
+	<style id="ThemeThumbnailCaptionColor" value="$text-color"/>
+	<style id="ThemeThumbnailCaptionPadding" value="9"/>
+	<style id="ThemeWellBg" value="#F5F5F5"/>
+	<style id="ThemeWellBorder" value="darken($well-bg, 7%)"/>
+	<style id="ThemeBadgeColor" value="#FFFFFF"/>
+	<style id="ThemeBadgeLinkHoverColor" value="#FFFFFF"/>
+	<style id="ThemeBadgeBg" value="$gray-light"/>
+	<style id="ThemeBadgeActiveColor" value="$link-color"/>
+	<style id="ThemeBadgeActiveBg" value="#FFFFFF"/>
+	<style id="ThemeBadgeFontWeight" value="bold"/>
+	<style id="ThemeBadgeBorderRadius" value="10"/>
+	<style id="ThemeBreadcrumbPaddingVertical" value="8"/>
+	<style id="ThemeBreadcrumbPaddingHorizontal" value="15"/>
+	<style id="ThemeBreadcrumbBg" value="#F5F5F5"/>
+	<style id="ThemeBreadcrumbColor" value="#CCCCCC"/>
+	<style id="ThemeBreadcrumbActiveColor" value="$gray-light"/>
+	<style id="ThemeBreadcrumbSeparator" value="/"/>
+	<style id="ThemeCarouselTextShadow" value="0 1px 2px rgba(0,0,0,.6)"/>
+	<style id="ThemeCarouselControlColor" value="#FFFFFF"/>
+	<style id="ThemeCarouselControlWidth" value="15%"/>
+	<style id="ThemeCarouselControlOpacity" value=".5"/>
+	<style id="ThemeCarouselControlFontSize" value="20"/>
+	<style id="ThemeCarouselIndicatorActiveBg" value="#FFFFFF"/>
+	<style id="ThemeCarouselIndicatorBorderColor" value="#FFFFFF"/>
+	<style id="ThemeCarouselCaptionColor" value="#FFFFFF"/>
+	<style id="ThemeCloseFontWeight" value="bold"/>
+	<style id="ThemeCloseColor" value="#000000"/>
+	<style id="ThemeCloseTextShadow" value="0 1px 0 #fff"/>
+	<style id="ThemeCodeColor" value="#C7254E"/>
+	<style id="ThemeCodeBg" value="#F9F2F4"/>
+	<style id="ThemeKbdColor" value="#FFFFFF"/>
+	<style id="ThemeKbdBg" value="#333333"/>
+	<style id="ThemePreBg" value="#F5F5F5"/>
+	<style id="ThemePreColor" value="$gray-dark"/>
+	<style id="ThemePreBorderColor" value="#CCCCCC"/>
+	<style id="ThemePreScrollableMaxHeight" value="340"/>
+	<style id="ThemeComponentOffsetHorizontal" value="180"/>
+	<style id="ThemeTextMuted" value="$gray-light"/>
+	<style id="ThemeAbbrBorderColor" value="$gray-light"/>
+	<style id="ThemeHeadingsSmallColor" value="$gray-light"/>
+	<style id="ThemeBlockquoteSmallColor" value="$gray-light"/>
+	<style id="ThemeBlockquoteFontSize" value="($font-size-base * 1.25)"/>
+	<style id="ThemeBlockquoteBorderColor" value="$gray-lighter"/>
+	<style id="ThemePageHeaderBorderColor" value="$gray-lighter"/>
+	<style id="ThemeDlHorizontalOffset" value="$component-offset-horizontal"/>
+	<style id="ThemeHrBorder" value="$gray-lighter"/>
+</theme>

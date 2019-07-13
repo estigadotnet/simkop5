@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/6/21" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/7/13" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -583,21 +583,6 @@
   <project>
     <phrase id="bodytitle" value="S.I.M. KOPERASI" />
     <phrase id="footertext" value="&amp;copy;2019 Selaras Solusindo. All rights reserved." />
-    <menu id="10654">
-      <phrase id="menutext" value="v 0306 pinjamanlap 5" />
-    </menu>
-    <menu id="10652">
-      <phrase id="menutext" value="v 0304 pinjamanlap 3" />
-    </menu>
-    <menu id="10653">
-      <phrase id="menutext" value="v 0305 pinjamanlap 4" />
-    </menu>
-    <menu id="10650">
-      <phrase id="menutext" value="v 0302 pinjamanlap" />
-    </menu>
-    <menu id="10651">
-      <phrase id="menutext" value="v 0303 pinjamanlap 2" />
-    </menu>
     <menu id="16">
       <phrase id="menutext" value="Home" />
     </menu>
@@ -646,14 +631,17 @@
     <menu id="10553">
       <phrase id="menutext" value="Laba Rugi" />
     </menu>
+    <menu id="10554">
+      <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10055">
+      <phrase id="menutext" value="Jurnal Transaksi" />
+    </menu>
     <menu id="10187">
       <phrase id="menutext" value="Jurnal" />
     </menu>
     <menu id="10339">
       <phrase id="menutext" value="Jurnal" />
-    </menu>
-    <menu id="10554">
-      <phrase id="menutext" value="Neraca" />
     </menu>
     <menu id="10185">
       <phrase id="menutext" value="Buku Besar" />
@@ -703,6 +691,9 @@
     <menu id="2">
       <phrase id="menutext" value="Jaminan" />
     </menu>
+    <menu id="10771">
+      <phrase id="menutext" value="Bank" />
+    </menu>
     <menu id="10053">
       <phrase id="menutext" value="Rekening Transaksi" />
     </menu>
@@ -736,6 +727,9 @@
     <menu id="10113">
       <phrase id="menutext" value="Laporan" />
     </menu>
+    <menu id="10772">
+      <phrase id="menutext" value="Pinjaman" />
+    </menu>
     <menu id="10018">
       <phrase id="menutext" value="Pinjaman" />
     </menu>
@@ -748,8 +742,8 @@
     <menu id="10648">
       <phrase id="menutext" value="Pinjaman 3" />
     </menu>
-    <menu id="10649">
-      <phrase id="menutext" value="Pinjaman" />
+    <menu id="10178">
+      <phrase id="menutext" value="Nasabah Macet" />
     </menu>
     <menu id="10025">
       <phrase id="menutext" value="Jurnal" />
@@ -759,6 +753,18 @@
     </menu>
     <menu id="10062">
       <phrase id="menutext" value="Neraca" />
+    </menu>
+    <menu id="10768">
+      <phrase id="menutext" value="Deposito" />
+    </menu>
+    <menu id="10769">
+      <phrase id="menutext" value="Transaksi" />
+    </menu>
+    <menu id="10655">
+      <phrase id="menutext" value="Input Data" />
+    </menu>
+    <menu id="10770">
+      <phrase id="menutext" value="Laporan" />
     </menu>
     <menu id="10338">
       <phrase id="menutext" value="General" />
@@ -784,12 +790,6 @@
     <menu id="36">
       <phrase id="menutext" value="Activity Log" />
     </menu>
-    <menu id="10178">
-      <phrase id="menutext" value="Nasabah Macet" />
-    </menu>
-    <menu id="10055">
-      <phrase id="menutext" value="Jurnal Transaksi" />
-    </menu>
     <menu id="10343">
       <phrase id="menutext" value="t 76 neracaold" />
     </menu>
@@ -813,6 +813,21 @@
     </menu>
     <menu id="10453">
       <phrase id="menutext" value="v 0301 pinjamannasabah" />
+    </menu>
+    <menu id="10650">
+      <phrase id="menutext" value="v 0302 pinjamanlap" />
+    </menu>
+    <menu id="10651">
+      <phrase id="menutext" value="v 0303 pinjamanlap 2" />
+    </menu>
+    <menu id="10652">
+      <phrase id="menutext" value="v 0304 pinjamanlap 3" />
+    </menu>
+    <menu id="10653">
+      <phrase id="menutext" value="v 0305 pinjamanlap 4" />
+    </menu>
+    <menu id="10654">
+      <phrase id="menutext" value="v 0306 pinjamanlap 5" />
     </menu>
     <menu id="10349">
       <phrase id="menutext" value="v 30 mutasi" />
@@ -974,9 +989,6 @@
       <phrase id="tblcaption" value="Neraca Saldo" />
     </table>
     <table id="cf41_pinjaman_php">
-      <phrase id="tblcaption" value="Pinjaman" />
-    </table>
-    <table id="cf42_pinjaman_php">
       <phrase id="tblcaption" value="Pinjaman" />
     </table>
     <table id="t01_nasabah">
@@ -1408,6 +1420,74 @@
       </field>
       <field id="kredit">
         <phrase id="fldcaption" value="Kredit" />
+      </field>
+    </table>
+    <table id="t20_deposito">
+      <phrase id="tblcaption" value="Deposito" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="no_urut">
+        <phrase id="fldcaption" value="No Urut" />
+      </field>
+      <field id="tanggal_valuta">
+        <phrase id="fldcaption" value="Tanggal Valuta" />
+      </field>
+      <field id="tanggal_jatuh_tempo">
+        <phrase id="fldcaption" value="Tanggal Jatuh Tempo" />
+      </field>
+      <field id="suku_bunga">
+        <phrase id="fldcaption" value="Suku Bunga" />
+      </field>
+      <field id="jumlah_bunga">
+        <phrase id="fldcaption" value="Jumlah Bunga" />
+      </field>
+      <field id="dikredit_diperpanjang">
+        <phrase id="fldcaption" value="Dikredit Diperpanjang" />
+        <phrase id="fldtagvalue1" value="Dikredit" />
+        <phrase id="fldtagcaption1" value="Dikredit" />
+        <phrase id="fldtagvalue2" value="Diperpanjang" />
+        <phrase id="fldtagcaption2" value="Diperpanjang" />
+      </field>
+      <field id="tunai_transfer">
+        <phrase id="fldcaption" value="Tunai Transfer" />
+        <phrase id="fldtagvalue1" value="Tunai" />
+        <phrase id="fldtagcaption1" value="Tunai" />
+        <phrase id="fldtagvalue2" value="Transfer" />
+        <phrase id="fldtagcaption2" value="Transfer" />
+      </field>
+      <field id="nasabah_id">
+        <phrase id="fldcaption" value="nasabah id" />
+      </field>
+      <field id="jumlah_deposito">
+        <phrase id="fldcaption" value="Jumlah Deposito" />
+      </field>
+      <field id="jumlah_terbilang">
+        <phrase id="fldcaption" value="Jumlah Terbilang" />
+      </field>
+    </table>
+    <table id="t21_bank">
+      <phrase id="tblcaption" value="Bank" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="nasabah_id">
+        <phrase id="fldcaption" value="nasabah id" />
+      </field>
+      <field id="nomor">
+        <phrase id="fldcaption" value="Nomor" />
+      </field>
+      <field id="pemilik">
+        <phrase id="fldcaption" value="Pemilik" />
+      </field>
+      <field id="bank">
+        <phrase id="fldcaption" value="Bank" />
+      </field>
+      <field id="kota">
+        <phrase id="fldcaption" value="Kota" />
+      </field>
+      <field id="cabang">
+        <phrase id="fldcaption" value="Cabang" />
       </field>
     </table>
     <table id="t73_pinjamanlap">
@@ -2296,6 +2376,18 @@
         <phrase id="fldcaption" value="pd Angsuran Bunga" />
       </field>
     </table>
+    <table id="v0306_pinjamanlap5">
+      <phrase id="tblcaption" value="v 0306 pinjamanlap 5" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="tanggal_bayar">
+        <phrase id="fldcaption" value="tanggal bayar" />
+      </field>
+      <field id="umur_tunggakan">
+        <phrase id="fldcaption" value="umur tunggakan" />
+      </field>
+    </table>
     <table id="v30_mutasi">
       <phrase id="tblcaption" value="v 30 mutasi" />
       <field id="id">
@@ -2521,17 +2613,8 @@
         <phrase id="fldcaption" value="saldoakhir" />
       </field>
     </table>
-    <table id="v0306_pinjamanlap5">
-      <phrase id="tblcaption" value="v 0306 pinjamanlap 5" />
-      <field id="id">
-        <phrase id="fldcaption" value="id" />
-      </field>
-      <field id="tanggal_bayar">
-        <phrase id="fldcaption" value="tanggal bayar" />
-      </field>
-      <field id="umur_tunggakan">
-        <phrase id="fldcaption" value="umur tunggakan" />
-      </field>
+    <table id="cf42_pinjaman_php">
+      <phrase id="tblcaption" value="Laporan Pinjaman" />
     </table>
   </project>
 </ew-language>

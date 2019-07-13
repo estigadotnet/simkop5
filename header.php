@@ -118,6 +118,16 @@ var ewVar = <?php echo json_encode($EW_CLIENT_VAR); ?>;
 
 	// tambah script autonumeric saat ketik nilai
 	ew_AddClientScript("phpjs/autoNumeric.js"); // Add JavaScript
+	/*echo "
+	<style>
+	.form-group {
+	margin-bottom: .25rem;
+	}
+	.table > tfoot > tr > td {
+	padding: 3px;
+	}
+	</style>
+	";*/
 ?>
 <script type="text/javascript" src="<?php echo $EW_RELATIVE_PATH ?>phpjs/userfn13.js"></script>
 <script type="text/javascript">

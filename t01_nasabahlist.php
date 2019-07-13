@@ -8,6 +8,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "t01_nasabahinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "t02_jaminangridcls.php" ?>
+<?php include_once "t21_bankgridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -441,6 +442,14 @@ class ct01_nasabah_list extends ct01_nasabah {
 			if (@$_POST["grid"] == "ft02_jaminangrid") {
 				if (!isset($GLOBALS["t02_jaminan_grid"])) $GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid;
 				$GLOBALS["t02_jaminan_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
+
+			// Process auto fill for detail table 't21_bank'
+			if (@$_POST["grid"] == "ft21_bankgrid") {
+				if (!isset($GLOBALS["t21_bank_grid"])) $GLOBALS["t21_bank_grid"] = new ct21_bank_grid;
+				$GLOBALS["t21_bank_grid"]->Page_Init();
 				$this->Page_Terminate();
 				exit();
 			}
@@ -1192,6 +1201,14 @@ class ct01_nasabah_list extends ct01_nasabah {
 		$item->ShowInButtonGroup = FALSE;
 		if (!isset($GLOBALS["t02_jaminan_grid"])) $GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid;
 
+		// "detail_t21_bank"
+		$item = &$this->ListOptions->Add("detail_t21_bank");
+		$item->CssStyle = "white-space: nowrap;";
+		$item->Visible = $Security->AllowList(CurrentProjectID() . 't21_bank') && !$this->ShowMultipleDetails;
+		$item->OnLeft = TRUE;
+		$item->ShowInButtonGroup = FALSE;
+		if (!isset($GLOBALS["t21_bank_grid"])) $GLOBALS["t21_bank_grid"] = new ct21_bank_grid;
+
 		// Multiple details
 		if ($this->ShowMultipleDetails) {
 			$item = &$this->ListOptions->Add("details");
@@ -1204,6 +1221,7 @@ class ct01_nasabah_list extends ct01_nasabah {
 		// Set up detail pages
 		$pages = new cSubPages();
 		$pages->Add("t02_jaminan");
+		$pages->Add("t21_bank");
 		$this->DetailPages = $pages;
 
 		// List actions
@@ -1351,6 +1369,36 @@ class ct01_nasabah_list extends ct01_nasabah {
 			$oListOpt->Body = $body;
 			if ($this->ShowMultipleDetails) $oListOpt->Visible = FALSE;
 		}
+
+		// "detail_t21_bank"
+		$oListOpt = &$this->ListOptions->Items["detail_t21_bank"];
+		if ($Security->AllowList(CurrentProjectID() . 't21_bank')) {
+			$body = $Language->Phrase("DetailLink") . $Language->TablePhrase("t21_bank", "TblCaption");
+			$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t21_banklist.php?" . EW_TABLE_SHOW_MASTER . "=t01_nasabah&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
+			$links = "";
+			if ($GLOBALS["t21_bank_grid"]->DetailView && $Security->CanView() && $Security->AllowView(CurrentProjectID() . 't21_bank')) {
+				$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t21_bank")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
+				if ($DetailViewTblVar <> "") $DetailViewTblVar .= ",";
+				$DetailViewTblVar .= "t21_bank";
+			}
+			if ($GLOBALS["t21_bank_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't21_bank')) {
+				$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t21_bank")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
+				if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
+				$DetailEditTblVar .= "t21_bank";
+			}
+			if ($GLOBALS["t21_bank_grid"]->DetailAdd && $Security->CanAdd() && $Security->AllowAdd(CurrentProjectID() . 't21_bank')) {
+				$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=t21_bank")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
+				if ($DetailCopyTblVar <> "") $DetailCopyTblVar .= ",";
+				$DetailCopyTblVar .= "t21_bank";
+			}
+			if ($links <> "") {
+				$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
+				$body .= "<ul class=\"dropdown-menu\">". $links . "</ul>";
+			}
+			$body = "<div class=\"btn-group\">" . $body . "</div>";
+			$oListOpt->Body = $body;
+			if ($this->ShowMultipleDetails) $oListOpt->Visible = FALSE;
+		}
 		if ($this->ShowMultipleDetails) {
 			$body = $Language->Phrase("MultipleMasterDetails");
 			$body = "<div class=\"btn-group\">";
@@ -1405,6 +1453,15 @@ class ct01_nasabah_list extends ct01_nasabah {
 		if ($item->Visible) {
 			if ($DetailTableLink <> "") $DetailTableLink .= ",";
 			$DetailTableLink .= "t02_jaminan";
+		}
+		$item = &$option->Add("detailadd_t21_bank");
+		$url = $this->GetAddUrl(EW_TABLE_SHOW_DETAIL . "=t21_bank");
+		$caption = $Language->Phrase("Add") . "&nbsp;" . $this->TableCaption() . "/" . $GLOBALS["t21_bank"]->TableCaption();
+		$item->Body = "<a class=\"ewDetailAddGroup ewDetailAdd\" title=\"" . ew_HtmlTitle($caption) . "\" data-caption=\"" . ew_HtmlTitle($caption) . "\" href=\"" . ew_HtmlEncode($url) . "\">" . $caption . "</a>";
+		$item->Visible = ($GLOBALS["t21_bank"]->DetailAdd && $Security->AllowAdd(CurrentProjectID() . 't21_bank') && $Security->CanAdd());
+		if ($item->Visible) {
+			if ($DetailTableLink <> "") $DetailTableLink .= ",";
+			$DetailTableLink .= "t21_bank";
 		}
 
 		// Add multiple details

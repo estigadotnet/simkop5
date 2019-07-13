@@ -312,12 +312,6 @@ Page_Rendering();
 </div>
 <?php } ?>
 <?php
-
-/*if (isset($_POST["btnexport"])) {
-	header("Content-type: application/vnd-ms-excel");
-	header("Content-Disposition: attachment; filename=hasil.xls");
-}*/
-
 $aselect = array();
 
 $q = "select * from t73_pinjamanlap where field_status = 'Y' and field_index <> 0 order by field_index";

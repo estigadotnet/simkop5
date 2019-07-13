@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration date="2019/06/21" author="e.World Technology Ltd.">
-  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2019/06/21 16:38:41" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
+<configuration date="2019/07/13" author="e.World Technology Ltd.">
+  <project id="{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}" file="C:\xampp\htdocs\simkop5\simkop5_prj.pmp" name="simkop5_prj" product="PHPMaker" version="13.0" datetime="2019/07/13 16:41:59" languagefolder="phplang" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0">
     <table id="cf01_home_php" name="cf01_home.php" caption="Home" userlevel="-2,&quot;Anonymous&quot;,8;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf02_tutupbuku_php" name="cf02_tutupbuku.php" caption="Tutup Buku" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf04_neraca_php" name="cf04_neraca.php" caption="Neraca" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -19,7 +19,6 @@
     <table id="cf34_neraca_php" name="cf34_neraca.php" caption="Neraca" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf35_neracasaldo_php" name="cf35_neracasaldo.php" caption="Neraca Saldo" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="cf41_pinjaman_php" name="cf41_pinjaman.php" caption="Pinjaman" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="cf42_pinjaman_php" name="cf42_pinjaman.php" caption="Pinjaman" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t01_nasabah" name="t01_nasabah" caption="Nasabah" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t02_jaminan" name="t02_jaminan" caption="Jaminan" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t03_pinjaman" name="t03_pinjaman" caption="Pinjaman" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -33,6 +32,8 @@
     <table id="t10_jurnal" name="t10_jurnal" caption="Jurnal" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t11_jurnalmaster" name="t11_jurnalmaster" caption="Jurnal Memorial" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t12_jurnaldetail" name="t12_jurnaldetail" caption="Detail" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t20_deposito" name="t20_deposito" caption="Deposito" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="t21_bank" name="t21_bank" caption="Bank" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t73_pinjamanlap" name="t73_pinjamanlap" caption="Laporan Pinjaman" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t74_jurnallapclosed" name="t74_jurnallapclosed" caption="Jurnal (Closed)" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="t75_company" name="t75_company" caption="Company" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -64,6 +65,7 @@
     <table id="v0303_pinjamanlap2" name="v0303_pinjamanlap2" caption="v 0303 pinjamanlap 2" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v0304_pinjamanlap3" name="v0304_pinjamanlap3" caption="v 0304 pinjamanlap 3" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v0305_pinjamanlap4" name="v0305_pinjamanlap4" caption="v 0305 pinjamanlap 4" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="v0306_pinjamanlap5" name="v0306_pinjamanlap5" caption="v 0306 pinjamanlap 5" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v30_mutasi" name="v30_mutasi" caption="v 30 mutasi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v31_mutasi" name="v31_mutasi" caption="v 31 mutasi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v32_labarugi" name="v32_labarugi" caption="v 32 labarugi" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
@@ -73,6 +75,6 @@
     <table id="v41_mutasiold" name="v41_mutasiold" caption="v 41 mutasiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v42_labarugiold" name="v42_labarugiold" caption="v 42 labarugiold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
     <table id="v43_neracaold" name="v43_neracaold" caption="v 43 neracaold" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
-    <table id="v0306_pinjamanlap5" name="v0306_pinjamanlap5" caption="v 0306 pinjamanlap 5" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
+    <table id="cf42_pinjaman_php" name="cf42_pinjaman.php" caption="Laporan Pinjaman" userlevel="-2,&quot;Anonymous&quot;,0;0,&quot;Default&quot;,0" priv="1" />
   </project>
 </configuration>

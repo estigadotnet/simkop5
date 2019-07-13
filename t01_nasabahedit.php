@@ -8,6 +8,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "t01_nasabahinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "t02_jaminangridcls.php" ?>
+<?php include_once "t21_bankgridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -296,6 +297,9 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$this->Keterangan->SetVisibility();
 		$this->marketing_id->SetVisibility();
 
+		// Set up detail page object
+		$this->SetupDetailPages();
+
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
 
@@ -316,6 +320,14 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			if (@$_POST["grid"] == "ft02_jaminangrid") {
 				if (!isset($GLOBALS["t02_jaminan_grid"])) $GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid;
 				$GLOBALS["t02_jaminan_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
+
+			// Process auto fill for detail table 't21_bank'
+			if (@$_POST["grid"] == "ft21_bankgrid") {
+				if (!isset($GLOBALS["t21_bank_grid"])) $GLOBALS["t21_bank_grid"] = new ct21_bank_grid;
+				$GLOBALS["t21_bank_grid"]->Page_Init();
 				$this->Page_Terminate();
 				exit();
 			}
@@ -389,6 +401,7 @@ class ct01_nasabah_edit extends ct01_nasabah {
 	var $IsModal = FALSE;
 	var $DbMasterFilter;
 	var $DbDetailFilter;
+	var $DetailPages; // Detail pages object
 
 	// 
 	// Page main
@@ -915,6 +928,10 @@ class ct01_nasabah_edit extends ct01_nasabah {
 			if (!isset($GLOBALS["t02_jaminan_grid"])) $GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid(); // get detail page object
 			$GLOBALS["t02_jaminan_grid"]->ValidateGridForm();
 		}
+		if (in_array("t21_bank", $DetailTblVar) && $GLOBALS["t21_bank"]->DetailEdit) {
+			if (!isset($GLOBALS["t21_bank_grid"])) $GLOBALS["t21_bank_grid"] = new ct21_bank_grid(); // get detail page object
+			$GLOBALS["t21_bank_grid"]->ValidateGridForm();
+		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -1004,6 +1021,14 @@ class ct01_nasabah_edit extends ct01_nasabah {
 						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
 					}
 				}
+				if ($EditRow) {
+					if (in_array("t21_bank", $DetailTblVar) && $GLOBALS["t21_bank"]->DetailEdit) {
+						if (!isset($GLOBALS["t21_bank_grid"])) $GLOBALS["t21_bank_grid"] = new ct21_bank_grid(); // Get detail page object
+						$Security->LoadCurrentUserLevel($this->ProjectID . "t21_bank"); // Load user level of detail table
+						$EditRow = $GLOBALS["t21_bank_grid"]->GridUpdate();
+						$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+					}
+				}
 
 				// Commit/Rollback transaction
 				if ($this->getCurrentDetailTable() <> "") {
@@ -1061,6 +1086,21 @@ class ct01_nasabah_edit extends ct01_nasabah {
 					$GLOBALS["t02_jaminan_grid"]->nasabah_id->setSessionValue($GLOBALS["t02_jaminan_grid"]->nasabah_id->CurrentValue);
 				}
 			}
+			if (in_array("t21_bank", $DetailTblVar)) {
+				if (!isset($GLOBALS["t21_bank_grid"]))
+					$GLOBALS["t21_bank_grid"] = new ct21_bank_grid;
+				if ($GLOBALS["t21_bank_grid"]->DetailEdit) {
+					$GLOBALS["t21_bank_grid"]->CurrentMode = "edit";
+					$GLOBALS["t21_bank_grid"]->CurrentAction = "gridedit";
+
+					// Save current master table to detail table
+					$GLOBALS["t21_bank_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t21_bank_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t21_bank_grid"]->nasabah_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t21_bank_grid"]->nasabah_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t21_bank_grid"]->nasabah_id->setSessionValue($GLOBALS["t21_bank_grid"]->nasabah_id->CurrentValue);
+				}
+			}
 		}
 	}
 
@@ -1072,6 +1112,15 @@ class ct01_nasabah_edit extends ct01_nasabah {
 		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t01_nasabahlist.php"), "", $this->TableVar, TRUE);
 		$PageId = "edit";
 		$Breadcrumb->Add("edit", $PageId, $url);
+	}
+
+	// Set up detail pages
+	function SetupDetailPages() {
+		$pages = new cSubPages();
+		$pages->Style = "tabs";
+		$pages->Add('t02_jaminan');
+		$pages->Add('t21_bank');
+		$this->DetailPages = $pages;
 	}
 
 	// Setup lookup filters of a field
@@ -1395,13 +1444,59 @@ $t01_nasabah_edit->ShowMessage();
 <?php } ?>
 </div>
 <input type="hidden" data-table="t01_nasabah" data-field="x_id" name="x_id" id="x_id" value="<?php echo ew_HtmlEncode($t01_nasabah->id->CurrentValue) ?>">
+<?php if ($t01_nasabah->getCurrentDetailTable() <> "") { ?>
+<?php
+	$t01_nasabah_edit->DetailPages->ValidKeys = explode(",", $t01_nasabah->getCurrentDetailTable());
+	$FirstActiveDetailTable = $t01_nasabah_edit->DetailPages->ActivePageIndex();
+?>
+<div class="ewDetailPages">
+<div class="tabbable" id="t01_nasabah_edit_details">
+	<ul class="nav<?php echo $t01_nasabah_edit->DetailPages->NavStyle() ?>">
 <?php
 	if (in_array("t02_jaminan", explode(",", $t01_nasabah->getCurrentDetailTable())) && $t02_jaminan->DetailEdit) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t02_jaminan") {
+			$FirstActiveDetailTable = "t02_jaminan";
+		}
 ?>
-<?php if ($t01_nasabah->getCurrentDetailTable() <> "") { ?>
-<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t02_jaminan", "TblCaption") ?></h4>
-<?php } ?>
+		<li<?php echo $t01_nasabah_edit->DetailPages->TabStyle("t02_jaminan") ?>><a href="#tab_t02_jaminan" data-toggle="tab"><?php echo $Language->TablePhrase("t02_jaminan", "TblCaption") ?></a></li>
+<?php
+	}
+?>
+<?php
+	if (in_array("t21_bank", explode(",", $t01_nasabah->getCurrentDetailTable())) && $t21_bank->DetailEdit) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t21_bank") {
+			$FirstActiveDetailTable = "t21_bank";
+		}
+?>
+		<li<?php echo $t01_nasabah_edit->DetailPages->TabStyle("t21_bank") ?>><a href="#tab_t21_bank" data-toggle="tab"><?php echo $Language->TablePhrase("t21_bank", "TblCaption") ?></a></li>
+<?php
+	}
+?>
+	</ul>
+	<div class="tab-content">
+<?php
+	if (in_array("t02_jaminan", explode(",", $t01_nasabah->getCurrentDetailTable())) && $t02_jaminan->DetailEdit) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t02_jaminan") {
+			$FirstActiveDetailTable = "t02_jaminan";
+		}
+?>
+		<div class="tab-pane<?php echo $t01_nasabah_edit->DetailPages->PageStyle("t02_jaminan") ?>" id="tab_t02_jaminan">
 <?php include_once "t02_jaminangrid.php" ?>
+		</div>
+<?php } ?>
+<?php
+	if (in_array("t21_bank", explode(",", $t01_nasabah->getCurrentDetailTable())) && $t21_bank->DetailEdit) {
+		if ($FirstActiveDetailTable == "" || $FirstActiveDetailTable == "t21_bank") {
+			$FirstActiveDetailTable = "t21_bank";
+		}
+?>
+		<div class="tab-pane<?php echo $t01_nasabah_edit->DetailPages->PageStyle("t21_bank") ?>" id="tab_t21_bank">
+<?php include_once "t21_bankgrid.php" ?>
+		</div>
+<?php } ?>
+	</div>
+</div>
+</div>
 <?php } ?>
 <?php if (!$t01_nasabah_edit->IsModal) { ?>
 <div class="form-group">
