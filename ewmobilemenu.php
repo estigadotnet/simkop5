@@ -27,6 +27,7 @@ $RootMenu->AddMenuItem(3, "mmi_t03_pinjaman", $Language->MenuPhrase("3", "MenuTe
 $RootMenu->AddMenuItem(10113, "mmci_Laporan", $Language->MenuPhrase("10113", "MenuText"), "", 10334, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10772, "mmi_cf42_pinjaman_php", $Language->MenuPhrase("10772", "MenuText"), "cf42_pinjaman.php", 10113, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf42_pinjaman.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10768, "mmci_Deposito", $Language->MenuPhrase("10768", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
+$RootMenu->AddMenuItem(10852, "mmci_Nasabah", $Language->MenuPhrase("10852", "MenuText"), "t01_nasabahlist.php", 10768, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10655, "mmi_t20_deposito", $Language->MenuPhrase("10655", "MenuText"), "t20_depositolist.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t20_deposito'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10770, "mmci_Laporan", $Language->MenuPhrase("10770", "MenuText"), "", 10768, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10338, "mmci_General", $Language->MenuPhrase("10338", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);

@@ -286,6 +286,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->Tanggal_Valuta->SetVisibility();
 		$this->Tanggal_Jatuh_Tempo->SetVisibility();
 		$this->nasabah_id->SetVisibility();
+		$this->bank_id->SetVisibility();
 		$this->Jumlah_Deposito->SetVisibility();
 		$this->Jumlah_Terbilang->SetVisibility();
 		$this->Suku_Bunga->SetVisibility();
@@ -476,6 +477,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		} else {
 			$this->nasabah_id->VirtualValue = ""; // Clear value
 		}
+		$this->bank_id->setDbValue($rs->fields('bank_id'));
 		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
 		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
@@ -493,6 +495,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->Tanggal_Valuta->DbValue = $row['Tanggal_Valuta'];
 		$this->Tanggal_Jatuh_Tempo->DbValue = $row['Tanggal_Jatuh_Tempo'];
 		$this->nasabah_id->DbValue = $row['nasabah_id'];
+		$this->bank_id->DbValue = $row['bank_id'];
 		$this->Jumlah_Deposito->DbValue = $row['Jumlah_Deposito'];
 		$this->Jumlah_Terbilang->DbValue = $row['Jumlah_Terbilang'];
 		$this->Suku_Bunga->DbValue = $row['Suku_Bunga'];
@@ -528,6 +531,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		// Tanggal_Valuta
 		// Tanggal_Jatuh_Tempo
 		// nasabah_id
+		// bank_id
 		// Jumlah_Deposito
 		// Jumlah_Terbilang
 		// Suku_Bunga
@@ -581,6 +585,43 @@ class ct20_deposito_delete extends ct20_deposito {
 		}
 		}
 		$this->nasabah_id->ViewCustomAttributes = "";
+
+		// bank_id
+		if (strval($this->bank_id->CurrentValue) <> "") {
+			$arwrk = explode(",", $this->bank_id->CurrentValue);
+			$sFilterWrk = "";
+			foreach ($arwrk as $wrk) {
+				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
+				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
+			}
+		$sSqlWrk = "SELECT `id`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t21_bank`";
+		$sWhereWrk = "";
+		$this->bank_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$this->bank_id->ViewValue = "";
+				$ari = 0;
+				while (!$rswrk->EOF) {
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$arwrk[2] = $rswrk->fields('Disp2Fld');
+					$arwrk[3] = $rswrk->fields('Disp3Fld');
+					$this->bank_id->ViewValue .= $this->bank_id->DisplayValue($arwrk);
+					$rswrk->MoveNext();
+					if (!$rswrk->EOF) $this->bank_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
+					$ari++;
+				}
+				$rswrk->Close();
+			} else {
+				$this->bank_id->ViewValue = $this->bank_id->CurrentValue;
+			}
+		} else {
+			$this->bank_id->ViewValue = NULL;
+		}
+		$this->bank_id->ViewCustomAttributes = "";
 
 		// Jumlah_Deposito
 		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
@@ -639,6 +680,11 @@ class ct20_deposito_delete extends ct20_deposito {
 			$this->nasabah_id->LinkCustomAttributes = "";
 			$this->nasabah_id->HrefValue = "";
 			$this->nasabah_id->TooltipValue = "";
+
+			// bank_id
+			$this->bank_id->LinkCustomAttributes = "";
+			$this->bank_id->HrefValue = "";
+			$this->bank_id->TooltipValue = "";
 
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->LinkCustomAttributes = "";
@@ -890,7 +936,8 @@ ft20_depositodelete.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft20_depositodelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft20_depositodelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft20_depositodelete.Lists["x_bank_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nomor","x_Pemilik","x_Bank",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t21_bank"};
 ft20_depositodelete.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft20_depositodelete.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
 ft20_depositodelete.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
@@ -938,6 +985,9 @@ $t20_deposito_delete->ShowMessage();
 <?php } ?>
 <?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
 		<th><span id="elh_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t20_deposito->bank_id->Visible) { // bank_id ?>
+		<th><span id="elh_t20_deposito_bank_id" class="t20_deposito_bank_id"><?php echo $t20_deposito->bank_id->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
 		<th><span id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></span></th>
@@ -1007,6 +1057,14 @@ while (!$t20_deposito_delete->Recordset->EOF) {
 <span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
 <span<?php echo $t20_deposito->nasabah_id->ViewAttributes() ?>>
 <?php echo $t20_deposito->nasabah_id->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t20_deposito->bank_id->Visible) { // bank_id ?>
+		<td<?php echo $t20_deposito->bank_id->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_bank_id" class="t20_deposito_bank_id">
+<span<?php echo $t20_deposito->bank_id->ViewAttributes() ?>>
+<?php echo $t20_deposito->bank_id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

@@ -18,6 +18,7 @@ class ct20_deposito extends cTable {
 	var $Tanggal_Valuta;
 	var $Tanggal_Jatuh_Tempo;
 	var $nasabah_id;
+	var $bank_id;
 	var $Jumlah_Deposito;
 	var $Jumlah_Terbilang;
 	var $Suku_Bunga;
@@ -85,6 +86,11 @@ class ct20_deposito extends cTable {
 		$this->nasabah_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
 		$this->nasabah_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['nasabah_id'] = &$this->nasabah_id;
+
+		// bank_id
+		$this->bank_id = new cField('t20_deposito', 't20_deposito', 'x_bank_id', 'bank_id', '`bank_id`', '`bank_id`', 200, -1, FALSE, '`bank_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'CHECKBOX');
+		$this->bank_id->Sortable = TRUE; // Allow sort
+		$this->fields['bank_id'] = &$this->bank_id;
 
 		// Jumlah_Deposito
 		$this->Jumlah_Deposito = new cField('t20_deposito', 't20_deposito', 'x_Jumlah_Deposito', 'Jumlah_Deposito', '`Jumlah_Deposito`', '`Jumlah_Deposito`', 4, -1, FALSE, '`Jumlah_Deposito`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
@@ -699,6 +705,7 @@ class ct20_deposito extends cTable {
 		$this->Tanggal_Valuta->setDbValue($rs->fields('Tanggal_Valuta'));
 		$this->Tanggal_Jatuh_Tempo->setDbValue($rs->fields('Tanggal_Jatuh_Tempo'));
 		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
+		$this->bank_id->setDbValue($rs->fields('bank_id'));
 		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
 		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
@@ -720,6 +727,7 @@ class ct20_deposito extends cTable {
 		// Tanggal_Valuta
 		// Tanggal_Jatuh_Tempo
 		// nasabah_id
+		// bank_id
 		// Jumlah_Deposito
 		// Jumlah_Terbilang
 		// Suku_Bunga
@@ -771,6 +779,43 @@ class ct20_deposito extends cTable {
 		}
 		}
 		$this->nasabah_id->ViewCustomAttributes = "";
+
+		// bank_id
+		if (strval($this->bank_id->CurrentValue) <> "") {
+			$arwrk = explode(",", $this->bank_id->CurrentValue);
+			$sFilterWrk = "";
+			foreach ($arwrk as $wrk) {
+				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
+				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
+			}
+		$sSqlWrk = "SELECT `id`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t21_bank`";
+		$sWhereWrk = "";
+		$this->bank_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$this->bank_id->ViewValue = "";
+				$ari = 0;
+				while (!$rswrk->EOF) {
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$arwrk[2] = $rswrk->fields('Disp2Fld');
+					$arwrk[3] = $rswrk->fields('Disp3Fld');
+					$this->bank_id->ViewValue .= $this->bank_id->DisplayValue($arwrk);
+					$rswrk->MoveNext();
+					if (!$rswrk->EOF) $this->bank_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
+					$ari++;
+				}
+				$rswrk->Close();
+			} else {
+				$this->bank_id->ViewValue = $this->bank_id->CurrentValue;
+			}
+		} else {
+			$this->bank_id->ViewValue = NULL;
+		}
+		$this->bank_id->ViewCustomAttributes = "";
 
 		// Jumlah_Deposito
 		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
@@ -834,6 +879,11 @@ class ct20_deposito extends cTable {
 		$this->nasabah_id->LinkCustomAttributes = "";
 		$this->nasabah_id->HrefValue = "";
 		$this->nasabah_id->TooltipValue = "";
+
+		// bank_id
+		$this->bank_id->LinkCustomAttributes = "";
+		$this->bank_id->HrefValue = "";
+		$this->bank_id->TooltipValue = "";
 
 		// Jumlah_Deposito
 		$this->Jumlah_Deposito->LinkCustomAttributes = "";
@@ -904,6 +954,9 @@ class ct20_deposito extends cTable {
 		$this->nasabah_id->EditAttrs["class"] = "form-control";
 		$this->nasabah_id->EditCustomAttributes = "";
 
+		// bank_id
+		$this->bank_id->EditCustomAttributes = "";
+
 		// Jumlah_Deposito
 		$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
 		$this->Jumlah_Deposito->EditCustomAttributes = "";
@@ -970,6 +1023,7 @@ class ct20_deposito extends cTable {
 					if ($this->Tanggal_Valuta->Exportable) $Doc->ExportCaption($this->Tanggal_Valuta);
 					if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportCaption($this->Tanggal_Jatuh_Tempo);
 					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
+					if ($this->bank_id->Exportable) $Doc->ExportCaption($this->bank_id);
 					if ($this->Jumlah_Deposito->Exportable) $Doc->ExportCaption($this->Jumlah_Deposito);
 					if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportCaption($this->Jumlah_Terbilang);
 					if ($this->Suku_Bunga->Exportable) $Doc->ExportCaption($this->Suku_Bunga);
@@ -982,6 +1036,7 @@ class ct20_deposito extends cTable {
 					if ($this->Tanggal_Valuta->Exportable) $Doc->ExportCaption($this->Tanggal_Valuta);
 					if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportCaption($this->Tanggal_Jatuh_Tempo);
 					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
+					if ($this->bank_id->Exportable) $Doc->ExportCaption($this->bank_id);
 					if ($this->Jumlah_Deposito->Exportable) $Doc->ExportCaption($this->Jumlah_Deposito);
 					if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportCaption($this->Jumlah_Terbilang);
 					if ($this->Suku_Bunga->Exportable) $Doc->ExportCaption($this->Suku_Bunga);
@@ -1023,6 +1078,7 @@ class ct20_deposito extends cTable {
 						if ($this->Tanggal_Valuta->Exportable) $Doc->ExportField($this->Tanggal_Valuta);
 						if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportField($this->Tanggal_Jatuh_Tempo);
 						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
+						if ($this->bank_id->Exportable) $Doc->ExportField($this->bank_id);
 						if ($this->Jumlah_Deposito->Exportable) $Doc->ExportField($this->Jumlah_Deposito);
 						if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportField($this->Jumlah_Terbilang);
 						if ($this->Suku_Bunga->Exportable) $Doc->ExportField($this->Suku_Bunga);
@@ -1035,6 +1091,7 @@ class ct20_deposito extends cTable {
 						if ($this->Tanggal_Valuta->Exportable) $Doc->ExportField($this->Tanggal_Valuta);
 						if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportField($this->Tanggal_Jatuh_Tempo);
 						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
+						if ($this->bank_id->Exportable) $Doc->ExportField($this->bank_id);
 						if ($this->Jumlah_Deposito->Exportable) $Doc->ExportField($this->Jumlah_Deposito);
 						if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportField($this->Jumlah_Terbilang);
 						if ($this->Suku_Bunga->Exportable) $Doc->ExportField($this->Suku_Bunga);

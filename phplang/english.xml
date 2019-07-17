@@ -757,6 +757,9 @@
     <menu id="10768">
       <phrase id="menutext" value="Deposito" />
     </menu>
+    <menu id="10852">
+      <phrase id="menutext" value="Nasabah" />
+    </menu>
     <menu id="10655">
       <phrase id="menutext" value="Transaksi" />
     </menu>
@@ -1435,6 +1438,9 @@
       </field>
       <field id="nasabah_id">
         <phrase id="fldcaption" value="Nasabah" />
+      </field>
+      <field id="bank_id">
+        <phrase id="fldcaption" value="Bank" />
       </field>
       <field id="jumlah_deposito">
         <phrase id="fldcaption" value="Jumlah Deposito" />

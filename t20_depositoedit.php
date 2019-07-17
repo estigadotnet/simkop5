@@ -289,6 +289,7 @@ class ct20_deposito_edit extends ct20_deposito {
 		$this->Tanggal_Valuta->SetVisibility();
 		$this->Tanggal_Jatuh_Tempo->SetVisibility();
 		$this->nasabah_id->SetVisibility();
+		$this->bank_id->SetVisibility();
 		$this->Jumlah_Deposito->SetVisibility();
 		$this->Jumlah_Terbilang->SetVisibility();
 		$this->Suku_Bunga->SetVisibility();
@@ -516,6 +517,9 @@ class ct20_deposito_edit extends ct20_deposito {
 		if (!$this->nasabah_id->FldIsDetailKey) {
 			$this->nasabah_id->setFormValue($objForm->GetValue("x_nasabah_id"));
 		}
+		if (!$this->bank_id->FldIsDetailKey) {
+			$this->bank_id->setFormValue($objForm->GetValue("x_bank_id"));
+		}
 		if (!$this->Jumlah_Deposito->FldIsDetailKey) {
 			$this->Jumlah_Deposito->setFormValue($objForm->GetValue("x_Jumlah_Deposito"));
 		}
@@ -549,6 +553,7 @@ class ct20_deposito_edit extends ct20_deposito {
 		$this->Tanggal_Jatuh_Tempo->CurrentValue = $this->Tanggal_Jatuh_Tempo->FormValue;
 		$this->Tanggal_Jatuh_Tempo->CurrentValue = ew_UnFormatDateTime($this->Tanggal_Jatuh_Tempo->CurrentValue, 7);
 		$this->nasabah_id->CurrentValue = $this->nasabah_id->FormValue;
+		$this->bank_id->CurrentValue = $this->bank_id->FormValue;
 		$this->Jumlah_Deposito->CurrentValue = $this->Jumlah_Deposito->FormValue;
 		$this->Jumlah_Terbilang->CurrentValue = $this->Jumlah_Terbilang->FormValue;
 		$this->Suku_Bunga->CurrentValue = $this->Suku_Bunga->FormValue;
@@ -596,6 +601,7 @@ class ct20_deposito_edit extends ct20_deposito {
 		} else {
 			$this->nasabah_id->VirtualValue = ""; // Clear value
 		}
+		$this->bank_id->setDbValue($rs->fields('bank_id'));
 		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
 		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
@@ -613,6 +619,7 @@ class ct20_deposito_edit extends ct20_deposito {
 		$this->Tanggal_Valuta->DbValue = $row['Tanggal_Valuta'];
 		$this->Tanggal_Jatuh_Tempo->DbValue = $row['Tanggal_Jatuh_Tempo'];
 		$this->nasabah_id->DbValue = $row['nasabah_id'];
+		$this->bank_id->DbValue = $row['bank_id'];
 		$this->Jumlah_Deposito->DbValue = $row['Jumlah_Deposito'];
 		$this->Jumlah_Terbilang->DbValue = $row['Jumlah_Terbilang'];
 		$this->Suku_Bunga->DbValue = $row['Suku_Bunga'];
@@ -648,6 +655,7 @@ class ct20_deposito_edit extends ct20_deposito {
 		// Tanggal_Valuta
 		// Tanggal_Jatuh_Tempo
 		// nasabah_id
+		// bank_id
 		// Jumlah_Deposito
 		// Jumlah_Terbilang
 		// Suku_Bunga
@@ -701,6 +709,43 @@ class ct20_deposito_edit extends ct20_deposito {
 		}
 		}
 		$this->nasabah_id->ViewCustomAttributes = "";
+
+		// bank_id
+		if (strval($this->bank_id->CurrentValue) <> "") {
+			$arwrk = explode(",", $this->bank_id->CurrentValue);
+			$sFilterWrk = "";
+			foreach ($arwrk as $wrk) {
+				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
+				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
+			}
+		$sSqlWrk = "SELECT `id`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t21_bank`";
+		$sWhereWrk = "";
+		$this->bank_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$this->bank_id->ViewValue = "";
+				$ari = 0;
+				while (!$rswrk->EOF) {
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$arwrk[2] = $rswrk->fields('Disp2Fld');
+					$arwrk[3] = $rswrk->fields('Disp3Fld');
+					$this->bank_id->ViewValue .= $this->bank_id->DisplayValue($arwrk);
+					$rswrk->MoveNext();
+					if (!$rswrk->EOF) $this->bank_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
+					$ari++;
+				}
+				$rswrk->Close();
+			} else {
+				$this->bank_id->ViewValue = $this->bank_id->CurrentValue;
+			}
+		} else {
+			$this->bank_id->ViewValue = NULL;
+		}
+		$this->bank_id->ViewCustomAttributes = "";
 
 		// Jumlah_Deposito
 		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
@@ -759,6 +804,11 @@ class ct20_deposito_edit extends ct20_deposito {
 			$this->nasabah_id->LinkCustomAttributes = "";
 			$this->nasabah_id->HrefValue = "";
 			$this->nasabah_id->TooltipValue = "";
+
+			// bank_id
+			$this->bank_id->LinkCustomAttributes = "";
+			$this->bank_id->HrefValue = "";
+			$this->bank_id->TooltipValue = "";
 
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->LinkCustomAttributes = "";
@@ -834,6 +884,46 @@ class ct20_deposito_edit extends ct20_deposito {
 			if ($rswrk) $rswrk->Close();
 			$this->nasabah_id->EditValue = $arwrk;
 
+			// bank_id
+			$this->bank_id->EditCustomAttributes = "";
+			if (trim(strval($this->bank_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$arwrk = explode(",", $this->bank_id->CurrentValue);
+				$sFilterWrk = "";
+				foreach ($arwrk as $wrk) {
+					if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
+					$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
+				}
+			}
+			$sSqlWrk = "SELECT `id`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld`, `nasabah_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t21_bank`";
+			$sWhereWrk = "";
+			$this->bank_id->LookupFilters = array();
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$this->bank_id->ViewValue = "";
+				$ari = 0;
+				while (!$rswrk->EOF) {
+					$arwrk = array();
+					$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+					$arwrk[2] = ew_HtmlEncode($rswrk->fields('Disp2Fld'));
+					$arwrk[3] = ew_HtmlEncode($rswrk->fields('Disp3Fld'));
+					$this->bank_id->ViewValue .= $this->bank_id->DisplayValue($arwrk);
+					$rswrk->MoveNext();
+					if (!$rswrk->EOF) $this->bank_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
+					$ari++;
+				}
+				$rswrk->MoveFirst();
+			} else {
+				$this->bank_id->ViewValue = $Language->Phrase("PleaseSelect");
+			}
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->bank_id->EditValue = $arwrk;
+
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
 			$this->Jumlah_Deposito->EditCustomAttributes = "";
@@ -886,6 +976,10 @@ class ct20_deposito_edit extends ct20_deposito {
 			// nasabah_id
 			$this->nasabah_id->LinkCustomAttributes = "";
 			$this->nasabah_id->HrefValue = "";
+
+			// bank_id
+			$this->bank_id->LinkCustomAttributes = "";
+			$this->bank_id->HrefValue = "";
 
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->LinkCustomAttributes = "";
@@ -1023,6 +1117,9 @@ class ct20_deposito_edit extends ct20_deposito {
 			// nasabah_id
 			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
 
+			// bank_id
+			$this->bank_id->SetDbValueDef($rsnew, $this->bank_id->CurrentValue, NULL, $this->bank_id->ReadOnly);
+
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->SetDbValueDef($rsnew, $this->Jumlah_Deposito->CurrentValue, 0, $this->Jumlah_Deposito->ReadOnly);
 
@@ -1093,6 +1190,18 @@ class ct20_deposito_edit extends ct20_deposito {
 			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
 			$sSqlWrk = "";
 			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
+		case "x_bank_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t21_bank`";
+			$sWhereWrk = "{filter}";
+			$this->bank_id->LookupFilters = array();
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "", "f1" => '`nasabah_id` IN ({filter_value})', "t1" => "3", "fn1" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
 			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
 			if ($sSqlWrk <> "")
 				$fld->LookupFilters["s"] .= $sSqlWrk;
@@ -1291,7 +1400,8 @@ ft20_depositoedit.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft20_depositoedit.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft20_depositoedit.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft20_depositoedit.Lists["x_bank_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nomor","x_Pemilik","x_Bank",""],"ParentFields":["x_nasabah_id"],"ChildFields":[],"FilterFields":["x_nasabah_id"],"Options":[],"Template":"","LinkTable":"t21_bank"};
 ft20_depositoedit.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft20_depositoedit.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
 ft20_depositoedit.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
@@ -1369,6 +1479,7 @@ ew_CreateCalendar("ft20_depositoedit", "x_Tanggal_Jatuh_Tempo", 7);
 		<label id="elh_t20_deposito_nasabah_id" for="x_nasabah_id" class="col-sm-2 control-label ewLabel"><?php echo $t20_deposito->nasabah_id->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t20_deposito->nasabah_id->CellAttributes() ?>>
 <span id="el_t20_deposito_nasabah_id">
+<?php $t20_deposito->nasabah_id->EditAttrs["onchange"] = "ew_UpdateOpt.call(this); " . @$t20_deposito->nasabah_id->EditAttrs["onchange"]; ?>
 <span class="ewLookupList">
 	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x_nasabah_id"><?php echo (strval($t20_deposito->nasabah_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t20_deposito->nasabah_id->ViewValue); ?></span>
 </span>
@@ -1377,6 +1488,29 @@ ew_CreateCalendar("ft20_depositoedit", "x_Tanggal_Jatuh_Tempo", 7);
 <input type="hidden" name="s_x_nasabah_id" id="s_x_nasabah_id" value="<?php echo $t20_deposito->nasabah_id->LookupFilterQuery() ?>">
 </span>
 <?php echo $t20_deposito->nasabah_id->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t20_deposito->bank_id->Visible) { // bank_id ?>
+	<div id="r_bank_id" class="form-group">
+		<label id="elh_t20_deposito_bank_id" class="col-sm-2 control-label ewLabel"><?php echo $t20_deposito->bank_id->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t20_deposito->bank_id->CellAttributes() ?>>
+<span id="el_t20_deposito_bank_id">
+<div class="ewDropdownList has-feedback">
+	<span onclick="" class="form-control dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+		<?php echo $t20_deposito->bank_id->ViewValue ?>
+	</span>
+	<span class="glyphicon glyphicon-remove form-control-feedback ewDropdownListClear"></span>
+	<span class="form-control-feedback"><span class="caret"></span></span>
+	<div id="dsl_x_bank_id" data-repeatcolumn="5" class="dropdown-menu">
+		<div class="ewItems" style="position: relative; overflow-x: hidden;">
+<?php echo $t20_deposito->bank_id->CheckBoxListHtml(TRUE, "x_bank_id[]") ?>
+		</div>
+	</div>
+	<div id="tp_x_bank_id" class="ewTemplate"><input type="checkbox" data-table="t20_deposito" data-field="x_bank_id" data-value-separator="<?php echo $t20_deposito->bank_id->DisplayValueSeparatorAttribute() ?>" name="x_bank_id[]" id="x_bank_id[]" value="{value}"<?php echo $t20_deposito->bank_id->EditAttributes() ?>></div>
+</div>
+<input type="hidden" name="s_x_bank_id" id="s_x_bank_id" value="<?php echo $t20_deposito->bank_id->LookupFilterQuery() ?>">
+</span>
+<?php echo $t20_deposito->bank_id->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 <?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>

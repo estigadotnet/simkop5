@@ -414,6 +414,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tanggal_Valuta->SetVisibility();
 		$this->Tanggal_Jatuh_Tempo->SetVisibility();
 		$this->nasabah_id->SetVisibility();
+		$this->bank_id->SetVisibility();
 		$this->Jumlah_Deposito->SetVisibility();
 		$this->Jumlah_Terbilang->SetVisibility();
 		$this->Suku_Bunga->SetVisibility();
@@ -780,6 +781,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$sFilterList = ew_Concat($sFilterList, $this->Tanggal_Valuta->AdvancedSearch->ToJSON(), ","); // Field Tanggal_Valuta
 		$sFilterList = ew_Concat($sFilterList, $this->Tanggal_Jatuh_Tempo->AdvancedSearch->ToJSON(), ","); // Field Tanggal_Jatuh_Tempo
 		$sFilterList = ew_Concat($sFilterList, $this->nasabah_id->AdvancedSearch->ToJSON(), ","); // Field nasabah_id
+		$sFilterList = ew_Concat($sFilterList, $this->bank_id->AdvancedSearch->ToJSON(), ","); // Field bank_id
 		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Deposito->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Deposito
 		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Terbilang->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Terbilang
 		$sFilterList = ew_Concat($sFilterList, $this->Suku_Bunga->AdvancedSearch->ToJSON(), ","); // Field Suku_Bunga
@@ -866,6 +868,14 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->nasabah_id->AdvancedSearch->SearchOperator2 = @$filter["w_nasabah_id"];
 		$this->nasabah_id->AdvancedSearch->Save();
 
+		// Field bank_id
+		$this->bank_id->AdvancedSearch->SearchValue = @$filter["x_bank_id"];
+		$this->bank_id->AdvancedSearch->SearchOperator = @$filter["z_bank_id"];
+		$this->bank_id->AdvancedSearch->SearchCondition = @$filter["v_bank_id"];
+		$this->bank_id->AdvancedSearch->SearchValue2 = @$filter["y_bank_id"];
+		$this->bank_id->AdvancedSearch->SearchOperator2 = @$filter["w_bank_id"];
+		$this->bank_id->AdvancedSearch->Save();
+
 		// Field Jumlah_Deposito
 		$this->Jumlah_Deposito->AdvancedSearch->SearchValue = @$filter["x_Jumlah_Deposito"];
 		$this->Jumlah_Deposito->AdvancedSearch->SearchOperator = @$filter["z_Jumlah_Deposito"];
@@ -925,6 +935,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->BuildSearchSql($sWhere, $this->Tanggal_Valuta, $Default, FALSE); // Tanggal_Valuta
 		$this->BuildSearchSql($sWhere, $this->Tanggal_Jatuh_Tempo, $Default, FALSE); // Tanggal_Jatuh_Tempo
 		$this->BuildSearchSql($sWhere, $this->nasabah_id, $Default, FALSE); // nasabah_id
+		$this->BuildSearchSql($sWhere, $this->bank_id, $Default, TRUE); // bank_id
 		$this->BuildSearchSql($sWhere, $this->Jumlah_Deposito, $Default, FALSE); // Jumlah_Deposito
 		$this->BuildSearchSql($sWhere, $this->Jumlah_Terbilang, $Default, FALSE); // Jumlah_Terbilang
 		$this->BuildSearchSql($sWhere, $this->Suku_Bunga, $Default, FALSE); // Suku_Bunga
@@ -942,6 +953,7 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Tanggal_Valuta->AdvancedSearch->Save(); // Tanggal_Valuta
 			$this->Tanggal_Jatuh_Tempo->AdvancedSearch->Save(); // Tanggal_Jatuh_Tempo
 			$this->nasabah_id->AdvancedSearch->Save(); // nasabah_id
+			$this->bank_id->AdvancedSearch->Save(); // bank_id
 			$this->Jumlah_Deposito->AdvancedSearch->Save(); // Jumlah_Deposito
 			$this->Jumlah_Terbilang->AdvancedSearch->Save(); // Jumlah_Terbilang
 			$this->Suku_Bunga->AdvancedSearch->Save(); // Suku_Bunga
@@ -1012,6 +1024,8 @@ class ct20_deposito_list extends ct20_deposito {
 			return TRUE;
 		if ($this->nasabah_id->AdvancedSearch->IssetSession())
 			return TRUE;
+		if ($this->bank_id->AdvancedSearch->IssetSession())
+			return TRUE;
 		if ($this->Jumlah_Deposito->AdvancedSearch->IssetSession())
 			return TRUE;
 		if ($this->Jumlah_Terbilang->AdvancedSearch->IssetSession())
@@ -1050,6 +1064,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tanggal_Valuta->AdvancedSearch->UnsetSession();
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->UnsetSession();
 		$this->nasabah_id->AdvancedSearch->UnsetSession();
+		$this->bank_id->AdvancedSearch->UnsetSession();
 		$this->Jumlah_Deposito->AdvancedSearch->UnsetSession();
 		$this->Jumlah_Terbilang->AdvancedSearch->UnsetSession();
 		$this->Suku_Bunga->AdvancedSearch->UnsetSession();
@@ -1068,6 +1083,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tanggal_Valuta->AdvancedSearch->Load();
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->Load();
 		$this->nasabah_id->AdvancedSearch->Load();
+		$this->bank_id->AdvancedSearch->Load();
 		$this->Jumlah_Deposito->AdvancedSearch->Load();
 		$this->Jumlah_Terbilang->AdvancedSearch->Load();
 		$this->Suku_Bunga->AdvancedSearch->Load();
@@ -1090,6 +1106,7 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->UpdateSort($this->Tanggal_Valuta, $bCtrl); // Tanggal_Valuta
 			$this->UpdateSort($this->Tanggal_Jatuh_Tempo, $bCtrl); // Tanggal_Jatuh_Tempo
 			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
+			$this->UpdateSort($this->bank_id, $bCtrl); // bank_id
 			$this->UpdateSort($this->Jumlah_Deposito, $bCtrl); // Jumlah_Deposito
 			$this->UpdateSort($this->Jumlah_Terbilang, $bCtrl); // Jumlah_Terbilang
 			$this->UpdateSort($this->Suku_Bunga, $bCtrl); // Suku_Bunga
@@ -1133,6 +1150,7 @@ class ct20_deposito_list extends ct20_deposito {
 				$this->Tanggal_Valuta->setSort("");
 				$this->Tanggal_Jatuh_Tempo->setSort("");
 				$this->nasabah_id->setSort("");
+				$this->bank_id->setSort("");
 				$this->Jumlah_Deposito->setSort("");
 				$this->Jumlah_Terbilang->setSort("");
 				$this->Suku_Bunga->setSort("");
@@ -1571,6 +1589,13 @@ class ct20_deposito_list extends ct20_deposito {
 		if ($this->nasabah_id->AdvancedSearch->SearchValue2 <> "") $this->Command = "search";
 		$this->nasabah_id->AdvancedSearch->SearchOperator2 = @$_GET["w_nasabah_id"];
 
+		// bank_id
+		$this->bank_id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_bank_id"]);
+		if ($this->bank_id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->bank_id->AdvancedSearch->SearchOperator = @$_GET["z_bank_id"];
+		if (is_array($this->bank_id->AdvancedSearch->SearchValue)) $this->bank_id->AdvancedSearch->SearchValue = implode(",", $this->bank_id->AdvancedSearch->SearchValue);
+		if (is_array($this->bank_id->AdvancedSearch->SearchValue2)) $this->bank_id->AdvancedSearch->SearchValue2 = implode(",", $this->bank_id->AdvancedSearch->SearchValue2);
+
 		// Jumlah_Deposito
 		$this->Jumlah_Deposito->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Jumlah_Deposito"]);
 		if ($this->Jumlah_Deposito->AdvancedSearch->SearchValue <> "") $this->Command = "search";
@@ -1667,6 +1692,7 @@ class ct20_deposito_list extends ct20_deposito {
 		} else {
 			$this->nasabah_id->VirtualValue = ""; // Clear value
 		}
+		$this->bank_id->setDbValue($rs->fields('bank_id'));
 		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
 		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
@@ -1684,6 +1710,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tanggal_Valuta->DbValue = $row['Tanggal_Valuta'];
 		$this->Tanggal_Jatuh_Tempo->DbValue = $row['Tanggal_Jatuh_Tempo'];
 		$this->nasabah_id->DbValue = $row['nasabah_id'];
+		$this->bank_id->DbValue = $row['bank_id'];
 		$this->Jumlah_Deposito->DbValue = $row['Jumlah_Deposito'];
 		$this->Jumlah_Terbilang->DbValue = $row['Jumlah_Terbilang'];
 		$this->Suku_Bunga->DbValue = $row['Suku_Bunga'];
@@ -1748,6 +1775,7 @@ class ct20_deposito_list extends ct20_deposito {
 		// Tanggal_Valuta
 		// Tanggal_Jatuh_Tempo
 		// nasabah_id
+		// bank_id
 		// Jumlah_Deposito
 		// Jumlah_Terbilang
 		// Suku_Bunga
@@ -1801,6 +1829,43 @@ class ct20_deposito_list extends ct20_deposito {
 		}
 		}
 		$this->nasabah_id->ViewCustomAttributes = "";
+
+		// bank_id
+		if (strval($this->bank_id->CurrentValue) <> "") {
+			$arwrk = explode(",", $this->bank_id->CurrentValue);
+			$sFilterWrk = "";
+			foreach ($arwrk as $wrk) {
+				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
+				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
+			}
+		$sSqlWrk = "SELECT `id`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t21_bank`";
+		$sWhereWrk = "";
+		$this->bank_id->LookupFilters = array();
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$this->bank_id->ViewValue = "";
+				$ari = 0;
+				while (!$rswrk->EOF) {
+					$arwrk = array();
+					$arwrk[1] = $rswrk->fields('DispFld');
+					$arwrk[2] = $rswrk->fields('Disp2Fld');
+					$arwrk[3] = $rswrk->fields('Disp3Fld');
+					$this->bank_id->ViewValue .= $this->bank_id->DisplayValue($arwrk);
+					$rswrk->MoveNext();
+					if (!$rswrk->EOF) $this->bank_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
+					$ari++;
+				}
+				$rswrk->Close();
+			} else {
+				$this->bank_id->ViewValue = $this->bank_id->CurrentValue;
+			}
+		} else {
+			$this->bank_id->ViewValue = NULL;
+		}
+		$this->bank_id->ViewCustomAttributes = "";
 
 		// Jumlah_Deposito
 		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
@@ -1860,6 +1925,11 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->nasabah_id->HrefValue = "";
 			$this->nasabah_id->TooltipValue = "";
 
+			// bank_id
+			$this->bank_id->LinkCustomAttributes = "";
+			$this->bank_id->HrefValue = "";
+			$this->bank_id->TooltipValue = "";
+
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->LinkCustomAttributes = "";
 			$this->Jumlah_Deposito->HrefValue = "";
@@ -1918,6 +1988,9 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->nasabah_id->EditCustomAttributes = "";
 			$this->nasabah_id->EditValue2 = ew_HtmlEncode($this->nasabah_id->AdvancedSearch->SearchValue2);
 			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+
+			// bank_id
+			$this->bank_id->EditCustomAttributes = "";
 
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
@@ -1992,6 +2065,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tanggal_Valuta->AdvancedSearch->Load();
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->Load();
 		$this->nasabah_id->AdvancedSearch->Load();
+		$this->bank_id->AdvancedSearch->Load();
 		$this->Jumlah_Deposito->AdvancedSearch->Load();
 		$this->Jumlah_Terbilang->AdvancedSearch->Load();
 		$this->Suku_Bunga->AdvancedSearch->Load();
@@ -2353,7 +2427,8 @@ ft20_depositolist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft20_depositolist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft20_depositolist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft20_depositolist.Lists["x_bank_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nomor","x_Pemilik","x_Bank",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t21_bank"};
 ft20_depositolist.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft20_depositolist.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
 ft20_depositolist.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
@@ -2391,7 +2466,7 @@ ft20_depositolistsrch.ValidateRequired = false; // No JavaScript validation
 <?php } ?>
 
 // Dynamic selection lists
-ft20_depositolistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft20_depositolistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 </script>
 <script type="text/javascript">
 
@@ -2570,6 +2645,15 @@ $t20_deposito_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
+<?php if ($t20_deposito->bank_id->Visible) { // bank_id ?>
+	<?php if ($t20_deposito->SortUrl($t20_deposito->bank_id) == "") { ?>
+		<th data-name="bank_id"><div id="elh_t20_deposito_bank_id" class="t20_deposito_bank_id"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->bank_id->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="bank_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->bank_id) ?>',2);"><div id="elh_t20_deposito_bank_id" class="t20_deposito_bank_id">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->bank_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->bank_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->bank_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
 <?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
 	<?php if ($t20_deposito->SortUrl($t20_deposito->Jumlah_Deposito) == "") { ?>
 		<th data-name="Jumlah_Deposito"><div id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></div></div></th>
@@ -2718,6 +2802,14 @@ $t20_deposito_list->ListOptions->Render("body", "left", $t20_deposito_list->RowC
 <span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
 <span<?php echo $t20_deposito->nasabah_id->ViewAttributes() ?>>
 <?php echo $t20_deposito->nasabah_id->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t20_deposito->bank_id->Visible) { // bank_id ?>
+		<td data-name="bank_id"<?php echo $t20_deposito->bank_id->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_bank_id" class="t20_deposito_bank_id">
+<span<?php echo $t20_deposito->bank_id->ViewAttributes() ?>>
+<?php echo $t20_deposito->bank_id->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
