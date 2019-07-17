@@ -410,17 +410,16 @@ class ct20_deposito_list extends ct20_deposito {
 
 		// Setup export options
 		$this->SetupExportOptions();
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->No_Urut->SetVisibility();
 		$this->Tanggal_Valuta->SetVisibility();
 		$this->Tanggal_Jatuh_Tempo->SetVisibility();
+		$this->nasabah_id->SetVisibility();
+		$this->Jumlah_Deposito->SetVisibility();
+		$this->Jumlah_Terbilang->SetVisibility();
 		$this->Suku_Bunga->SetVisibility();
 		$this->Jumlah_Bunga->SetVisibility();
 		$this->Dikredit_Diperpanjang->SetVisibility();
 		$this->Tunai_Transfer->SetVisibility();
-		$this->nasabah_id->SetVisibility();
-		$this->Jumlah_Deposito->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -607,11 +606,7 @@ class ct20_deposito_list extends ct20_deposito {
 			}
 
 			// Get default search criteria
-			ew_AddFilter($this->DefaultSearchWhere, $this->BasicSearchWhere(TRUE));
 			ew_AddFilter($this->DefaultSearchWhere, $this->AdvancedSearchWhere(TRUE));
-
-			// Get basic search values
-			$this->LoadBasicSearchValues();
 
 			// Get and validate search values for advanced search
 			$this->LoadSearchValues(); // Get search values
@@ -631,10 +626,6 @@ class ct20_deposito_list extends ct20_deposito {
 			// Set up sorting order
 			$this->SetUpSortOrder();
 
-			// Get basic search criteria
-			if ($gsSearchError == "")
-				$sSrchBasic = $this->BasicSearchWhere();
-
 			// Get search criteria for advanced search
 			if ($gsSearchError == "")
 				$sSrchAdvanced = $this->AdvancedSearchWhere();
@@ -652,11 +643,6 @@ class ct20_deposito_list extends ct20_deposito {
 
 		// Load search default if no existing search criteria
 		if (!$this->CheckSearchParms()) {
-
-			// Load basic search from default
-			$this->BasicSearch->LoadDefault();
-			if ($this->BasicSearch->Keyword != "")
-				$sSrchBasic = $this->BasicSearchWhere();
 
 			// Load advanced search from default
 			if ($this->LoadAdvancedSearchDefault()) {
@@ -686,6 +672,10 @@ class ct20_deposito_list extends ct20_deposito {
 			$sFilter = "(0=1)"; // Filter all records
 		ew_AddFilter($sFilter, $this->DbDetailFilter);
 		ew_AddFilter($sFilter, $this->SearchWhere);
+		if ($sFilter == "") {
+			$sFilter = "0=101";
+			$this->SearchWhere = $sFilter;
+		}
 
 		// Set up filter in session
 		$this->setSessionWhere($sFilter);
@@ -789,17 +779,13 @@ class ct20_deposito_list extends ct20_deposito {
 		$sFilterList = ew_Concat($sFilterList, $this->No_Urut->AdvancedSearch->ToJSON(), ","); // Field No_Urut
 		$sFilterList = ew_Concat($sFilterList, $this->Tanggal_Valuta->AdvancedSearch->ToJSON(), ","); // Field Tanggal_Valuta
 		$sFilterList = ew_Concat($sFilterList, $this->Tanggal_Jatuh_Tempo->AdvancedSearch->ToJSON(), ","); // Field Tanggal_Jatuh_Tempo
+		$sFilterList = ew_Concat($sFilterList, $this->nasabah_id->AdvancedSearch->ToJSON(), ","); // Field nasabah_id
+		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Deposito->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Deposito
+		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Terbilang->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Terbilang
 		$sFilterList = ew_Concat($sFilterList, $this->Suku_Bunga->AdvancedSearch->ToJSON(), ","); // Field Suku_Bunga
 		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Bunga->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Bunga
 		$sFilterList = ew_Concat($sFilterList, $this->Dikredit_Diperpanjang->AdvancedSearch->ToJSON(), ","); // Field Dikredit_Diperpanjang
 		$sFilterList = ew_Concat($sFilterList, $this->Tunai_Transfer->AdvancedSearch->ToJSON(), ","); // Field Tunai_Transfer
-		$sFilterList = ew_Concat($sFilterList, $this->nasabah_id->AdvancedSearch->ToJSON(), ","); // Field nasabah_id
-		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Deposito->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Deposito
-		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Terbilang->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Terbilang
-		if ($this->BasicSearch->Keyword <> "") {
-			$sWrk = "\"" . EW_TABLE_BASIC_SEARCH . "\":\"" . ew_JsEncode2($this->BasicSearch->Keyword) . "\",\"" . EW_TABLE_BASIC_SEARCH_TYPE . "\":\"" . ew_JsEncode2($this->BasicSearch->Type) . "\"";
-			$sFilterList = ew_Concat($sFilterList, $sWrk, ",");
-		}
 		$sFilterList = preg_replace('/,$/', "", $sFilterList);
 
 		// Return filter list in json
@@ -872,6 +858,30 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->SearchOperator2 = @$filter["w_Tanggal_Jatuh_Tempo"];
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->Save();
 
+		// Field nasabah_id
+		$this->nasabah_id->AdvancedSearch->SearchValue = @$filter["x_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->SearchOperator = @$filter["z_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->SearchCondition = @$filter["v_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->SearchValue2 = @$filter["y_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->SearchOperator2 = @$filter["w_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->Save();
+
+		// Field Jumlah_Deposito
+		$this->Jumlah_Deposito->AdvancedSearch->SearchValue = @$filter["x_Jumlah_Deposito"];
+		$this->Jumlah_Deposito->AdvancedSearch->SearchOperator = @$filter["z_Jumlah_Deposito"];
+		$this->Jumlah_Deposito->AdvancedSearch->SearchCondition = @$filter["v_Jumlah_Deposito"];
+		$this->Jumlah_Deposito->AdvancedSearch->SearchValue2 = @$filter["y_Jumlah_Deposito"];
+		$this->Jumlah_Deposito->AdvancedSearch->SearchOperator2 = @$filter["w_Jumlah_Deposito"];
+		$this->Jumlah_Deposito->AdvancedSearch->Save();
+
+		// Field Jumlah_Terbilang
+		$this->Jumlah_Terbilang->AdvancedSearch->SearchValue = @$filter["x_Jumlah_Terbilang"];
+		$this->Jumlah_Terbilang->AdvancedSearch->SearchOperator = @$filter["z_Jumlah_Terbilang"];
+		$this->Jumlah_Terbilang->AdvancedSearch->SearchCondition = @$filter["v_Jumlah_Terbilang"];
+		$this->Jumlah_Terbilang->AdvancedSearch->SearchValue2 = @$filter["y_Jumlah_Terbilang"];
+		$this->Jumlah_Terbilang->AdvancedSearch->SearchOperator2 = @$filter["w_Jumlah_Terbilang"];
+		$this->Jumlah_Terbilang->AdvancedSearch->Save();
+
 		// Field Suku_Bunga
 		$this->Suku_Bunga->AdvancedSearch->SearchValue = @$filter["x_Suku_Bunga"];
 		$this->Suku_Bunga->AdvancedSearch->SearchOperator = @$filter["z_Suku_Bunga"];
@@ -903,32 +913,6 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tunai_Transfer->AdvancedSearch->SearchValue2 = @$filter["y_Tunai_Transfer"];
 		$this->Tunai_Transfer->AdvancedSearch->SearchOperator2 = @$filter["w_Tunai_Transfer"];
 		$this->Tunai_Transfer->AdvancedSearch->Save();
-
-		// Field nasabah_id
-		$this->nasabah_id->AdvancedSearch->SearchValue = @$filter["x_nasabah_id"];
-		$this->nasabah_id->AdvancedSearch->SearchOperator = @$filter["z_nasabah_id"];
-		$this->nasabah_id->AdvancedSearch->SearchCondition = @$filter["v_nasabah_id"];
-		$this->nasabah_id->AdvancedSearch->SearchValue2 = @$filter["y_nasabah_id"];
-		$this->nasabah_id->AdvancedSearch->SearchOperator2 = @$filter["w_nasabah_id"];
-		$this->nasabah_id->AdvancedSearch->Save();
-
-		// Field Jumlah_Deposito
-		$this->Jumlah_Deposito->AdvancedSearch->SearchValue = @$filter["x_Jumlah_Deposito"];
-		$this->Jumlah_Deposito->AdvancedSearch->SearchOperator = @$filter["z_Jumlah_Deposito"];
-		$this->Jumlah_Deposito->AdvancedSearch->SearchCondition = @$filter["v_Jumlah_Deposito"];
-		$this->Jumlah_Deposito->AdvancedSearch->SearchValue2 = @$filter["y_Jumlah_Deposito"];
-		$this->Jumlah_Deposito->AdvancedSearch->SearchOperator2 = @$filter["w_Jumlah_Deposito"];
-		$this->Jumlah_Deposito->AdvancedSearch->Save();
-
-		// Field Jumlah_Terbilang
-		$this->Jumlah_Terbilang->AdvancedSearch->SearchValue = @$filter["x_Jumlah_Terbilang"];
-		$this->Jumlah_Terbilang->AdvancedSearch->SearchOperator = @$filter["z_Jumlah_Terbilang"];
-		$this->Jumlah_Terbilang->AdvancedSearch->SearchCondition = @$filter["v_Jumlah_Terbilang"];
-		$this->Jumlah_Terbilang->AdvancedSearch->SearchValue2 = @$filter["y_Jumlah_Terbilang"];
-		$this->Jumlah_Terbilang->AdvancedSearch->SearchOperator2 = @$filter["w_Jumlah_Terbilang"];
-		$this->Jumlah_Terbilang->AdvancedSearch->Save();
-		$this->BasicSearch->setKeyword(@$filter[EW_TABLE_BASIC_SEARCH]);
-		$this->BasicSearch->setType(@$filter[EW_TABLE_BASIC_SEARCH_TYPE]);
 	}
 
 	// Advanced search WHERE clause based on QueryString
@@ -940,13 +924,13 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->BuildSearchSql($sWhere, $this->No_Urut, $Default, FALSE); // No_Urut
 		$this->BuildSearchSql($sWhere, $this->Tanggal_Valuta, $Default, FALSE); // Tanggal_Valuta
 		$this->BuildSearchSql($sWhere, $this->Tanggal_Jatuh_Tempo, $Default, FALSE); // Tanggal_Jatuh_Tempo
+		$this->BuildSearchSql($sWhere, $this->nasabah_id, $Default, FALSE); // nasabah_id
+		$this->BuildSearchSql($sWhere, $this->Jumlah_Deposito, $Default, FALSE); // Jumlah_Deposito
+		$this->BuildSearchSql($sWhere, $this->Jumlah_Terbilang, $Default, FALSE); // Jumlah_Terbilang
 		$this->BuildSearchSql($sWhere, $this->Suku_Bunga, $Default, FALSE); // Suku_Bunga
 		$this->BuildSearchSql($sWhere, $this->Jumlah_Bunga, $Default, FALSE); // Jumlah_Bunga
 		$this->BuildSearchSql($sWhere, $this->Dikredit_Diperpanjang, $Default, FALSE); // Dikredit_Diperpanjang
 		$this->BuildSearchSql($sWhere, $this->Tunai_Transfer, $Default, FALSE); // Tunai_Transfer
-		$this->BuildSearchSql($sWhere, $this->nasabah_id, $Default, FALSE); // nasabah_id
-		$this->BuildSearchSql($sWhere, $this->Jumlah_Deposito, $Default, FALSE); // Jumlah_Deposito
-		$this->BuildSearchSql($sWhere, $this->Jumlah_Terbilang, $Default, FALSE); // Jumlah_Terbilang
 
 		// Set up search parm
 		if (!$Default && $sWhere <> "") {
@@ -957,13 +941,13 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->No_Urut->AdvancedSearch->Save(); // No_Urut
 			$this->Tanggal_Valuta->AdvancedSearch->Save(); // Tanggal_Valuta
 			$this->Tanggal_Jatuh_Tempo->AdvancedSearch->Save(); // Tanggal_Jatuh_Tempo
+			$this->nasabah_id->AdvancedSearch->Save(); // nasabah_id
+			$this->Jumlah_Deposito->AdvancedSearch->Save(); // Jumlah_Deposito
+			$this->Jumlah_Terbilang->AdvancedSearch->Save(); // Jumlah_Terbilang
 			$this->Suku_Bunga->AdvancedSearch->Save(); // Suku_Bunga
 			$this->Jumlah_Bunga->AdvancedSearch->Save(); // Jumlah_Bunga
 			$this->Dikredit_Diperpanjang->AdvancedSearch->Save(); // Dikredit_Diperpanjang
 			$this->Tunai_Transfer->AdvancedSearch->Save(); // Tunai_Transfer
-			$this->nasabah_id->AdvancedSearch->Save(); // nasabah_id
-			$this->Jumlah_Deposito->AdvancedSearch->Save(); // Jumlah_Deposito
-			$this->Jumlah_Terbilang->AdvancedSearch->Save(); // Jumlah_Terbilang
 		}
 		return $sWhere;
 	}
@@ -1016,137 +1000,8 @@ class ct20_deposito_list extends ct20_deposito {
 		return $Value;
 	}
 
-	// Return basic search SQL
-	function BasicSearchSQL($arKeywords, $type) {
-		$sWhere = "";
-		$this->BuildBasicSearchSQL($sWhere, $this->No_Urut, $arKeywords, $type);
-		$this->BuildBasicSearchSQL($sWhere, $this->Jumlah_Terbilang, $arKeywords, $type);
-		return $sWhere;
-	}
-
-	// Build basic search SQL
-	function BuildBasicSearchSQL(&$Where, &$Fld, $arKeywords, $type) {
-		global $EW_BASIC_SEARCH_IGNORE_PATTERN;
-		$sDefCond = ($type == "OR") ? "OR" : "AND";
-		$arSQL = array(); // Array for SQL parts
-		$arCond = array(); // Array for search conditions
-		$cnt = count($arKeywords);
-		$j = 0; // Number of SQL parts
-		for ($i = 0; $i < $cnt; $i++) {
-			$Keyword = $arKeywords[$i];
-			$Keyword = trim($Keyword);
-			if ($EW_BASIC_SEARCH_IGNORE_PATTERN <> "") {
-				$Keyword = preg_replace($EW_BASIC_SEARCH_IGNORE_PATTERN, "\\", $Keyword);
-				$ar = explode("\\", $Keyword);
-			} else {
-				$ar = array($Keyword);
-			}
-			foreach ($ar as $Keyword) {
-				if ($Keyword <> "") {
-					$sWrk = "";
-					if ($Keyword == "OR" && $type == "") {
-						if ($j > 0)
-							$arCond[$j-1] = "OR";
-					} elseif ($Keyword == EW_NULL_VALUE) {
-						$sWrk = $Fld->FldExpression . " IS NULL";
-					} elseif ($Keyword == EW_NOT_NULL_VALUE) {
-						$sWrk = $Fld->FldExpression . " IS NOT NULL";
-					} elseif ($Fld->FldIsVirtual) {
-						$sWrk = $Fld->FldVirtualExpression . ew_Like(ew_QuotedValue("%" . $Keyword . "%", EW_DATATYPE_STRING, $this->DBID), $this->DBID);
-					} elseif ($Fld->FldDataType != EW_DATATYPE_NUMBER || is_numeric($Keyword)) {
-						$sWrk = $Fld->FldBasicSearchExpression . ew_Like(ew_QuotedValue("%" . $Keyword . "%", EW_DATATYPE_STRING, $this->DBID), $this->DBID);
-					}
-					if ($sWrk <> "") {
-						$arSQL[$j] = $sWrk;
-						$arCond[$j] = $sDefCond;
-						$j += 1;
-					}
-				}
-			}
-		}
-		$cnt = count($arSQL);
-		$bQuoted = FALSE;
-		$sSql = "";
-		if ($cnt > 0) {
-			for ($i = 0; $i < $cnt-1; $i++) {
-				if ($arCond[$i] == "OR") {
-					if (!$bQuoted) $sSql .= "(";
-					$bQuoted = TRUE;
-				}
-				$sSql .= $arSQL[$i];
-				if ($bQuoted && $arCond[$i] <> "OR") {
-					$sSql .= ")";
-					$bQuoted = FALSE;
-				}
-				$sSql .= " " . $arCond[$i] . " ";
-			}
-			$sSql .= $arSQL[$cnt-1];
-			if ($bQuoted)
-				$sSql .= ")";
-		}
-		if ($sSql <> "") {
-			if ($Where <> "") $Where .= " OR ";
-			$Where .=  "(" . $sSql . ")";
-		}
-	}
-
-	// Return basic search WHERE clause based on search keyword and type
-	function BasicSearchWhere($Default = FALSE) {
-		global $Security;
-		$sSearchStr = "";
-		if (!$Security->CanSearch()) return "";
-		$sSearchKeyword = ($Default) ? $this->BasicSearch->KeywordDefault : $this->BasicSearch->Keyword;
-		$sSearchType = ($Default) ? $this->BasicSearch->TypeDefault : $this->BasicSearch->Type;
-		if ($sSearchKeyword <> "") {
-			$sSearch = trim($sSearchKeyword);
-			if ($sSearchType <> "=") {
-				$ar = array();
-
-				// Match quoted keywords (i.e.: "...")
-				if (preg_match_all('/"([^"]*)"/i', $sSearch, $matches, PREG_SET_ORDER)) {
-					foreach ($matches as $match) {
-						$p = strpos($sSearch, $match[0]);
-						$str = substr($sSearch, 0, $p);
-						$sSearch = substr($sSearch, $p + strlen($match[0]));
-						if (strlen(trim($str)) > 0)
-							$ar = array_merge($ar, explode(" ", trim($str)));
-						$ar[] = $match[1]; // Save quoted keyword
-					}
-				}
-
-				// Match individual keywords
-				if (strlen(trim($sSearch)) > 0)
-					$ar = array_merge($ar, explode(" ", trim($sSearch)));
-
-				// Search keyword in any fields
-				if (($sSearchType == "OR" || $sSearchType == "AND") && $this->BasicSearch->BasicSearchAnyFields) {
-					foreach ($ar as $sKeyword) {
-						if ($sKeyword <> "") {
-							if ($sSearchStr <> "") $sSearchStr .= " " . $sSearchType . " ";
-							$sSearchStr .= "(" . $this->BasicSearchSQL(array($sKeyword), $sSearchType) . ")";
-						}
-					}
-				} else {
-					$sSearchStr = $this->BasicSearchSQL($ar, $sSearchType);
-				}
-			} else {
-				$sSearchStr = $this->BasicSearchSQL(array($sSearch), $sSearchType);
-			}
-			if (!$Default) $this->Command = "search";
-		}
-		if (!$Default && $this->Command == "search") {
-			$this->BasicSearch->setKeyword($sSearchKeyword);
-			$this->BasicSearch->setType($sSearchType);
-		}
-		return $sSearchStr;
-	}
-
 	// Check if search parm exists
 	function CheckSearchParms() {
-
-		// Check basic search
-		if ($this->BasicSearch->IssetSession())
-			return TRUE;
 		if ($this->id->AdvancedSearch->IssetSession())
 			return TRUE;
 		if ($this->No_Urut->AdvancedSearch->IssetSession())
@@ -1155,6 +1010,12 @@ class ct20_deposito_list extends ct20_deposito {
 			return TRUE;
 		if ($this->Tanggal_Jatuh_Tempo->AdvancedSearch->IssetSession())
 			return TRUE;
+		if ($this->nasabah_id->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Jumlah_Deposito->AdvancedSearch->IssetSession())
+			return TRUE;
+		if ($this->Jumlah_Terbilang->AdvancedSearch->IssetSession())
+			return TRUE;
 		if ($this->Suku_Bunga->AdvancedSearch->IssetSession())
 			return TRUE;
 		if ($this->Jumlah_Bunga->AdvancedSearch->IssetSession())
@@ -1162,12 +1023,6 @@ class ct20_deposito_list extends ct20_deposito {
 		if ($this->Dikredit_Diperpanjang->AdvancedSearch->IssetSession())
 			return TRUE;
 		if ($this->Tunai_Transfer->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->nasabah_id->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Jumlah_Deposito->AdvancedSearch->IssetSession())
-			return TRUE;
-		if ($this->Jumlah_Terbilang->AdvancedSearch->IssetSession())
 			return TRUE;
 		return FALSE;
 	}
@@ -1179,9 +1034,6 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->SearchWhere = "";
 		$this->setSearchWhere($this->SearchWhere);
 
-		// Clear basic search parameters
-		$this->ResetBasicSearchParms();
-
 		// Clear advanced search parameters
 		$this->ResetAdvancedSearchParms();
 	}
@@ -1191,45 +1043,37 @@ class ct20_deposito_list extends ct20_deposito {
 		return FALSE;
 	}
 
-	// Clear all basic search parameters
-	function ResetBasicSearchParms() {
-		$this->BasicSearch->UnsetSession();
-	}
-
 	// Clear all advanced search parameters
 	function ResetAdvancedSearchParms() {
 		$this->id->AdvancedSearch->UnsetSession();
 		$this->No_Urut->AdvancedSearch->UnsetSession();
 		$this->Tanggal_Valuta->AdvancedSearch->UnsetSession();
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->UnsetSession();
+		$this->nasabah_id->AdvancedSearch->UnsetSession();
+		$this->Jumlah_Deposito->AdvancedSearch->UnsetSession();
+		$this->Jumlah_Terbilang->AdvancedSearch->UnsetSession();
 		$this->Suku_Bunga->AdvancedSearch->UnsetSession();
 		$this->Jumlah_Bunga->AdvancedSearch->UnsetSession();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->UnsetSession();
 		$this->Tunai_Transfer->AdvancedSearch->UnsetSession();
-		$this->nasabah_id->AdvancedSearch->UnsetSession();
-		$this->Jumlah_Deposito->AdvancedSearch->UnsetSession();
-		$this->Jumlah_Terbilang->AdvancedSearch->UnsetSession();
 	}
 
 	// Restore all search parameters
 	function RestoreSearchParms() {
 		$this->RestoreSearch = TRUE;
 
-		// Restore basic search values
-		$this->BasicSearch->Load();
-
 		// Restore advanced search values
 		$this->id->AdvancedSearch->Load();
 		$this->No_Urut->AdvancedSearch->Load();
 		$this->Tanggal_Valuta->AdvancedSearch->Load();
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->Load();
+		$this->nasabah_id->AdvancedSearch->Load();
+		$this->Jumlah_Deposito->AdvancedSearch->Load();
+		$this->Jumlah_Terbilang->AdvancedSearch->Load();
 		$this->Suku_Bunga->AdvancedSearch->Load();
 		$this->Jumlah_Bunga->AdvancedSearch->Load();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->Load();
 		$this->Tunai_Transfer->AdvancedSearch->Load();
-		$this->nasabah_id->AdvancedSearch->Load();
-		$this->Jumlah_Deposito->AdvancedSearch->Load();
-		$this->Jumlah_Terbilang->AdvancedSearch->Load();
 	}
 
 	// Set up sort parameters
@@ -1242,16 +1086,16 @@ class ct20_deposito_list extends ct20_deposito {
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->id, $bCtrl); // id
 			$this->UpdateSort($this->No_Urut, $bCtrl); // No_Urut
 			$this->UpdateSort($this->Tanggal_Valuta, $bCtrl); // Tanggal_Valuta
 			$this->UpdateSort($this->Tanggal_Jatuh_Tempo, $bCtrl); // Tanggal_Jatuh_Tempo
+			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
+			$this->UpdateSort($this->Jumlah_Deposito, $bCtrl); // Jumlah_Deposito
+			$this->UpdateSort($this->Jumlah_Terbilang, $bCtrl); // Jumlah_Terbilang
 			$this->UpdateSort($this->Suku_Bunga, $bCtrl); // Suku_Bunga
 			$this->UpdateSort($this->Jumlah_Bunga, $bCtrl); // Jumlah_Bunga
 			$this->UpdateSort($this->Dikredit_Diperpanjang, $bCtrl); // Dikredit_Diperpanjang
 			$this->UpdateSort($this->Tunai_Transfer, $bCtrl); // Tunai_Transfer
-			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
-			$this->UpdateSort($this->Jumlah_Deposito, $bCtrl); // Jumlah_Deposito
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1284,16 +1128,17 @@ class ct20_deposito_list extends ct20_deposito {
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->id->setSort("");
+				$this->setSessionOrderByList($sOrderBy);
 				$this->No_Urut->setSort("");
 				$this->Tanggal_Valuta->setSort("");
 				$this->Tanggal_Jatuh_Tempo->setSort("");
+				$this->nasabah_id->setSort("");
+				$this->Jumlah_Deposito->setSort("");
+				$this->Jumlah_Terbilang->setSort("");
 				$this->Suku_Bunga->setSort("");
 				$this->Jumlah_Bunga->setSort("");
 				$this->Dikredit_Diperpanjang->setSort("");
 				$this->Tunai_Transfer->setSort("");
-				$this->nasabah_id->setSort("");
-				$this->Jumlah_Deposito->setSort("");
 			}
 
 			// Reset start position
@@ -1623,7 +1468,7 @@ class ct20_deposito_list extends ct20_deposito {
 
 		// Show all button
 		$item = &$this->SearchOptions->Add("showall");
-		$item->Body = "<a class=\"btn btn-default ewShowAll\" title=\"" . $Language->Phrase("ShowAll") . "\" data-caption=\"" . $Language->Phrase("ShowAll") . "\" href=\"" . $this->PageUrl() . "cmd=reset\">" . $Language->Phrase("ShowAllBtn") . "</a>";
+		$item->Body = "<a class=\"btn btn-default ewShowAll\" title=\"" . $Language->Phrase("ResetSearch") . "\" data-caption=\"" . $Language->Phrase("ResetSearch") . "\" href=\"" . $this->PageUrl() . "cmd=reset\">" . $Language->Phrase("ResetSearchBtn") . "</a>";
 		$item->Visible = ($this->SearchWhere <> $this->DefaultSearchWhere && $this->SearchWhere <> "0=101");
 
 		// Button group for search
@@ -1691,13 +1536,6 @@ class ct20_deposito_list extends ct20_deposito {
 		}
 	}
 
-	// Load basic search values
-	function LoadBasicSearchValues() {
-		$this->BasicSearch->Keyword = @$_GET[EW_TABLE_BASIC_SEARCH];
-		if ($this->BasicSearch->Keyword <> "") $this->Command = "search";
-		$this->BasicSearch->Type = @$_GET[EW_TABLE_BASIC_SEARCH_TYPE];
-	}
-
 	// Load search values for validation
 	function LoadSearchValues() {
 		global $objForm;
@@ -1724,6 +1562,25 @@ class ct20_deposito_list extends ct20_deposito {
 		if ($this->Tanggal_Jatuh_Tempo->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->SearchOperator = @$_GET["z_Tanggal_Jatuh_Tempo"];
 
+		// nasabah_id
+		$this->nasabah_id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_nasabah_id"]);
+		if ($this->nasabah_id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->nasabah_id->AdvancedSearch->SearchOperator = @$_GET["z_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->SearchCondition = @$_GET["v_nasabah_id"];
+		$this->nasabah_id->AdvancedSearch->SearchValue2 = ew_StripSlashes(@$_GET["y_nasabah_id"]);
+		if ($this->nasabah_id->AdvancedSearch->SearchValue2 <> "") $this->Command = "search";
+		$this->nasabah_id->AdvancedSearch->SearchOperator2 = @$_GET["w_nasabah_id"];
+
+		// Jumlah_Deposito
+		$this->Jumlah_Deposito->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Jumlah_Deposito"]);
+		if ($this->Jumlah_Deposito->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Jumlah_Deposito->AdvancedSearch->SearchOperator = @$_GET["z_Jumlah_Deposito"];
+
+		// Jumlah_Terbilang
+		$this->Jumlah_Terbilang->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Jumlah_Terbilang"]);
+		if ($this->Jumlah_Terbilang->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Jumlah_Terbilang->AdvancedSearch->SearchOperator = @$_GET["z_Jumlah_Terbilang"];
+
 		// Suku_Bunga
 		$this->Suku_Bunga->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Suku_Bunga"]);
 		if ($this->Suku_Bunga->AdvancedSearch->SearchValue <> "") $this->Command = "search";
@@ -1743,21 +1600,6 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tunai_Transfer->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Tunai_Transfer"]);
 		if ($this->Tunai_Transfer->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->Tunai_Transfer->AdvancedSearch->SearchOperator = @$_GET["z_Tunai_Transfer"];
-
-		// nasabah_id
-		$this->nasabah_id->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_nasabah_id"]);
-		if ($this->nasabah_id->AdvancedSearch->SearchValue <> "") $this->Command = "search";
-		$this->nasabah_id->AdvancedSearch->SearchOperator = @$_GET["z_nasabah_id"];
-
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Jumlah_Deposito"]);
-		if ($this->Jumlah_Deposito->AdvancedSearch->SearchValue <> "") $this->Command = "search";
-		$this->Jumlah_Deposito->AdvancedSearch->SearchOperator = @$_GET["z_Jumlah_Deposito"];
-
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Jumlah_Terbilang"]);
-		if ($this->Jumlah_Terbilang->AdvancedSearch->SearchValue <> "") $this->Command = "search";
-		$this->Jumlah_Terbilang->AdvancedSearch->SearchOperator = @$_GET["z_Jumlah_Terbilang"];
 	}
 
 	// Load recordset
@@ -1772,7 +1614,7 @@ class ct20_deposito_list extends ct20_deposito {
 		if ($this->UseSelectLimit) {
 			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
 			} else {
 				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
 			}
@@ -1819,13 +1661,18 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->No_Urut->setDbValue($rs->fields('No_Urut'));
 		$this->Tanggal_Valuta->setDbValue($rs->fields('Tanggal_Valuta'));
 		$this->Tanggal_Jatuh_Tempo->setDbValue($rs->fields('Tanggal_Jatuh_Tempo'));
+		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
+		if (array_key_exists('EV__nasabah_id', $rs->fields)) {
+			$this->nasabah_id->VirtualValue = $rs->fields('EV__nasabah_id'); // Set up virtual field value
+		} else {
+			$this->nasabah_id->VirtualValue = ""; // Clear value
+		}
+		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
+		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
-		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
-		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 	}
 
 	// Load DbValue from recordset
@@ -1836,13 +1683,13 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->No_Urut->DbValue = $row['No_Urut'];
 		$this->Tanggal_Valuta->DbValue = $row['Tanggal_Valuta'];
 		$this->Tanggal_Jatuh_Tempo->DbValue = $row['Tanggal_Jatuh_Tempo'];
+		$this->nasabah_id->DbValue = $row['nasabah_id'];
+		$this->Jumlah_Deposito->DbValue = $row['Jumlah_Deposito'];
+		$this->Jumlah_Terbilang->DbValue = $row['Jumlah_Terbilang'];
 		$this->Suku_Bunga->DbValue = $row['Suku_Bunga'];
 		$this->Jumlah_Bunga->DbValue = $row['Jumlah_Bunga'];
 		$this->Dikredit_Diperpanjang->DbValue = $row['Dikredit_Diperpanjang'];
 		$this->Tunai_Transfer->DbValue = $row['Tunai_Transfer'];
-		$this->nasabah_id->DbValue = $row['nasabah_id'];
-		$this->Jumlah_Deposito->DbValue = $row['Jumlah_Deposito'];
-		$this->Jumlah_Terbilang->DbValue = $row['Jumlah_Terbilang'];
 	}
 
 	// Load old record
@@ -1881,16 +1728,16 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->DeleteUrl = $this->GetDeleteUrl();
 
 		// Convert decimal values if posted back
+		if ($this->Jumlah_Deposito->FormValue == $this->Jumlah_Deposito->CurrentValue && is_numeric(ew_StrToFloat($this->Jumlah_Deposito->CurrentValue)))
+			$this->Jumlah_Deposito->CurrentValue = ew_StrToFloat($this->Jumlah_Deposito->CurrentValue);
+
+		// Convert decimal values if posted back
 		if ($this->Suku_Bunga->FormValue == $this->Suku_Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Suku_Bunga->CurrentValue)))
 			$this->Suku_Bunga->CurrentValue = ew_StrToFloat($this->Suku_Bunga->CurrentValue);
 
 		// Convert decimal values if posted back
 		if ($this->Jumlah_Bunga->FormValue == $this->Jumlah_Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Jumlah_Bunga->CurrentValue)))
 			$this->Jumlah_Bunga->CurrentValue = ew_StrToFloat($this->Jumlah_Bunga->CurrentValue);
-
-		// Convert decimal values if posted back
-		if ($this->Jumlah_Deposito->FormValue == $this->Jumlah_Deposito->CurrentValue && is_numeric(ew_StrToFloat($this->Jumlah_Deposito->CurrentValue)))
-			$this->Jumlah_Deposito->CurrentValue = ew_StrToFloat($this->Jumlah_Deposito->CurrentValue);
 
 		// Call Row_Rendering event
 		$this->Row_Rendering();
@@ -1900,13 +1747,13 @@ class ct20_deposito_list extends ct20_deposito {
 		// No_Urut
 		// Tanggal_Valuta
 		// Tanggal_Jatuh_Tempo
+		// nasabah_id
+		// Jumlah_Deposito
+		// Jumlah_Terbilang
 		// Suku_Bunga
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
-		// nasabah_id
-		// Jumlah_Deposito
-		// Jumlah_Terbilang
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1920,20 +1767,61 @@ class ct20_deposito_list extends ct20_deposito {
 
 		// Tanggal_Valuta
 		$this->Tanggal_Valuta->ViewValue = $this->Tanggal_Valuta->CurrentValue;
-		$this->Tanggal_Valuta->ViewValue = ew_FormatDateTime($this->Tanggal_Valuta->ViewValue, 0);
+		$this->Tanggal_Valuta->ViewValue = ew_FormatDateTime($this->Tanggal_Valuta->ViewValue, 7);
 		$this->Tanggal_Valuta->ViewCustomAttributes = "";
 
 		// Tanggal_Jatuh_Tempo
 		$this->Tanggal_Jatuh_Tempo->ViewValue = $this->Tanggal_Jatuh_Tempo->CurrentValue;
-		$this->Tanggal_Jatuh_Tempo->ViewValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->ViewValue, 0);
+		$this->Tanggal_Jatuh_Tempo->ViewValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->ViewValue, 7);
 		$this->Tanggal_Jatuh_Tempo->ViewCustomAttributes = "";
+
+		// nasabah_id
+		if ($this->nasabah_id->VirtualValue <> "") {
+			$this->nasabah_id->ViewValue = $this->nasabah_id->VirtualValue;
+		} else {
+		if (strval($this->nasabah_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
+		$sWhereWrk = "";
+		$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			}
+		} else {
+			$this->nasabah_id->ViewValue = NULL;
+		}
+		}
+		$this->nasabah_id->ViewCustomAttributes = "";
+
+		// Jumlah_Deposito
+		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
+		$this->Jumlah_Deposito->ViewValue = ew_FormatNumber($this->Jumlah_Deposito->ViewValue, 0, -2, -2, -2);
+		$this->Jumlah_Deposito->CellCssStyle .= "text-align: right;";
+		$this->Jumlah_Deposito->ViewCustomAttributes = "";
+
+		// Jumlah_Terbilang
+		$this->Jumlah_Terbilang->ViewValue = $this->Jumlah_Terbilang->CurrentValue;
+		$this->Jumlah_Terbilang->ViewCustomAttributes = "";
 
 		// Suku_Bunga
 		$this->Suku_Bunga->ViewValue = $this->Suku_Bunga->CurrentValue;
+		$this->Suku_Bunga->ViewValue = ew_FormatNumber($this->Suku_Bunga->ViewValue, 0, -2, -2, -2);
+		$this->Suku_Bunga->CellCssStyle .= "text-align: right;";
 		$this->Suku_Bunga->ViewCustomAttributes = "";
 
 		// Jumlah_Bunga
 		$this->Jumlah_Bunga->ViewValue = $this->Jumlah_Bunga->CurrentValue;
+		$this->Jumlah_Bunga->ViewValue = ew_FormatNumber($this->Jumlah_Bunga->ViewValue, 0, -2, -2, -2);
+		$this->Jumlah_Bunga->CellCssStyle .= "text-align: right;";
 		$this->Jumlah_Bunga->ViewCustomAttributes = "";
 
 		// Dikredit_Diperpanjang
@@ -1952,19 +1840,6 @@ class ct20_deposito_list extends ct20_deposito {
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
 
-		// nasabah_id
-		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-		$this->nasabah_id->ViewCustomAttributes = "";
-
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
-		$this->Jumlah_Deposito->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// No_Urut
 			$this->No_Urut->LinkCustomAttributes = "";
 			$this->No_Urut->HrefValue = "";
@@ -1979,6 +1854,21 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Tanggal_Jatuh_Tempo->LinkCustomAttributes = "";
 			$this->Tanggal_Jatuh_Tempo->HrefValue = "";
 			$this->Tanggal_Jatuh_Tempo->TooltipValue = "";
+
+			// nasabah_id
+			$this->nasabah_id->LinkCustomAttributes = "";
+			$this->nasabah_id->HrefValue = "";
+			$this->nasabah_id->TooltipValue = "";
+
+			// Jumlah_Deposito
+			$this->Jumlah_Deposito->LinkCustomAttributes = "";
+			$this->Jumlah_Deposito->HrefValue = "";
+			$this->Jumlah_Deposito->TooltipValue = "";
+
+			// Jumlah_Terbilang
+			$this->Jumlah_Terbilang->LinkCustomAttributes = "";
+			$this->Jumlah_Terbilang->HrefValue = "";
+			$this->Jumlah_Terbilang->TooltipValue = "";
 
 			// Suku_Bunga
 			$this->Suku_Bunga->LinkCustomAttributes = "";
@@ -1999,23 +1889,7 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Tunai_Transfer->LinkCustomAttributes = "";
 			$this->Tunai_Transfer->HrefValue = "";
 			$this->Tunai_Transfer->TooltipValue = "";
-
-			// nasabah_id
-			$this->nasabah_id->LinkCustomAttributes = "";
-			$this->nasabah_id->HrefValue = "";
-			$this->nasabah_id->TooltipValue = "";
-
-			// Jumlah_Deposito
-			$this->Jumlah_Deposito->LinkCustomAttributes = "";
-			$this->Jumlah_Deposito->HrefValue = "";
-			$this->Jumlah_Deposito->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
-
-			// id
-			$this->id->EditAttrs["class"] = "form-control";
-			$this->id->EditCustomAttributes = "";
-			$this->id->EditValue = ew_HtmlEncode($this->id->AdvancedSearch->SearchValue);
-			$this->id->PlaceHolder = ew_RemoveHtml($this->id->FldCaption());
 
 			// No_Urut
 			$this->No_Urut->EditAttrs["class"] = "form-control";
@@ -2025,15 +1899,37 @@ class ct20_deposito_list extends ct20_deposito {
 
 			// Tanggal_Valuta
 			$this->Tanggal_Valuta->EditAttrs["class"] = "form-control";
-			$this->Tanggal_Valuta->EditCustomAttributes = "";
-			$this->Tanggal_Valuta->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->Tanggal_Valuta->AdvancedSearch->SearchValue, 0), 8));
+			$this->Tanggal_Valuta->EditCustomAttributes = "style='width: 112px;''";
+			$this->Tanggal_Valuta->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->Tanggal_Valuta->AdvancedSearch->SearchValue, 7), 7));
 			$this->Tanggal_Valuta->PlaceHolder = ew_RemoveHtml($this->Tanggal_Valuta->FldCaption());
 
 			// Tanggal_Jatuh_Tempo
 			$this->Tanggal_Jatuh_Tempo->EditAttrs["class"] = "form-control";
-			$this->Tanggal_Jatuh_Tempo->EditCustomAttributes = "";
-			$this->Tanggal_Jatuh_Tempo->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->Tanggal_Jatuh_Tempo->AdvancedSearch->SearchValue, 0), 8));
+			$this->Tanggal_Jatuh_Tempo->EditCustomAttributes = "style='width: 112px;''";
+			$this->Tanggal_Jatuh_Tempo->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->Tanggal_Jatuh_Tempo->AdvancedSearch->SearchValue, 7), 7));
 			$this->Tanggal_Jatuh_Tempo->PlaceHolder = ew_RemoveHtml($this->Tanggal_Jatuh_Tempo->FldCaption());
+
+			// nasabah_id
+			$this->nasabah_id->EditAttrs["class"] = "form-control";
+			$this->nasabah_id->EditCustomAttributes = "";
+			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->AdvancedSearch->SearchValue);
+			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+			$this->nasabah_id->EditAttrs["class"] = "form-control";
+			$this->nasabah_id->EditCustomAttributes = "";
+			$this->nasabah_id->EditValue2 = ew_HtmlEncode($this->nasabah_id->AdvancedSearch->SearchValue2);
+			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
+
+			// Jumlah_Deposito
+			$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
+			$this->Jumlah_Deposito->EditCustomAttributes = "";
+			$this->Jumlah_Deposito->EditValue = ew_HtmlEncode($this->Jumlah_Deposito->AdvancedSearch->SearchValue);
+			$this->Jumlah_Deposito->PlaceHolder = ew_RemoveHtml($this->Jumlah_Deposito->FldCaption());
+
+			// Jumlah_Terbilang
+			$this->Jumlah_Terbilang->EditAttrs["class"] = "form-control";
+			$this->Jumlah_Terbilang->EditCustomAttributes = "";
+			$this->Jumlah_Terbilang->EditValue = ew_HtmlEncode($this->Jumlah_Terbilang->AdvancedSearch->SearchValue);
+			$this->Jumlah_Terbilang->PlaceHolder = ew_RemoveHtml($this->Jumlah_Terbilang->FldCaption());
 
 			// Suku_Bunga
 			$this->Suku_Bunga->EditAttrs["class"] = "form-control";
@@ -2054,18 +1950,6 @@ class ct20_deposito_list extends ct20_deposito {
 			// Tunai_Transfer
 			$this->Tunai_Transfer->EditCustomAttributes = "";
 			$this->Tunai_Transfer->EditValue = $this->Tunai_Transfer->Options(FALSE);
-
-			// nasabah_id
-			$this->nasabah_id->EditAttrs["class"] = "form-control";
-			$this->nasabah_id->EditCustomAttributes = "";
-			$this->nasabah_id->EditValue = ew_HtmlEncode($this->nasabah_id->AdvancedSearch->SearchValue);
-			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
-
-			// Jumlah_Deposito
-			$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
-			$this->Jumlah_Deposito->EditCustomAttributes = "";
-			$this->Jumlah_Deposito->EditValue = ew_HtmlEncode($this->Jumlah_Deposito->AdvancedSearch->SearchValue);
-			$this->Jumlah_Deposito->PlaceHolder = ew_RemoveHtml($this->Jumlah_Deposito->FldCaption());
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -2107,13 +1991,13 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->No_Urut->AdvancedSearch->Load();
 		$this->Tanggal_Valuta->AdvancedSearch->Load();
 		$this->Tanggal_Jatuh_Tempo->AdvancedSearch->Load();
+		$this->nasabah_id->AdvancedSearch->Load();
+		$this->Jumlah_Deposito->AdvancedSearch->Load();
+		$this->Jumlah_Terbilang->AdvancedSearch->Load();
 		$this->Suku_Bunga->AdvancedSearch->Load();
 		$this->Jumlah_Bunga->AdvancedSearch->Load();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->Load();
 		$this->Tunai_Transfer->AdvancedSearch->Load();
-		$this->nasabah_id->AdvancedSearch->Load();
-		$this->Jumlah_Deposito->AdvancedSearch->Load();
-		$this->Jumlah_Terbilang->AdvancedSearch->Load();
 	}
 
 	// Set up export options
@@ -2277,6 +2161,18 @@ class ct20_deposito_list extends ct20_deposito {
 			}
 		} elseif ($pageId == "extbs") {
 			switch ($fld->FldVar) {
+		case "x_nasabah_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
+			$sWhereWrk = "{filter}";
+			$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 			}
 		} 
 	}
@@ -2457,6 +2353,7 @@ ft20_depositolist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
+ft20_depositolist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 ft20_depositolist.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft20_depositolist.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
 ft20_depositolist.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
@@ -2494,10 +2391,7 @@ ft20_depositolistsrch.ValidateRequired = false; // No JavaScript validation
 <?php } ?>
 
 // Dynamic selection lists
-ft20_depositolistsrch.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft20_depositolistsrch.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
-ft20_depositolistsrch.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft20_depositolistsrch.Lists["x_Tunai_Transfer"].Options = <?php echo json_encode($t20_deposito->Tunai_Transfer->Options()) ?>;
+ft20_depositolistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 </script>
 <script type="text/javascript">
 
@@ -2579,48 +2473,33 @@ $t20_deposito->ResetAttrs();
 $t20_deposito_list->RenderRow();
 ?>
 <div id="xsr_1" class="ewRow">
-<?php if ($t20_deposito->Dikredit_Diperpanjang->Visible) { // Dikredit_Diperpanjang ?>
-	<div id="xsc_Dikredit_Diperpanjang" class="ewCell form-group">
-		<label class="ewSearchCaption ewLabel"><?php echo $t20_deposito->Dikredit_Diperpanjang->FldCaption() ?></label>
-		<span class="ewSearchOperator"><?php echo $Language->Phrase("=") ?><input type="hidden" name="z_Dikredit_Diperpanjang" id="z_Dikredit_Diperpanjang" value="="></span>
+<?php if ($t20_deposito->No_Urut->Visible) { // No_Urut ?>
+	<div id="xsc_No_Urut" class="ewCell form-group">
+		<label for="x_No_Urut" class="ewSearchCaption ewLabel"><?php echo $t20_deposito->No_Urut->FldCaption() ?></label>
+		<span class="ewSearchOperator"><?php echo $Language->Phrase("=") ?><input type="hidden" name="z_No_Urut" id="z_No_Urut" value="="></span>
 		<span class="ewSearchField">
-<div id="tp_x_Dikredit_Diperpanjang" class="ewTemplate"><input type="radio" data-table="t20_deposito" data-field="x_Dikredit_Diperpanjang" data-value-separator="<?php echo $t20_deposito->Dikredit_Diperpanjang->DisplayValueSeparatorAttribute() ?>" name="x_Dikredit_Diperpanjang" id="x_Dikredit_Diperpanjang" value="{value}"<?php echo $t20_deposito->Dikredit_Diperpanjang->EditAttributes() ?>></div>
-<div id="dsl_x_Dikredit_Diperpanjang" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t20_deposito->Dikredit_Diperpanjang->RadioButtonListHtml(FALSE, "x_Dikredit_Diperpanjang") ?>
-</div></div>
+<input type="text" data-table="t20_deposito" data-field="x_No_Urut" name="x_No_Urut" id="x_No_Urut" size="10" maxlength="10" placeholder="<?php echo ew_HtmlEncode($t20_deposito->No_Urut->getPlaceHolder()) ?>" value="<?php echo $t20_deposito->No_Urut->EditValue ?>"<?php echo $t20_deposito->No_Urut->EditAttributes() ?>>
 </span>
 	</div>
 <?php } ?>
 </div>
 <div id="xsr_2" class="ewRow">
-<?php if ($t20_deposito->Tunai_Transfer->Visible) { // Tunai_Transfer ?>
-	<div id="xsc_Tunai_Transfer" class="ewCell form-group">
-		<label class="ewSearchCaption ewLabel"><?php echo $t20_deposito->Tunai_Transfer->FldCaption() ?></label>
-		<span class="ewSearchOperator"><?php echo $Language->Phrase("=") ?><input type="hidden" name="z_Tunai_Transfer" id="z_Tunai_Transfer" value="="></span>
+<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
+	<div id="xsc_nasabah_id" class="ewCell form-group">
+		<label for="x_nasabah_id" class="ewSearchCaption ewLabel"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></label>
+		<span class="ewSearchOperator"><select name="z_nasabah_id" id="z_nasabah_id" class="form-control" onchange="ewForms(this).SrchOprChanged(this);"><option value="="<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "=") ? " selected" : "" ?> ><?php echo $Language->Phrase("EQUAL") ?></option><option value="<>"<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "<>") ? " selected" : "" ?> ><?php echo $Language->Phrase("<>") ?></option><option value="<"<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "<") ? " selected" : "" ?> ><?php echo $Language->Phrase("<") ?></option><option value="<="<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "<=") ? " selected" : "" ?> ><?php echo $Language->Phrase("<=") ?></option><option value=">"<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == ">") ? " selected" : "" ?> ><?php echo $Language->Phrase(">") ?></option><option value=">="<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == ">=") ? " selected" : "" ?> ><?php echo $Language->Phrase(">=") ?></option><option value="LIKE"<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "LIKE") ? " selected" : "" ?> ><?php echo $Language->Phrase("LIKE") ?></option><option value="NOT LIKE"<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "NOT LIKE") ? " selected" : "" ?> ><?php echo $Language->Phrase("NOT LIKE") ?></option><option value="STARTS WITH"<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "STARTS WITH") ? " selected" : "" ?> ><?php echo $Language->Phrase("STARTS WITH") ?></option><option value="ENDS WITH"<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "ENDS WITH") ? " selected" : "" ?> ><?php echo $Language->Phrase("ENDS WITH") ?></option><option value="BETWEEN"<?php echo ($t20_deposito->nasabah_id->AdvancedSearch->SearchOperator == "BETWEEN") ? " selected" : "" ?> ><?php echo $Language->Phrase("BETWEEN") ?></option></select></span>
 		<span class="ewSearchField">
-<div id="tp_x_Tunai_Transfer" class="ewTemplate"><input type="radio" data-table="t20_deposito" data-field="x_Tunai_Transfer" data-value-separator="<?php echo $t20_deposito->Tunai_Transfer->DisplayValueSeparatorAttribute() ?>" name="x_Tunai_Transfer" id="x_Tunai_Transfer" value="{value}"<?php echo $t20_deposito->Tunai_Transfer->EditAttributes() ?>></div>
-<div id="dsl_x_Tunai_Transfer" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t20_deposito->Tunai_Transfer->RadioButtonListHtml(FALSE, "x_Tunai_Transfer") ?>
-</div></div>
+<input type="text" data-table="t20_deposito" data-field="x_nasabah_id" name="x_nasabah_id" id="x_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t20_deposito->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t20_deposito->nasabah_id->EditValue ?>"<?php echo $t20_deposito->nasabah_id->EditAttributes() ?>>
+</span>
+		<span class="ewSearchCond btw1_nasabah_id" style="display: none">&nbsp;<?php echo $Language->Phrase("AND") ?>&nbsp;</span>
+		<span class="ewSearchField btw1_nasabah_id" style="display: none">
+<input type="text" data-table="t20_deposito" data-field="x_nasabah_id" name="y_nasabah_id" id="y_nasabah_id" size="30" placeholder="<?php echo ew_HtmlEncode($t20_deposito->nasabah_id->getPlaceHolder()) ?>" value="<?php echo $t20_deposito->nasabah_id->EditValue2 ?>"<?php echo $t20_deposito->nasabah_id->EditAttributes() ?>>
 </span>
 	</div>
 <?php } ?>
 </div>
 <div id="xsr_3" class="ewRow">
-	<div class="ewQuickSearch input-group">
-	<input type="text" name="<?php echo EW_TABLE_BASIC_SEARCH ?>" id="<?php echo EW_TABLE_BASIC_SEARCH ?>" class="form-control" value="<?php echo ew_HtmlEncode($t20_deposito_list->BasicSearch->getKeyword()) ?>" placeholder="<?php echo ew_HtmlEncode($Language->Phrase("Search")) ?>">
-	<input type="hidden" name="<?php echo EW_TABLE_BASIC_SEARCH_TYPE ?>" id="<?php echo EW_TABLE_BASIC_SEARCH_TYPE ?>" value="<?php echo ew_HtmlEncode($t20_deposito_list->BasicSearch->getType()) ?>">
-	<div class="input-group-btn">
-		<button type="button" data-toggle="dropdown" class="btn btn-default"><span id="searchtype"><?php echo $t20_deposito_list->BasicSearch->getTypeNameShort() ?></span><span class="caret"></span></button>
-		<ul class="dropdown-menu pull-right" role="menu">
-			<li<?php if ($t20_deposito_list->BasicSearch->getType() == "") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this)"><?php echo $Language->Phrase("QuickSearchAuto") ?></a></li>
-			<li<?php if ($t20_deposito_list->BasicSearch->getType() == "=") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'=')"><?php echo $Language->Phrase("QuickSearchExact") ?></a></li>
-			<li<?php if ($t20_deposito_list->BasicSearch->getType() == "AND") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'AND')"><?php echo $Language->Phrase("QuickSearchAll") ?></a></li>
-			<li<?php if ($t20_deposito_list->BasicSearch->getType() == "OR") echo " class=\"active\""; ?>><a href="javascript:void(0);" onclick="ew_SetSearchType(this,'OR')"><?php echo $Language->Phrase("QuickSearchAny") ?></a></li>
-		</ul>
 	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("QuickSearchBtn") ?></button>
-	</div>
-	</div>
 </div>
 	</div>
 </div>
@@ -2655,21 +2534,12 @@ $t20_deposito_list->RenderListOptions();
 // Render list options (header, left)
 $t20_deposito_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t20_deposito->id->Visible) { // id ?>
-	<?php if ($t20_deposito->SortUrl($t20_deposito->id) == "") { ?>
-		<th data-name="id"><div id="elh_t20_deposito_id" class="t20_deposito_id"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->id) ?>',2);"><div id="elh_t20_deposito_id" class="t20_deposito_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t20_deposito->No_Urut->Visible) { // No_Urut ?>
 	<?php if ($t20_deposito->SortUrl($t20_deposito->No_Urut) == "") { ?>
 		<th data-name="No_Urut"><div id="elh_t20_deposito_No_Urut" class="t20_deposito_No_Urut"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->No_Urut->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="No_Urut"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->No_Urut) ?>',2);"><div id="elh_t20_deposito_No_Urut" class="t20_deposito_No_Urut">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->No_Urut->FldCaption() ?><?php echo $Language->Phrase("SrchLegend") ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->No_Urut->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->No_Urut->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->No_Urut->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->No_Urut->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->No_Urut->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2688,6 +2558,33 @@ $t20_deposito_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="Tanggal_Jatuh_Tempo"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Tanggal_Jatuh_Tempo) ?>',2);"><div id="elh_t20_deposito_Tanggal_Jatuh_Tempo" class="t20_deposito_Tanggal_Jatuh_Tempo">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Tanggal_Jatuh_Tempo->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Tanggal_Jatuh_Tempo->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Tanggal_Jatuh_Tempo->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
+	<?php if ($t20_deposito->SortUrl($t20_deposito->nasabah_id) == "") { ?>
+		<th data-name="nasabah_id"><div id="elh_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="nasabah_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->nasabah_id) ?>',2);"><div id="elh_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->nasabah_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->nasabah_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
+	<?php if ($t20_deposito->SortUrl($t20_deposito->Jumlah_Deposito) == "") { ?>
+		<th data-name="Jumlah_Deposito"><div id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Jumlah_Deposito"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Jumlah_Deposito) ?>',2);"><div id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Jumlah_Deposito->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Jumlah_Deposito->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t20_deposito->Jumlah_Terbilang->Visible) { // Jumlah_Terbilang ?>
+	<?php if ($t20_deposito->SortUrl($t20_deposito->Jumlah_Terbilang) == "") { ?>
+		<th data-name="Jumlah_Terbilang"><div id="elh_t20_deposito_Jumlah_Terbilang" class="t20_deposito_Jumlah_Terbilang"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Terbilang->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Jumlah_Terbilang"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Jumlah_Terbilang) ?>',2);"><div id="elh_t20_deposito_Jumlah_Terbilang" class="t20_deposito_Jumlah_Terbilang">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Terbilang->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Jumlah_Terbilang->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Jumlah_Terbilang->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2724,24 +2621,6 @@ $t20_deposito_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="Tunai_Transfer"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Tunai_Transfer) ?>',2);"><div id="elh_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Tunai_Transfer->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Tunai_Transfer->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Tunai_Transfer->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
-	<?php if ($t20_deposito->SortUrl($t20_deposito->nasabah_id) == "") { ?>
-		<th data-name="nasabah_id"><div id="elh_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="nasabah_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->nasabah_id) ?>',2);"><div id="elh_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->nasabah_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->nasabah_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
-	<?php if ($t20_deposito->SortUrl($t20_deposito->Jumlah_Deposito) == "") { ?>
-		<th data-name="Jumlah_Deposito"><div id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Jumlah_Deposito"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Jumlah_Deposito) ?>',2);"><div id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Jumlah_Deposito->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Jumlah_Deposito->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2810,21 +2689,13 @@ while ($t20_deposito_list->RecCnt < $t20_deposito_list->StopRec) {
 // Render list options (body, left)
 $t20_deposito_list->ListOptions->Render("body", "left", $t20_deposito_list->RowCnt);
 ?>
-	<?php if ($t20_deposito->id->Visible) { // id ?>
-		<td data-name="id"<?php echo $t20_deposito->id->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_id" class="t20_deposito_id">
-<span<?php echo $t20_deposito->id->ViewAttributes() ?>>
-<?php echo $t20_deposito->id->ListViewValue() ?></span>
-</span>
-<a id="<?php echo $t20_deposito_list->PageObjName . "_row_" . $t20_deposito_list->RowCnt ?>"></a></td>
-	<?php } ?>
 	<?php if ($t20_deposito->No_Urut->Visible) { // No_Urut ?>
 		<td data-name="No_Urut"<?php echo $t20_deposito->No_Urut->CellAttributes() ?>>
 <span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_No_Urut" class="t20_deposito_No_Urut">
 <span<?php echo $t20_deposito->No_Urut->ViewAttributes() ?>>
 <?php echo $t20_deposito->No_Urut->ListViewValue() ?></span>
 </span>
-</td>
+<a id="<?php echo $t20_deposito_list->PageObjName . "_row_" . $t20_deposito_list->RowCnt ?>"></a></td>
 	<?php } ?>
 	<?php if ($t20_deposito->Tanggal_Valuta->Visible) { // Tanggal_Valuta ?>
 		<td data-name="Tanggal_Valuta"<?php echo $t20_deposito->Tanggal_Valuta->CellAttributes() ?>>
@@ -2839,6 +2710,30 @@ $t20_deposito_list->ListOptions->Render("body", "left", $t20_deposito_list->RowC
 <span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Tanggal_Jatuh_Tempo" class="t20_deposito_Tanggal_Jatuh_Tempo">
 <span<?php echo $t20_deposito->Tanggal_Jatuh_Tempo->ViewAttributes() ?>>
 <?php echo $t20_deposito->Tanggal_Jatuh_Tempo->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
+		<td data-name="nasabah_id"<?php echo $t20_deposito->nasabah_id->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
+<span<?php echo $t20_deposito->nasabah_id->ViewAttributes() ?>>
+<?php echo $t20_deposito->nasabah_id->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
+		<td data-name="Jumlah_Deposito"<?php echo $t20_deposito->Jumlah_Deposito->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
+<span<?php echo $t20_deposito->Jumlah_Deposito->ViewAttributes() ?>>
+<?php echo $t20_deposito->Jumlah_Deposito->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t20_deposito->Jumlah_Terbilang->Visible) { // Jumlah_Terbilang ?>
+		<td data-name="Jumlah_Terbilang"<?php echo $t20_deposito->Jumlah_Terbilang->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Jumlah_Terbilang" class="t20_deposito_Jumlah_Terbilang">
+<span<?php echo $t20_deposito->Jumlah_Terbilang->ViewAttributes() ?>>
+<?php echo $t20_deposito->Jumlah_Terbilang->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
@@ -2871,22 +2766,6 @@ $t20_deposito_list->ListOptions->Render("body", "left", $t20_deposito_list->RowC
 <span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer">
 <span<?php echo $t20_deposito->Tunai_Transfer->ViewAttributes() ?>>
 <?php echo $t20_deposito->Tunai_Transfer->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
-		<td data-name="nasabah_id"<?php echo $t20_deposito->nasabah_id->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
-<span<?php echo $t20_deposito->nasabah_id->ViewAttributes() ?>>
-<?php echo $t20_deposito->nasabah_id->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
-		<td data-name="Jumlah_Deposito"<?php echo $t20_deposito->Jumlah_Deposito->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
-<span<?php echo $t20_deposito->Jumlah_Deposito->ViewAttributes() ?>>
-<?php echo $t20_deposito->Jumlah_Deposito->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
@@ -3015,6 +2894,9 @@ if (EW_DEBUG_ENABLED)
 // Write your table-specific startup script here
 // document.write("page loaded");
 
+	$(document).ready(function() { 
+		$("#z_nasabah_id option[value='LIKE']").attr('selected', 'selected'); 
+	});
 </script>
 <?php } ?>
 <?php include_once "footer.php" ?>

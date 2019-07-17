@@ -17,13 +17,13 @@ class ct20_deposito extends cTable {
 	var $No_Urut;
 	var $Tanggal_Valuta;
 	var $Tanggal_Jatuh_Tempo;
+	var $nasabah_id;
+	var $Jumlah_Deposito;
+	var $Jumlah_Terbilang;
 	var $Suku_Bunga;
 	var $Jumlah_Bunga;
 	var $Dikredit_Diperpanjang;
 	var $Tunai_Transfer;
-	var $nasabah_id;
-	var $Jumlah_Deposito;
-	var $Jumlah_Terbilang;
 
 	//
 	// Table class constructor
@@ -67,16 +67,35 @@ class ct20_deposito extends cTable {
 		$this->fields['No_Urut'] = &$this->No_Urut;
 
 		// Tanggal_Valuta
-		$this->Tanggal_Valuta = new cField('t20_deposito', 't20_deposito', 'x_Tanggal_Valuta', 'Tanggal_Valuta', '`Tanggal_Valuta`', ew_CastDateFieldForLike('`Tanggal_Valuta`', 0, "DB"), 133, 0, FALSE, '`Tanggal_Valuta`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Tanggal_Valuta = new cField('t20_deposito', 't20_deposito', 'x_Tanggal_Valuta', 'Tanggal_Valuta', '`Tanggal_Valuta`', ew_CastDateFieldForLike('`Tanggal_Valuta`', 7, "DB"), 133, 7, FALSE, '`Tanggal_Valuta`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Tanggal_Valuta->Sortable = TRUE; // Allow sort
-		$this->Tanggal_Valuta->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
+		$this->Tanggal_Valuta->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
 		$this->fields['Tanggal_Valuta'] = &$this->Tanggal_Valuta;
 
 		// Tanggal_Jatuh_Tempo
-		$this->Tanggal_Jatuh_Tempo = new cField('t20_deposito', 't20_deposito', 'x_Tanggal_Jatuh_Tempo', 'Tanggal_Jatuh_Tempo', '`Tanggal_Jatuh_Tempo`', ew_CastDateFieldForLike('`Tanggal_Jatuh_Tempo`', 0, "DB"), 133, 0, FALSE, '`Tanggal_Jatuh_Tempo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Tanggal_Jatuh_Tempo = new cField('t20_deposito', 't20_deposito', 'x_Tanggal_Jatuh_Tempo', 'Tanggal_Jatuh_Tempo', '`Tanggal_Jatuh_Tempo`', ew_CastDateFieldForLike('`Tanggal_Jatuh_Tempo`', 7, "DB"), 133, 7, FALSE, '`Tanggal_Jatuh_Tempo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Tanggal_Jatuh_Tempo->Sortable = TRUE; // Allow sort
-		$this->Tanggal_Jatuh_Tempo->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
+		$this->Tanggal_Jatuh_Tempo->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
 		$this->fields['Tanggal_Jatuh_Tempo'] = &$this->Tanggal_Jatuh_Tempo;
+
+		// nasabah_id
+		$this->nasabah_id = new cField('t20_deposito', 't20_deposito', 'x_nasabah_id', 'nasabah_id', '`nasabah_id`', '`nasabah_id`', 3, -1, FALSE, '`EV__nasabah_id`', TRUE, TRUE, TRUE, 'FORMATTED TEXT', 'SELECT');
+		$this->nasabah_id->Sortable = TRUE; // Allow sort
+		$this->nasabah_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->nasabah_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
+		$this->nasabah_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['nasabah_id'] = &$this->nasabah_id;
+
+		// Jumlah_Deposito
+		$this->Jumlah_Deposito = new cField('t20_deposito', 't20_deposito', 'x_Jumlah_Deposito', 'Jumlah_Deposito', '`Jumlah_Deposito`', '`Jumlah_Deposito`', 4, -1, FALSE, '`Jumlah_Deposito`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Jumlah_Deposito->Sortable = TRUE; // Allow sort
+		$this->Jumlah_Deposito->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Jumlah_Deposito'] = &$this->Jumlah_Deposito;
+
+		// Jumlah_Terbilang
+		$this->Jumlah_Terbilang = new cField('t20_deposito', 't20_deposito', 'x_Jumlah_Terbilang', 'Jumlah_Terbilang', '`Jumlah_Terbilang`', '`Jumlah_Terbilang`', 201, -1, FALSE, '`Jumlah_Terbilang`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
+		$this->Jumlah_Terbilang->Sortable = TRUE; // Allow sort
+		$this->fields['Jumlah_Terbilang'] = &$this->Jumlah_Terbilang;
 
 		// Suku_Bunga
 		$this->Suku_Bunga = new cField('t20_deposito', 't20_deposito', 'x_Suku_Bunga', 'Suku_Bunga', '`Suku_Bunga`', '`Suku_Bunga`', 131, -1, FALSE, '`Suku_Bunga`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
@@ -101,23 +120,6 @@ class ct20_deposito extends cTable {
 		$this->Tunai_Transfer->Sortable = TRUE; // Allow sort
 		$this->Tunai_Transfer->OptionCount = 2;
 		$this->fields['Tunai_Transfer'] = &$this->Tunai_Transfer;
-
-		// nasabah_id
-		$this->nasabah_id = new cField('t20_deposito', 't20_deposito', 'x_nasabah_id', 'nasabah_id', '`nasabah_id`', '`nasabah_id`', 3, -1, FALSE, '`nasabah_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->nasabah_id->Sortable = TRUE; // Allow sort
-		$this->nasabah_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['nasabah_id'] = &$this->nasabah_id;
-
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito = new cField('t20_deposito', 't20_deposito', 'x_Jumlah_Deposito', 'Jumlah_Deposito', '`Jumlah_Deposito`', '`Jumlah_Deposito`', 4, -1, FALSE, '`Jumlah_Deposito`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Jumlah_Deposito->Sortable = TRUE; // Allow sort
-		$this->Jumlah_Deposito->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
-		$this->fields['Jumlah_Deposito'] = &$this->Jumlah_Deposito;
-
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang = new cField('t20_deposito', 't20_deposito', 'x_Jumlah_Terbilang', 'Jumlah_Terbilang', '`Jumlah_Terbilang`', '`Jumlah_Terbilang`', 201, -1, FALSE, '`Jumlah_Terbilang`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->Jumlah_Terbilang->Sortable = TRUE; // Allow sort
-		$this->fields['Jumlah_Terbilang'] = &$this->Jumlah_Terbilang;
 	}
 
 	// Set Field Visibility
@@ -149,9 +151,31 @@ class ct20_deposito extends cTable {
 			} else {
 				$this->setSessionOrderBy($sSortField . " " . $sThisSort); // Save to Session
 			}
+			$sSortFieldList = ($ofld->FldVirtualExpression <> "") ? $ofld->FldVirtualExpression : $sSortField;
+			if ($ctrl) {
+				$sOrderByList = $this->getSessionOrderByList();
+				if (strpos($sOrderByList, $sSortFieldList . " " . $sLastSort) !== FALSE) {
+					$sOrderByList = str_replace($sSortFieldList . " " . $sLastSort, $sSortFieldList . " " . $sThisSort, $sOrderByList);
+				} else {
+					if ($sOrderByList <> "") $sOrderByList .= ", ";
+					$sOrderByList .= $sSortFieldList . " " . $sThisSort;
+				}
+				$this->setSessionOrderByList($sOrderByList); // Save to Session
+			} else {
+				$this->setSessionOrderByList($sSortFieldList . " " . $sThisSort); // Save to Session
+			}
 		} else {
 			if (!$ctrl) $ofld->setSort("");
 		}
+	}
+
+	// Session ORDER BY for List page
+	function getSessionOrderByList() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST];
+	}
+
+	function setSessionOrderByList($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST] = $v;
 	}
 
 	// Table level SQL
@@ -180,6 +204,23 @@ class ct20_deposito extends cTable {
 
 	function setSqlSelect($v) {
 		$this->_SqlSelect = $v;
+	}
+	var $_SqlSelectList = "";
+
+	function getSqlSelectList() { // Select for List page
+		$select = "";
+		$select = "SELECT * FROM (" .
+			"SELECT *, (SELECT `Nama` FROM `v02_nasabahjaminan` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t20_deposito`.`nasabah_id` LIMIT 1) AS `EV__nasabah_id` FROM `t20_deposito`" .
+			") `EW_TMP_TABLE`";
+		return ($this->_SqlSelectList <> "") ? $this->_SqlSelectList : $select;
+	}
+
+	function SqlSelectList() { // For backward compatibility
+		return $this->getSqlSelectList();
+	}
+
+	function setSqlSelectList($v) {
+		$this->_SqlSelectList = $v;
 	}
 	var $_SqlWhere = "";
 
@@ -292,15 +333,38 @@ class ct20_deposito extends cTable {
 		ew_AddFilter($sFilter, $this->CurrentFilter);
 		$sFilter = $this->ApplyUserIDFilters($sFilter);
 		$this->Recordset_Selecting($sFilter);
-		$sSort = $this->getSessionOrderBy();
-		return ew_BuildSelectSql($this->getSqlSelect(), $this->getSqlWhere(), $this->getSqlGroupBy(),
-			$this->getSqlHaving(), $this->getSqlOrderBy(), $sFilter, $sSort);
+		if ($this->UseVirtualFields()) {
+			$sSort = $this->getSessionOrderByList();
+			return ew_BuildSelectSql($this->getSqlSelectList(), $this->getSqlWhere(), $this->getSqlGroupBy(),
+				$this->getSqlHaving(), $this->getSqlOrderBy(), $sFilter, $sSort);
+		} else {
+			$sSort = $this->getSessionOrderBy();
+			return ew_BuildSelectSql($this->getSqlSelect(), $this->getSqlWhere(), $this->getSqlGroupBy(),
+				$this->getSqlHaving(), $this->getSqlOrderBy(), $sFilter, $sSort);
+		}
 	}
 
 	// Get ORDER BY clause
 	function GetOrderBy() {
-		$sSort = $this->getSessionOrderBy();
+		$sSort = ($this->UseVirtualFields()) ? $this->getSessionOrderByList() : $this->getSessionOrderBy();
 		return ew_BuildSelectSql("", "", "", "", $this->getSqlOrderBy(), "", $sSort);
+	}
+
+	// Check if virtual fields is used in SQL
+	function UseVirtualFields() {
+		$sWhere = $this->getSessionWhere();
+		$sOrderBy = $this->getSessionOrderByList();
+		if ($sWhere <> "")
+			$sWhere = " " . str_replace(array("(",")"), array("",""), $sWhere) . " ";
+		if ($sOrderBy <> "")
+			$sOrderBy = " " . str_replace(array("(",")"), array("",""), $sOrderBy) . " ";
+		if ($this->nasabah_id->AdvancedSearch->SearchValue <> "" ||
+			$this->nasabah_id->AdvancedSearch->SearchValue2 <> "" ||
+			strpos($sWhere, " " . $this->nasabah_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		if (strpos($sOrderBy, " " . $this->nasabah_id->FldVirtualExpression . " ") !== FALSE)
+			return TRUE;
+		return FALSE;
 	}
 
 	// Try to get record count
@@ -634,13 +698,13 @@ class ct20_deposito extends cTable {
 		$this->No_Urut->setDbValue($rs->fields('No_Urut'));
 		$this->Tanggal_Valuta->setDbValue($rs->fields('Tanggal_Valuta'));
 		$this->Tanggal_Jatuh_Tempo->setDbValue($rs->fields('Tanggal_Jatuh_Tempo'));
+		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
+		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
+		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
-		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
-		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 	}
 
 	// Render list row values
@@ -655,13 +719,13 @@ class ct20_deposito extends cTable {
 		// No_Urut
 		// Tanggal_Valuta
 		// Tanggal_Jatuh_Tempo
+		// nasabah_id
+		// Jumlah_Deposito
+		// Jumlah_Terbilang
 		// Suku_Bunga
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
-		// nasabah_id
-		// Jumlah_Deposito
-		// Jumlah_Terbilang
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -673,20 +737,61 @@ class ct20_deposito extends cTable {
 
 		// Tanggal_Valuta
 		$this->Tanggal_Valuta->ViewValue = $this->Tanggal_Valuta->CurrentValue;
-		$this->Tanggal_Valuta->ViewValue = ew_FormatDateTime($this->Tanggal_Valuta->ViewValue, 0);
+		$this->Tanggal_Valuta->ViewValue = ew_FormatDateTime($this->Tanggal_Valuta->ViewValue, 7);
 		$this->Tanggal_Valuta->ViewCustomAttributes = "";
 
 		// Tanggal_Jatuh_Tempo
 		$this->Tanggal_Jatuh_Tempo->ViewValue = $this->Tanggal_Jatuh_Tempo->CurrentValue;
-		$this->Tanggal_Jatuh_Tempo->ViewValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->ViewValue, 0);
+		$this->Tanggal_Jatuh_Tempo->ViewValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->ViewValue, 7);
 		$this->Tanggal_Jatuh_Tempo->ViewCustomAttributes = "";
+
+		// nasabah_id
+		if ($this->nasabah_id->VirtualValue <> "") {
+			$this->nasabah_id->ViewValue = $this->nasabah_id->VirtualValue;
+		} else {
+		if (strval($this->nasabah_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
+		$sWhereWrk = "";
+		$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			}
+		} else {
+			$this->nasabah_id->ViewValue = NULL;
+		}
+		}
+		$this->nasabah_id->ViewCustomAttributes = "";
+
+		// Jumlah_Deposito
+		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
+		$this->Jumlah_Deposito->ViewValue = ew_FormatNumber($this->Jumlah_Deposito->ViewValue, 0, -2, -2, -2);
+		$this->Jumlah_Deposito->CellCssStyle .= "text-align: right;";
+		$this->Jumlah_Deposito->ViewCustomAttributes = "";
+
+		// Jumlah_Terbilang
+		$this->Jumlah_Terbilang->ViewValue = $this->Jumlah_Terbilang->CurrentValue;
+		$this->Jumlah_Terbilang->ViewCustomAttributes = "";
 
 		// Suku_Bunga
 		$this->Suku_Bunga->ViewValue = $this->Suku_Bunga->CurrentValue;
+		$this->Suku_Bunga->ViewValue = ew_FormatNumber($this->Suku_Bunga->ViewValue, 0, -2, -2, -2);
+		$this->Suku_Bunga->CellCssStyle .= "text-align: right;";
 		$this->Suku_Bunga->ViewCustomAttributes = "";
 
 		// Jumlah_Bunga
 		$this->Jumlah_Bunga->ViewValue = $this->Jumlah_Bunga->CurrentValue;
+		$this->Jumlah_Bunga->ViewValue = ew_FormatNumber($this->Jumlah_Bunga->ViewValue, 0, -2, -2, -2);
+		$this->Jumlah_Bunga->CellCssStyle .= "text-align: right;";
 		$this->Jumlah_Bunga->ViewCustomAttributes = "";
 
 		// Dikredit_Diperpanjang
@@ -704,18 +809,6 @@ class ct20_deposito extends cTable {
 			$this->Tunai_Transfer->ViewValue = NULL;
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
-
-		// nasabah_id
-		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-		$this->nasabah_id->ViewCustomAttributes = "";
-
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
-		$this->Jumlah_Deposito->ViewCustomAttributes = "";
-
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang->ViewValue = $this->Jumlah_Terbilang->CurrentValue;
-		$this->Jumlah_Terbilang->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
@@ -737,6 +830,21 @@ class ct20_deposito extends cTable {
 		$this->Tanggal_Jatuh_Tempo->HrefValue = "";
 		$this->Tanggal_Jatuh_Tempo->TooltipValue = "";
 
+		// nasabah_id
+		$this->nasabah_id->LinkCustomAttributes = "";
+		$this->nasabah_id->HrefValue = "";
+		$this->nasabah_id->TooltipValue = "";
+
+		// Jumlah_Deposito
+		$this->Jumlah_Deposito->LinkCustomAttributes = "";
+		$this->Jumlah_Deposito->HrefValue = "";
+		$this->Jumlah_Deposito->TooltipValue = "";
+
+		// Jumlah_Terbilang
+		$this->Jumlah_Terbilang->LinkCustomAttributes = "";
+		$this->Jumlah_Terbilang->HrefValue = "";
+		$this->Jumlah_Terbilang->TooltipValue = "";
+
 		// Suku_Bunga
 		$this->Suku_Bunga->LinkCustomAttributes = "";
 		$this->Suku_Bunga->HrefValue = "";
@@ -756,21 +864,6 @@ class ct20_deposito extends cTable {
 		$this->Tunai_Transfer->LinkCustomAttributes = "";
 		$this->Tunai_Transfer->HrefValue = "";
 		$this->Tunai_Transfer->TooltipValue = "";
-
-		// nasabah_id
-		$this->nasabah_id->LinkCustomAttributes = "";
-		$this->nasabah_id->HrefValue = "";
-		$this->nasabah_id->TooltipValue = "";
-
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->LinkCustomAttributes = "";
-		$this->Jumlah_Deposito->HrefValue = "";
-		$this->Jumlah_Deposito->TooltipValue = "";
-
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang->LinkCustomAttributes = "";
-		$this->Jumlah_Terbilang->HrefValue = "";
-		$this->Jumlah_Terbilang->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -797,29 +890,46 @@ class ct20_deposito extends cTable {
 
 		// Tanggal_Valuta
 		$this->Tanggal_Valuta->EditAttrs["class"] = "form-control";
-		$this->Tanggal_Valuta->EditCustomAttributes = "";
-		$this->Tanggal_Valuta->EditValue = ew_FormatDateTime($this->Tanggal_Valuta->CurrentValue, 8);
+		$this->Tanggal_Valuta->EditCustomAttributes = "style='width: 112px;''";
+		$this->Tanggal_Valuta->EditValue = ew_FormatDateTime($this->Tanggal_Valuta->CurrentValue, 7);
 		$this->Tanggal_Valuta->PlaceHolder = ew_RemoveHtml($this->Tanggal_Valuta->FldCaption());
 
 		// Tanggal_Jatuh_Tempo
 		$this->Tanggal_Jatuh_Tempo->EditAttrs["class"] = "form-control";
-		$this->Tanggal_Jatuh_Tempo->EditCustomAttributes = "";
-		$this->Tanggal_Jatuh_Tempo->EditValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->CurrentValue, 8);
+		$this->Tanggal_Jatuh_Tempo->EditCustomAttributes = "style='width: 112px;''";
+		$this->Tanggal_Jatuh_Tempo->EditValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->CurrentValue, 7);
 		$this->Tanggal_Jatuh_Tempo->PlaceHolder = ew_RemoveHtml($this->Tanggal_Jatuh_Tempo->FldCaption());
+
+		// nasabah_id
+		$this->nasabah_id->EditAttrs["class"] = "form-control";
+		$this->nasabah_id->EditCustomAttributes = "";
+
+		// Jumlah_Deposito
+		$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
+		$this->Jumlah_Deposito->EditCustomAttributes = "";
+		$this->Jumlah_Deposito->EditValue = $this->Jumlah_Deposito->CurrentValue;
+		$this->Jumlah_Deposito->PlaceHolder = ew_RemoveHtml($this->Jumlah_Deposito->FldCaption());
+		if (strval($this->Jumlah_Deposito->EditValue) <> "" && is_numeric($this->Jumlah_Deposito->EditValue)) $this->Jumlah_Deposito->EditValue = ew_FormatNumber($this->Jumlah_Deposito->EditValue, -2, -2, -2, -2);
+
+		// Jumlah_Terbilang
+		$this->Jumlah_Terbilang->EditAttrs["class"] = "form-control";
+		$this->Jumlah_Terbilang->EditCustomAttributes = "";
+		$this->Jumlah_Terbilang->EditValue = $this->Jumlah_Terbilang->CurrentValue;
+		$this->Jumlah_Terbilang->ViewCustomAttributes = "";
 
 		// Suku_Bunga
 		$this->Suku_Bunga->EditAttrs["class"] = "form-control";
 		$this->Suku_Bunga->EditCustomAttributes = "";
 		$this->Suku_Bunga->EditValue = $this->Suku_Bunga->CurrentValue;
 		$this->Suku_Bunga->PlaceHolder = ew_RemoveHtml($this->Suku_Bunga->FldCaption());
-		if (strval($this->Suku_Bunga->EditValue) <> "" && is_numeric($this->Suku_Bunga->EditValue)) $this->Suku_Bunga->EditValue = ew_FormatNumber($this->Suku_Bunga->EditValue, -2, -1, -2, 0);
+		if (strval($this->Suku_Bunga->EditValue) <> "" && is_numeric($this->Suku_Bunga->EditValue)) $this->Suku_Bunga->EditValue = ew_FormatNumber($this->Suku_Bunga->EditValue, -2, -2, -2, -2);
 
 		// Jumlah_Bunga
 		$this->Jumlah_Bunga->EditAttrs["class"] = "form-control";
 		$this->Jumlah_Bunga->EditCustomAttributes = "";
 		$this->Jumlah_Bunga->EditValue = $this->Jumlah_Bunga->CurrentValue;
 		$this->Jumlah_Bunga->PlaceHolder = ew_RemoveHtml($this->Jumlah_Bunga->FldCaption());
-		if (strval($this->Jumlah_Bunga->EditValue) <> "" && is_numeric($this->Jumlah_Bunga->EditValue)) $this->Jumlah_Bunga->EditValue = ew_FormatNumber($this->Jumlah_Bunga->EditValue, -2, -1, -2, 0);
+		if (strval($this->Jumlah_Bunga->EditValue) <> "" && is_numeric($this->Jumlah_Bunga->EditValue)) $this->Jumlah_Bunga->EditValue = ew_FormatNumber($this->Jumlah_Bunga->EditValue, -2, -2, -2, -2);
 
 		// Dikredit_Diperpanjang
 		$this->Dikredit_Diperpanjang->EditCustomAttributes = "";
@@ -828,25 +938,6 @@ class ct20_deposito extends cTable {
 		// Tunai_Transfer
 		$this->Tunai_Transfer->EditCustomAttributes = "";
 		$this->Tunai_Transfer->EditValue = $this->Tunai_Transfer->Options(FALSE);
-
-		// nasabah_id
-		$this->nasabah_id->EditAttrs["class"] = "form-control";
-		$this->nasabah_id->EditCustomAttributes = "";
-		$this->nasabah_id->EditValue = $this->nasabah_id->CurrentValue;
-		$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
-
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
-		$this->Jumlah_Deposito->EditCustomAttributes = "";
-		$this->Jumlah_Deposito->EditValue = $this->Jumlah_Deposito->CurrentValue;
-		$this->Jumlah_Deposito->PlaceHolder = ew_RemoveHtml($this->Jumlah_Deposito->FldCaption());
-		if (strval($this->Jumlah_Deposito->EditValue) <> "" && is_numeric($this->Jumlah_Deposito->EditValue)) $this->Jumlah_Deposito->EditValue = ew_FormatNumber($this->Jumlah_Deposito->EditValue, -2, -1, -2, 0);
-
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang->EditAttrs["class"] = "form-control";
-		$this->Jumlah_Terbilang->EditCustomAttributes = "";
-		$this->Jumlah_Terbilang->EditValue = $this->Jumlah_Terbilang->CurrentValue;
-		$this->Jumlah_Terbilang->PlaceHolder = ew_RemoveHtml($this->Jumlah_Terbilang->FldCaption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -875,28 +966,28 @@ class ct20_deposito extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->No_Urut->Exportable) $Doc->ExportCaption($this->No_Urut);
 					if ($this->Tanggal_Valuta->Exportable) $Doc->ExportCaption($this->Tanggal_Valuta);
 					if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportCaption($this->Tanggal_Jatuh_Tempo);
+					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
+					if ($this->Jumlah_Deposito->Exportable) $Doc->ExportCaption($this->Jumlah_Deposito);
+					if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportCaption($this->Jumlah_Terbilang);
 					if ($this->Suku_Bunga->Exportable) $Doc->ExportCaption($this->Suku_Bunga);
 					if ($this->Jumlah_Bunga->Exportable) $Doc->ExportCaption($this->Jumlah_Bunga);
 					if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportCaption($this->Dikredit_Diperpanjang);
 					if ($this->Tunai_Transfer->Exportable) $Doc->ExportCaption($this->Tunai_Transfer);
-					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
-					if ($this->Jumlah_Deposito->Exportable) $Doc->ExportCaption($this->Jumlah_Deposito);
-					if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportCaption($this->Jumlah_Terbilang);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
 					if ($this->No_Urut->Exportable) $Doc->ExportCaption($this->No_Urut);
 					if ($this->Tanggal_Valuta->Exportable) $Doc->ExportCaption($this->Tanggal_Valuta);
 					if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportCaption($this->Tanggal_Jatuh_Tempo);
+					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
+					if ($this->Jumlah_Deposito->Exportable) $Doc->ExportCaption($this->Jumlah_Deposito);
+					if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportCaption($this->Jumlah_Terbilang);
 					if ($this->Suku_Bunga->Exportable) $Doc->ExportCaption($this->Suku_Bunga);
 					if ($this->Jumlah_Bunga->Exportable) $Doc->ExportCaption($this->Jumlah_Bunga);
 					if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportCaption($this->Dikredit_Diperpanjang);
 					if ($this->Tunai_Transfer->Exportable) $Doc->ExportCaption($this->Tunai_Transfer);
-					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
-					if ($this->Jumlah_Deposito->Exportable) $Doc->ExportCaption($this->Jumlah_Deposito);
 				}
 				$Doc->EndExportRow();
 			}
@@ -928,28 +1019,28 @@ class ct20_deposito extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->No_Urut->Exportable) $Doc->ExportField($this->No_Urut);
 						if ($this->Tanggal_Valuta->Exportable) $Doc->ExportField($this->Tanggal_Valuta);
 						if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportField($this->Tanggal_Jatuh_Tempo);
+						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
+						if ($this->Jumlah_Deposito->Exportable) $Doc->ExportField($this->Jumlah_Deposito);
+						if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportField($this->Jumlah_Terbilang);
 						if ($this->Suku_Bunga->Exportable) $Doc->ExportField($this->Suku_Bunga);
 						if ($this->Jumlah_Bunga->Exportable) $Doc->ExportField($this->Jumlah_Bunga);
 						if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportField($this->Dikredit_Diperpanjang);
 						if ($this->Tunai_Transfer->Exportable) $Doc->ExportField($this->Tunai_Transfer);
-						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
-						if ($this->Jumlah_Deposito->Exportable) $Doc->ExportField($this->Jumlah_Deposito);
-						if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportField($this->Jumlah_Terbilang);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
 						if ($this->No_Urut->Exportable) $Doc->ExportField($this->No_Urut);
 						if ($this->Tanggal_Valuta->Exportable) $Doc->ExportField($this->Tanggal_Valuta);
 						if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportField($this->Tanggal_Jatuh_Tempo);
+						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
+						if ($this->Jumlah_Deposito->Exportable) $Doc->ExportField($this->Jumlah_Deposito);
+						if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportField($this->Jumlah_Terbilang);
 						if ($this->Suku_Bunga->Exportable) $Doc->ExportField($this->Suku_Bunga);
 						if ($this->Jumlah_Bunga->Exportable) $Doc->ExportField($this->Jumlah_Bunga);
 						if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportField($this->Dikredit_Diperpanjang);
 						if ($this->Tunai_Transfer->Exportable) $Doc->ExportField($this->Tunai_Transfer);
-						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
-						if ($this->Jumlah_Deposito->Exportable) $Doc->ExportField($this->Jumlah_Deposito);
 					}
 					$Doc->EndExportRow();
 				}
@@ -1262,8 +1353,47 @@ class ct20_deposito extends cTable {
 	function Row_Rendered() {
 
 		// To view properties of field class, use:
-		//var_dump($this-><FieldName>); 
+		//var_dump($this-><FieldName>);
+		//if ($this->PageID == "list") {
 
+		if (CurrentPageID() == "list") {
+			$q = "select * from t20_deposito order by No_Urut desc";
+			$r = Conn()->Execute($q);
+			$this->No_Urut->EditValue = $r->fields["No_Urut"];
+			if (isset($_GET["x_No_Urut"])) {
+				$this->No_Urut->EditValue = $_GET["x_No_Urut"];
+			}
+		}
+
+		// Kondisi saat form Tambah sedang terbuka (tidak dalam mode konfirmasi)
+		if (CurrentPageID() == "add" && $this->CurrentAction != "F") {
+
+			// users meng-klik icon COPY
+			if (isset($_GET["id"])) {
+
+				//echo "id ".$_GET["id"];
+				// proses copy
+
+				$this->No_Urut->CurrentValue = GetNextNoUrut2($_GET["id"]); // trik
+			}
+			else {
+				$this->No_Urut->CurrentValue = GetNextNoUrut(); // trik
+			}
+			$this->No_Urut->EditValue = $this->No_Urut->CurrentValue; // tampilkan
+
+			//$this->Kode->ReadOnly = TRUE; // supaya tidak bisa diubah
+			if (isset($_GET["id"])) {
+
+				//echo "id ".$_GET["id"];
+				// proses copy
+
+			}
+		}
+
+		// Kondisi saat form Tambah sedang dalam mode konfirmasi
+		if ($this->CurrentAction == "add" && $this->CurrentAction=="F") {
+			$this->No_Urut->ViewValue = $this->No_Urut->CurrentValue; // ambil dari mode sebelumnya
+		}
 	}
 
 	// User ID Filtering event

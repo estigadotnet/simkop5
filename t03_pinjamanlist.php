@@ -365,6 +365,9 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$Security->UserID_Loaded();
 		}
 
+		// Create form object
+		$objForm = new cFormObj();
+
 		// Get export parameters
 		$custom = "";
 		if (@$_GET["export"] <> "") {
@@ -605,6 +608,27 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			if ($this->Export == "")
 				$this->SetupBreadcrumb();
 
+			// Check QueryString parameters
+			if (@$_GET["a"] <> "") {
+				$this->CurrentAction = $_GET["a"];
+
+				// Clear inline mode
+				if ($this->CurrentAction == "cancel")
+					$this->ClearInlineMode();
+
+				// Switch to inline edit mode
+				if ($this->CurrentAction == "edit")
+					$this->InlineEditMode();
+			} else {
+				if (@$_POST["a_list"] <> "") {
+					$this->CurrentAction = $_POST["a_list"]; // Get action
+
+					// Inline Update
+					if (($this->CurrentAction == "update" || $this->CurrentAction == "overwrite") && @$_SESSION[EW_SESSION_INLINE_MODE] == "edit")
+						$this->InlineUpdate();
+				}
+			}
+
 			// Hide list options
 			if ($this->Export <> "") {
 				$this->ListOptions->HideAllOptions(array("sequence"));
@@ -745,6 +769,78 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			$this->StartRec = 1;
 			$this->setStartRecordNumber($this->StartRec);
 		}
+	}
+
+	//  Exit inline mode
+	function ClearInlineMode() {
+		$this->setKey("id", ""); // Clear inline edit key
+		$this->Pinjaman->FormValue = ""; // Clear form value
+		$this->LastAction = $this->CurrentAction; // Save last action
+		$this->CurrentAction = ""; // Clear action
+		$_SESSION[EW_SESSION_INLINE_MODE] = ""; // Clear inline mode
+	}
+
+	// Switch to Inline Edit mode
+	function InlineEditMode() {
+		global $Security, $Language;
+		if (!$Security->CanEdit())
+			$this->Page_Terminate("login.php"); // Go to login page
+		$bInlineEdit = TRUE;
+		if (@$_GET["id"] <> "") {
+			$this->id->setQueryStringValue($_GET["id"]);
+		} else {
+			$bInlineEdit = FALSE;
+		}
+		if ($bInlineEdit) {
+			if ($this->LoadRow()) {
+				$this->setKey("id", $this->id->CurrentValue); // Set up inline edit key
+				$_SESSION[EW_SESSION_INLINE_MODE] = "edit"; // Enable inline edit
+			}
+		}
+	}
+
+	// Perform update to Inline Edit record
+	function InlineUpdate() {
+		global $Language, $objForm, $gsFormError;
+		$objForm->Index = 1; 
+		$this->LoadFormValues(); // Get form values
+
+		// Validate form
+		$bInlineUpdate = TRUE;
+		if (!$this->ValidateForm()) {	
+			$bInlineUpdate = FALSE; // Form error, reset action
+			$this->setFailureMessage($gsFormError);
+		} else {
+			$bInlineUpdate = FALSE;
+			$rowkey = strval($objForm->GetValue($this->FormKeyName));
+			if ($this->SetupKeyValues($rowkey)) { // Set up key values
+				if ($this->CheckInlineEditKey()) { // Check key
+					$this->SendEmail = TRUE; // Send email on update success
+					$bInlineUpdate = $this->EditRow(); // Update record
+				} else {
+					$bInlineUpdate = FALSE;
+				}
+			}
+		}
+		if ($bInlineUpdate) { // Update success
+			if ($this->getSuccessMessage() == "")
+				$this->setSuccessMessage($Language->Phrase("UpdateSuccess")); // Set up success message
+			$this->ClearInlineMode(); // Clear inline edit mode
+		} else {
+			if ($this->getFailureMessage() == "")
+				$this->setFailureMessage($Language->Phrase("UpdateFailed")); // Set update failed message
+			$this->EventCancelled = TRUE; // Cancel event
+			$this->CurrentAction = "edit"; // Stay in edit mode
+		}
+	}
+
+	// Check Inline Edit key
+	function CheckInlineEditKey() {
+
+		//CheckInlineEditKey = True
+		if (strval($this->getKey("id")) <> strval($this->id->CurrentValue))
+			return FALSE;
+		return TRUE;
 	}
 
 	// Build filter for all keys
@@ -1388,11 +1484,42 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		global $Security, $Language, $objForm;
 		$this->ListOptions->LoadDefault();
 
+		// Set up row action and key
+		if (is_numeric($this->RowIndex) && $this->CurrentMode <> "view") {
+			$objForm->Index = $this->RowIndex;
+			$ActionName = str_replace("k_", "k" . $this->RowIndex . "_", $this->FormActionName);
+			$OldKeyName = str_replace("k_", "k" . $this->RowIndex . "_", $this->FormOldKeyName);
+			$KeyName = str_replace("k_", "k" . $this->RowIndex . "_", $this->FormKeyName);
+			$BlankRowName = str_replace("k_", "k" . $this->RowIndex . "_", $this->FormBlankRowName);
+			if ($this->RowAction <> "")
+				$this->MultiSelectKey .= "<input type=\"hidden\" name=\"" . $ActionName . "\" id=\"" . $ActionName . "\" value=\"" . $this->RowAction . "\">";
+			if ($this->RowAction == "delete") {
+				$rowkey = $objForm->GetValue($this->FormKeyName);
+				$this->SetupKeyValues($rowkey);
+			}
+			if ($this->RowAction == "insert" && $this->CurrentAction == "F" && $this->EmptyRow())
+				$this->MultiSelectKey .= "<input type=\"hidden\" name=\"" . $BlankRowName . "\" id=\"" . $BlankRowName . "\" value=\"1\">";
+		}
+
+		// "edit"
+		$oListOpt = &$this->ListOptions->Items["edit"];
+		if ($this->CurrentAction == "edit" && $this->RowType == EW_ROWTYPE_EDIT) { // Inline-Edit
+			$this->ListOptions->CustomItem = "edit"; // Show edit column only
+			$cancelurl = $this->AddMasterUrl($this->PageUrl() . "a=cancel");
+				$oListOpt->Body = "<div" . (($oListOpt->OnLeft) ? " style=\"text-align: right\"" : "") . ">" .
+					"<a class=\"ewGridLink ewInlineUpdate\" title=\"" . ew_HtmlTitle($Language->Phrase("UpdateLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("UpdateLink")) . "\" href=\"\" onclick=\"return ewForms(this).Submit('" . ew_GetHashUrl($this->PageName(), $this->PageObjName . "_row_" . $this->RowCnt) . "');\">" . $Language->Phrase("UpdateLink") . "</a>&nbsp;" .
+					"<a class=\"ewGridLink ewInlineCancel\" title=\"" . ew_HtmlTitle($Language->Phrase("CancelLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("CancelLink")) . "\" href=\"" . $cancelurl . "\">" . $Language->Phrase("CancelLink") . "</a>" .
+					"<input type=\"hidden\" name=\"a_list\" id=\"a_list\" value=\"update\"></div>";
+			$oListOpt->Body .= "<input type=\"hidden\" name=\"k" . $this->RowIndex . "_key\" id=\"k" . $this->RowIndex . "_key\" value=\"" . ew_HtmlEncode($this->id->CurrentValue) . "\">";
+			return;
+		}
+
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
 		if ($Security->CanEdit()) {
 			$oListOpt->Body = "<a class=\"ewRowLink ewEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("EditLink")) . "\" href=\"" . ew_HtmlEncode($this->EditUrl) . "\">" . $Language->Phrase("EditLink") . "</a>";
+			$oListOpt->Body .= "<a class=\"ewRowLink ewInlineEdit\" title=\"" . ew_HtmlTitle($Language->Phrase("InlineEditLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("InlineEditLink")) . "\" href=\"" . ew_HtmlEncode(ew_GetHashUrl($this->InlineEditUrl, $this->PageObjName . "_row_" . $this->RowCnt)) . "\">" . $Language->Phrase("InlineEditLink") . "</a>";
 		} else {
 			$oListOpt->Body = "";
 		}
@@ -1830,6 +1957,21 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		}
 	}
 
+	// Load default values
+	function LoadDefaultValues() {
+		$this->Kontrak_No->CurrentValue = NULL;
+		$this->Kontrak_No->OldValue = $this->Kontrak_No->CurrentValue;
+		$this->Kontrak_Tgl->CurrentValue = NULL;
+		$this->Kontrak_Tgl->OldValue = $this->Kontrak_Tgl->CurrentValue;
+		$this->nasabah_id->CurrentValue = NULL;
+		$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
+		$this->Pinjaman->CurrentValue = NULL;
+		$this->Pinjaman->OldValue = $this->Pinjaman->CurrentValue;
+		$this->marketing_id->CurrentValue = NULL;
+		$this->marketing_id->OldValue = $this->marketing_id->CurrentValue;
+		$this->Macet->CurrentValue = "N";
+	}
+
 	// Load search values for validation
 	function LoadSearchValues() {
 		global $objForm;
@@ -1936,6 +2078,48 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$this->Macet->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Macet"]);
 		if ($this->Macet->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->Macet->AdvancedSearch->SearchOperator = @$_GET["z_Macet"];
+	}
+
+	// Load form values
+	function LoadFormValues() {
+
+		// Load from form
+		global $objForm;
+		if (!$this->Kontrak_No->FldIsDetailKey) {
+			$this->Kontrak_No->setFormValue($objForm->GetValue("x_Kontrak_No"));
+		}
+		if (!$this->Kontrak_Tgl->FldIsDetailKey) {
+			$this->Kontrak_Tgl->setFormValue($objForm->GetValue("x_Kontrak_Tgl"));
+			$this->Kontrak_Tgl->CurrentValue = ew_UnFormatDateTime($this->Kontrak_Tgl->CurrentValue, 7);
+		}
+		if (!$this->nasabah_id->FldIsDetailKey) {
+			$this->nasabah_id->setFormValue($objForm->GetValue("x_nasabah_id"));
+		}
+		if (!$this->Pinjaman->FldIsDetailKey) {
+			$this->Pinjaman->setFormValue($objForm->GetValue("x_Pinjaman"));
+		}
+		if (!$this->marketing_id->FldIsDetailKey) {
+			$this->marketing_id->setFormValue($objForm->GetValue("x_marketing_id"));
+		}
+		if (!$this->Macet->FldIsDetailKey) {
+			$this->Macet->setFormValue($objForm->GetValue("x_Macet"));
+		}
+		if (!$this->id->FldIsDetailKey && $this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
+			$this->id->setFormValue($objForm->GetValue("x_id"));
+	}
+
+	// Restore form values
+	function RestoreFormValues() {
+		global $objForm;
+		if ($this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
+			$this->id->CurrentValue = $this->id->FormValue;
+		$this->Kontrak_No->CurrentValue = $this->Kontrak_No->FormValue;
+		$this->Kontrak_Tgl->CurrentValue = $this->Kontrak_Tgl->FormValue;
+		$this->Kontrak_Tgl->CurrentValue = ew_UnFormatDateTime($this->Kontrak_Tgl->CurrentValue, 7);
+		$this->nasabah_id->CurrentValue = $this->nasabah_id->FormValue;
+		$this->Pinjaman->CurrentValue = $this->Pinjaman->FormValue;
+		$this->marketing_id->CurrentValue = $this->marketing_id->FormValue;
+		$this->Macet->CurrentValue = $this->Macet->FormValue;
 	}
 
 	// Load recordset
@@ -2316,6 +2500,181 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 				$this->Macet->HrefValue = "";
 			}
 			$this->Macet->TooltipValue = "";
+		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
+
+			// Kontrak_No
+			$this->Kontrak_No->EditAttrs["class"] = "form-control";
+			$this->Kontrak_No->EditCustomAttributes = "";
+			$this->Kontrak_No->EditValue = ew_HtmlEncode($this->Kontrak_No->CurrentValue);
+			$this->Kontrak_No->PlaceHolder = ew_RemoveHtml($this->Kontrak_No->FldCaption());
+
+			// Kontrak_Tgl
+			$this->Kontrak_Tgl->EditAttrs["class"] = "form-control";
+			$this->Kontrak_Tgl->EditCustomAttributes = "style='width: 115px;'";
+			$this->Kontrak_Tgl->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Kontrak_Tgl->CurrentValue, 7));
+			$this->Kontrak_Tgl->PlaceHolder = ew_RemoveHtml($this->Kontrak_Tgl->FldCaption());
+
+			// nasabah_id
+			$this->nasabah_id->EditAttrs["class"] = "form-control";
+			$this->nasabah_id->EditCustomAttributes = "";
+
+			// Pinjaman
+			$this->Pinjaman->EditAttrs["class"] = "form-control";
+			$this->Pinjaman->EditCustomAttributes = "";
+			$this->Pinjaman->EditValue = ew_HtmlEncode($this->Pinjaman->CurrentValue);
+			$this->Pinjaman->PlaceHolder = ew_RemoveHtml($this->Pinjaman->FldCaption());
+			if (strval($this->Pinjaman->EditValue) <> "" && is_numeric($this->Pinjaman->EditValue)) $this->Pinjaman->EditValue = ew_FormatNumber($this->Pinjaman->EditValue, -2, -2, -2, -2);
+
+			// marketing_id
+			$this->marketing_id->EditAttrs["class"] = "form-control";
+			$this->marketing_id->EditCustomAttributes = "";
+			$this->marketing_id->EditValue = ew_HtmlEncode($this->marketing_id->CurrentValue);
+			$this->marketing_id->PlaceHolder = ew_RemoveHtml($this->marketing_id->FldCaption());
+
+			// Macet
+			$this->Macet->EditCustomAttributes = "";
+			$this->Macet->EditValue = $this->Macet->Options(FALSE);
+
+			// Add refer script
+			// Kontrak_No
+
+			$this->Kontrak_No->LinkCustomAttributes = "";
+			$this->Kontrak_No->HrefValue = "";
+
+			// Kontrak_Tgl
+			$this->Kontrak_Tgl->LinkCustomAttributes = "";
+			$this->Kontrak_Tgl->HrefValue = "";
+
+			// nasabah_id
+			$this->nasabah_id->LinkCustomAttributes = "";
+			$this->nasabah_id->HrefValue = "";
+
+			// Pinjaman
+			$this->Pinjaman->LinkCustomAttributes = "";
+			$this->Pinjaman->HrefValue = "";
+
+			// marketing_id
+			$this->marketing_id->LinkCustomAttributes = "";
+			$this->marketing_id->HrefValue = "";
+
+			// Macet
+			$this->Macet->LinkCustomAttributes = "";
+			if (!ew_Empty($this->id->CurrentValue)) {
+				$this->Macet->HrefValue = "cf09_nasabahmacet.php?id=" . ((!empty($this->id->EditValue)) ? ew_RemoveHtml($this->id->EditValue) : $this->id->CurrentValue); // Add prefix/suffix
+				$this->Macet->LinkAttrs["target"] = ""; // Add target
+				if ($this->Export <> "") $this->Macet->HrefValue = ew_ConvertFullUrl($this->Macet->HrefValue);
+			} else {
+				$this->Macet->HrefValue = "";
+			}
+		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
+
+			// Kontrak_No
+			$this->Kontrak_No->EditAttrs["class"] = "form-control";
+			$this->Kontrak_No->EditCustomAttributes = "";
+			$this->Kontrak_No->EditValue = ew_HtmlEncode($this->Kontrak_No->CurrentValue);
+			$this->Kontrak_No->PlaceHolder = ew_RemoveHtml($this->Kontrak_No->FldCaption());
+
+			// Kontrak_Tgl
+			$this->Kontrak_Tgl->EditAttrs["class"] = "form-control";
+			$this->Kontrak_Tgl->EditCustomAttributes = "style='width: 115px;'";
+			$this->Kontrak_Tgl->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Kontrak_Tgl->CurrentValue, 7));
+			$this->Kontrak_Tgl->PlaceHolder = ew_RemoveHtml($this->Kontrak_Tgl->FldCaption());
+
+			// nasabah_id
+			$this->nasabah_id->EditCustomAttributes = "";
+			if (trim(strval($this->nasabah_id->CurrentValue)) == "") {
+				$sFilterWrk = "0=1";
+			} else {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			}
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `v02_nasabahjaminan`";
+			$sWhereWrk = "";
+			$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+			$lookuptblfilter = "`Status` <> 2";
+			ew_AddFilter($sWhereWrk, $lookuptblfilter);
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+			} else {
+				$this->nasabah_id->ViewValue = $Language->Phrase("PleaseSelect");
+			}
+			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
+			if ($rswrk) $rswrk->Close();
+			$this->nasabah_id->EditValue = $arwrk;
+
+			// Pinjaman
+			$this->Pinjaman->EditAttrs["class"] = "form-control";
+			$this->Pinjaman->EditCustomAttributes = "";
+			$this->Pinjaman->EditValue = ew_HtmlEncode($this->Pinjaman->CurrentValue);
+			$this->Pinjaman->PlaceHolder = ew_RemoveHtml($this->Pinjaman->FldCaption());
+			if (strval($this->Pinjaman->EditValue) <> "" && is_numeric($this->Pinjaman->EditValue)) $this->Pinjaman->EditValue = ew_FormatNumber($this->Pinjaman->EditValue, -2, -2, -2, -2);
+
+			// marketing_id
+			$this->marketing_id->EditAttrs["class"] = "form-control";
+			$this->marketing_id->EditCustomAttributes = "";
+			$this->marketing_id->EditValue = ew_HtmlEncode($this->marketing_id->CurrentValue);
+			if (strval($this->marketing_id->CurrentValue) <> "") {
+				$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
+			$sWhereWrk = "";
+			$this->marketing_id->LookupFilters = array("dx1" => '`Nama`');
+			ew_AddFilter($sWhereWrk, $sFilterWrk);
+			$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+				$rswrk = Conn()->Execute($sSqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = array();
+					$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
+					$this->marketing_id->EditValue = $this->marketing_id->DisplayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->marketing_id->EditValue = ew_HtmlEncode($this->marketing_id->CurrentValue);
+				}
+			} else {
+				$this->marketing_id->EditValue = NULL;
+			}
+			$this->marketing_id->PlaceHolder = ew_RemoveHtml($this->marketing_id->FldCaption());
+
+			// Macet
+			$this->Macet->EditCustomAttributes = "";
+			$this->Macet->EditValue = $this->Macet->Options(FALSE);
+
+			// Edit refer script
+			// Kontrak_No
+
+			$this->Kontrak_No->LinkCustomAttributes = "";
+			$this->Kontrak_No->HrefValue = "";
+
+			// Kontrak_Tgl
+			$this->Kontrak_Tgl->LinkCustomAttributes = "";
+			$this->Kontrak_Tgl->HrefValue = "";
+
+			// nasabah_id
+			$this->nasabah_id->LinkCustomAttributes = "";
+			$this->nasabah_id->HrefValue = "";
+
+			// Pinjaman
+			$this->Pinjaman->LinkCustomAttributes = "";
+			$this->Pinjaman->HrefValue = "";
+
+			// marketing_id
+			$this->marketing_id->LinkCustomAttributes = "";
+			$this->marketing_id->HrefValue = "";
+
+			// Macet
+			$this->Macet->LinkCustomAttributes = "";
+			if (!ew_Empty($this->id->CurrentValue)) {
+				$this->Macet->HrefValue = "cf09_nasabahmacet.php?id=" . ((!empty($this->id->EditValue)) ? ew_RemoveHtml($this->id->EditValue) : $this->id->CurrentValue); // Add prefix/suffix
+				$this->Macet->LinkAttrs["target"] = ""; // Add target
+				if ($this->Export <> "") $this->Macet->HrefValue = ew_ConvertFullUrl($this->Macet->HrefValue);
+			} else {
+				$this->Macet->HrefValue = "";
+			}
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
 
 			// Kontrak_No
@@ -2388,6 +2747,218 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 			ew_AddMessage($gsSearchError, $sFormCustomError);
 		}
 		return $ValidateSearch;
+	}
+
+	// Validate form
+	function ValidateForm() {
+		global $Language, $gsFormError;
+
+		// Initialize form error message
+		$gsFormError = "";
+
+		// Check if validation required
+		if (!EW_SERVER_VALIDATE)
+			return ($gsFormError == "");
+		if (!$this->Kontrak_No->FldIsDetailKey && !is_null($this->Kontrak_No->FormValue) && $this->Kontrak_No->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Kontrak_No->FldCaption(), $this->Kontrak_No->ReqErrMsg));
+		}
+		if (!$this->Kontrak_Tgl->FldIsDetailKey && !is_null($this->Kontrak_Tgl->FormValue) && $this->Kontrak_Tgl->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Kontrak_Tgl->FldCaption(), $this->Kontrak_Tgl->ReqErrMsg));
+		}
+		if (!ew_CheckEuroDate($this->Kontrak_Tgl->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Kontrak_Tgl->FldErrMsg());
+		}
+		if (!$this->nasabah_id->FldIsDetailKey && !is_null($this->nasabah_id->FormValue) && $this->nasabah_id->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->nasabah_id->FldCaption(), $this->nasabah_id->ReqErrMsg));
+		}
+		if (!$this->Pinjaman->FldIsDetailKey && !is_null($this->Pinjaman->FormValue) && $this->Pinjaman->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Pinjaman->FldCaption(), $this->Pinjaman->ReqErrMsg));
+		}
+		if (!ew_CheckNumber($this->Pinjaman->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Pinjaman->FldErrMsg());
+		}
+		if (!$this->marketing_id->FldIsDetailKey && !is_null($this->marketing_id->FormValue) && $this->marketing_id->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->marketing_id->FldCaption(), $this->marketing_id->ReqErrMsg));
+		}
+		if (!ew_CheckInteger($this->marketing_id->FormValue)) {
+			ew_AddMessage($gsFormError, $this->marketing_id->FldErrMsg());
+		}
+		if ($this->Macet->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Macet->FldCaption(), $this->Macet->ReqErrMsg));
+		}
+
+		// Return validate result
+		$ValidateForm = ($gsFormError == "");
+
+		// Call Form_CustomValidate event
+		$sFormCustomError = "";
+		$ValidateForm = $ValidateForm && $this->Form_CustomValidate($sFormCustomError);
+		if ($sFormCustomError <> "") {
+			ew_AddMessage($gsFormError, $sFormCustomError);
+		}
+		return $ValidateForm;
+	}
+
+	// Update record based on key values
+	function EditRow() {
+		global $Security, $Language;
+		$sFilter = $this->KeyFilter();
+		$sFilter = $this->ApplyUserIDFilters($sFilter);
+		$conn = &$this->Connection();
+		if ($this->Kontrak_No->CurrentValue <> "") { // Check field with unique index
+			$sFilterChk = "(`Kontrak_No` = '" . ew_AdjustSql($this->Kontrak_No->CurrentValue, $this->DBID) . "')";
+			$sFilterChk .= " AND NOT (" . $sFilter . ")";
+			$this->CurrentFilter = $sFilterChk;
+			$sSqlChk = $this->SQL();
+			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
+			$rsChk = $conn->Execute($sSqlChk);
+			$conn->raiseErrorFn = '';
+			if ($rsChk === FALSE) {
+				return FALSE;
+			} elseif (!$rsChk->EOF) {
+				$sIdxErrMsg = str_replace("%f", $this->Kontrak_No->FldCaption(), $Language->Phrase("DupIndex"));
+				$sIdxErrMsg = str_replace("%v", $this->Kontrak_No->CurrentValue, $sIdxErrMsg);
+				$this->setFailureMessage($sIdxErrMsg);
+				$rsChk->Close();
+				return FALSE;
+			}
+			$rsChk->Close();
+		}
+		$this->CurrentFilter = $sFilter;
+		$sSql = $this->SQL();
+		$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
+		$rs = $conn->Execute($sSql);
+		$conn->raiseErrorFn = '';
+		if ($rs === FALSE)
+			return FALSE;
+		if ($rs->EOF) {
+			$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
+			$EditRow = FALSE; // Update Failed
+		} else {
+
+			// Save old values
+			$rsold = &$rs->fields;
+			$this->LoadDbValues($rsold);
+			$rsnew = array();
+
+			// Kontrak_No
+			$this->Kontrak_No->SetDbValueDef($rsnew, $this->Kontrak_No->CurrentValue, "", $this->Kontrak_No->ReadOnly);
+
+			// Kontrak_Tgl
+			$this->Kontrak_Tgl->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Kontrak_Tgl->CurrentValue, 7), ew_CurrentDate(), $this->Kontrak_Tgl->ReadOnly);
+
+			// nasabah_id
+			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
+
+			// Pinjaman
+			$this->Pinjaman->SetDbValueDef($rsnew, $this->Pinjaman->CurrentValue, 0, $this->Pinjaman->ReadOnly);
+
+			// marketing_id
+			$this->marketing_id->SetDbValueDef($rsnew, $this->marketing_id->CurrentValue, 0, $this->marketing_id->ReadOnly);
+
+			// Macet
+			$this->Macet->SetDbValueDef($rsnew, ((strval($this->Macet->CurrentValue) == "Y") ? "Y" : "N"), "N", $this->Macet->ReadOnly);
+
+			// Call Row Updating event
+			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
+			if ($bUpdateRow) {
+				$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
+				if (count($rsnew) > 0)
+					$EditRow = $this->Update($rsnew, "", $rsold);
+				else
+					$EditRow = TRUE; // No field to update
+				$conn->raiseErrorFn = '';
+				if ($EditRow) {
+				}
+			} else {
+				if ($this->getSuccessMessage() <> "" || $this->getFailureMessage() <> "") {
+
+					// Use the message, do nothing
+				} elseif ($this->CancelMessage <> "") {
+					$this->setFailureMessage($this->CancelMessage);
+					$this->CancelMessage = "";
+				} else {
+					$this->setFailureMessage($Language->Phrase("UpdateCancelled"));
+				}
+				$EditRow = FALSE;
+			}
+		}
+
+		// Call Row_Updated event
+		if ($EditRow)
+			$this->Row_Updated($rsold, $rsnew);
+		$rs->Close();
+		return $EditRow;
+	}
+
+	// Add record
+	function AddRow($rsold = NULL) {
+		global $Language, $Security;
+		if ($this->Kontrak_No->CurrentValue <> "") { // Check field with unique index
+			$sFilter = "(Kontrak_No = '" . ew_AdjustSql($this->Kontrak_No->CurrentValue, $this->DBID) . "')";
+			$rsChk = $this->LoadRs($sFilter);
+			if ($rsChk && !$rsChk->EOF) {
+				$sIdxErrMsg = str_replace("%f", $this->Kontrak_No->FldCaption(), $Language->Phrase("DupIndex"));
+				$sIdxErrMsg = str_replace("%v", $this->Kontrak_No->CurrentValue, $sIdxErrMsg);
+				$this->setFailureMessage($sIdxErrMsg);
+				$rsChk->Close();
+				return FALSE;
+			}
+		}
+		$conn = &$this->Connection();
+
+		// Load db values from rsold
+		if ($rsold) {
+			$this->LoadDbValues($rsold);
+		}
+		$rsnew = array();
+
+		// Kontrak_No
+		$this->Kontrak_No->SetDbValueDef($rsnew, $this->Kontrak_No->CurrentValue, "", FALSE);
+
+		// Kontrak_Tgl
+		$this->Kontrak_Tgl->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Kontrak_Tgl->CurrentValue, 7), ew_CurrentDate(), FALSE);
+
+		// nasabah_id
+		$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, FALSE);
+
+		// Pinjaman
+		$this->Pinjaman->SetDbValueDef($rsnew, $this->Pinjaman->CurrentValue, 0, FALSE);
+
+		// marketing_id
+		$this->marketing_id->SetDbValueDef($rsnew, $this->marketing_id->CurrentValue, 0, FALSE);
+
+		// Macet
+		$this->Macet->SetDbValueDef($rsnew, ((strval($this->Macet->CurrentValue) == "Y") ? "Y" : "N"), "N", strval($this->Macet->CurrentValue) == "");
+
+		// Call Row Inserting event
+		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
+		$bInsertRow = $this->Row_Inserting($rs, $rsnew);
+		if ($bInsertRow) {
+			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
+			$AddRow = $this->Insert($rsnew);
+			$conn->raiseErrorFn = '';
+			if ($AddRow) {
+			}
+		} else {
+			if ($this->getSuccessMessage() <> "" || $this->getFailureMessage() <> "") {
+
+				// Use the message, do nothing
+			} elseif ($this->CancelMessage <> "") {
+				$this->setFailureMessage($this->CancelMessage);
+				$this->CancelMessage = "";
+			} else {
+				$this->setFailureMessage($Language->Phrase("InsertCancelled"));
+			}
+			$AddRow = FALSE;
+		}
+		if ($AddRow) {
+
+			// Call Row Inserted event
+			$rs = ($rsold == NULL) ? NULL : $rsold->fields;
+			$this->Row_Inserted($rs, $rsnew);
+		}
+		return $AddRow;
 	}
 
 	// Load advanced search
@@ -2571,6 +3142,32 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$pageId = $pageId ?: $this->PageID;
 		if ($pageId == "list") {
 			switch ($fld->FldVar) {
+		case "x_nasabah_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
+			$sWhereWrk = "{filter}";
+			$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+			$lookuptblfilter = "`Status` <> 2";
+			ew_AddFilter($sWhereWrk, $lookuptblfilter);
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
+		case "x_marketing_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
+			$sWhereWrk = "{filter}";
+			$this->marketing_id->LookupFilters = array("dx1" => '`Nama`');
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 			}
 		} elseif ($pageId == "extbs") {
 			switch ($fld->FldVar) {
@@ -2598,6 +3195,19 @@ class ct03_pinjaman_list extends ct03_pinjaman {
 		$pageId = $pageId ?: $this->PageID;
 		if ($pageId == "list") {
 			switch ($fld->FldVar) {
+		case "x_marketing_id":
+			$sSqlWrk = "";
+			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld` FROM `t07_marketing`";
+			$sWhereWrk = "`Nama` LIKE '{query_value}%'";
+			$this->marketing_id->LookupFilters = array("dx1" => '`Nama`');
+			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "");
+			$sSqlWrk = "";
+			$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
+			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$sSqlWrk .= " LIMIT " . EW_AUTO_SUGGEST_MAX_ENTRIES;
+			if ($sSqlWrk <> "")
+				$fld->LookupFilters["s"] .= $sSqlWrk;
+			break;
 			}
 		} elseif ($pageId == "extbs") {
 			switch ($fld->FldVar) {
@@ -2816,6 +3426,56 @@ var CurrentPageID = EW_PAGE_ID = "list";
 var CurrentForm = ft03_pinjamanlist = new ew_Form("ft03_pinjamanlist", "list");
 ft03_pinjamanlist.FormKeyCountName = '<?php echo $t03_pinjaman_list->FormKeyCountName ?>';
 
+// Validate form
+ft03_pinjamanlist.Validate = function() {
+	if (!this.ValidateRequired)
+		return true; // Ignore validation
+	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
+	if ($fobj.find("#a_confirm").val() == "F")
+		return true;
+	var elm, felm, uelm, addcnt = 0;
+	var $k = $fobj.find("#" + this.FormKeyCountName); // Get key_count
+	var rowcnt = ($k[0]) ? parseInt($k.val(), 10) : 1;
+	var startcnt = (rowcnt == 0) ? 0 : 1; // Check rowcnt == 0 => Inline-Add
+	var gridinsert = $fobj.find("#a_list").val() == "gridinsert";
+	for (var i = startcnt; i <= rowcnt; i++) {
+		var infix = ($k[0]) ? String(i) : "";
+		$fobj.data("rowindex", infix);
+			elm = this.GetElements("x" + infix + "_Kontrak_No");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_pinjaman->Kontrak_No->FldCaption(), $t03_pinjaman->Kontrak_No->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Kontrak_Tgl");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_pinjaman->Kontrak_Tgl->FldCaption(), $t03_pinjaman->Kontrak_Tgl->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Kontrak_Tgl");
+			if (elm && !ew_CheckEuroDate(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t03_pinjaman->Kontrak_Tgl->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_nasabah_id");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_pinjaman->nasabah_id->FldCaption(), $t03_pinjaman->nasabah_id->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Pinjaman");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_pinjaman->Pinjaman->FldCaption(), $t03_pinjaman->Pinjaman->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Pinjaman");
+			if (elm && !ew_CheckNumber(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t03_pinjaman->Pinjaman->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_marketing_id");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_pinjaman->marketing_id->FldCaption(), $t03_pinjaman->marketing_id->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_marketing_id");
+			if (elm && !ew_CheckInteger(elm.value))
+				return this.OnError(elm, "<?php echo ew_JsEncode2($t03_pinjaman->marketing_id->FldErrMsg()) ?>");
+			elm = this.GetElements("x" + infix + "_Macet");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t03_pinjaman->Macet->FldCaption(), $t03_pinjaman->Macet->ReqErrMsg)) ?>");
+
+			// Fire Form_CustomValidate event
+			if (!this.Form_CustomValidate(fobj))
+				return false;
+	}
+	return true;
+}
+
 // Form_CustomValidate event
 ft03_pinjamanlist.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
@@ -2832,7 +3492,7 @@ ft03_pinjamanlist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft03_pinjamanlist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft03_pinjamanlist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":true,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_jaminan_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 ft03_pinjamanlist.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
 ft03_pinjamanlist.Lists["x_Macet"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft03_pinjamanlist.Lists["x_Macet"].Options = <?php echo json_encode($t03_pinjaman->Macet->Options()) ?>;
@@ -3085,6 +3745,15 @@ if ($t03_pinjaman->ExportAll && $t03_pinjaman->Export <> "") {
 	else
 		$t03_pinjaman_list->StopRec = $t03_pinjaman_list->TotalRecs;
 }
+
+// Restore number of post back records
+if ($objForm) {
+	$objForm->Index = -1;
+	if ($objForm->HasValue($t03_pinjaman_list->FormKeyCountName) && ($t03_pinjaman->CurrentAction == "gridadd" || $t03_pinjaman->CurrentAction == "gridedit" || $t03_pinjaman->CurrentAction == "F")) {
+		$t03_pinjaman_list->KeyCount = $objForm->GetValue($t03_pinjaman_list->FormKeyCountName);
+		$t03_pinjaman_list->StopRec = $t03_pinjaman_list->StartRec + $t03_pinjaman_list->KeyCount - 1;
+	}
+}
 $t03_pinjaman_list->RecCnt = $t03_pinjaman_list->StartRec - 1;
 if ($t03_pinjaman_list->Recordset && !$t03_pinjaman_list->Recordset->EOF) {
 	$t03_pinjaman_list->Recordset->MoveFirst();
@@ -3099,6 +3768,9 @@ if ($t03_pinjaman_list->Recordset && !$t03_pinjaman_list->Recordset->EOF) {
 $t03_pinjaman->RowType = EW_ROWTYPE_AGGREGATEINIT;
 $t03_pinjaman->ResetAttrs();
 $t03_pinjaman_list->RenderRow();
+$t03_pinjaman_list->EditRowCnt = 0;
+if ($t03_pinjaman->CurrentAction == "edit")
+	$t03_pinjaman_list->RowIndex = 1;
 while ($t03_pinjaman_list->RecCnt < $t03_pinjaman_list->StopRec) {
 	$t03_pinjaman_list->RecCnt++;
 	if (intval($t03_pinjaman_list->RecCnt) >= intval($t03_pinjaman_list->StartRec)) {
@@ -3111,10 +3783,22 @@ while ($t03_pinjaman_list->RecCnt < $t03_pinjaman_list->StopRec) {
 		$t03_pinjaman->ResetAttrs();
 		$t03_pinjaman->CssClass = "";
 		if ($t03_pinjaman->CurrentAction == "gridadd") {
+			$t03_pinjaman_list->LoadDefaultValues(); // Load default values
 		} else {
 			$t03_pinjaman_list->LoadRowValues($t03_pinjaman_list->Recordset); // Load row values
 		}
 		$t03_pinjaman->RowType = EW_ROWTYPE_VIEW; // Render view
+		if ($t03_pinjaman->CurrentAction == "edit") {
+			if ($t03_pinjaman_list->CheckInlineEditKey() && $t03_pinjaman_list->EditRowCnt == 0) { // Inline edit
+				$t03_pinjaman->RowType = EW_ROWTYPE_EDIT; // Render edit
+			}
+		}
+		if ($t03_pinjaman->CurrentAction == "edit" && $t03_pinjaman->RowType == EW_ROWTYPE_EDIT && $t03_pinjaman->EventCancelled) { // Update failed
+			$objForm->Index = 1;
+			$t03_pinjaman_list->RestoreFormValues(); // Restore form values
+		}
+		if ($t03_pinjaman->RowType == EW_ROWTYPE_EDIT) // Edit row
+			$t03_pinjaman_list->EditRowCnt++;
 
 		// Set up row id / data-rowindex
 		$t03_pinjaman->RowAttrs = array_merge($t03_pinjaman->RowAttrs, array('data-rowindex'=>$t03_pinjaman_list->RowCnt, 'id'=>'r' . $t03_pinjaman_list->RowCnt . '_t03_pinjaman', 'data-rowtype'=>$t03_pinjaman->RowType));
@@ -3133,46 +3817,119 @@ $t03_pinjaman_list->ListOptions->Render("body", "left", $t03_pinjaman_list->RowC
 ?>
 	<?php if ($t03_pinjaman->Kontrak_No->Visible) { // Kontrak_No ?>
 		<td data-name="Kontrak_No"<?php echo $t03_pinjaman->Kontrak_No->CellAttributes() ?>>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Kontrak_No" class="form-group t03_pinjaman_Kontrak_No">
+<input type="text" data-table="t03_pinjaman" data-field="x_Kontrak_No" name="x<?php echo $t03_pinjaman_list->RowIndex ?>_Kontrak_No" id="x<?php echo $t03_pinjaman_list->RowIndex ?>_Kontrak_No" size="5" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->Kontrak_No->getPlaceHolder()) ?>" value="<?php echo $t03_pinjaman->Kontrak_No->EditValue ?>"<?php echo $t03_pinjaman->Kontrak_No->EditAttributes() ?>>
+</span>
+<?php } ?>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Kontrak_No" class="t03_pinjaman_Kontrak_No">
 <span<?php echo $t03_pinjaman->Kontrak_No->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->Kontrak_No->ListViewValue() ?></span>
 </span>
+<?php } ?>
 <a id="<?php echo $t03_pinjaman_list->PageObjName . "_row_" . $t03_pinjaman_list->RowCnt ?>"></a></td>
 	<?php } ?>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_EDIT || $t03_pinjaman->CurrentMode == "edit") { ?>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_id" name="x<?php echo $t03_pinjaman_list->RowIndex ?>_id" id="x<?php echo $t03_pinjaman_list->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->id->CurrentValue) ?>">
+<?php } ?>
 	<?php if ($t03_pinjaman->Kontrak_Tgl->Visible) { // Kontrak_Tgl ?>
 		<td data-name="Kontrak_Tgl"<?php echo $t03_pinjaman->Kontrak_Tgl->CellAttributes() ?>>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Kontrak_Tgl" class="form-group t03_pinjaman_Kontrak_Tgl">
+<input type="text" data-table="t03_pinjaman" data-field="x_Kontrak_Tgl" data-format="7" name="x<?php echo $t03_pinjaman_list->RowIndex ?>_Kontrak_Tgl" id="x<?php echo $t03_pinjaman_list->RowIndex ?>_Kontrak_Tgl" size="10" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->Kontrak_Tgl->getPlaceHolder()) ?>" value="<?php echo $t03_pinjaman->Kontrak_Tgl->EditValue ?>"<?php echo $t03_pinjaman->Kontrak_Tgl->EditAttributes() ?>>
+<?php if (!$t03_pinjaman->Kontrak_Tgl->ReadOnly && !$t03_pinjaman->Kontrak_Tgl->Disabled && !isset($t03_pinjaman->Kontrak_Tgl->EditAttrs["readonly"]) && !isset($t03_pinjaman->Kontrak_Tgl->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft03_pinjamanlist", "x<?php echo $t03_pinjaman_list->RowIndex ?>_Kontrak_Tgl", 7);
+</script>
+<?php } ?>
+</span>
+<?php } ?>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Kontrak_Tgl" class="t03_pinjaman_Kontrak_Tgl">
 <span<?php echo $t03_pinjaman->Kontrak_Tgl->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->Kontrak_Tgl->ListViewValue() ?></span>
 </span>
+<?php } ?>
 </td>
 	<?php } ?>
 	<?php if ($t03_pinjaman->nasabah_id->Visible) { // nasabah_id ?>
 		<td data-name="nasabah_id"<?php echo $t03_pinjaman->nasabah_id->CellAttributes() ?>>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_nasabah_id" class="form-group t03_pinjaman_nasabah_id">
+<?php $t03_pinjaman->nasabah_id->EditAttrs["onchange"] = "ew_AutoFill(this); " . @$t03_pinjaman->nasabah_id->EditAttrs["onchange"]; ?>
+<span class="ewLookupList">
+	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x<?php echo $t03_pinjaman_list->RowIndex ?>_nasabah_id"><?php echo (strval($t03_pinjaman->nasabah_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t03_pinjaman->nasabah_id->ViewValue); ?></span>
+</span>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t03_pinjaman->nasabah_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x<?php echo $t03_pinjaman_list->RowIndex ?>_nasabah_id',m:0,n:10});" class="ewLookupBtn btn btn-default btn-sm"><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_nasabah_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t03_pinjaman->nasabah_id->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t03_pinjaman_list->RowIndex ?>_nasabah_id" id="x<?php echo $t03_pinjaman_list->RowIndex ?>_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->CurrentValue ?>"<?php echo $t03_pinjaman->nasabah_id->EditAttributes() ?>>
+<input type="hidden" name="s_x<?php echo $t03_pinjaman_list->RowIndex ?>_nasabah_id" id="s_x<?php echo $t03_pinjaman_list->RowIndex ?>_nasabah_id" value="<?php echo $t03_pinjaman->nasabah_id->LookupFilterQuery() ?>">
+<input type="hidden" name="ln_x<?php echo $t03_pinjaman_list->RowIndex ?>_nasabah_id" id="ln_x<?php echo $t03_pinjaman_list->RowIndex ?>_nasabah_id" value="x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id">
+</span>
+<?php } ?>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_nasabah_id" class="t03_pinjaman_nasabah_id">
 <span<?php echo $t03_pinjaman->nasabah_id->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->nasabah_id->ListViewValue() ?></span>
 </span>
+<?php } ?>
 </td>
 	<?php } ?>
 	<?php if ($t03_pinjaman->Pinjaman->Visible) { // Pinjaman ?>
 		<td data-name="Pinjaman"<?php echo $t03_pinjaman->Pinjaman->CellAttributes() ?>>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Pinjaman" class="form-group t03_pinjaman_Pinjaman">
+<input type="text" data-table="t03_pinjaman" data-field="x_Pinjaman" name="x<?php echo $t03_pinjaman_list->RowIndex ?>_Pinjaman" id="x<?php echo $t03_pinjaman_list->RowIndex ?>_Pinjaman" size="10" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->Pinjaman->getPlaceHolder()) ?>" value="<?php echo $t03_pinjaman->Pinjaman->EditValue ?>"<?php echo $t03_pinjaman->Pinjaman->EditAttributes() ?>>
+</span>
+<?php } ?>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Pinjaman" class="t03_pinjaman_Pinjaman">
 <span<?php echo $t03_pinjaman->Pinjaman->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->Pinjaman->ListViewValue() ?></span>
 </span>
+<?php } ?>
 </td>
 	<?php } ?>
 	<?php if ($t03_pinjaman->marketing_id->Visible) { // marketing_id ?>
 		<td data-name="marketing_id"<?php echo $t03_pinjaman->marketing_id->CellAttributes() ?>>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_marketing_id" class="form-group t03_pinjaman_marketing_id">
+<?php
+$wrkonchange = trim(" " . @$t03_pinjaman->marketing_id->EditAttrs["onchange"]);
+if ($wrkonchange <> "") $wrkonchange = " onchange=\"" . ew_JsEncode2($wrkonchange) . "\"";
+$t03_pinjaman->marketing_id->EditAttrs["onchange"] = "";
+?>
+<span id="as_x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" style="white-space: nowrap; z-index: <?php echo (9000 - $t03_pinjaman_list->RowCnt * 10) ?>">
+	<input type="text" name="sv_x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" id="sv_x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" value="<?php echo $t03_pinjaman->marketing_id->EditValue ?>" size="30" placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->marketing_id->getPlaceHolder()) ?>" data-placeholder="<?php echo ew_HtmlEncode($t03_pinjaman->marketing_id->getPlaceHolder()) ?>"<?php echo $t03_pinjaman->marketing_id->EditAttributes() ?>>
+</span>
+<input type="hidden" data-table="t03_pinjaman" data-field="x_marketing_id" data-multiple="0" data-lookup="1" data-value-separator="<?php echo $t03_pinjaman->marketing_id->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" id="x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" value="<?php echo ew_HtmlEncode($t03_pinjaman->marketing_id->CurrentValue) ?>"<?php echo $wrkonchange ?>>
+<input type="hidden" name="q_x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" id="q_x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" value="<?php echo $t03_pinjaman->marketing_id->LookupFilterQuery(true) ?>">
+<script type="text/javascript">
+ft03_pinjamanlist.CreateAutoSuggest({"id":"x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id","forceSelect":false});
+</script>
+<button type="button" title="<?php echo ew_HtmlEncode(str_replace("%s", ew_RemoveHtml($t03_pinjaman->marketing_id->FldCaption()), $Language->Phrase("LookupLink", TRUE))) ?>" onclick="ew_ModalLookupShow({lnk:this,el:'x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id',m:0,n:10,srch:true});" class="ewLookupBtn btn btn-default btn-sm"><span class="glyphicon glyphicon-search ewIcon"></span></button>
+<input type="hidden" name="s_x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" id="s_x<?php echo $t03_pinjaman_list->RowIndex ?>_marketing_id" value="<?php echo $t03_pinjaman->marketing_id->LookupFilterQuery(false) ?>">
+</span>
+<?php } ?>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_marketing_id" class="t03_pinjaman_marketing_id">
 <span<?php echo $t03_pinjaman->marketing_id->ViewAttributes() ?>>
 <?php echo $t03_pinjaman->marketing_id->ListViewValue() ?></span>
 </span>
+<?php } ?>
 </td>
 	<?php } ?>
 	<?php if ($t03_pinjaman->Macet->Visible) { // Macet ?>
 		<td data-name="Macet"<?php echo $t03_pinjaman->Macet->CellAttributes() ?>>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
+<span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Macet" class="form-group t03_pinjaman_Macet">
+<div id="tp_x<?php echo $t03_pinjaman_list->RowIndex ?>_Macet" class="ewTemplate"><input type="radio" data-table="t03_pinjaman" data-field="x_Macet" data-value-separator="<?php echo $t03_pinjaman->Macet->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t03_pinjaman_list->RowIndex ?>_Macet" id="x<?php echo $t03_pinjaman_list->RowIndex ?>_Macet" value="{value}"<?php echo $t03_pinjaman->Macet->EditAttributes() ?>></div>
+<div id="dsl_x<?php echo $t03_pinjaman_list->RowIndex ?>_Macet" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t03_pinjaman->Macet->RadioButtonListHtml(FALSE, "x{$t03_pinjaman_list->RowIndex}_Macet") ?>
+</div></div>
+</span>
+<?php } ?>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_VIEW) { // View record ?>
 <span id="el<?php echo $t03_pinjaman_list->RowCnt ?>_t03_pinjaman_Macet" class="t03_pinjaman_Macet">
 <span<?php echo $t03_pinjaman->Macet->ViewAttributes() ?>>
 <?php if ((!ew_EmptyStr($t03_pinjaman->Macet->ListViewValue())) && $t03_pinjaman->Macet->LinkAttributes() <> "") { ?>
@@ -3182,6 +3939,7 @@ $t03_pinjaman_list->ListOptions->Render("body", "left", $t03_pinjaman_list->RowC
 <?php } ?>
 </span>
 </span>
+<?php } ?>
 </td>
 	<?php } ?>
 <?php
@@ -3190,6 +3948,11 @@ $t03_pinjaman_list->ListOptions->Render("body", "left", $t03_pinjaman_list->RowC
 $t03_pinjaman_list->ListOptions->Render("body", "right", $t03_pinjaman_list->RowCnt);
 ?>
 	</tr>
+<?php if ($t03_pinjaman->RowType == EW_ROWTYPE_ADD || $t03_pinjaman->RowType == EW_ROWTYPE_EDIT) { ?>
+<script type="text/javascript">
+ft03_pinjamanlist.UpdateOpts(<?php echo $t03_pinjaman_list->RowIndex ?>);
+</script>
+<?php } ?>
 <?php
 	}
 	if ($t03_pinjaman->CurrentAction <> "gridadd")
@@ -3198,6 +3961,9 @@ $t03_pinjaman_list->ListOptions->Render("body", "right", $t03_pinjaman_list->Row
 ?>
 </tbody>
 </table>
+<?php } ?>
+<?php if ($t03_pinjaman->CurrentAction == "edit") { ?>
+<input type="hidden" name="<?php echo $t03_pinjaman_list->FormKeyCountName ?>" id="<?php echo $t03_pinjaman_list->FormKeyCountName ?>" value="<?php echo $t03_pinjaman_list->KeyCount ?>">
 <?php } ?>
 <?php if ($t03_pinjaman->CurrentAction == "") { ?>
 <input type="hidden" name="a_list" id="a_list" value="">

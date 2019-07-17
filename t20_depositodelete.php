@@ -282,17 +282,16 @@ class ct20_deposito_delete extends ct20_deposito {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->id->SetVisibility();
-		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
 		$this->No_Urut->SetVisibility();
 		$this->Tanggal_Valuta->SetVisibility();
 		$this->Tanggal_Jatuh_Tempo->SetVisibility();
+		$this->nasabah_id->SetVisibility();
+		$this->Jumlah_Deposito->SetVisibility();
+		$this->Jumlah_Terbilang->SetVisibility();
 		$this->Suku_Bunga->SetVisibility();
 		$this->Jumlah_Bunga->SetVisibility();
 		$this->Dikredit_Diperpanjang->SetVisibility();
 		$this->Tunai_Transfer->SetVisibility();
-		$this->nasabah_id->SetVisibility();
-		$this->Jumlah_Deposito->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -424,7 +423,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		if ($this->UseSelectLimit) {
 			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
 			} else {
 				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
 			}
@@ -471,13 +470,18 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->No_Urut->setDbValue($rs->fields('No_Urut'));
 		$this->Tanggal_Valuta->setDbValue($rs->fields('Tanggal_Valuta'));
 		$this->Tanggal_Jatuh_Tempo->setDbValue($rs->fields('Tanggal_Jatuh_Tempo'));
+		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
+		if (array_key_exists('EV__nasabah_id', $rs->fields)) {
+			$this->nasabah_id->VirtualValue = $rs->fields('EV__nasabah_id'); // Set up virtual field value
+		} else {
+			$this->nasabah_id->VirtualValue = ""; // Clear value
+		}
+		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
+		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
-		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
-		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
 	}
 
 	// Load DbValue from recordset
@@ -488,13 +492,13 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->No_Urut->DbValue = $row['No_Urut'];
 		$this->Tanggal_Valuta->DbValue = $row['Tanggal_Valuta'];
 		$this->Tanggal_Jatuh_Tempo->DbValue = $row['Tanggal_Jatuh_Tempo'];
+		$this->nasabah_id->DbValue = $row['nasabah_id'];
+		$this->Jumlah_Deposito->DbValue = $row['Jumlah_Deposito'];
+		$this->Jumlah_Terbilang->DbValue = $row['Jumlah_Terbilang'];
 		$this->Suku_Bunga->DbValue = $row['Suku_Bunga'];
 		$this->Jumlah_Bunga->DbValue = $row['Jumlah_Bunga'];
 		$this->Dikredit_Diperpanjang->DbValue = $row['Dikredit_Diperpanjang'];
 		$this->Tunai_Transfer->DbValue = $row['Tunai_Transfer'];
-		$this->nasabah_id->DbValue = $row['nasabah_id'];
-		$this->Jumlah_Deposito->DbValue = $row['Jumlah_Deposito'];
-		$this->Jumlah_Terbilang->DbValue = $row['Jumlah_Terbilang'];
 	}
 
 	// Render row values based on field settings
@@ -504,16 +508,16 @@ class ct20_deposito_delete extends ct20_deposito {
 		// Initialize URLs
 		// Convert decimal values if posted back
 
+		if ($this->Jumlah_Deposito->FormValue == $this->Jumlah_Deposito->CurrentValue && is_numeric(ew_StrToFloat($this->Jumlah_Deposito->CurrentValue)))
+			$this->Jumlah_Deposito->CurrentValue = ew_StrToFloat($this->Jumlah_Deposito->CurrentValue);
+
+		// Convert decimal values if posted back
 		if ($this->Suku_Bunga->FormValue == $this->Suku_Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Suku_Bunga->CurrentValue)))
 			$this->Suku_Bunga->CurrentValue = ew_StrToFloat($this->Suku_Bunga->CurrentValue);
 
 		// Convert decimal values if posted back
 		if ($this->Jumlah_Bunga->FormValue == $this->Jumlah_Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Jumlah_Bunga->CurrentValue)))
 			$this->Jumlah_Bunga->CurrentValue = ew_StrToFloat($this->Jumlah_Bunga->CurrentValue);
-
-		// Convert decimal values if posted back
-		if ($this->Jumlah_Deposito->FormValue == $this->Jumlah_Deposito->CurrentValue && is_numeric(ew_StrToFloat($this->Jumlah_Deposito->CurrentValue)))
-			$this->Jumlah_Deposito->CurrentValue = ew_StrToFloat($this->Jumlah_Deposito->CurrentValue);
 
 		// Call Row_Rendering event
 		$this->Row_Rendering();
@@ -523,13 +527,13 @@ class ct20_deposito_delete extends ct20_deposito {
 		// No_Urut
 		// Tanggal_Valuta
 		// Tanggal_Jatuh_Tempo
+		// nasabah_id
+		// Jumlah_Deposito
+		// Jumlah_Terbilang
 		// Suku_Bunga
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
-		// nasabah_id
-		// Jumlah_Deposito
-		// Jumlah_Terbilang
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -543,20 +547,61 @@ class ct20_deposito_delete extends ct20_deposito {
 
 		// Tanggal_Valuta
 		$this->Tanggal_Valuta->ViewValue = $this->Tanggal_Valuta->CurrentValue;
-		$this->Tanggal_Valuta->ViewValue = ew_FormatDateTime($this->Tanggal_Valuta->ViewValue, 0);
+		$this->Tanggal_Valuta->ViewValue = ew_FormatDateTime($this->Tanggal_Valuta->ViewValue, 7);
 		$this->Tanggal_Valuta->ViewCustomAttributes = "";
 
 		// Tanggal_Jatuh_Tempo
 		$this->Tanggal_Jatuh_Tempo->ViewValue = $this->Tanggal_Jatuh_Tempo->CurrentValue;
-		$this->Tanggal_Jatuh_Tempo->ViewValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->ViewValue, 0);
+		$this->Tanggal_Jatuh_Tempo->ViewValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->ViewValue, 7);
 		$this->Tanggal_Jatuh_Tempo->ViewCustomAttributes = "";
+
+		// nasabah_id
+		if ($this->nasabah_id->VirtualValue <> "") {
+			$this->nasabah_id->ViewValue = $this->nasabah_id->VirtualValue;
+		} else {
+		if (strval($this->nasabah_id->CurrentValue) <> "") {
+			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
+		$sWhereWrk = "";
+		$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
+		ew_AddFilter($sWhereWrk, $sFilterWrk);
+		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
+		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
+			$rswrk = Conn()->Execute($sSqlWrk);
+			if ($rswrk && !$rswrk->EOF) { // Lookup values found
+				$arwrk = array();
+				$arwrk[1] = $rswrk->fields('DispFld');
+				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
+				$rswrk->Close();
+			} else {
+				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+			}
+		} else {
+			$this->nasabah_id->ViewValue = NULL;
+		}
+		}
+		$this->nasabah_id->ViewCustomAttributes = "";
+
+		// Jumlah_Deposito
+		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
+		$this->Jumlah_Deposito->ViewValue = ew_FormatNumber($this->Jumlah_Deposito->ViewValue, 0, -2, -2, -2);
+		$this->Jumlah_Deposito->CellCssStyle .= "text-align: right;";
+		$this->Jumlah_Deposito->ViewCustomAttributes = "";
+
+		// Jumlah_Terbilang
+		$this->Jumlah_Terbilang->ViewValue = $this->Jumlah_Terbilang->CurrentValue;
+		$this->Jumlah_Terbilang->ViewCustomAttributes = "";
 
 		// Suku_Bunga
 		$this->Suku_Bunga->ViewValue = $this->Suku_Bunga->CurrentValue;
+		$this->Suku_Bunga->ViewValue = ew_FormatNumber($this->Suku_Bunga->ViewValue, 0, -2, -2, -2);
+		$this->Suku_Bunga->CellCssStyle .= "text-align: right;";
 		$this->Suku_Bunga->ViewCustomAttributes = "";
 
 		// Jumlah_Bunga
 		$this->Jumlah_Bunga->ViewValue = $this->Jumlah_Bunga->CurrentValue;
+		$this->Jumlah_Bunga->ViewValue = ew_FormatNumber($this->Jumlah_Bunga->ViewValue, 0, -2, -2, -2);
+		$this->Jumlah_Bunga->CellCssStyle .= "text-align: right;";
 		$this->Jumlah_Bunga->ViewCustomAttributes = "";
 
 		// Dikredit_Diperpanjang
@@ -575,19 +620,6 @@ class ct20_deposito_delete extends ct20_deposito {
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
 
-		// nasabah_id
-		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-		$this->nasabah_id->ViewCustomAttributes = "";
-
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
-		$this->Jumlah_Deposito->ViewCustomAttributes = "";
-
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
-
 			// No_Urut
 			$this->No_Urut->LinkCustomAttributes = "";
 			$this->No_Urut->HrefValue = "";
@@ -602,6 +634,21 @@ class ct20_deposito_delete extends ct20_deposito {
 			$this->Tanggal_Jatuh_Tempo->LinkCustomAttributes = "";
 			$this->Tanggal_Jatuh_Tempo->HrefValue = "";
 			$this->Tanggal_Jatuh_Tempo->TooltipValue = "";
+
+			// nasabah_id
+			$this->nasabah_id->LinkCustomAttributes = "";
+			$this->nasabah_id->HrefValue = "";
+			$this->nasabah_id->TooltipValue = "";
+
+			// Jumlah_Deposito
+			$this->Jumlah_Deposito->LinkCustomAttributes = "";
+			$this->Jumlah_Deposito->HrefValue = "";
+			$this->Jumlah_Deposito->TooltipValue = "";
+
+			// Jumlah_Terbilang
+			$this->Jumlah_Terbilang->LinkCustomAttributes = "";
+			$this->Jumlah_Terbilang->HrefValue = "";
+			$this->Jumlah_Terbilang->TooltipValue = "";
 
 			// Suku_Bunga
 			$this->Suku_Bunga->LinkCustomAttributes = "";
@@ -622,16 +669,6 @@ class ct20_deposito_delete extends ct20_deposito {
 			$this->Tunai_Transfer->LinkCustomAttributes = "";
 			$this->Tunai_Transfer->HrefValue = "";
 			$this->Tunai_Transfer->TooltipValue = "";
-
-			// nasabah_id
-			$this->nasabah_id->LinkCustomAttributes = "";
-			$this->nasabah_id->HrefValue = "";
-			$this->nasabah_id->TooltipValue = "";
-
-			// Jumlah_Deposito
-			$this->Jumlah_Deposito->LinkCustomAttributes = "";
-			$this->Jumlah_Deposito->HrefValue = "";
-			$this->Jumlah_Deposito->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -853,6 +890,7 @@ ft20_depositodelete.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
+ft20_depositodelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
 ft20_depositodelete.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft20_depositodelete.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
 ft20_depositodelete.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
@@ -889,9 +927,6 @@ $t20_deposito_delete->ShowMessage();
 <?php echo $t20_deposito->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t20_deposito->id->Visible) { // id ?>
-		<th><span id="elh_t20_deposito_id" class="t20_deposito_id"><?php echo $t20_deposito->id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t20_deposito->No_Urut->Visible) { // No_Urut ?>
 		<th><span id="elh_t20_deposito_No_Urut" class="t20_deposito_No_Urut"><?php echo $t20_deposito->No_Urut->FldCaption() ?></span></th>
 <?php } ?>
@@ -900,6 +935,15 @@ $t20_deposito_delete->ShowMessage();
 <?php } ?>
 <?php if ($t20_deposito->Tanggal_Jatuh_Tempo->Visible) { // Tanggal_Jatuh_Tempo ?>
 		<th><span id="elh_t20_deposito_Tanggal_Jatuh_Tempo" class="t20_deposito_Tanggal_Jatuh_Tempo"><?php echo $t20_deposito->Tanggal_Jatuh_Tempo->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
+		<th><span id="elh_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
+		<th><span id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t20_deposito->Jumlah_Terbilang->Visible) { // Jumlah_Terbilang ?>
+		<th><span id="elh_t20_deposito_Jumlah_Terbilang" class="t20_deposito_Jumlah_Terbilang"><?php echo $t20_deposito->Jumlah_Terbilang->FldCaption() ?></span></th>
 <?php } ?>
 <?php if ($t20_deposito->Suku_Bunga->Visible) { // Suku_Bunga ?>
 		<th><span id="elh_t20_deposito_Suku_Bunga" class="t20_deposito_Suku_Bunga"><?php echo $t20_deposito->Suku_Bunga->FldCaption() ?></span></th>
@@ -912,12 +956,6 @@ $t20_deposito_delete->ShowMessage();
 <?php } ?>
 <?php if ($t20_deposito->Tunai_Transfer->Visible) { // Tunai_Transfer ?>
 		<th><span id="elh_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer"><?php echo $t20_deposito->Tunai_Transfer->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
-		<th><span id="elh_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
-		<th><span id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
@@ -940,14 +978,6 @@ while (!$t20_deposito_delete->Recordset->EOF) {
 	$t20_deposito_delete->RenderRow();
 ?>
 	<tr<?php echo $t20_deposito->RowAttributes() ?>>
-<?php if ($t20_deposito->id->Visible) { // id ?>
-		<td<?php echo $t20_deposito->id->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_id" class="t20_deposito_id">
-<span<?php echo $t20_deposito->id->ViewAttributes() ?>>
-<?php echo $t20_deposito->id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t20_deposito->No_Urut->Visible) { // No_Urut ?>
 		<td<?php echo $t20_deposito->No_Urut->CellAttributes() ?>>
 <span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_No_Urut" class="t20_deposito_No_Urut">
@@ -969,6 +999,30 @@ while (!$t20_deposito_delete->Recordset->EOF) {
 <span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Tanggal_Jatuh_Tempo" class="t20_deposito_Tanggal_Jatuh_Tempo">
 <span<?php echo $t20_deposito->Tanggal_Jatuh_Tempo->ViewAttributes() ?>>
 <?php echo $t20_deposito->Tanggal_Jatuh_Tempo->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
+		<td<?php echo $t20_deposito->nasabah_id->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
+<span<?php echo $t20_deposito->nasabah_id->ViewAttributes() ?>>
+<?php echo $t20_deposito->nasabah_id->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
+		<td<?php echo $t20_deposito->Jumlah_Deposito->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
+<span<?php echo $t20_deposito->Jumlah_Deposito->ViewAttributes() ?>>
+<?php echo $t20_deposito->Jumlah_Deposito->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t20_deposito->Jumlah_Terbilang->Visible) { // Jumlah_Terbilang ?>
+		<td<?php echo $t20_deposito->Jumlah_Terbilang->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Jumlah_Terbilang" class="t20_deposito_Jumlah_Terbilang">
+<span<?php echo $t20_deposito->Jumlah_Terbilang->ViewAttributes() ?>>
+<?php echo $t20_deposito->Jumlah_Terbilang->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
@@ -1001,22 +1055,6 @@ while (!$t20_deposito_delete->Recordset->EOF) {
 <span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer">
 <span<?php echo $t20_deposito->Tunai_Transfer->ViewAttributes() ?>>
 <?php echo $t20_deposito->Tunai_Transfer->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
-		<td<?php echo $t20_deposito->nasabah_id->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
-<span<?php echo $t20_deposito->nasabah_id->ViewAttributes() ?>>
-<?php echo $t20_deposito->nasabah_id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
-		<td<?php echo $t20_deposito->Jumlah_Deposito->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
-<span<?php echo $t20_deposito->Jumlah_Deposito->ViewAttributes() ?>>
-<?php echo $t20_deposito->Jumlah_Deposito->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

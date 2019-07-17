@@ -31,6 +31,23 @@ function Page_Unloaded() {
 function yang dibuat untuk memudahkan memproses data
 */
 
+function GetNextNoUrut() {
+	$sNextNoUrut = "";
+	$sLastNoUrut = "";
+	$value = ew_ExecuteScalar("SELECT No_Urut FROM t20_deposito ORDER BY No_Urut DESC");
+	if ($value != "") { // jika sudah ada, langsung ambil dan proses...
+		$sLastNoUrut = intval($value); //intval(substr($value, 1, 4)); // ambil 4 digit terakhir
+		$sLastNoUrut = intval($sLastNoUrut) + 1; // konversi ke integer, lalu tambahkan satu
+		$sNextNoUrut = sprintf('%05s', $sLastNoUrut); // format hasilnya dan tambahkan prefix
+		if (strlen($sNextNoUrut) > 5) {
+			$sNextNoUrut = "99999";
+		}
+	} else { // jika belum ada, gunakan kode yang pertama
+		$sNextNoUrut = "00001";
+	}
+	return $sNextNoUrut;
+}
+
 function GetNextNoKontrakCopy($id) {
 	$sNextNoKontrak = "";
 	$sLastNoKontrak = "";

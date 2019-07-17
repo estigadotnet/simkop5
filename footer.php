@@ -35,6 +35,118 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 
 // Write your global startup script here
 // document.write("page loaded");
+	function f_hitung_bunga() {
+		var jumlah_deposito = parseFloat($("#x_Jumlah_Deposito").val());
+		var suku_bunga = parseFloat($("#x_Suku_Bunga").val());
+		var jumlah_bunga = ((suku_bunga / 12) / 100) * jumlah_deposito;
+
+		//eval('var '+$('#x_Jumlah_Bunga').autoNumeric('getString'));
+		$("#x_Jumlah_Bunga").val(jumlah_bunga);
+
+		//$("#x_Jumlah_Bunga").autoNumeric('update');
+	}
+
+	// Table 't20_deposito' Field 'Jumlah Deposito'
+	$('[data-table=t20_deposito][data-field=x_Jumlah_Deposito]').on(
+		{
+			'change': function (e) {
+				var $row = $(this).fields();
+				f_terbilang($row["Jumlah_Deposito"].val(), "x_Jumlah_Terbilang");
+				f_hitung_bunga();
+			}
+		}
+	);
+
+	// Table 't20_deposito' Field 'Suku Bunga'
+	$('[data-table=t20_deposito][data-field=x_Suku_Bunga]').on(
+		{
+			'change': function (e) {
+				var $row = $(this).fields();
+
+				//f_terbilang($row["Jumlah_Deposito"].val(), "x_Jumlah_Terbilang");
+				f_hitung_bunga();
+			}
+		}
+	);
+
+function f_terbilang(bilanganx, terbilangx){
+	var bilangan=bilanganx; /* document.getElementById("nominal").value; */
+	var kalimat="";
+	var angka   = new Array('0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');
+	var kata    = new Array('','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan');
+	var tingkat = new Array('','Ribu','Juta','Milyar','Triliun');
+	var panjang_bilangan = bilangan.length;
+
+	/* pengujian panjang bilangan */
+	if(panjang_bilangan > 15){
+		kalimat = "Diluar Batas";
+	}else{
+
+		/* mengambil angka-angka yang ada dalam bilangan, dimasukkan ke dalam array */
+		for(i = 1; i <= panjang_bilangan; i++) {
+			angka[i] = bilangan.substr(-(i),1);
+		}
+		var i = 1;
+		var j = 0;
+
+		/* mulai proses iterasi terhadap array angka */
+		while(i <= panjang_bilangan){
+			subkalimat = "";
+			kata1 = "";
+			kata2 = "";
+			kata3 = "";
+
+			/* untuk Ratusan */
+			if(angka[i+2] != "0"){
+				if(angka[i+2] == "1"){
+					kata1 = "Seratus";
+				}else{
+					kata1 = kata[angka[i+2]] + " Ratus";
+				}
+			}
+
+			/* untuk Puluhan atau Belasan */
+			if(angka[i+1] != "0"){
+				if(angka[i+1] == "1"){
+					if(angka[i] == "0"){
+						kata2 = "Sepuluh";
+					}else if(angka[i] == "1"){
+						kata2 = "Sebelas";
+					}else{
+						kata2 = kata[angka[i]] + " Belas";
+					}
+				}else{
+					kata2 = kata[angka[i+1]] + " Puluh";
+				}
+			}
+
+			/* untuk Satuan */
+			if (angka[i] != "0"){
+				if (angka[i+1] != "1"){
+					kata3 = kata[angka[i]];
+				}
+			}
+
+			/* pengujian angka apakah tidak nol semua, lalu ditambahkan tingkat */
+			if ((angka[i] != "0") || (angka[i+1] != "0") || (angka[i+2] != "0")){
+				subkalimat = kata1+" "+kata2+" "+kata3+" "+tingkat[j]+" ";
+			}
+
+			/* gabungkan variabe sub kalimat (untuk Satu blok 3 angka) ke variabel kalimat */
+			kalimat = subkalimat + kalimat;
+			i = i + 3;
+			j = j + 1;
+		}
+
+		/* mengganti Satu Ribu jadi Seribu jika diperlukan */
+		if ((angka[5] == "0") && (angka[6] == "0")){
+			kalimat = kalimat.replace("Satu Ribu","Seribu");
+		}
+	}
+	kalimat = kalimat + " Rupiah";
+	document.getElementById(terbilangx).innerHTML=kalimat;
+};
+
 	function f_hitung(xparam) {
 		eval('var '+$('#x_Total_Denda').autoNumeric('getString'));
 		eval('var '+$('#x_Bayar_Titipan').autoNumeric('getString'));
