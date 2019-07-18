@@ -302,6 +302,10 @@ class cdefault {
 			$this->Page_Terminate("cf35_neracasaldo.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf41_pinjaman.php'))
 			$this->Page_Terminate("cf41_pinjaman.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf42_pinjaman.php'))
+			$this->Page_Terminate("cf42_pinjaman.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf43_deposito.php'))
+			$this->Page_Terminate("cf43_deposito.php");
 		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
 			$this->Page_Terminate("t01_nasabahlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))
@@ -330,6 +334,8 @@ class cdefault {
 			$this->Page_Terminate("t20_depositolist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't21_bank'))
 			$this->Page_Terminate("t21_banklist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't72_depositolap'))
+			$this->Page_Terminate("t72_depositolaplist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't73_pinjamanlap'))
 			$this->Page_Terminate("t73_pinjamanlaplist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't74_jurnallapclosed'))
@@ -370,8 +376,6 @@ class cdefault {
 			$this->Page_Terminate("t98_userlevelpermissionslist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't99_audittrail'))
 			$this->Page_Terminate("t99_audittraillist.php");
-		if ($Security->AllowList(CurrentProjectID() . 'cf42_pinjaman.php'))
-			$this->Page_Terminate("cf42_pinjaman.php");
 		if ($Security->IsLoggedIn()) {
 			$this->setFailureMessage(ew_DeniedMsg() . "<br><br><a href=\"logout.php\">" . $Language->Phrase("BackToLogin") . "</a>");
 		} else {

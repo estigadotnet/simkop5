@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/7/17" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/7/18" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -763,8 +763,11 @@
     <menu id="10655">
       <phrase id="menutext" value="Transaksi" />
     </menu>
-    <menu id="10770">
+    <menu id="10853">
       <phrase id="menutext" value="Laporan" />
+    </menu>
+    <menu id="10854">
+      <phrase id="menutext" value="Laporan Deposito" />
     </menu>
     <menu id="10338">
       <phrase id="menutext" value="General" />
@@ -990,6 +993,12 @@
     </table>
     <table id="cf41_pinjaman_php">
       <phrase id="tblcaption" value="Pinjaman" />
+    </table>
+    <table id="cf42_pinjaman_php">
+      <phrase id="tblcaption" value="Laporan Pinjaman" />
+    </table>
+    <table id="cf43_deposito_php">
+      <phrase id="tblcaption" value="Laporan Deposito" />
     </table>
     <table id="t01_nasabah">
       <phrase id="tblcaption" value="Nasabah" />
@@ -1493,6 +1502,46 @@
         <phrase id="fldcaption" value="Cabang" />
       </field>
     </table>
+    <table id="t72_depositolap">
+      <phrase id="tblcaption" value="Laporan Deposito" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="field_name">
+        <phrase id="fldcaption" value="Data" />
+      </field>
+      <field id="field_caption">
+        <phrase id="fldcaption" value="Judul Kolom" />
+      </field>
+      <field id="field_index">
+        <phrase id="fldcaption" value="Urutan Kolom" />
+      </field>
+      <field id="field_status">
+        <phrase id="fldcaption" value="Kolom ditampilkan ?" />
+        <phrase id="fldtagvalue1" value="Y" />
+        <phrase id="fldtagcaption1" value="Y" />
+        <phrase id="fldtagvalue2" value="N" />
+        <phrase id="fldtagcaption2" value="N" />
+      </field>
+      <field id="field_align">
+        <phrase id="fldcaption" value="Posisi Data" />
+        <phrase id="fldtagvalue1" value="left" />
+        <phrase id="fldtagcaption1" value="left" />
+        <phrase id="fldtagvalue2" value="center" />
+        <phrase id="fldtagcaption2" value="center" />
+        <phrase id="fldtagvalue3" value="right" />
+        <phrase id="fldtagcaption3" value="right" />
+      </field>
+      <field id="field_format">
+        <phrase id="fldcaption" value="Format Kolom" />
+        <phrase id="fldtagvalue1" value="none" />
+        <phrase id="fldtagcaption1" value="none" />
+        <phrase id="fldtagvalue2" value="tanggal" />
+        <phrase id="fldtagcaption2" value="tanggal" />
+        <phrase id="fldtagvalue3" value="numerik" />
+        <phrase id="fldtagcaption3" value="numerik" />
+      </field>
+    </table>
     <table id="t73_pinjamanlap">
       <phrase id="tblcaption" value="Laporan Pinjaman" />
       <field id="id">
@@ -1502,13 +1551,13 @@
         <phrase id="fldcaption" value="Data" />
       </field>
       <field id="field_caption">
-        <phrase id="fldcaption" value="Header Kolom" />
+        <phrase id="fldcaption" value="Judul Kolom" />
       </field>
       <field id="field_index">
         <phrase id="fldcaption" value="Urutan Kolom" />
       </field>
       <field id="field_status">
-        <phrase id="fldcaption" value="Kolom Ditampilkan" />
+        <phrase id="fldcaption" value="Kolom ditampilkan ?" />
         <phrase id="fldtagvalue1" value="Y" />
         <phrase id="fldtagcaption1" value="Ya" />
         <phrase id="fldtagvalue2" value="N" />
@@ -2615,9 +2664,6 @@
       <field id="saldoakhir">
         <phrase id="fldcaption" value="saldoakhir" />
       </field>
-    </table>
-    <table id="cf42_pinjaman_php">
-      <phrase id="tblcaption" value="Laporan Pinjaman" />
     </table>
   </project>
 </ew-language>

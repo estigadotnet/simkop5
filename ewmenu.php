@@ -30,7 +30,7 @@ $RootMenu->AddMenuItem(10772, "mi_cf42_pinjaman_php", $Language->MenuPhrase("107
 $RootMenu->AddMenuItem(10768, "mci_Deposito", $Language->MenuPhrase("10768", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10852, "mci_Nasabah", $Language->MenuPhrase("10852", "MenuText"), "t01_nasabahlist.php", 10768, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10655, "mi_t20_deposito", $Language->MenuPhrase("10655", "MenuText"), "t20_depositolist.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t20_deposito'), FALSE, FALSE);
-$RootMenu->AddMenuItem(10770, "mci_Laporan", $Language->MenuPhrase("10770", "MenuText"), "", 10768, "", IsLoggedIn(), FALSE, TRUE);
+$RootMenu->AddMenuItem(10853, "mi_cf43_deposito_php", $Language->MenuPhrase("10853", "MenuText"), "cf43_deposito.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf43_deposito.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10338, "mci_General", $Language->MenuPhrase("10338", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10358, "mi_t75_company", $Language->MenuPhrase("10358", "MenuText"), "t75_companylist.php", 10338, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t75_company'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10359, "mi_cf14_backup_php", $Language->MenuPhrase("10359", "MenuText"), "cf14_backup.php", 10338, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf14_backup.php'), FALSE, TRUE);
