@@ -25,6 +25,7 @@ class ct20_deposito extends cTable {
 	var $Jumlah_Bunga;
 	var $Dikredit_Diperpanjang;
 	var $Tunai_Transfer;
+	var $Periode;
 
 	//
 	// Table class constructor
@@ -126,6 +127,11 @@ class ct20_deposito extends cTable {
 		$this->Tunai_Transfer->Sortable = TRUE; // Allow sort
 		$this->Tunai_Transfer->OptionCount = 2;
 		$this->fields['Tunai_Transfer'] = &$this->Tunai_Transfer;
+
+		// Periode
+		$this->Periode = new cField('t20_deposito', 't20_deposito', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Periode->Sortable = TRUE; // Allow sort
+		$this->fields['Periode'] = &$this->Periode;
 	}
 
 	// Set Field Visibility
@@ -712,6 +718,7 @@ class ct20_deposito extends cTable {
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Render list row values
@@ -734,6 +741,7 @@ class ct20_deposito extends cTable {
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
+		// Periode
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
@@ -855,6 +863,10 @@ class ct20_deposito extends cTable {
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
 
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
@@ -914,6 +926,11 @@ class ct20_deposito extends cTable {
 		$this->Tunai_Transfer->LinkCustomAttributes = "";
 		$this->Tunai_Transfer->HrefValue = "";
 		$this->Tunai_Transfer->TooltipValue = "";
+
+		// Periode
+		$this->Periode->LinkCustomAttributes = "";
+		$this->Periode->HrefValue = "";
+		$this->Periode->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -992,6 +1009,12 @@ class ct20_deposito extends cTable {
 		$this->Tunai_Transfer->EditCustomAttributes = "";
 		$this->Tunai_Transfer->EditValue = $this->Tunai_Transfer->Options(FALSE);
 
+		// Periode
+		$this->Periode->EditAttrs["class"] = "form-control";
+		$this->Periode->EditCustomAttributes = "";
+		$this->Periode->EditValue = $this->Periode->CurrentValue;
+		$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
+
 		// Call Row Rendered event
 		$this->Row_Rendered();
 	}
@@ -1043,6 +1066,7 @@ class ct20_deposito extends cTable {
 					if ($this->Jumlah_Bunga->Exportable) $Doc->ExportCaption($this->Jumlah_Bunga);
 					if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportCaption($this->Dikredit_Diperpanjang);
 					if ($this->Tunai_Transfer->Exportable) $Doc->ExportCaption($this->Tunai_Transfer);
+					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1098,6 +1122,7 @@ class ct20_deposito extends cTable {
 						if ($this->Jumlah_Bunga->Exportable) $Doc->ExportField($this->Jumlah_Bunga);
 						if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportField($this->Dikredit_Diperpanjang);
 						if ($this->Tunai_Transfer->Exportable) $Doc->ExportField($this->Tunai_Transfer);
+						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
 					}
 					$Doc->EndExportRow();
 				}
@@ -1307,6 +1332,15 @@ class ct20_deposito extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (
+			(date_format(date_create($rsnew["Tanggal_Valuta"]),"Ym") <> $GLOBALS["Periode"])
+			and
+			(date_format(date_create($rsold["Tanggal_Valuta"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}
+		$rsnew["Periode"] = $GLOBALS["Periode"];
 		return TRUE;
 	}
 

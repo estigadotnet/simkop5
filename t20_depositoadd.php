@@ -609,6 +609,7 @@ class ct20_deposito_add extends ct20_deposito {
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -627,6 +628,7 @@ class ct20_deposito_add extends ct20_deposito {
 		$this->Jumlah_Bunga->DbValue = $row['Jumlah_Bunga'];
 		$this->Dikredit_Diperpanjang->DbValue = $row['Dikredit_Diperpanjang'];
 		$this->Tunai_Transfer->DbValue = $row['Tunai_Transfer'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Load old record
@@ -686,6 +688,7 @@ class ct20_deposito_add extends ct20_deposito {
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -808,6 +811,10 @@ class ct20_deposito_add extends ct20_deposito {
 			$this->Tunai_Transfer->ViewValue = NULL;
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
 			// No_Urut
 			$this->No_Urut->LinkCustomAttributes = "";

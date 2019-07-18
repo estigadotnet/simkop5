@@ -788,6 +788,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Bunga->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Bunga
 		$sFilterList = ew_Concat($sFilterList, $this->Dikredit_Diperpanjang->AdvancedSearch->ToJSON(), ","); // Field Dikredit_Diperpanjang
 		$sFilterList = ew_Concat($sFilterList, $this->Tunai_Transfer->AdvancedSearch->ToJSON(), ","); // Field Tunai_Transfer
+		$sFilterList = ew_Concat($sFilterList, $this->Periode->AdvancedSearch->ToJSON(), ","); // Field Periode
 		$sFilterList = preg_replace('/,$/', "", $sFilterList);
 
 		// Return filter list in json
@@ -923,6 +924,14 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tunai_Transfer->AdvancedSearch->SearchValue2 = @$filter["y_Tunai_Transfer"];
 		$this->Tunai_Transfer->AdvancedSearch->SearchOperator2 = @$filter["w_Tunai_Transfer"];
 		$this->Tunai_Transfer->AdvancedSearch->Save();
+
+		// Field Periode
+		$this->Periode->AdvancedSearch->SearchValue = @$filter["x_Periode"];
+		$this->Periode->AdvancedSearch->SearchOperator = @$filter["z_Periode"];
+		$this->Periode->AdvancedSearch->SearchCondition = @$filter["v_Periode"];
+		$this->Periode->AdvancedSearch->SearchValue2 = @$filter["y_Periode"];
+		$this->Periode->AdvancedSearch->SearchOperator2 = @$filter["w_Periode"];
+		$this->Periode->AdvancedSearch->Save();
 	}
 
 	// Advanced search WHERE clause based on QueryString
@@ -942,6 +951,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->BuildSearchSql($sWhere, $this->Jumlah_Bunga, $Default, FALSE); // Jumlah_Bunga
 		$this->BuildSearchSql($sWhere, $this->Dikredit_Diperpanjang, $Default, FALSE); // Dikredit_Diperpanjang
 		$this->BuildSearchSql($sWhere, $this->Tunai_Transfer, $Default, FALSE); // Tunai_Transfer
+		$this->BuildSearchSql($sWhere, $this->Periode, $Default, FALSE); // Periode
 
 		// Set up search parm
 		if (!$Default && $sWhere <> "") {
@@ -960,6 +970,7 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Jumlah_Bunga->AdvancedSearch->Save(); // Jumlah_Bunga
 			$this->Dikredit_Diperpanjang->AdvancedSearch->Save(); // Dikredit_Diperpanjang
 			$this->Tunai_Transfer->AdvancedSearch->Save(); // Tunai_Transfer
+			$this->Periode->AdvancedSearch->Save(); // Periode
 		}
 		return $sWhere;
 	}
@@ -1038,6 +1049,8 @@ class ct20_deposito_list extends ct20_deposito {
 			return TRUE;
 		if ($this->Tunai_Transfer->AdvancedSearch->IssetSession())
 			return TRUE;
+		if ($this->Periode->AdvancedSearch->IssetSession())
+			return TRUE;
 		return FALSE;
 	}
 
@@ -1071,6 +1084,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->AdvancedSearch->UnsetSession();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->UnsetSession();
 		$this->Tunai_Transfer->AdvancedSearch->UnsetSession();
+		$this->Periode->AdvancedSearch->UnsetSession();
 	}
 
 	// Restore all search parameters
@@ -1090,6 +1104,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->AdvancedSearch->Load();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->Load();
 		$this->Tunai_Transfer->AdvancedSearch->Load();
+		$this->Periode->AdvancedSearch->Load();
 	}
 
 	// Set up sort parameters
@@ -1625,6 +1640,11 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tunai_Transfer->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Tunai_Transfer"]);
 		if ($this->Tunai_Transfer->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->Tunai_Transfer->AdvancedSearch->SearchOperator = @$_GET["z_Tunai_Transfer"];
+
+		// Periode
+		$this->Periode->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Periode"]);
+		if ($this->Periode->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Periode->AdvancedSearch->SearchOperator = @$_GET["z_Periode"];
 	}
 
 	// Load recordset
@@ -1699,6 +1719,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -1717,6 +1738,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->DbValue = $row['Jumlah_Bunga'];
 		$this->Dikredit_Diperpanjang->DbValue = $row['Dikredit_Diperpanjang'];
 		$this->Tunai_Transfer->DbValue = $row['Tunai_Transfer'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Load old record
@@ -1782,6 +1804,7 @@ class ct20_deposito_list extends ct20_deposito {
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1904,6 +1927,10 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Tunai_Transfer->ViewValue = NULL;
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
 			// No_Urut
 			$this->No_Urut->LinkCustomAttributes = "";
@@ -2072,6 +2099,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->AdvancedSearch->Load();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->Load();
 		$this->Tunai_Transfer->AdvancedSearch->Load();
+		$this->Periode->AdvancedSearch->Load();
 	}
 
 	// Set up export options
