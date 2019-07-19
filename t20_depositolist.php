@@ -421,6 +421,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->SetVisibility();
 		$this->Dikredit_Diperpanjang->SetVisibility();
 		$this->Tunai_Transfer->SetVisibility();
+		$this->Status->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -788,6 +789,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$sFilterList = ew_Concat($sFilterList, $this->Jumlah_Bunga->AdvancedSearch->ToJSON(), ","); // Field Jumlah_Bunga
 		$sFilterList = ew_Concat($sFilterList, $this->Dikredit_Diperpanjang->AdvancedSearch->ToJSON(), ","); // Field Dikredit_Diperpanjang
 		$sFilterList = ew_Concat($sFilterList, $this->Tunai_Transfer->AdvancedSearch->ToJSON(), ","); // Field Tunai_Transfer
+		$sFilterList = ew_Concat($sFilterList, $this->Status->AdvancedSearch->ToJSON(), ","); // Field Status
 		$sFilterList = ew_Concat($sFilterList, $this->Periode->AdvancedSearch->ToJSON(), ","); // Field Periode
 		$sFilterList = preg_replace('/,$/', "", $sFilterList);
 
@@ -925,6 +927,14 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tunai_Transfer->AdvancedSearch->SearchOperator2 = @$filter["w_Tunai_Transfer"];
 		$this->Tunai_Transfer->AdvancedSearch->Save();
 
+		// Field Status
+		$this->Status->AdvancedSearch->SearchValue = @$filter["x_Status"];
+		$this->Status->AdvancedSearch->SearchOperator = @$filter["z_Status"];
+		$this->Status->AdvancedSearch->SearchCondition = @$filter["v_Status"];
+		$this->Status->AdvancedSearch->SearchValue2 = @$filter["y_Status"];
+		$this->Status->AdvancedSearch->SearchOperator2 = @$filter["w_Status"];
+		$this->Status->AdvancedSearch->Save();
+
 		// Field Periode
 		$this->Periode->AdvancedSearch->SearchValue = @$filter["x_Periode"];
 		$this->Periode->AdvancedSearch->SearchOperator = @$filter["z_Periode"];
@@ -951,6 +961,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->BuildSearchSql($sWhere, $this->Jumlah_Bunga, $Default, FALSE); // Jumlah_Bunga
 		$this->BuildSearchSql($sWhere, $this->Dikredit_Diperpanjang, $Default, FALSE); // Dikredit_Diperpanjang
 		$this->BuildSearchSql($sWhere, $this->Tunai_Transfer, $Default, FALSE); // Tunai_Transfer
+		$this->BuildSearchSql($sWhere, $this->Status, $Default, FALSE); // Status
 		$this->BuildSearchSql($sWhere, $this->Periode, $Default, FALSE); // Periode
 
 		// Set up search parm
@@ -970,6 +981,7 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Jumlah_Bunga->AdvancedSearch->Save(); // Jumlah_Bunga
 			$this->Dikredit_Diperpanjang->AdvancedSearch->Save(); // Dikredit_Diperpanjang
 			$this->Tunai_Transfer->AdvancedSearch->Save(); // Tunai_Transfer
+			$this->Status->AdvancedSearch->Save(); // Status
 			$this->Periode->AdvancedSearch->Save(); // Periode
 		}
 		return $sWhere;
@@ -1049,6 +1061,8 @@ class ct20_deposito_list extends ct20_deposito {
 			return TRUE;
 		if ($this->Tunai_Transfer->AdvancedSearch->IssetSession())
 			return TRUE;
+		if ($this->Status->AdvancedSearch->IssetSession())
+			return TRUE;
 		if ($this->Periode->AdvancedSearch->IssetSession())
 			return TRUE;
 		return FALSE;
@@ -1084,6 +1098,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->AdvancedSearch->UnsetSession();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->UnsetSession();
 		$this->Tunai_Transfer->AdvancedSearch->UnsetSession();
+		$this->Status->AdvancedSearch->UnsetSession();
 		$this->Periode->AdvancedSearch->UnsetSession();
 	}
 
@@ -1104,6 +1119,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->AdvancedSearch->Load();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->Load();
 		$this->Tunai_Transfer->AdvancedSearch->Load();
+		$this->Status->AdvancedSearch->Load();
 		$this->Periode->AdvancedSearch->Load();
 	}
 
@@ -1128,6 +1144,7 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->UpdateSort($this->Jumlah_Bunga, $bCtrl); // Jumlah_Bunga
 			$this->UpdateSort($this->Dikredit_Diperpanjang, $bCtrl); // Dikredit_Diperpanjang
 			$this->UpdateSort($this->Tunai_Transfer, $bCtrl); // Tunai_Transfer
+			$this->UpdateSort($this->Status, $bCtrl); // Status
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1172,6 +1189,7 @@ class ct20_deposito_list extends ct20_deposito {
 				$this->Jumlah_Bunga->setSort("");
 				$this->Dikredit_Diperpanjang->setSort("");
 				$this->Tunai_Transfer->setSort("");
+				$this->Status->setSort("");
 			}
 
 			// Reset start position
@@ -1641,6 +1659,11 @@ class ct20_deposito_list extends ct20_deposito {
 		if ($this->Tunai_Transfer->AdvancedSearch->SearchValue <> "") $this->Command = "search";
 		$this->Tunai_Transfer->AdvancedSearch->SearchOperator = @$_GET["z_Tunai_Transfer"];
 
+		// Status
+		$this->Status->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Status"]);
+		if ($this->Status->AdvancedSearch->SearchValue <> "") $this->Command = "search";
+		$this->Status->AdvancedSearch->SearchOperator = @$_GET["z_Status"];
+
 		// Periode
 		$this->Periode->AdvancedSearch->SearchValue = ew_StripSlashes(@$_GET["x_Periode"]);
 		if ($this->Periode->AdvancedSearch->SearchValue <> "") $this->Command = "search";
@@ -1719,6 +1742,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
+		$this->Status->setDbValue($rs->fields('Status'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
@@ -1738,6 +1762,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->DbValue = $row['Jumlah_Bunga'];
 		$this->Dikredit_Diperpanjang->DbValue = $row['Dikredit_Diperpanjang'];
 		$this->Tunai_Transfer->DbValue = $row['Tunai_Transfer'];
+		$this->Status->DbValue = $row['Status'];
 		$this->Periode->DbValue = $row['Periode'];
 	}
 
@@ -1804,6 +1829,7 @@ class ct20_deposito_list extends ct20_deposito {
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
+		// Status
 		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
@@ -1928,6 +1954,14 @@ class ct20_deposito_list extends ct20_deposito {
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
 
+		// Status
+		if (strval($this->Status->CurrentValue) <> "") {
+			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
+		} else {
+			$this->Status->ViewValue = NULL;
+		}
+		$this->Status->ViewCustomAttributes = "";
+
 		// Periode
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
@@ -1986,6 +2020,11 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Tunai_Transfer->LinkCustomAttributes = "";
 			$this->Tunai_Transfer->HrefValue = "";
 			$this->Tunai_Transfer->TooltipValue = "";
+
+			// Status
+			$this->Status->LinkCustomAttributes = "";
+			$this->Status->HrefValue = "";
+			$this->Status->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
 
 			// No_Urut
@@ -2050,6 +2089,10 @@ class ct20_deposito_list extends ct20_deposito {
 			// Tunai_Transfer
 			$this->Tunai_Transfer->EditCustomAttributes = "";
 			$this->Tunai_Transfer->EditValue = $this->Tunai_Transfer->Options(FALSE);
+
+			// Status
+			$this->Status->EditCustomAttributes = "";
+			$this->Status->EditValue = $this->Status->Options(FALSE);
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -2099,6 +2142,7 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Jumlah_Bunga->AdvancedSearch->Load();
 		$this->Dikredit_Diperpanjang->AdvancedSearch->Load();
 		$this->Tunai_Transfer->AdvancedSearch->Load();
+		$this->Status->AdvancedSearch->Load();
 		$this->Periode->AdvancedSearch->Load();
 	}
 
@@ -2461,6 +2505,8 @@ ft20_depositolist.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null
 ft20_depositolist.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
 ft20_depositolist.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft20_depositolist.Lists["x_Tunai_Transfer"].Options = <?php echo json_encode($t20_deposito->Tunai_Transfer->Options()) ?>;
+ft20_depositolist.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft20_depositolist.Lists["x_Status"].Options = <?php echo json_encode($t20_deposito->Status->Options()) ?>;
 
 // Form object for search
 var CurrentSearchForm = ft20_depositolistsrch = new ew_Form("ft20_depositolistsrch");
@@ -2495,6 +2541,8 @@ ft20_depositolistsrch.ValidateRequired = false; // No JavaScript validation
 
 // Dynamic selection lists
 ft20_depositolistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
+ft20_depositolistsrch.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft20_depositolistsrch.Lists["x_Status"].Options = <?php echo json_encode($t20_deposito->Status->Options()) ?>;
 </script>
 <script type="text/javascript">
 
@@ -2602,6 +2650,20 @@ $t20_deposito_list->RenderRow();
 <?php } ?>
 </div>
 <div id="xsr_3" class="ewRow">
+<?php if ($t20_deposito->Status->Visible) { // Status ?>
+	<div id="xsc_Status" class="ewCell form-group">
+		<label class="ewSearchCaption ewLabel"><?php echo $t20_deposito->Status->FldCaption() ?></label>
+		<span class="ewSearchOperator"><?php echo $Language->Phrase("=") ?><input type="hidden" name="z_Status" id="z_Status" value="="></span>
+		<span class="ewSearchField">
+<div id="tp_x_Status" class="ewTemplate"><input type="radio" data-table="t20_deposito" data-field="x_Status" data-value-separator="<?php echo $t20_deposito->Status->DisplayValueSeparatorAttribute() ?>" name="x_Status" id="x_Status" value="{value}"<?php echo $t20_deposito->Status->EditAttributes() ?>></div>
+<div id="dsl_x_Status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t20_deposito->Status->RadioButtonListHtml(FALSE, "x_Status") ?>
+</div></div>
+</span>
+	</div>
+<?php } ?>
+</div>
+<div id="xsr_4" class="ewRow">
 	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("QuickSearchBtn") ?></button>
 </div>
 	</div>
@@ -2733,6 +2795,15 @@ $t20_deposito_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="Tunai_Transfer"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Tunai_Transfer) ?>',2);"><div id="elh_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Tunai_Transfer->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Tunai_Transfer->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Tunai_Transfer->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
+        </div></div></th>
+	<?php } ?>
+<?php } ?>		
+<?php if ($t20_deposito->Status->Visible) { // Status ?>
+	<?php if ($t20_deposito->SortUrl($t20_deposito->Status) == "") { ?>
+		<th data-name="Status"><div id="elh_t20_deposito_Status" class="t20_deposito_Status"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Status->FldCaption() ?></div></div></th>
+	<?php } else { ?>
+		<th data-name="Status"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Status) ?>',2);"><div id="elh_t20_deposito_Status" class="t20_deposito_Status">
+			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Status->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Status->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Status->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2886,6 +2957,14 @@ $t20_deposito_list->ListOptions->Render("body", "left", $t20_deposito_list->RowC
 <span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer">
 <span<?php echo $t20_deposito->Tunai_Transfer->ViewAttributes() ?>>
 <?php echo $t20_deposito->Tunai_Transfer->ListViewValue() ?></span>
+</span>
+</td>
+	<?php } ?>
+	<?php if ($t20_deposito->Status->Visible) { // Status ?>
+		<td data-name="Status"<?php echo $t20_deposito->Status->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Status" class="t20_deposito_Status">
+<span<?php echo $t20_deposito->Status->ViewAttributes() ?>>
+<?php echo $t20_deposito->Status->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

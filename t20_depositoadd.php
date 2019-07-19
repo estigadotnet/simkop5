@@ -296,6 +296,7 @@ class ct20_deposito_add extends ct20_deposito {
 		$this->Jumlah_Bunga->SetVisibility();
 		$this->Dikredit_Diperpanjang->SetVisibility();
 		$this->Tunai_Transfer->SetVisibility();
+		$this->Status->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -500,6 +501,7 @@ class ct20_deposito_add extends ct20_deposito {
 		$this->Jumlah_Bunga->OldValue = $this->Jumlah_Bunga->CurrentValue;
 		$this->Dikredit_Diperpanjang->CurrentValue = "Dikredit";
 		$this->Tunai_Transfer->CurrentValue = "Tunai";
+		$this->Status->CurrentValue = "Lanjut";
 	}
 
 	// Load form values
@@ -542,6 +544,9 @@ class ct20_deposito_add extends ct20_deposito {
 		if (!$this->Tunai_Transfer->FldIsDetailKey) {
 			$this->Tunai_Transfer->setFormValue($objForm->GetValue("x_Tunai_Transfer"));
 		}
+		if (!$this->Status->FldIsDetailKey) {
+			$this->Status->setFormValue($objForm->GetValue("x_Status"));
+		}
 	}
 
 	// Restore form values
@@ -561,6 +566,7 @@ class ct20_deposito_add extends ct20_deposito {
 		$this->Jumlah_Bunga->CurrentValue = $this->Jumlah_Bunga->FormValue;
 		$this->Dikredit_Diperpanjang->CurrentValue = $this->Dikredit_Diperpanjang->FormValue;
 		$this->Tunai_Transfer->CurrentValue = $this->Tunai_Transfer->FormValue;
+		$this->Status->CurrentValue = $this->Status->FormValue;
 	}
 
 	// Load row based on key values
@@ -609,6 +615,7 @@ class ct20_deposito_add extends ct20_deposito {
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
+		$this->Status->setDbValue($rs->fields('Status'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
@@ -628,6 +635,7 @@ class ct20_deposito_add extends ct20_deposito {
 		$this->Jumlah_Bunga->DbValue = $row['Jumlah_Bunga'];
 		$this->Dikredit_Diperpanjang->DbValue = $row['Dikredit_Diperpanjang'];
 		$this->Tunai_Transfer->DbValue = $row['Tunai_Transfer'];
+		$this->Status->DbValue = $row['Status'];
 		$this->Periode->DbValue = $row['Periode'];
 	}
 
@@ -688,6 +696,7 @@ class ct20_deposito_add extends ct20_deposito {
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
+		// Status
 		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
@@ -812,6 +821,14 @@ class ct20_deposito_add extends ct20_deposito {
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
 
+		// Status
+		if (strval($this->Status->CurrentValue) <> "") {
+			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
+		} else {
+			$this->Status->ViewValue = NULL;
+		}
+		$this->Status->ViewCustomAttributes = "";
+
 		// Periode
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
@@ -870,6 +887,11 @@ class ct20_deposito_add extends ct20_deposito {
 			$this->Tunai_Transfer->LinkCustomAttributes = "";
 			$this->Tunai_Transfer->HrefValue = "";
 			$this->Tunai_Transfer->TooltipValue = "";
+
+			// Status
+			$this->Status->LinkCustomAttributes = "";
+			$this->Status->HrefValue = "";
+			$this->Status->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// No_Urut
@@ -990,6 +1012,10 @@ class ct20_deposito_add extends ct20_deposito {
 			$this->Tunai_Transfer->EditCustomAttributes = "";
 			$this->Tunai_Transfer->EditValue = $this->Tunai_Transfer->Options(FALSE);
 
+			// Status
+			$this->Status->EditCustomAttributes = "";
+			$this->Status->EditValue = $this->Status->Options(FALSE);
+
 			// Add refer script
 			// No_Urut
 
@@ -1035,6 +1061,10 @@ class ct20_deposito_add extends ct20_deposito {
 			// Tunai_Transfer
 			$this->Tunai_Transfer->LinkCustomAttributes = "";
 			$this->Tunai_Transfer->HrefValue = "";
+
+			// Status
+			$this->Status->LinkCustomAttributes = "";
+			$this->Status->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -1102,6 +1132,9 @@ class ct20_deposito_add extends ct20_deposito {
 		if ($this->Tunai_Transfer->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Tunai_Transfer->FldCaption(), $this->Tunai_Transfer->ReqErrMsg));
 		}
+		if ($this->Status->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Status->FldCaption(), $this->Status->ReqErrMsg));
+		}
 
 		// Return validate result
 		$ValidateForm = ($gsFormError == "");
@@ -1158,6 +1191,9 @@ class ct20_deposito_add extends ct20_deposito {
 
 		// Tunai_Transfer
 		$this->Tunai_Transfer->SetDbValueDef($rsnew, $this->Tunai_Transfer->CurrentValue, "", strval($this->Tunai_Transfer->CurrentValue) == "");
+
+		// Status
+		$this->Status->SetDbValueDef($rsnew, $this->Status->CurrentValue, "", strval($this->Status->CurrentValue) == "");
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -1392,6 +1428,9 @@ ft20_depositoadd.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Tunai_Transfer");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t20_deposito->Tunai_Transfer->FldCaption(), $t20_deposito->Tunai_Transfer->ReqErrMsg)) ?>");
+			elm = this.GetElements("x" + infix + "_Status");
+			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t20_deposito->Status->FldCaption(), $t20_deposito->Status->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1431,6 +1470,8 @@ ft20_depositoadd.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null,
 ft20_depositoadd.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
 ft20_depositoadd.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft20_depositoadd.Lists["x_Tunai_Transfer"].Options = <?php echo json_encode($t20_deposito->Tunai_Transfer->Options()) ?>;
+ft20_depositoadd.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft20_depositoadd.Lists["x_Status"].Options = <?php echo json_encode($t20_deposito->Status->Options()) ?>;
 
 // Form object for search
 </script>
@@ -1602,6 +1643,19 @@ ew_CreateCalendar("ft20_depositoadd", "x_Tanggal_Jatuh_Tempo", 7);
 </div></div>
 </span>
 <?php echo $t20_deposito->Tunai_Transfer->CustomMsg ?></div></div>
+	</div>
+<?php } ?>
+<?php if ($t20_deposito->Status->Visible) { // Status ?>
+	<div id="r_Status" class="form-group">
+		<label id="elh_t20_deposito_Status" class="col-sm-2 control-label ewLabel"><?php echo $t20_deposito->Status->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t20_deposito->Status->CellAttributes() ?>>
+<span id="el_t20_deposito_Status">
+<div id="tp_x_Status" class="ewTemplate"><input type="radio" data-table="t20_deposito" data-field="x_Status" data-value-separator="<?php echo $t20_deposito->Status->DisplayValueSeparatorAttribute() ?>" name="x_Status" id="x_Status" value="{value}"<?php echo $t20_deposito->Status->EditAttributes() ?>></div>
+<div id="dsl_x_Status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
+<?php echo $t20_deposito->Status->RadioButtonListHtml(FALSE, "x_Status") ?>
+</div></div>
+</span>
+<?php echo $t20_deposito->Status->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>

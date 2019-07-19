@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/7/18" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/7/19" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -1474,6 +1474,13 @@
         <phrase id="fldtagvalue2" value="Transfer" />
         <phrase id="fldtagcaption2" value="Transfer" />
       </field>
+      <field id="status">
+        <phrase id="fldcaption" value="Status" />
+        <phrase id="fldtagvalue1" value="Keluar" />
+        <phrase id="fldtagcaption1" value="Keluar" />
+        <phrase id="fldtagvalue2" value="Lanjut" />
+        <phrase id="fldtagcaption2" value="Lanjut" />
+      </field>
       <field id="periode">
         <phrase id="fldcaption" value="Periode" />
       </field>
@@ -2536,6 +2543,13 @@
       </field>
       <field id="marketing_nohp">
         <phrase id="fldcaption" value="Marketing No HP" />
+      </field>
+      <field id="status_deposito">
+        <phrase id="fldcaption" value="status deposito" />
+        <phrase id="fldtagvalue1" value="Keluar" />
+        <phrase id="fldtagcaption1" value="Keluar" />
+        <phrase id="fldtagvalue2" value="Lanjut" />
+        <phrase id="fldtagcaption2" value="Lanjut" />
       </field>
     </table>
     <table id="v30_mutasi">

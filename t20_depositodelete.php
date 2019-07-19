@@ -293,6 +293,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->Jumlah_Bunga->SetVisibility();
 		$this->Dikredit_Diperpanjang->SetVisibility();
 		$this->Tunai_Transfer->SetVisibility();
+		$this->Status->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -484,6 +485,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
 		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
 		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
+		$this->Status->setDbValue($rs->fields('Status'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
@@ -503,6 +505,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->Jumlah_Bunga->DbValue = $row['Jumlah_Bunga'];
 		$this->Dikredit_Diperpanjang->DbValue = $row['Dikredit_Diperpanjang'];
 		$this->Tunai_Transfer->DbValue = $row['Tunai_Transfer'];
+		$this->Status->DbValue = $row['Status'];
 		$this->Periode->DbValue = $row['Periode'];
 	}
 
@@ -540,6 +543,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		// Jumlah_Bunga
 		// Dikredit_Diperpanjang
 		// Tunai_Transfer
+		// Status
 		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
@@ -664,6 +668,14 @@ class ct20_deposito_delete extends ct20_deposito {
 		}
 		$this->Tunai_Transfer->ViewCustomAttributes = "";
 
+		// Status
+		if (strval($this->Status->CurrentValue) <> "") {
+			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
+		} else {
+			$this->Status->ViewValue = NULL;
+		}
+		$this->Status->ViewCustomAttributes = "";
+
 		// Periode
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
@@ -722,6 +734,11 @@ class ct20_deposito_delete extends ct20_deposito {
 			$this->Tunai_Transfer->LinkCustomAttributes = "";
 			$this->Tunai_Transfer->HrefValue = "";
 			$this->Tunai_Transfer->TooltipValue = "";
+
+			// Status
+			$this->Status->LinkCustomAttributes = "";
+			$this->Status->HrefValue = "";
+			$this->Status->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -949,6 +966,8 @@ ft20_depositodelete.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":nu
 ft20_depositodelete.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
 ft20_depositodelete.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
 ft20_depositodelete.Lists["x_Tunai_Transfer"].Options = <?php echo json_encode($t20_deposito->Tunai_Transfer->Options()) ?>;
+ft20_depositodelete.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft20_depositodelete.Lists["x_Status"].Options = <?php echo json_encode($t20_deposito->Status->Options()) ?>;
 
 // Form object for search
 </script>
@@ -1013,6 +1032,9 @@ $t20_deposito_delete->ShowMessage();
 <?php } ?>
 <?php if ($t20_deposito->Tunai_Transfer->Visible) { // Tunai_Transfer ?>
 		<th><span id="elh_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer"><?php echo $t20_deposito->Tunai_Transfer->FldCaption() ?></span></th>
+<?php } ?>
+<?php if ($t20_deposito->Status->Visible) { // Status ?>
+		<th><span id="elh_t20_deposito_Status" class="t20_deposito_Status"><?php echo $t20_deposito->Status->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
@@ -1120,6 +1142,14 @@ while (!$t20_deposito_delete->Recordset->EOF) {
 <span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer">
 <span<?php echo $t20_deposito->Tunai_Transfer->ViewAttributes() ?>>
 <?php echo $t20_deposito->Tunai_Transfer->ListViewValue() ?></span>
+</span>
+</td>
+<?php } ?>
+<?php if ($t20_deposito->Status->Visible) { // Status ?>
+		<td<?php echo $t20_deposito->Status->CellAttributes() ?>>
+<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Status" class="t20_deposito_Status">
+<span<?php echo $t20_deposito->Status->ViewAttributes() ?>>
+<?php echo $t20_deposito->Status->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>

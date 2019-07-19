@@ -1,3 +1,12 @@
+<strong>----- review -------------------------------------------------------------------------------</strong>
+11:08 AM 7/19/2019
+deposito
+- dibuatkan inputan "status" apabila nasabah sudah tidak melanjutkan perjanjian deposito
+- tanyakan untuk COA yang digunakan apa saja
+- dibuatkan setup link rekening
+- auto-jurnal nya di proses apa aja
+
+
 <strong>----- to do --------------------------------------------------------------------------------</strong>
 
 11:29 AM 4/26/2019
