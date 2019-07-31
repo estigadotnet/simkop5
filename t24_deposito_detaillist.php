@@ -824,14 +824,6 @@ class ct24_deposito_detail_list extends ct24_deposito_detail {
 		$item->ShowInDropDown = FALSE;
 		$item->ShowInButtonGroup = FALSE;
 
-		// "sequence"
-		$item = &$this->ListOptions->Add("sequence");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = TRUE;
-		$item->OnLeft = TRUE; // Always on left
-		$item->ShowInDropDown = FALSE;
-		$item->ShowInButtonGroup = FALSE;
-
 		// Drop down button for ListOptions
 		$this->ListOptions->UseImageAndText = TRUE;
 		$this->ListOptions->UseDropDownButton = FALSE;
@@ -852,10 +844,6 @@ class ct24_deposito_detail_list extends ct24_deposito_detail {
 	function RenderListOptions() {
 		global $Security, $Language, $objForm;
 		$this->ListOptions->LoadDefault();
-
-		// "sequence"
-		$oListOpt = &$this->ListOptions->Items["sequence"];
-		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
 
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
@@ -1631,6 +1619,13 @@ class ct24_deposito_detail_list extends ct24_deposito_detail {
 		// Example: 
 		//$this->ListOptions->Items["new"]->Body = "xxx";
 
+		if (isset($_GET["edit"])) {
+
+			//$this->ListOptions->Items["edit"]->Body = "";
+		}
+		else {
+			$this->ListOptions->Items["edit"]->Body = "";
+		}
 	}
 
 	// Row Custom Action event

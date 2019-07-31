@@ -341,13 +341,23 @@ $t24_deposito_detail_grid->ListOptions->Render("body", "left", $t24_deposito_det
 		<td data-name="Bayar_Tgl"<?php echo $t24_deposito_detail->Bayar_Tgl->CellAttributes() ?>>
 <?php if ($t24_deposito_detail->RowType == EW_ROWTYPE_ADD) { // Add record ?>
 <span id="el<?php echo $t24_deposito_detail_grid->RowCnt ?>_t24_deposito_detail_Bayar_Tgl" class="form-group t24_deposito_detail_Bayar_Tgl">
-<input type="text" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" data-format="7" name="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" id="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" placeholder="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->getPlaceHolder()) ?>" value="<?php echo $t24_deposito_detail->Bayar_Tgl->EditValue ?>"<?php echo $t24_deposito_detail->Bayar_Tgl->EditAttributes() ?>>
+<input type="text" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" data-format="7" name="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" id="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" size="10" placeholder="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->getPlaceHolder()) ?>" value="<?php echo $t24_deposito_detail->Bayar_Tgl->EditValue ?>"<?php echo $t24_deposito_detail->Bayar_Tgl->EditAttributes() ?>>
+<?php if (!$t24_deposito_detail->Bayar_Tgl->ReadOnly && !$t24_deposito_detail->Bayar_Tgl->Disabled && !isset($t24_deposito_detail->Bayar_Tgl->EditAttrs["readonly"]) && !isset($t24_deposito_detail->Bayar_Tgl->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft24_deposito_detailgrid", "x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl", 7);
+</script>
+<?php } ?>
 </span>
 <input type="hidden" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" name="o<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" id="o<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" value="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->OldValue) ?>">
 <?php } ?>
 <?php if ($t24_deposito_detail->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t24_deposito_detail_grid->RowCnt ?>_t24_deposito_detail_Bayar_Tgl" class="form-group t24_deposito_detail_Bayar_Tgl">
-<input type="text" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" data-format="7" name="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" id="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" placeholder="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->getPlaceHolder()) ?>" value="<?php echo $t24_deposito_detail->Bayar_Tgl->EditValue ?>"<?php echo $t24_deposito_detail->Bayar_Tgl->EditAttributes() ?>>
+<input type="text" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" data-format="7" name="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" id="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" size="10" placeholder="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->getPlaceHolder()) ?>" value="<?php echo $t24_deposito_detail->Bayar_Tgl->EditValue ?>"<?php echo $t24_deposito_detail->Bayar_Tgl->EditAttributes() ?>>
+<?php if (!$t24_deposito_detail->Bayar_Tgl->ReadOnly && !$t24_deposito_detail->Bayar_Tgl->Disabled && !isset($t24_deposito_detail->Bayar_Tgl->EditAttrs["readonly"]) && !isset($t24_deposito_detail->Bayar_Tgl->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft24_deposito_detailgrid", "x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl", 7);
+</script>
+<?php } ?>
 </span>
 <?php } ?>
 <?php if ($t24_deposito_detail->RowType == EW_ROWTYPE_VIEW) { // View record ?>
@@ -455,7 +465,12 @@ $t24_deposito_detail_grid->ListOptions->Render("body", "left", $t24_deposito_det
 		<td data-name="Bayar_Tgl">
 <?php if ($t24_deposito_detail->CurrentAction <> "F") { ?>
 <span id="el$rowindex$_t24_deposito_detail_Bayar_Tgl" class="form-group t24_deposito_detail_Bayar_Tgl">
-<input type="text" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" data-format="7" name="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" id="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" placeholder="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->getPlaceHolder()) ?>" value="<?php echo $t24_deposito_detail->Bayar_Tgl->EditValue ?>"<?php echo $t24_deposito_detail->Bayar_Tgl->EditAttributes() ?>>
+<input type="text" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" data-format="7" name="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" id="x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl" size="10" placeholder="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->getPlaceHolder()) ?>" value="<?php echo $t24_deposito_detail->Bayar_Tgl->EditValue ?>"<?php echo $t24_deposito_detail->Bayar_Tgl->EditAttributes() ?>>
+<?php if (!$t24_deposito_detail->Bayar_Tgl->ReadOnly && !$t24_deposito_detail->Bayar_Tgl->Disabled && !isset($t24_deposito_detail->Bayar_Tgl->EditAttrs["readonly"]) && !isset($t24_deposito_detail->Bayar_Tgl->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft24_deposito_detailgrid", "x<?php echo $t24_deposito_detail_grid->RowIndex ?>_Bayar_Tgl", 7);
+</script>
+<?php } ?>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_t24_deposito_detail_Bayar_Tgl" class="form-group t24_deposito_detail_Bayar_Tgl">

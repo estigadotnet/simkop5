@@ -950,6 +950,18 @@ class ct24_deposito_detail_edit extends ct24_deposito_detail {
 		// Example:
 		//$header = "your header";
 
+		$q = "
+			select
+				Bunga
+			from
+				t23_deposito
+			where
+				id = ".$this->deposito_id->CurrentValue.""; //echo $q;
+		$r = Conn()->Execute($q);
+		$bayar_jumlah = $r->fields["Bunga"]; //echo $bayar_jumlah;
+		$this->Bayar_Jumlah->EditValue = $bayar_jumlah;
+
+		//echo $_SESSION["deposito_id"];
 	}
 
 	// Page Data Rendered event
@@ -1106,7 +1118,12 @@ $t24_deposito_detail_edit->ShowMessage();
 		<label id="elh_t24_deposito_detail_Bayar_Tgl" for="x_Bayar_Tgl" class="col-sm-2 control-label ewLabel"><?php echo $t24_deposito_detail->Bayar_Tgl->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
 		<div class="col-sm-10"><div<?php echo $t24_deposito_detail->Bayar_Tgl->CellAttributes() ?>>
 <span id="el_t24_deposito_detail_Bayar_Tgl">
-<input type="text" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" data-format="7" name="x_Bayar_Tgl" id="x_Bayar_Tgl" placeholder="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->getPlaceHolder()) ?>" value="<?php echo $t24_deposito_detail->Bayar_Tgl->EditValue ?>"<?php echo $t24_deposito_detail->Bayar_Tgl->EditAttributes() ?>>
+<input type="text" data-table="t24_deposito_detail" data-field="x_Bayar_Tgl" data-format="7" name="x_Bayar_Tgl" id="x_Bayar_Tgl" size="10" placeholder="<?php echo ew_HtmlEncode($t24_deposito_detail->Bayar_Tgl->getPlaceHolder()) ?>" value="<?php echo $t24_deposito_detail->Bayar_Tgl->EditValue ?>"<?php echo $t24_deposito_detail->Bayar_Tgl->EditAttributes() ?>>
+<?php if (!$t24_deposito_detail->Bayar_Tgl->ReadOnly && !$t24_deposito_detail->Bayar_Tgl->Disabled && !isset($t24_deposito_detail->Bayar_Tgl->EditAttrs["readonly"]) && !isset($t24_deposito_detail->Bayar_Tgl->EditAttrs["disabled"])) { ?>
+<script type="text/javascript">
+ew_CreateCalendar("ft24_deposito_detailedit", "x_Bayar_Tgl", 7);
+</script>
+<?php } ?>
 </span>
 <?php echo $t24_deposito_detail->Bayar_Tgl->CustomMsg ?></div></div>
 	</div>

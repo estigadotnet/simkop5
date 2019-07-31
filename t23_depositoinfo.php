@@ -1532,6 +1532,24 @@ class ct23_deposito extends cTable {
 
 		//echo "Row Inserted"
 		f_create_rincian_pembayaran($rsnew);
+
+		// kodetransaksi = 14
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '14'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '14'");
+		f_buatjurnal($rsnew["Periode"], $rsnew["id"].".DEPM", $rekdebet, $rsnew["Deposito"], 0, "Deposito No. Kontrak ".$rsnew["Kontrak_No"], $rsnew["Kontrak_Tgl"]);
+		f_buatjurnal($rsnew["Periode"], $rsnew["id"].".DEPM", $rekkredit, 0, $rsnew["Deposito"], "Deposito No. Kontrak ".$rsnew["Kontrak_No"], $rsnew["Kontrak_Tgl"]);
+
+		// kodetransaksi = 15
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '15'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '15'");
+		f_buatjurnal($rsnew["Periode"], $rsnew["id"].".ADM", $rekdebet, $rsnew["Biaya_Administrasi"], 0, "Pendapatan Administrasi Deposito No. Kontrak ".$rsnew["Kontrak_No"], $rsnew["Kontrak_Tgl"]);
+		f_buatjurnal($rsnew["Periode"], $rsnew["id"].".ADM", $rekkredit, 0, $rsnew["Biaya_Administrasi"], "Pendapatan Administrasi Deposito No. Kontrak ".$rsnew["Kontrak_No"], $rsnew["Kontrak_Tgl"]);
+
+		// kodetransaksi = 16
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '16'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '16'");
+		f_buatjurnal($rsnew["Periode"], $rsnew["id"].".MAT", $rekdebet, $rsnew["Biaya_Materai"], 0, "Pendapatan Materai Deposito No. Kontrak ".$rsnew["Kontrak_No"], $rsnew["Kontrak_Tgl"]);
+		f_buatjurnal($rsnew["Periode"], $rsnew["id"].".MAT", $rekkredit, 0, $rsnew["Biaya_Materai"], "Pendapatan Materai Deposito No. Kontrak ".$rsnew["Kontrak_No"], $rsnew["Kontrak_Tgl"]);
 	}
 
 	// Row Updating event
@@ -1540,6 +1558,14 @@ class ct23_deposito extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		if (
+			(date_format(date_create($rsnew["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+			and
+			(date_format(date_create($rsold["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}
 		return TRUE;
 	}
 
@@ -1547,6 +1573,41 @@ class ct23_deposito extends cTable {
 	function Row_Updated($rsold, &$rsnew) {
 
 		//echo "Row Updated";
+		//echo $rsold["id"]." - ".$rsnew["id"]; exit;
+		// hapus data rincian angsuran yang lama
+
+		$q = "delete from t24_deposito_detail where deposito_id = ".$rsold["id"]."";
+		ew_Execute($q);
+
+		//$rsupdate = array();
+		$rsupdate["id"] = $rsold["id"];
+		$rsupdate["Kontrak_Tgl"] = ($rsold["Kontrak_Tgl"] <> $rsnew["Kontrak_Tgl"]) ? $rsnew["Kontrak_Tgl"] : $rsold["Kontrak_Tgl"];
+		$rsupdate["Kontrak_Lama"] = ($rsold["Kontrak_Lama"] <> $rsnew["Kontrak_Lama"]) ? $rsnew["Kontrak_Lama"] : $rsold["Kontrak_Lama"];
+		f_create_rincian_pembayaran($rsupdate);
+
+		// kodetransaksi = 14
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '14'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '14'");
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".DEPM", $rekdebet, "Deposito No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsold["id"].".DEPM", $rekdebet, $rsupdate["Deposito"], 0, "Deposito No. Kontrak ".$rsupdate["Kontrak_No"], $rsupdate["Kontrak_Tgl"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".DEPM", $rekkredit, "Deposito No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsold["id"].".DEPM", $rekkredit, 0, $rsupdate["Deposito"], "Deposito No. Kontrak ".$rsupdate["Kontrak_No"], $rsupdate["Kontrak_Tgl"]);
+
+		// kodetransaksi = 15
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '15'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '15'");
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekdebet, "Pendapatan Administrasi Deposito No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekdebet, $rsupdate["Biaya_Administrasi"], 0, "Pendapatan Administrasi Deposito No. Kontrak ".$rsupdate["Kontrak_No"], $rsupdate["Kontrak_Tgl"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekkredit, "Pendapatan Administrasi Deposito No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsold["id"].".ADM", $rekkredit, 0, $rsupdate["Biaya_Administrasi"], "Pendapatan Administrasi Deposito No. Kontrak ".$rsupdate["Kontrak_No"], $rsupdate["Kontrak_Tgl"]);
+
+		// kodetransaksi = 16
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '16'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '16'");
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekdebet, "Pendapatan Materai Deposito No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekdebet, $rsupdate["Biaya_Materai"], 0, "Pendapatan Materai Deposito No. Kontrak ".$rsupdate["Kontrak_No"], $rsupdate["Kontrak_Tgl"]);
+		f_hapusjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekkredit, "Pendapatan Materai Deposito No. Kontrak ".$rsold["Kontrak_No"]);
+		f_buatjurnal($rsold["Periode"], $rsold["id"].".MAT", $rekkredit, 0, $rsupdate["Biaya_Materai"], "Pendapatan Materai Deposito No. Kontrak ".$rsupdate["Kontrak_No"], $rsupdate["Kontrak_Tgl"]);
 	}
 
 	// Row Update Conflict event
@@ -1601,6 +1662,24 @@ class ct23_deposito extends cTable {
 	function Row_Deleted(&$rs) {
 
 		//echo "Row Deleted";
+		// kodetransaksi = 14
+
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '14'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '14'");
+		f_hapusjurnal($rs["Periode"], $rs["id"].".DEPM", $rekdebet, "Deposito No. Kontrak ".$rs["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".DEPM", $rekkredit, "Deposito No. Kontrak ".$rs["Kontrak_No"]);
+
+		// kodetransaksi = 15
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '15'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '15'");
+		f_hapusjurnal($rs["Periode"], $rs["id"].".ADM", $rekdebet, "Pendapatan Administrasi Deposito No. Kontrak ".$rs["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".ADM", $rekkredit, "Pendapatan Administrasi Deposito No. Kontrak ".$rs["Kontrak_No"]);
+
+		// kodetransaksi = 16
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '16'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '16'");
+		f_hapusjurnal($rs["Periode"], $rs["id"].".MAT", $rekdebet, "Pendapatan Materai Deposito No. Kontrak ".$rs["Kontrak_No"]);
+		f_hapusjurnal($rs["Periode"], $rs["id"].".MAT", $rekkredit, "Pendapatan Materai Deposito No. Kontrak ".$rs["Kontrak_No"]);
 	}
 
 	// Email Sending event

@@ -1490,6 +1490,7 @@ class ct23_deposito_add extends ct23_deposito {
 	function Page_Load() {
 
 		//echo "Page Load";
+		$_SESSION["deposito_id"] = 0;
 	}
 
 	// Page Unload event

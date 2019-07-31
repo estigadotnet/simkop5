@@ -1027,7 +1027,12 @@ class ct24_deposito_detail extends cTable {
 	// Recordset Selecting event
 	function Recordset_Selecting(&$filter) {
 
-		// Enter your code here	
+		// Enter your code here
+		//ew_AddFilter($filter, "Field1 = 1234"); // Add your own filter expression
+
+		if (isset($_GET["edit"])) {
+			ew_AddFilter($filter, "Periode is not null"); // Add your own filter expression
+		}
 	}
 
 	// Recordset Selected event
@@ -1083,6 +1088,46 @@ class ct24_deposito_detail extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
+		/*
+		periksa tanggal pembayaran, karena tanggal pembayaran harus sesuai dengan
+		periode aktif saat ini
+		*/
+		if (
+			(date_format(date_create($rsnew["Bayar_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+			and
+			(date_format(date_create($rsold["Bayar_Tgl"]),"Ym") <> $GLOBALS["Periode"])
+			) {
+			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
+			return false;
+		}
+		/*
+		check tanggal pembayaran, harus lebih atau sama dengan tanggal pembayaran
+		sebelumnya
+		*/
+
+		// cari data tanggal pembayaran sebelumnya
+		$q = "select
+			Bayar_Tgl from t24_deposito_detail where
+			deposito_id = ".$_SESSION["deposito_id"]." and Bayar_Jumlah <> 0 order by Bayar_Tgl desc limit 1";
+
+		//echo $q; //exit;
+		$r = Conn()->Execute($q); //echo $this->Bayar_Tgl->CurrentValue;
+		$tglbayar = new DateTime($this->Bayar_Tgl->CurrentValue);
+		$tglbayar_lebihkecil = 0;
+		while (!$r->EOF) {
+			if ($tglbayar->format("Y-m-d") < $r->fields["Bayar_Tgl"]) {
+
+				//echo $tglbayar->format("Y-m-d") . "<br>" . $r->fields["Bayar_Tgl"]; exit;
+				$tglbayar_lebihkecil = 1;
+				break;
+			}
+			$r->MoveNext();
+		}
+		if ($tglbayar_lebihkecil == 1) {
+			$this->setFailureMessage("Tanggal Bayar tidak diperkenankan lebih kecil dari Tanggal Bayar sebelumya");
+			return false;
+		}
+		$rsnew["Periode"] = $GLOBALS["Periode"];
 		return TRUE;
 	}
 
@@ -1090,6 +1135,16 @@ class ct24_deposito_detail extends cTable {
 	function Row_Updated($rsold, &$rsnew) {
 
 		//echo "Row Updated";
+		$Kontrak_No = ew_ExecuteScalar("select Kontrak_No from t23_deposito where id = ".$rsold["deposito_id"]."");
+		$rsupdate["Bayar_Tgl"] = ($rsold["Bayar_Tgl"] <> $rsnew["Bayar_Tgl"]) ? $rsnew["Bayar_Tgl"] : $rsold["Bayar_Tgl"];
+
+		// kodetransaksi = 17
+		$rekdebet  = ew_ExecuteScalar("select DebetRekening from t89_rektran where KodeTransaksi = '17'");
+		$rekkredit = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '17'");
+		f_hapusjurnal($GLOBALS["Periode"], $rsold["id"].".BYRBNGDEP", $rekdebet, "Pembayaran Bunga ke ".$rsold["Pembayaran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $rsold["id"].".BYRBNGDEP", $rekdebet, $this->Bayar_Jumlah->CurrentValue, 0, "Pembayaran Bunga ke ".$rsold["Pembayaran_Ke"]." No. Kontrak ".$Kontrak_No, $rsupdate["Bayar_Tgl"]);
+		f_hapusjurnal($GLOBALS["Periode"], $rsold["id"].".BYRBNGDEP", $rekkredit, "Pembayaran Bunga ke ".$rsold["Pembayaran_Ke"]." No. Kontrak ".$Kontrak_No);
+		f_buatjurnal($GLOBALS["Periode"], $rsold["id"].".BYRBNGDEP", $rekkredit, 0, $this->Bayar_Jumlah->CurrentValue, "Pembayaran Bunga ke ".$rsold["Pembayaran_Ke"]." No. Kontrak ".$Kontrak_No, $rsupdate["Bayar_Tgl"]);
 	}
 
 	// Row Update Conflict event

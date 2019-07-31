@@ -14,7 +14,8 @@ function Page_Loading() {
 	//$GLOBALS["t03_pinjaman"]->Angsuran_Denda->CurrentValue;
 
 	$_SESSION["pinjaman_id"] = 0;
-	$_SESSION["deposito_id"] = 0;
+
+	//$_SESSION["deposito_id"] = 0;
 }
 
 // Page Rendering event
