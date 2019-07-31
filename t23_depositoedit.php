@@ -449,10 +449,7 @@ class ct23_deposito_edit extends ct23_deposito {
 				$this->SetUpDetailParms();
 				break;
 			Case "U": // Update
-				if ($this->getCurrentDetailTable() <> "") // Master/detail edit
-					$sReturnUrl = $this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=" . $this->getCurrentDetailTable()); // Master/Detail view page
-				else
-					$sReturnUrl = $this->getReturnUrl();
+				$sReturnUrl = "t24_deposito_detaillist.php?showmaster=t23_deposito&fk_id=".urlencode($this->id->CurrentValue);
 				if (ew_GetPageName($sReturnUrl) == "t23_depositolist.php")
 					$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 				$this->SendEmail = TRUE; // Send email on update success

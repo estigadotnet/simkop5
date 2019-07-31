@@ -5,7 +5,7 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t23_depositoinfo.php" ?>
+<?php include_once "t71_depositolapinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +14,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t23_deposito_delete = NULL; // Initialize page object first
+$t71_depositolap_delete = NULL; // Initialize page object first
 
-class ct23_deposito_delete extends ct23_deposito {
+class ct71_depositolap_delete extends ct71_depositolap {
 
 	// Page ID
 	var $PageID = 'delete';
@@ -25,10 +25,10 @@ class ct23_deposito_delete extends ct23_deposito {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't23_deposito';
+	var $TableName = 't71_depositolap';
 
 	// Page object name
-	var $PageObjName = 't23_deposito_delete';
+	var $PageObjName = 't71_depositolap_delete';
 
 	// Page name
 	function PageName() {
@@ -226,10 +226,10 @@ class ct23_deposito_delete extends ct23_deposito {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t23_deposito)
-		if (!isset($GLOBALS["t23_deposito"]) || get_class($GLOBALS["t23_deposito"]) == "ct23_deposito") {
-			$GLOBALS["t23_deposito"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t23_deposito"];
+		// Table object (t71_depositolap)
+		if (!isset($GLOBALS["t71_depositolap"]) || get_class($GLOBALS["t71_depositolap"]) == "ct71_depositolap") {
+			$GLOBALS["t71_depositolap"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t71_depositolap"];
 		}
 
 		// Table object (t96_employees)
@@ -241,7 +241,7 @@ class ct23_deposito_delete extends ct23_deposito {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't23_deposito', TRUE);
+			define("EW_TABLE_NAME", 't71_depositolap', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -272,7 +272,7 @@ class ct23_deposito_delete extends ct23_deposito {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t23_depositolist.php"));
+				$this->Page_Terminate(ew_GetUrl("t71_depositolaplist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -282,13 +282,12 @@ class ct23_deposito_delete extends ct23_deposito {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->Kontrak_No->SetVisibility();
-		$this->Kontrak_Tgl->SetVisibility();
-		$this->Kontrak_Lama->SetVisibility();
-		$this->Deposito->SetVisibility();
-		$this->Bunga_Suku->SetVisibility();
-		$this->Bunga->SetVisibility();
-		$this->nasabah_id->SetVisibility();
+		$this->field_name->SetVisibility();
+		$this->field_caption->SetVisibility();
+		$this->field_index->SetVisibility();
+		$this->field_status->SetVisibility();
+		$this->field_align->SetVisibility();
+		$this->field_format->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -320,13 +319,13 @@ class ct23_deposito_delete extends ct23_deposito {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t23_deposito;
+		global $EW_EXPORT, $t71_depositolap;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t23_deposito);
+				$doc = new $class($t71_depositolap);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -372,10 +371,10 @@ class ct23_deposito_delete extends ct23_deposito {
 		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
 		$sFilter = $this->GetKeyFilter();
 		if ($sFilter == "")
-			$this->Page_Terminate("t23_depositolist.php"); // Prevent SQL injection, return to list
+			$this->Page_Terminate("t71_depositolaplist.php"); // Prevent SQL injection, return to list
 
 		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in t23_deposito class, t23_depositoinfo.php
+		// SQL constructor in t71_depositolap class, t71_depositolapinfo.php
 
 		$this->CurrentFilter = $sFilter;
 
@@ -403,7 +402,7 @@ class ct23_deposito_delete extends ct23_deposito {
 			if ($this->TotalRecs <= 0) { // No record found, exit
 				if ($this->Recordset)
 					$this->Recordset->Close();
-				$this->Page_Terminate("t23_depositolist.php"); // Return to list
+				$this->Page_Terminate("t71_depositolaplist.php"); // Return to list
 			}
 		}
 	}
@@ -420,7 +419,7 @@ class ct23_deposito_delete extends ct23_deposito {
 		if ($this->UseSelectLimit) {
 			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
 			} else {
 				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
 			}
@@ -464,27 +463,12 @@ class ct23_deposito_delete extends ct23_deposito {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Kontrak_No->setDbValue($rs->fields('Kontrak_No'));
-		$this->Kontrak_Tgl->setDbValue($rs->fields('Kontrak_Tgl'));
-		$this->Kontrak_Lama->setDbValue($rs->fields('Kontrak_Lama'));
-		$this->Jatuh_Tempo_Tgl->setDbValue($rs->fields('Jatuh_Tempo_Tgl'));
-		$this->Deposito->setDbValue($rs->fields('Deposito'));
-		$this->Bunga_Suku->setDbValue($rs->fields('Bunga_Suku'));
-		$this->Bunga->setDbValue($rs->fields('Bunga'));
-		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		if (array_key_exists('EV__nasabah_id', $rs->fields)) {
-			$this->nasabah_id->VirtualValue = $rs->fields('EV__nasabah_id'); // Set up virtual field value
-		} else {
-			$this->nasabah_id->VirtualValue = ""; // Clear value
-		}
-		$this->bank_id->setDbValue($rs->fields('bank_id'));
-		$this->No_Ref->setDbValue($rs->fields('No_Ref'));
-		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
-		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
-		$this->Periode->setDbValue($rs->fields('Periode'));
-		$this->Kontrak_Status->setDbValue($rs->fields('Kontrak_Status'));
-		$this->Jatuh_Tempo_Status->setDbValue($rs->fields('Jatuh_Tempo_Status'));
-		$this->Bunga_Status->setDbValue($rs->fields('Bunga_Status'));
+		$this->field_name->setDbValue($rs->fields('field_name'));
+		$this->field_caption->setDbValue($rs->fields('field_caption'));
+		$this->field_index->setDbValue($rs->fields('field_index'));
+		$this->field_status->setDbValue($rs->fields('field_status'));
+		$this->field_align->setDbValue($rs->fields('field_align'));
+		$this->field_format->setDbValue($rs->fields('field_format'));
 	}
 
 	// Load DbValue from recordset
@@ -492,22 +476,12 @@ class ct23_deposito_delete extends ct23_deposito {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->Kontrak_No->DbValue = $row['Kontrak_No'];
-		$this->Kontrak_Tgl->DbValue = $row['Kontrak_Tgl'];
-		$this->Kontrak_Lama->DbValue = $row['Kontrak_Lama'];
-		$this->Jatuh_Tempo_Tgl->DbValue = $row['Jatuh_Tempo_Tgl'];
-		$this->Deposito->DbValue = $row['Deposito'];
-		$this->Bunga_Suku->DbValue = $row['Bunga_Suku'];
-		$this->Bunga->DbValue = $row['Bunga'];
-		$this->nasabah_id->DbValue = $row['nasabah_id'];
-		$this->bank_id->DbValue = $row['bank_id'];
-		$this->No_Ref->DbValue = $row['No_Ref'];
-		$this->Biaya_Administrasi->DbValue = $row['Biaya_Administrasi'];
-		$this->Biaya_Materai->DbValue = $row['Biaya_Materai'];
-		$this->Periode->DbValue = $row['Periode'];
-		$this->Kontrak_Status->DbValue = $row['Kontrak_Status'];
-		$this->Jatuh_Tempo_Status->DbValue = $row['Jatuh_Tempo_Status'];
-		$this->Bunga_Status->DbValue = $row['Bunga_Status'];
+		$this->field_name->DbValue = $row['field_name'];
+		$this->field_caption->DbValue = $row['field_caption'];
+		$this->field_index->DbValue = $row['field_index'];
+		$this->field_status->DbValue = $row['field_status'];
+		$this->field_align->DbValue = $row['field_align'];
+		$this->field_format->DbValue = $row['field_format'];
 	}
 
 	// Render row values based on field settings
@@ -515,40 +489,18 @@ class ct23_deposito_delete extends ct23_deposito {
 		global $Security, $Language, $gsLanguage;
 
 		// Initialize URLs
-		// Convert decimal values if posted back
-
-		if ($this->Deposito->FormValue == $this->Deposito->CurrentValue && is_numeric(ew_StrToFloat($this->Deposito->CurrentValue)))
-			$this->Deposito->CurrentValue = ew_StrToFloat($this->Deposito->CurrentValue);
-
-		// Convert decimal values if posted back
-		if ($this->Bunga_Suku->FormValue == $this->Bunga_Suku->CurrentValue && is_numeric(ew_StrToFloat($this->Bunga_Suku->CurrentValue)))
-			$this->Bunga_Suku->CurrentValue = ew_StrToFloat($this->Bunga_Suku->CurrentValue);
-
-		// Convert decimal values if posted back
-		if ($this->Bunga->FormValue == $this->Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Bunga->CurrentValue)))
-			$this->Bunga->CurrentValue = ew_StrToFloat($this->Bunga->CurrentValue);
-
 		// Call Row_Rendering event
+
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// Kontrak_No
-		// Kontrak_Tgl
-		// Kontrak_Lama
-		// Jatuh_Tempo_Tgl
-		// Deposito
-		// Bunga_Suku
-		// Bunga
-		// nasabah_id
-		// bank_id
-		// No_Ref
-		// Biaya_Administrasi
-		// Biaya_Materai
-		// Periode
-		// Kontrak_Status
-		// Jatuh_Tempo_Status
-		// Bunga_Status
+		// field_name
+		// field_caption
+		// field_index
+		// field_status
+		// field_align
+		// field_format
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -556,186 +508,71 @@ class ct23_deposito_delete extends ct23_deposito {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Kontrak_No
-		$this->Kontrak_No->ViewValue = $this->Kontrak_No->CurrentValue;
-		$this->Kontrak_No->ViewCustomAttributes = "";
+		// field_name
+		$this->field_name->ViewValue = $this->field_name->CurrentValue;
+		$this->field_name->ViewCustomAttributes = "";
 
-		// Kontrak_Tgl
-		$this->Kontrak_Tgl->ViewValue = $this->Kontrak_Tgl->CurrentValue;
-		$this->Kontrak_Tgl->ViewValue = ew_FormatDateTime($this->Kontrak_Tgl->ViewValue, 7);
-		$this->Kontrak_Tgl->ViewCustomAttributes = "";
+		// field_caption
+		$this->field_caption->ViewValue = $this->field_caption->CurrentValue;
+		$this->field_caption->ViewCustomAttributes = "";
 
-		// Kontrak_Lama
-		$this->Kontrak_Lama->ViewValue = $this->Kontrak_Lama->CurrentValue;
-		$this->Kontrak_Lama->ViewValue = ew_FormatNumber($this->Kontrak_Lama->ViewValue, 0, -2, -2, -2);
-		$this->Kontrak_Lama->CellCssStyle .= "text-align: right;";
-		$this->Kontrak_Lama->ViewCustomAttributes = "";
+		// field_index
+		$this->field_index->ViewValue = $this->field_index->CurrentValue;
+		$this->field_index->ViewCustomAttributes = "";
 
-		// Jatuh_Tempo_Tgl
-		$this->Jatuh_Tempo_Tgl->ViewValue = $this->Jatuh_Tempo_Tgl->CurrentValue;
-		$this->Jatuh_Tempo_Tgl->ViewValue = ew_FormatDateTime($this->Jatuh_Tempo_Tgl->ViewValue, 7);
-		$this->Jatuh_Tempo_Tgl->ViewCustomAttributes = "";
-
-		// Deposito
-		$this->Deposito->ViewValue = $this->Deposito->CurrentValue;
-		$this->Deposito->ViewValue = ew_FormatNumber($this->Deposito->ViewValue, 2, -2, -2, -2);
-		$this->Deposito->CellCssStyle .= "text-align: right;";
-		$this->Deposito->ViewCustomAttributes = "";
-
-		// Bunga_Suku
-		$this->Bunga_Suku->ViewValue = $this->Bunga_Suku->CurrentValue;
-		$this->Bunga_Suku->ViewValue = ew_FormatNumber($this->Bunga_Suku->ViewValue, 2, -2, -2, -2);
-		$this->Bunga_Suku->CellCssStyle .= "text-align: right;";
-		$this->Bunga_Suku->ViewCustomAttributes = "";
-
-		// Bunga
-		$this->Bunga->ViewValue = $this->Bunga->CurrentValue;
-		$this->Bunga->ViewValue = ew_FormatNumber($this->Bunga->ViewValue, 2, -2, -2, -2);
-		$this->Bunga->CellCssStyle .= "text-align: right;";
-		$this->Bunga->ViewCustomAttributes = "";
-
-		// nasabah_id
-		if ($this->nasabah_id->VirtualValue <> "") {
-			$this->nasabah_id->ViewValue = $this->nasabah_id->VirtualValue;
+		// field_status
+		if (ew_ConvertToBool($this->field_status->CurrentValue)) {
+			$this->field_status->ViewValue = $this->field_status->FldTagCaption(1) <> "" ? $this->field_status->FldTagCaption(1) : "Y";
 		} else {
-		if (strval($this->nasabah_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t22_peserta`";
-		$sWhereWrk = "";
-		$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-			}
+			$this->field_status->ViewValue = $this->field_status->FldTagCaption(2) <> "" ? $this->field_status->FldTagCaption(2) : "N";
+		}
+		$this->field_status->ViewCustomAttributes = "";
+
+		// field_align
+		if (strval($this->field_align->CurrentValue) <> "") {
+			$this->field_align->ViewValue = $this->field_align->OptionCaption($this->field_align->CurrentValue);
 		} else {
-			$this->nasabah_id->ViewValue = NULL;
+			$this->field_align->ViewValue = NULL;
 		}
-		}
-		$this->nasabah_id->ViewCustomAttributes = "";
+		$this->field_align->ViewCustomAttributes = "";
 
-		// bank_id
-		if (strval($this->bank_id->CurrentValue) <> "") {
-			$arwrk = explode(",", $this->bank_id->CurrentValue);
-			$sFilterWrk = "";
-			foreach ($arwrk as $wrk) {
-				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
-				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
-			}
-		$sSqlWrk = "SELECT `id`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t21_bank`";
-		$sWhereWrk = "";
-		$this->bank_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$this->bank_id->ViewValue = "";
-				$ari = 0;
-				while (!$rswrk->EOF) {
-					$arwrk = array();
-					$arwrk[1] = $rswrk->fields('DispFld');
-					$arwrk[2] = $rswrk->fields('Disp2Fld');
-					$arwrk[3] = $rswrk->fields('Disp3Fld');
-					$this->bank_id->ViewValue .= $this->bank_id->DisplayValue($arwrk);
-					$rswrk->MoveNext();
-					if (!$rswrk->EOF) $this->bank_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
-					$ari++;
-				}
-				$rswrk->Close();
-			} else {
-				$this->bank_id->ViewValue = $this->bank_id->CurrentValue;
-			}
+		// field_format
+		if (strval($this->field_format->CurrentValue) <> "") {
+			$this->field_format->ViewValue = $this->field_format->OptionCaption($this->field_format->CurrentValue);
 		} else {
-			$this->bank_id->ViewValue = NULL;
+			$this->field_format->ViewValue = NULL;
 		}
-		$this->bank_id->ViewCustomAttributes = "";
+		$this->field_format->ViewCustomAttributes = "";
 
-		// No_Ref
-		$this->No_Ref->ViewValue = $this->No_Ref->CurrentValue;
-		$this->No_Ref->ViewCustomAttributes = "";
+			// field_name
+			$this->field_name->LinkCustomAttributes = "";
+			$this->field_name->HrefValue = "";
+			$this->field_name->TooltipValue = "";
 
-		// Biaya_Administrasi
-		$this->Biaya_Administrasi->ViewValue = $this->Biaya_Administrasi->CurrentValue;
-		$this->Biaya_Administrasi->ViewValue = ew_FormatNumber($this->Biaya_Administrasi->ViewValue, 2, -2, -2, -2);
-		$this->Biaya_Administrasi->CellCssStyle .= "text-align: right;";
-		$this->Biaya_Administrasi->ViewCustomAttributes = "";
+			// field_caption
+			$this->field_caption->LinkCustomAttributes = "";
+			$this->field_caption->HrefValue = "";
+			$this->field_caption->TooltipValue = "";
 
-		// Biaya_Materai
-		$this->Biaya_Materai->ViewValue = $this->Biaya_Materai->CurrentValue;
-		$this->Biaya_Materai->ViewValue = ew_FormatNumber($this->Biaya_Materai->ViewValue, 2, -2, -2, -2);
-		$this->Biaya_Materai->CellCssStyle .= "text-align: right;";
-		$this->Biaya_Materai->ViewCustomAttributes = "";
+			// field_index
+			$this->field_index->LinkCustomAttributes = "";
+			$this->field_index->HrefValue = "";
+			$this->field_index->TooltipValue = "";
 
-		// Periode
-		$this->Periode->ViewValue = $this->Periode->CurrentValue;
-		$this->Periode->ViewCustomAttributes = "";
+			// field_status
+			$this->field_status->LinkCustomAttributes = "";
+			$this->field_status->HrefValue = "";
+			$this->field_status->TooltipValue = "";
 
-		// Kontrak_Status
-		if (strval($this->Kontrak_Status->CurrentValue) <> "") {
-			$this->Kontrak_Status->ViewValue = $this->Kontrak_Status->OptionCaption($this->Kontrak_Status->CurrentValue);
-		} else {
-			$this->Kontrak_Status->ViewValue = NULL;
-		}
-		$this->Kontrak_Status->ViewCustomAttributes = "";
+			// field_align
+			$this->field_align->LinkCustomAttributes = "";
+			$this->field_align->HrefValue = "";
+			$this->field_align->TooltipValue = "";
 
-		// Jatuh_Tempo_Status
-		if (strval($this->Jatuh_Tempo_Status->CurrentValue) <> "") {
-			$this->Jatuh_Tempo_Status->ViewValue = $this->Jatuh_Tempo_Status->OptionCaption($this->Jatuh_Tempo_Status->CurrentValue);
-		} else {
-			$this->Jatuh_Tempo_Status->ViewValue = NULL;
-		}
-		$this->Jatuh_Tempo_Status->ViewCustomAttributes = "";
-
-		// Bunga_Status
-		if (strval($this->Bunga_Status->CurrentValue) <> "") {
-			$this->Bunga_Status->ViewValue = $this->Bunga_Status->OptionCaption($this->Bunga_Status->CurrentValue);
-		} else {
-			$this->Bunga_Status->ViewValue = NULL;
-		}
-		$this->Bunga_Status->ViewCustomAttributes = "";
-
-			// Kontrak_No
-			$this->Kontrak_No->LinkCustomAttributes = "";
-			$this->Kontrak_No->HrefValue = "";
-			$this->Kontrak_No->TooltipValue = "";
-
-			// Kontrak_Tgl
-			$this->Kontrak_Tgl->LinkCustomAttributes = "";
-			$this->Kontrak_Tgl->HrefValue = "";
-			$this->Kontrak_Tgl->TooltipValue = "";
-
-			// Kontrak_Lama
-			$this->Kontrak_Lama->LinkCustomAttributes = "";
-			$this->Kontrak_Lama->HrefValue = "";
-			$this->Kontrak_Lama->TooltipValue = "";
-
-			// Deposito
-			$this->Deposito->LinkCustomAttributes = "";
-			$this->Deposito->HrefValue = "";
-			$this->Deposito->TooltipValue = "";
-
-			// Bunga_Suku
-			$this->Bunga_Suku->LinkCustomAttributes = "";
-			$this->Bunga_Suku->HrefValue = "";
-			$this->Bunga_Suku->TooltipValue = "";
-
-			// Bunga
-			$this->Bunga->LinkCustomAttributes = "";
-			$this->Bunga->HrefValue = "";
-			$this->Bunga->TooltipValue = "";
-
-			// nasabah_id
-			$this->nasabah_id->LinkCustomAttributes = "";
-			$this->nasabah_id->HrefValue = "";
-			$this->nasabah_id->TooltipValue = "";
+			// field_format
+			$this->field_format->LinkCustomAttributes = "";
+			$this->field_format->HrefValue = "";
+			$this->field_format->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -771,7 +608,6 @@ class ct23_deposito_delete extends ct23_deposito {
 		}
 		$rows = ($rs) ? $rs->GetRows() : array();
 		$conn->BeginTrans();
-		if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteBegin")); // Batch delete begin
 
 		// Clone old rows
 		$rsold = $rows;
@@ -814,10 +650,8 @@ class ct23_deposito_delete extends ct23_deposito {
 		}
 		if ($DeleteRows) {
 			$conn->CommitTrans(); // Commit the changes
-			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteSuccess")); // Batch delete success
 		} else {
 			$conn->RollbackTrans(); // Rollback changes
-			if ($this->AuditTrailOnDelete) $this->WriteAuditTrailDummy($Language->Phrase("BatchDeleteRollback")); // Batch delete rollback
 		}
 
 		// Call Row Deleted event
@@ -834,7 +668,7 @@ class ct23_deposito_delete extends ct23_deposito {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t23_depositolist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t71_depositolaplist.php"), "", $this->TableVar, TRUE);
 		$PageId = "delete";
 		$Breadcrumb->Add("delete", $PageId, $url);
 	}
@@ -920,29 +754,29 @@ class ct23_deposito_delete extends ct23_deposito {
 <?php
 
 // Create page object
-if (!isset($t23_deposito_delete)) $t23_deposito_delete = new ct23_deposito_delete();
+if (!isset($t71_depositolap_delete)) $t71_depositolap_delete = new ct71_depositolap_delete();
 
 // Page init
-$t23_deposito_delete->Page_Init();
+$t71_depositolap_delete->Page_Init();
 
 // Page main
-$t23_deposito_delete->Page_Main();
+$t71_depositolap_delete->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t23_deposito_delete->Page_Render();
+$t71_depositolap_delete->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = ft23_depositodelete = new ew_Form("ft23_depositodelete", "delete");
+var CurrentForm = ft71_depositolapdelete = new ew_Form("ft71_depositolapdelete", "delete");
 
 // Form_CustomValidate event
-ft23_depositodelete.Form_CustomValidate = 
+ft71_depositolapdelete.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -951,13 +785,18 @@ ft23_depositodelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft23_depositodelete.ValidateRequired = true;
+ft71_depositolapdelete.ValidateRequired = true;
 <?php } else { ?>
-ft23_depositodelete.ValidateRequired = false; 
+ft71_depositolapdelete.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-ft23_depositodelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t22_peserta"};
+ft71_depositolapdelete.Lists["x_field_status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft71_depositolapdelete.Lists["x_field_status"].Options = <?php echo json_encode($t71_depositolap->field_status->Options()) ?>;
+ft71_depositolapdelete.Lists["x_field_align"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft71_depositolapdelete.Lists["x_field_align"].Options = <?php echo json_encode($t71_depositolap->field_align->Options()) ?>;
+ft71_depositolapdelete.Lists["x_field_format"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft71_depositolapdelete.Lists["x_field_format"].Options = <?php echo json_encode($t71_depositolap->field_format->Options()) ?>;
 
 // Form object for search
 </script>
@@ -970,129 +809,118 @@ ft23_depositodelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"Aut
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $t23_deposito_delete->ShowPageHeader(); ?>
+<?php $t71_depositolap_delete->ShowPageHeader(); ?>
 <?php
-$t23_deposito_delete->ShowMessage();
+$t71_depositolap_delete->ShowMessage();
 ?>
-<form name="ft23_depositodelete" id="ft23_depositodelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t23_deposito_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t23_deposito_delete->Token ?>">
+<form name="ft71_depositolapdelete" id="ft71_depositolapdelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t71_depositolap_delete->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t71_depositolap_delete->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t23_deposito">
+<input type="hidden" name="t" value="t71_depositolap">
 <input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($t23_deposito_delete->RecKeys as $key) { ?>
+<?php foreach ($t71_depositolap_delete->RecKeys as $key) { ?>
 <?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
 <input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
 <?php } ?>
 <div class="ewGrid">
 <div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <table class="table ewTable">
-<?php echo $t23_deposito->TableCustomInnerHtml ?>
+<?php echo $t71_depositolap->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t23_deposito->Kontrak_No->Visible) { // Kontrak_No ?>
-		<th><span id="elh_t23_deposito_Kontrak_No" class="t23_deposito_Kontrak_No"><?php echo $t23_deposito->Kontrak_No->FldCaption() ?></span></th>
+<?php if ($t71_depositolap->field_name->Visible) { // field_name ?>
+		<th><span id="elh_t71_depositolap_field_name" class="t71_depositolap_field_name"><?php echo $t71_depositolap->field_name->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t23_deposito->Kontrak_Tgl->Visible) { // Kontrak_Tgl ?>
-		<th><span id="elh_t23_deposito_Kontrak_Tgl" class="t23_deposito_Kontrak_Tgl"><?php echo $t23_deposito->Kontrak_Tgl->FldCaption() ?></span></th>
+<?php if ($t71_depositolap->field_caption->Visible) { // field_caption ?>
+		<th><span id="elh_t71_depositolap_field_caption" class="t71_depositolap_field_caption"><?php echo $t71_depositolap->field_caption->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t23_deposito->Kontrak_Lama->Visible) { // Kontrak_Lama ?>
-		<th><span id="elh_t23_deposito_Kontrak_Lama" class="t23_deposito_Kontrak_Lama"><?php echo $t23_deposito->Kontrak_Lama->FldCaption() ?></span></th>
+<?php if ($t71_depositolap->field_index->Visible) { // field_index ?>
+		<th><span id="elh_t71_depositolap_field_index" class="t71_depositolap_field_index"><?php echo $t71_depositolap->field_index->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t23_deposito->Deposito->Visible) { // Deposito ?>
-		<th><span id="elh_t23_deposito_Deposito" class="t23_deposito_Deposito"><?php echo $t23_deposito->Deposito->FldCaption() ?></span></th>
+<?php if ($t71_depositolap->field_status->Visible) { // field_status ?>
+		<th><span id="elh_t71_depositolap_field_status" class="t71_depositolap_field_status"><?php echo $t71_depositolap->field_status->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t23_deposito->Bunga_Suku->Visible) { // Bunga_Suku ?>
-		<th><span id="elh_t23_deposito_Bunga_Suku" class="t23_deposito_Bunga_Suku"><?php echo $t23_deposito->Bunga_Suku->FldCaption() ?></span></th>
+<?php if ($t71_depositolap->field_align->Visible) { // field_align ?>
+		<th><span id="elh_t71_depositolap_field_align" class="t71_depositolap_field_align"><?php echo $t71_depositolap->field_align->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t23_deposito->Bunga->Visible) { // Bunga ?>
-		<th><span id="elh_t23_deposito_Bunga" class="t23_deposito_Bunga"><?php echo $t23_deposito->Bunga->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t23_deposito->nasabah_id->Visible) { // nasabah_id ?>
-		<th><span id="elh_t23_deposito_nasabah_id" class="t23_deposito_nasabah_id"><?php echo $t23_deposito->nasabah_id->FldCaption() ?></span></th>
+<?php if ($t71_depositolap->field_format->Visible) { // field_format ?>
+		<th><span id="elh_t71_depositolap_field_format" class="t71_depositolap_field_format"><?php echo $t71_depositolap->field_format->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
 	<tbody>
 <?php
-$t23_deposito_delete->RecCnt = 0;
+$t71_depositolap_delete->RecCnt = 0;
 $i = 0;
-while (!$t23_deposito_delete->Recordset->EOF) {
-	$t23_deposito_delete->RecCnt++;
-	$t23_deposito_delete->RowCnt++;
+while (!$t71_depositolap_delete->Recordset->EOF) {
+	$t71_depositolap_delete->RecCnt++;
+	$t71_depositolap_delete->RowCnt++;
 
 	// Set row properties
-	$t23_deposito->ResetAttrs();
-	$t23_deposito->RowType = EW_ROWTYPE_VIEW; // View
+	$t71_depositolap->ResetAttrs();
+	$t71_depositolap->RowType = EW_ROWTYPE_VIEW; // View
 
 	// Get the field contents
-	$t23_deposito_delete->LoadRowValues($t23_deposito_delete->Recordset);
+	$t71_depositolap_delete->LoadRowValues($t71_depositolap_delete->Recordset);
 
 	// Render row
-	$t23_deposito_delete->RenderRow();
+	$t71_depositolap_delete->RenderRow();
 ?>
-	<tr<?php echo $t23_deposito->RowAttributes() ?>>
-<?php if ($t23_deposito->Kontrak_No->Visible) { // Kontrak_No ?>
-		<td<?php echo $t23_deposito->Kontrak_No->CellAttributes() ?>>
-<span id="el<?php echo $t23_deposito_delete->RowCnt ?>_t23_deposito_Kontrak_No" class="t23_deposito_Kontrak_No">
-<span<?php echo $t23_deposito->Kontrak_No->ViewAttributes() ?>>
-<?php echo $t23_deposito->Kontrak_No->ListViewValue() ?></span>
+	<tr<?php echo $t71_depositolap->RowAttributes() ?>>
+<?php if ($t71_depositolap->field_name->Visible) { // field_name ?>
+		<td<?php echo $t71_depositolap->field_name->CellAttributes() ?>>
+<span id="el<?php echo $t71_depositolap_delete->RowCnt ?>_t71_depositolap_field_name" class="t71_depositolap_field_name">
+<span<?php echo $t71_depositolap->field_name->ViewAttributes() ?>>
+<?php echo $t71_depositolap->field_name->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t23_deposito->Kontrak_Tgl->Visible) { // Kontrak_Tgl ?>
-		<td<?php echo $t23_deposito->Kontrak_Tgl->CellAttributes() ?>>
-<span id="el<?php echo $t23_deposito_delete->RowCnt ?>_t23_deposito_Kontrak_Tgl" class="t23_deposito_Kontrak_Tgl">
-<span<?php echo $t23_deposito->Kontrak_Tgl->ViewAttributes() ?>>
-<?php echo $t23_deposito->Kontrak_Tgl->ListViewValue() ?></span>
+<?php if ($t71_depositolap->field_caption->Visible) { // field_caption ?>
+		<td<?php echo $t71_depositolap->field_caption->CellAttributes() ?>>
+<span id="el<?php echo $t71_depositolap_delete->RowCnt ?>_t71_depositolap_field_caption" class="t71_depositolap_field_caption">
+<span<?php echo $t71_depositolap->field_caption->ViewAttributes() ?>>
+<?php echo $t71_depositolap->field_caption->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t23_deposito->Kontrak_Lama->Visible) { // Kontrak_Lama ?>
-		<td<?php echo $t23_deposito->Kontrak_Lama->CellAttributes() ?>>
-<span id="el<?php echo $t23_deposito_delete->RowCnt ?>_t23_deposito_Kontrak_Lama" class="t23_deposito_Kontrak_Lama">
-<span<?php echo $t23_deposito->Kontrak_Lama->ViewAttributes() ?>>
-<?php echo $t23_deposito->Kontrak_Lama->ListViewValue() ?></span>
+<?php if ($t71_depositolap->field_index->Visible) { // field_index ?>
+		<td<?php echo $t71_depositolap->field_index->CellAttributes() ?>>
+<span id="el<?php echo $t71_depositolap_delete->RowCnt ?>_t71_depositolap_field_index" class="t71_depositolap_field_index">
+<span<?php echo $t71_depositolap->field_index->ViewAttributes() ?>>
+<?php echo $t71_depositolap->field_index->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t23_deposito->Deposito->Visible) { // Deposito ?>
-		<td<?php echo $t23_deposito->Deposito->CellAttributes() ?>>
-<span id="el<?php echo $t23_deposito_delete->RowCnt ?>_t23_deposito_Deposito" class="t23_deposito_Deposito">
-<span<?php echo $t23_deposito->Deposito->ViewAttributes() ?>>
-<?php echo $t23_deposito->Deposito->ListViewValue() ?></span>
+<?php if ($t71_depositolap->field_status->Visible) { // field_status ?>
+		<td<?php echo $t71_depositolap->field_status->CellAttributes() ?>>
+<span id="el<?php echo $t71_depositolap_delete->RowCnt ?>_t71_depositolap_field_status" class="t71_depositolap_field_status">
+<span<?php echo $t71_depositolap->field_status->ViewAttributes() ?>>
+<?php echo $t71_depositolap->field_status->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t23_deposito->Bunga_Suku->Visible) { // Bunga_Suku ?>
-		<td<?php echo $t23_deposito->Bunga_Suku->CellAttributes() ?>>
-<span id="el<?php echo $t23_deposito_delete->RowCnt ?>_t23_deposito_Bunga_Suku" class="t23_deposito_Bunga_Suku">
-<span<?php echo $t23_deposito->Bunga_Suku->ViewAttributes() ?>>
-<?php echo $t23_deposito->Bunga_Suku->ListViewValue() ?></span>
+<?php if ($t71_depositolap->field_align->Visible) { // field_align ?>
+		<td<?php echo $t71_depositolap->field_align->CellAttributes() ?>>
+<span id="el<?php echo $t71_depositolap_delete->RowCnt ?>_t71_depositolap_field_align" class="t71_depositolap_field_align">
+<span<?php echo $t71_depositolap->field_align->ViewAttributes() ?>>
+<?php echo $t71_depositolap->field_align->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t23_deposito->Bunga->Visible) { // Bunga ?>
-		<td<?php echo $t23_deposito->Bunga->CellAttributes() ?>>
-<span id="el<?php echo $t23_deposito_delete->RowCnt ?>_t23_deposito_Bunga" class="t23_deposito_Bunga">
-<span<?php echo $t23_deposito->Bunga->ViewAttributes() ?>>
-<?php echo $t23_deposito->Bunga->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t23_deposito->nasabah_id->Visible) { // nasabah_id ?>
-		<td<?php echo $t23_deposito->nasabah_id->CellAttributes() ?>>
-<span id="el<?php echo $t23_deposito_delete->RowCnt ?>_t23_deposito_nasabah_id" class="t23_deposito_nasabah_id">
-<span<?php echo $t23_deposito->nasabah_id->ViewAttributes() ?>>
-<?php echo $t23_deposito->nasabah_id->ListViewValue() ?></span>
+<?php if ($t71_depositolap->field_format->Visible) { // field_format ?>
+		<td<?php echo $t71_depositolap->field_format->CellAttributes() ?>>
+<span id="el<?php echo $t71_depositolap_delete->RowCnt ?>_t71_depositolap_field_format" class="t71_depositolap_field_format">
+<span<?php echo $t71_depositolap->field_format->ViewAttributes() ?>>
+<?php echo $t71_depositolap->field_format->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
 	</tr>
 <?php
-	$t23_deposito_delete->Recordset->MoveNext();
+	$t71_depositolap_delete->Recordset->MoveNext();
 }
-$t23_deposito_delete->Recordset->Close();
+$t71_depositolap_delete->Recordset->Close();
 ?>
 </tbody>
 </table>
@@ -1100,14 +928,14 @@ $t23_deposito_delete->Recordset->Close();
 </div>
 <div>
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t23_deposito_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t71_depositolap_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 </div>
 </form>
 <script type="text/javascript">
-ft23_depositodelete.Init();
+ft71_depositolapdelete.Init();
 </script>
 <?php
-$t23_deposito_delete->ShowPageFooter();
+$t71_depositolap_delete->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1119,5 +947,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t23_deposito_delete->Page_Terminate();
+$t71_depositolap_delete->Page_Terminate();
 ?>

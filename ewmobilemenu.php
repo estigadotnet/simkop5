@@ -27,7 +27,7 @@ $RootMenu->AddMenuItem(10772, "mmi_cf42_pinjaman_php", $Language->MenuPhrase("10
 $RootMenu->AddMenuItem(10768, "mmci_Deposito", $Language->MenuPhrase("10768", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10856, "mmi_t22_peserta", $Language->MenuPhrase("10856", "MenuText"), "t22_pesertalist.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t22_peserta'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10858, "mmi_t23_deposito", $Language->MenuPhrase("10858", "MenuText"), "t23_depositolist.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t23_deposito'), FALSE, FALSE);
-$RootMenu->AddMenuItem(10853, "mmi_cf43_deposito_php", $Language->MenuPhrase("10853", "MenuText"), "cf43_deposito.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf43_deposito.php'), FALSE, TRUE);
+$RootMenu->AddMenuItem(10861, "mmi_cf44_deposito_php", $Language->MenuPhrase("10861", "MenuText"), "cf44_deposito.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf44_deposito.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10338, "mmci_General", $Language->MenuPhrase("10338", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10358, "mmi_t75_company", $Language->MenuPhrase("10358", "MenuText"), "t75_companylist.php", 10338, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t75_company'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10359, "mmi_cf14_backup_php", $Language->MenuPhrase("10359", "MenuText"), "cf14_backup.php", 10338, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf14_backup.php'), FALSE, TRUE);

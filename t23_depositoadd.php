@@ -472,10 +472,7 @@ class ct23_deposito_add extends ct23_deposito {
 				if ($this->AddRow($this->OldRecordset)) { // Add successful
 					if ($this->getSuccessMessage() == "")
 						$this->setSuccessMessage($Language->Phrase("AddSuccess")); // Set up success message
-					if ($this->getCurrentDetailTable() <> "") // Master/detail add
-						$sReturnUrl = $this->GetDetailUrl();
-					else
-						$sReturnUrl = $this->getReturnUrl();
+					$sReturnUrl = "t24_deposito_detaillist.php?showmaster=t23_deposito&fk_id=".urlencode($this->id->CurrentValue);
 					if (ew_GetPageName($sReturnUrl) == "t23_depositolist.php")
 						$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
 					elseif (ew_GetPageName($sReturnUrl) == "t23_depositoview.php")

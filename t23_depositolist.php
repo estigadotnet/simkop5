@@ -417,18 +417,10 @@ class ct23_deposito_list extends ct23_deposito {
 		$this->Kontrak_No->SetVisibility();
 		$this->Kontrak_Tgl->SetVisibility();
 		$this->Kontrak_Lama->SetVisibility();
-		$this->Jatuh_Tempo_Tgl->SetVisibility();
 		$this->Deposito->SetVisibility();
 		$this->Bunga_Suku->SetVisibility();
 		$this->Bunga->SetVisibility();
 		$this->nasabah_id->SetVisibility();
-		$this->bank_id->SetVisibility();
-		$this->No_Ref->SetVisibility();
-		$this->Biaya_Administrasi->SetVisibility();
-		$this->Biaya_Materai->SetVisibility();
-		$this->Kontrak_Status->SetVisibility();
-		$this->Jatuh_Tempo_Status->SetVisibility();
-		$this->Bunga_Status->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -768,8 +760,6 @@ class ct23_deposito_list extends ct23_deposito {
 		$this->Deposito->FormValue = ""; // Clear form value
 		$this->Bunga_Suku->FormValue = ""; // Clear form value
 		$this->Bunga->FormValue = ""; // Clear form value
-		$this->Biaya_Administrasi->FormValue = ""; // Clear form value
-		$this->Biaya_Materai->FormValue = ""; // Clear form value
 		$this->LastAction = $this->CurrentAction; // Save last action
 		$this->CurrentAction = ""; // Clear action
 		$_SESSION[EW_SESSION_INLINE_MODE] = ""; // Clear inline mode
@@ -1293,18 +1283,10 @@ class ct23_deposito_list extends ct23_deposito {
 			$this->UpdateSort($this->Kontrak_No, $bCtrl); // Kontrak_No
 			$this->UpdateSort($this->Kontrak_Tgl, $bCtrl); // Kontrak_Tgl
 			$this->UpdateSort($this->Kontrak_Lama, $bCtrl); // Kontrak_Lama
-			$this->UpdateSort($this->Jatuh_Tempo_Tgl, $bCtrl); // Jatuh_Tempo_Tgl
 			$this->UpdateSort($this->Deposito, $bCtrl); // Deposito
 			$this->UpdateSort($this->Bunga_Suku, $bCtrl); // Bunga_Suku
 			$this->UpdateSort($this->Bunga, $bCtrl); // Bunga
 			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
-			$this->UpdateSort($this->bank_id, $bCtrl); // bank_id
-			$this->UpdateSort($this->No_Ref, $bCtrl); // No_Ref
-			$this->UpdateSort($this->Biaya_Administrasi, $bCtrl); // Biaya_Administrasi
-			$this->UpdateSort($this->Biaya_Materai, $bCtrl); // Biaya_Materai
-			$this->UpdateSort($this->Kontrak_Status, $bCtrl); // Kontrak_Status
-			$this->UpdateSort($this->Jatuh_Tempo_Status, $bCtrl); // Jatuh_Tempo_Status
-			$this->UpdateSort($this->Bunga_Status, $bCtrl); // Bunga_Status
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1341,18 +1323,10 @@ class ct23_deposito_list extends ct23_deposito {
 				$this->Kontrak_No->setSort("");
 				$this->Kontrak_Tgl->setSort("");
 				$this->Kontrak_Lama->setSort("");
-				$this->Jatuh_Tempo_Tgl->setSort("");
 				$this->Deposito->setSort("");
 				$this->Bunga_Suku->setSort("");
 				$this->Bunga->setSort("");
 				$this->nasabah_id->setSort("");
-				$this->bank_id->setSort("");
-				$this->No_Ref->setSort("");
-				$this->Biaya_Administrasi->setSort("");
-				$this->Biaya_Materai->setSort("");
-				$this->Kontrak_Status->setSort("");
-				$this->Jatuh_Tempo_Status->setSort("");
-				$this->Bunga_Status->setSort("");
 			}
 
 			// Reset start position
@@ -1862,8 +1836,6 @@ class ct23_deposito_list extends ct23_deposito {
 		$this->Kontrak_Tgl->OldValue = $this->Kontrak_Tgl->CurrentValue;
 		$this->Kontrak_Lama->CurrentValue = NULL;
 		$this->Kontrak_Lama->OldValue = $this->Kontrak_Lama->CurrentValue;
-		$this->Jatuh_Tempo_Tgl->CurrentValue = NULL;
-		$this->Jatuh_Tempo_Tgl->OldValue = $this->Jatuh_Tempo_Tgl->CurrentValue;
 		$this->Deposito->CurrentValue = NULL;
 		$this->Deposito->OldValue = $this->Deposito->CurrentValue;
 		$this->Bunga_Suku->CurrentValue = 12.00;
@@ -1871,15 +1843,6 @@ class ct23_deposito_list extends ct23_deposito {
 		$this->Bunga->OldValue = $this->Bunga->CurrentValue;
 		$this->nasabah_id->CurrentValue = NULL;
 		$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
-		$this->bank_id->CurrentValue = NULL;
-		$this->bank_id->OldValue = $this->bank_id->CurrentValue;
-		$this->No_Ref->CurrentValue = NULL;
-		$this->No_Ref->OldValue = $this->No_Ref->CurrentValue;
-		$this->Biaya_Administrasi->CurrentValue = 0.00;
-		$this->Biaya_Materai->CurrentValue = 0.00;
-		$this->Kontrak_Status->CurrentValue = "Ya";
-		$this->Jatuh_Tempo_Status->CurrentValue = "Diperpanjang";
-		$this->Bunga_Status->CurrentValue = "Transfer";
 	}
 
 	// Load search values for validation
@@ -1995,10 +1958,6 @@ class ct23_deposito_list extends ct23_deposito {
 		if (!$this->Kontrak_Lama->FldIsDetailKey) {
 			$this->Kontrak_Lama->setFormValue($objForm->GetValue("x_Kontrak_Lama"));
 		}
-		if (!$this->Jatuh_Tempo_Tgl->FldIsDetailKey) {
-			$this->Jatuh_Tempo_Tgl->setFormValue($objForm->GetValue("x_Jatuh_Tempo_Tgl"));
-			$this->Jatuh_Tempo_Tgl->CurrentValue = ew_UnFormatDateTime($this->Jatuh_Tempo_Tgl->CurrentValue, 7);
-		}
 		if (!$this->Deposito->FldIsDetailKey) {
 			$this->Deposito->setFormValue($objForm->GetValue("x_Deposito"));
 		}
@@ -2010,27 +1969,6 @@ class ct23_deposito_list extends ct23_deposito {
 		}
 		if (!$this->nasabah_id->FldIsDetailKey) {
 			$this->nasabah_id->setFormValue($objForm->GetValue("x_nasabah_id"));
-		}
-		if (!$this->bank_id->FldIsDetailKey) {
-			$this->bank_id->setFormValue($objForm->GetValue("x_bank_id"));
-		}
-		if (!$this->No_Ref->FldIsDetailKey) {
-			$this->No_Ref->setFormValue($objForm->GetValue("x_No_Ref"));
-		}
-		if (!$this->Biaya_Administrasi->FldIsDetailKey) {
-			$this->Biaya_Administrasi->setFormValue($objForm->GetValue("x_Biaya_Administrasi"));
-		}
-		if (!$this->Biaya_Materai->FldIsDetailKey) {
-			$this->Biaya_Materai->setFormValue($objForm->GetValue("x_Biaya_Materai"));
-		}
-		if (!$this->Kontrak_Status->FldIsDetailKey) {
-			$this->Kontrak_Status->setFormValue($objForm->GetValue("x_Kontrak_Status"));
-		}
-		if (!$this->Jatuh_Tempo_Status->FldIsDetailKey) {
-			$this->Jatuh_Tempo_Status->setFormValue($objForm->GetValue("x_Jatuh_Tempo_Status"));
-		}
-		if (!$this->Bunga_Status->FldIsDetailKey) {
-			$this->Bunga_Status->setFormValue($objForm->GetValue("x_Bunga_Status"));
 		}
 		if (!$this->id->FldIsDetailKey && $this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
 			$this->id->setFormValue($objForm->GetValue("x_id"));
@@ -2045,19 +1983,10 @@ class ct23_deposito_list extends ct23_deposito {
 		$this->Kontrak_Tgl->CurrentValue = $this->Kontrak_Tgl->FormValue;
 		$this->Kontrak_Tgl->CurrentValue = ew_UnFormatDateTime($this->Kontrak_Tgl->CurrentValue, 7);
 		$this->Kontrak_Lama->CurrentValue = $this->Kontrak_Lama->FormValue;
-		$this->Jatuh_Tempo_Tgl->CurrentValue = $this->Jatuh_Tempo_Tgl->FormValue;
-		$this->Jatuh_Tempo_Tgl->CurrentValue = ew_UnFormatDateTime($this->Jatuh_Tempo_Tgl->CurrentValue, 7);
 		$this->Deposito->CurrentValue = $this->Deposito->FormValue;
 		$this->Bunga_Suku->CurrentValue = $this->Bunga_Suku->FormValue;
 		$this->Bunga->CurrentValue = $this->Bunga->FormValue;
 		$this->nasabah_id->CurrentValue = $this->nasabah_id->FormValue;
-		$this->bank_id->CurrentValue = $this->bank_id->FormValue;
-		$this->No_Ref->CurrentValue = $this->No_Ref->FormValue;
-		$this->Biaya_Administrasi->CurrentValue = $this->Biaya_Administrasi->FormValue;
-		$this->Biaya_Materai->CurrentValue = $this->Biaya_Materai->FormValue;
-		$this->Kontrak_Status->CurrentValue = $this->Kontrak_Status->FormValue;
-		$this->Jatuh_Tempo_Status->CurrentValue = $this->Jatuh_Tempo_Status->FormValue;
-		$this->Bunga_Status->CurrentValue = $this->Bunga_Status->FormValue;
 	}
 
 	// Load recordset
@@ -2208,14 +2137,6 @@ class ct23_deposito_list extends ct23_deposito {
 		// Convert decimal values if posted back
 		if ($this->Bunga->FormValue == $this->Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Bunga->CurrentValue)))
 			$this->Bunga->CurrentValue = ew_StrToFloat($this->Bunga->CurrentValue);
-
-		// Convert decimal values if posted back
-		if ($this->Biaya_Administrasi->FormValue == $this->Biaya_Administrasi->CurrentValue && is_numeric(ew_StrToFloat($this->Biaya_Administrasi->CurrentValue)))
-			$this->Biaya_Administrasi->CurrentValue = ew_StrToFloat($this->Biaya_Administrasi->CurrentValue);
-
-		// Convert decimal values if posted back
-		if ($this->Biaya_Materai->FormValue == $this->Biaya_Materai->CurrentValue && is_numeric(ew_StrToFloat($this->Biaya_Materai->CurrentValue)))
-			$this->Biaya_Materai->CurrentValue = ew_StrToFloat($this->Biaya_Materai->CurrentValue);
 
 		// Call Row_Rendering event
 		$this->Row_Rendering();
@@ -2406,11 +2327,6 @@ class ct23_deposito_list extends ct23_deposito {
 			$this->Kontrak_Lama->HrefValue = "";
 			$this->Kontrak_Lama->TooltipValue = "";
 
-			// Jatuh_Tempo_Tgl
-			$this->Jatuh_Tempo_Tgl->LinkCustomAttributes = "";
-			$this->Jatuh_Tempo_Tgl->HrefValue = "";
-			$this->Jatuh_Tempo_Tgl->TooltipValue = "";
-
 			// Deposito
 			$this->Deposito->LinkCustomAttributes = "";
 			$this->Deposito->HrefValue = "";
@@ -2430,41 +2346,6 @@ class ct23_deposito_list extends ct23_deposito {
 			$this->nasabah_id->LinkCustomAttributes = "";
 			$this->nasabah_id->HrefValue = "";
 			$this->nasabah_id->TooltipValue = "";
-
-			// bank_id
-			$this->bank_id->LinkCustomAttributes = "";
-			$this->bank_id->HrefValue = "";
-			$this->bank_id->TooltipValue = "";
-
-			// No_Ref
-			$this->No_Ref->LinkCustomAttributes = "";
-			$this->No_Ref->HrefValue = "";
-			$this->No_Ref->TooltipValue = "";
-
-			// Biaya_Administrasi
-			$this->Biaya_Administrasi->LinkCustomAttributes = "";
-			$this->Biaya_Administrasi->HrefValue = "";
-			$this->Biaya_Administrasi->TooltipValue = "";
-
-			// Biaya_Materai
-			$this->Biaya_Materai->LinkCustomAttributes = "";
-			$this->Biaya_Materai->HrefValue = "";
-			$this->Biaya_Materai->TooltipValue = "";
-
-			// Kontrak_Status
-			$this->Kontrak_Status->LinkCustomAttributes = "";
-			$this->Kontrak_Status->HrefValue = "";
-			$this->Kontrak_Status->TooltipValue = "";
-
-			// Jatuh_Tempo_Status
-			$this->Jatuh_Tempo_Status->LinkCustomAttributes = "";
-			$this->Jatuh_Tempo_Status->HrefValue = "";
-			$this->Jatuh_Tempo_Status->TooltipValue = "";
-
-			// Bunga_Status
-			$this->Bunga_Status->LinkCustomAttributes = "";
-			$this->Bunga_Status->HrefValue = "";
-			$this->Bunga_Status->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
 			// Kontrak_No
@@ -2484,12 +2365,6 @@ class ct23_deposito_list extends ct23_deposito {
 			$this->Kontrak_Lama->EditCustomAttributes = "";
 			$this->Kontrak_Lama->EditValue = ew_HtmlEncode($this->Kontrak_Lama->CurrentValue);
 			$this->Kontrak_Lama->PlaceHolder = ew_RemoveHtml($this->Kontrak_Lama->FldCaption());
-
-			// Jatuh_Tempo_Tgl
-			$this->Jatuh_Tempo_Tgl->EditAttrs["class"] = "form-control";
-			$this->Jatuh_Tempo_Tgl->EditCustomAttributes = "style='width: 115px;'";
-			$this->Jatuh_Tempo_Tgl->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Jatuh_Tempo_Tgl->CurrentValue, 7));
-			$this->Jatuh_Tempo_Tgl->PlaceHolder = ew_RemoveHtml($this->Jatuh_Tempo_Tgl->FldCaption());
 
 			// Deposito
 			$this->Deposito->EditAttrs["class"] = "form-control";
@@ -2516,41 +2391,6 @@ class ct23_deposito_list extends ct23_deposito {
 			$this->nasabah_id->EditAttrs["class"] = "form-control";
 			$this->nasabah_id->EditCustomAttributes = "";
 
-			// bank_id
-			$this->bank_id->EditCustomAttributes = "";
-
-			// No_Ref
-			$this->No_Ref->EditAttrs["class"] = "form-control";
-			$this->No_Ref->EditCustomAttributes = "";
-			$this->No_Ref->EditValue = ew_HtmlEncode($this->No_Ref->CurrentValue);
-			$this->No_Ref->PlaceHolder = ew_RemoveHtml($this->No_Ref->FldCaption());
-
-			// Biaya_Administrasi
-			$this->Biaya_Administrasi->EditAttrs["class"] = "form-control";
-			$this->Biaya_Administrasi->EditCustomAttributes = "";
-			$this->Biaya_Administrasi->EditValue = ew_HtmlEncode($this->Biaya_Administrasi->CurrentValue);
-			$this->Biaya_Administrasi->PlaceHolder = ew_RemoveHtml($this->Biaya_Administrasi->FldCaption());
-			if (strval($this->Biaya_Administrasi->EditValue) <> "" && is_numeric($this->Biaya_Administrasi->EditValue)) $this->Biaya_Administrasi->EditValue = ew_FormatNumber($this->Biaya_Administrasi->EditValue, -2, -2, -2, -2);
-
-			// Biaya_Materai
-			$this->Biaya_Materai->EditAttrs["class"] = "form-control";
-			$this->Biaya_Materai->EditCustomAttributes = "";
-			$this->Biaya_Materai->EditValue = ew_HtmlEncode($this->Biaya_Materai->CurrentValue);
-			$this->Biaya_Materai->PlaceHolder = ew_RemoveHtml($this->Biaya_Materai->FldCaption());
-			if (strval($this->Biaya_Materai->EditValue) <> "" && is_numeric($this->Biaya_Materai->EditValue)) $this->Biaya_Materai->EditValue = ew_FormatNumber($this->Biaya_Materai->EditValue, -2, -2, -2, -2);
-
-			// Kontrak_Status
-			$this->Kontrak_Status->EditCustomAttributes = "";
-			$this->Kontrak_Status->EditValue = $this->Kontrak_Status->Options(FALSE);
-
-			// Jatuh_Tempo_Status
-			$this->Jatuh_Tempo_Status->EditCustomAttributes = "";
-			$this->Jatuh_Tempo_Status->EditValue = $this->Jatuh_Tempo_Status->Options(FALSE);
-
-			// Bunga_Status
-			$this->Bunga_Status->EditCustomAttributes = "";
-			$this->Bunga_Status->EditValue = $this->Bunga_Status->Options(FALSE);
-
 			// Add refer script
 			// Kontrak_No
 
@@ -2564,10 +2404,6 @@ class ct23_deposito_list extends ct23_deposito {
 			// Kontrak_Lama
 			$this->Kontrak_Lama->LinkCustomAttributes = "";
 			$this->Kontrak_Lama->HrefValue = "";
-
-			// Jatuh_Tempo_Tgl
-			$this->Jatuh_Tempo_Tgl->LinkCustomAttributes = "";
-			$this->Jatuh_Tempo_Tgl->HrefValue = "";
 
 			// Deposito
 			$this->Deposito->LinkCustomAttributes = "";
@@ -2584,34 +2420,6 @@ class ct23_deposito_list extends ct23_deposito {
 			// nasabah_id
 			$this->nasabah_id->LinkCustomAttributes = "";
 			$this->nasabah_id->HrefValue = "";
-
-			// bank_id
-			$this->bank_id->LinkCustomAttributes = "";
-			$this->bank_id->HrefValue = "";
-
-			// No_Ref
-			$this->No_Ref->LinkCustomAttributes = "";
-			$this->No_Ref->HrefValue = "";
-
-			// Biaya_Administrasi
-			$this->Biaya_Administrasi->LinkCustomAttributes = "";
-			$this->Biaya_Administrasi->HrefValue = "";
-
-			// Biaya_Materai
-			$this->Biaya_Materai->LinkCustomAttributes = "";
-			$this->Biaya_Materai->HrefValue = "";
-
-			// Kontrak_Status
-			$this->Kontrak_Status->LinkCustomAttributes = "";
-			$this->Kontrak_Status->HrefValue = "";
-
-			// Jatuh_Tempo_Status
-			$this->Jatuh_Tempo_Status->LinkCustomAttributes = "";
-			$this->Jatuh_Tempo_Status->HrefValue = "";
-
-			// Bunga_Status
-			$this->Bunga_Status->LinkCustomAttributes = "";
-			$this->Bunga_Status->HrefValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
 			// Kontrak_No
@@ -2631,12 +2439,6 @@ class ct23_deposito_list extends ct23_deposito {
 			$this->Kontrak_Lama->EditCustomAttributes = "";
 			$this->Kontrak_Lama->EditValue = ew_HtmlEncode($this->Kontrak_Lama->CurrentValue);
 			$this->Kontrak_Lama->PlaceHolder = ew_RemoveHtml($this->Kontrak_Lama->FldCaption());
-
-			// Jatuh_Tempo_Tgl
-			$this->Jatuh_Tempo_Tgl->EditAttrs["class"] = "form-control";
-			$this->Jatuh_Tempo_Tgl->EditCustomAttributes = "style='width: 115px;'";
-			$this->Jatuh_Tempo_Tgl->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Jatuh_Tempo_Tgl->CurrentValue, 7));
-			$this->Jatuh_Tempo_Tgl->PlaceHolder = ew_RemoveHtml($this->Jatuh_Tempo_Tgl->FldCaption());
 
 			// Deposito
 			$this->Deposito->EditAttrs["class"] = "form-control";
@@ -2684,78 +2486,6 @@ class ct23_deposito_list extends ct23_deposito {
 			if ($rswrk) $rswrk->Close();
 			$this->nasabah_id->EditValue = $arwrk;
 
-			// bank_id
-			$this->bank_id->EditCustomAttributes = "";
-			if (trim(strval($this->bank_id->CurrentValue)) == "") {
-				$sFilterWrk = "0=1";
-			} else {
-				$arwrk = explode(",", $this->bank_id->CurrentValue);
-				$sFilterWrk = "";
-				foreach ($arwrk as $wrk) {
-					if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
-					$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
-				}
-			}
-			$sSqlWrk = "SELECT `id`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld`, `nasabah_id` AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t21_bank`";
-			$sWhereWrk = "";
-			$this->bank_id->LookupFilters = array();
-			ew_AddFilter($sWhereWrk, $sFilterWrk);
-			$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$this->bank_id->ViewValue = "";
-				$ari = 0;
-				while (!$rswrk->EOF) {
-					$arwrk = array();
-					$arwrk[1] = ew_HtmlEncode($rswrk->fields('DispFld'));
-					$arwrk[2] = ew_HtmlEncode($rswrk->fields('Disp2Fld'));
-					$arwrk[3] = ew_HtmlEncode($rswrk->fields('Disp3Fld'));
-					$this->bank_id->ViewValue .= $this->bank_id->DisplayValue($arwrk);
-					$rswrk->MoveNext();
-					if (!$rswrk->EOF) $this->bank_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
-					$ari++;
-				}
-				$rswrk->MoveFirst();
-			} else {
-				$this->bank_id->ViewValue = $Language->Phrase("PleaseSelect");
-			}
-			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
-			if ($rswrk) $rswrk->Close();
-			$this->bank_id->EditValue = $arwrk;
-
-			// No_Ref
-			$this->No_Ref->EditAttrs["class"] = "form-control";
-			$this->No_Ref->EditCustomAttributes = "";
-			$this->No_Ref->EditValue = ew_HtmlEncode($this->No_Ref->CurrentValue);
-			$this->No_Ref->PlaceHolder = ew_RemoveHtml($this->No_Ref->FldCaption());
-
-			// Biaya_Administrasi
-			$this->Biaya_Administrasi->EditAttrs["class"] = "form-control";
-			$this->Biaya_Administrasi->EditCustomAttributes = "";
-			$this->Biaya_Administrasi->EditValue = ew_HtmlEncode($this->Biaya_Administrasi->CurrentValue);
-			$this->Biaya_Administrasi->PlaceHolder = ew_RemoveHtml($this->Biaya_Administrasi->FldCaption());
-			if (strval($this->Biaya_Administrasi->EditValue) <> "" && is_numeric($this->Biaya_Administrasi->EditValue)) $this->Biaya_Administrasi->EditValue = ew_FormatNumber($this->Biaya_Administrasi->EditValue, -2, -2, -2, -2);
-
-			// Biaya_Materai
-			$this->Biaya_Materai->EditAttrs["class"] = "form-control";
-			$this->Biaya_Materai->EditCustomAttributes = "";
-			$this->Biaya_Materai->EditValue = ew_HtmlEncode($this->Biaya_Materai->CurrentValue);
-			$this->Biaya_Materai->PlaceHolder = ew_RemoveHtml($this->Biaya_Materai->FldCaption());
-			if (strval($this->Biaya_Materai->EditValue) <> "" && is_numeric($this->Biaya_Materai->EditValue)) $this->Biaya_Materai->EditValue = ew_FormatNumber($this->Biaya_Materai->EditValue, -2, -2, -2, -2);
-
-			// Kontrak_Status
-			$this->Kontrak_Status->EditCustomAttributes = "";
-			$this->Kontrak_Status->EditValue = $this->Kontrak_Status->Options(FALSE);
-
-			// Jatuh_Tempo_Status
-			$this->Jatuh_Tempo_Status->EditCustomAttributes = "";
-			$this->Jatuh_Tempo_Status->EditValue = $this->Jatuh_Tempo_Status->Options(FALSE);
-
-			// Bunga_Status
-			$this->Bunga_Status->EditCustomAttributes = "";
-			$this->Bunga_Status->EditValue = $this->Bunga_Status->Options(FALSE);
-
 			// Edit refer script
 			// Kontrak_No
 
@@ -2769,10 +2499,6 @@ class ct23_deposito_list extends ct23_deposito {
 			// Kontrak_Lama
 			$this->Kontrak_Lama->LinkCustomAttributes = "";
 			$this->Kontrak_Lama->HrefValue = "";
-
-			// Jatuh_Tempo_Tgl
-			$this->Jatuh_Tempo_Tgl->LinkCustomAttributes = "";
-			$this->Jatuh_Tempo_Tgl->HrefValue = "";
 
 			// Deposito
 			$this->Deposito->LinkCustomAttributes = "";
@@ -2789,34 +2515,6 @@ class ct23_deposito_list extends ct23_deposito {
 			// nasabah_id
 			$this->nasabah_id->LinkCustomAttributes = "";
 			$this->nasabah_id->HrefValue = "";
-
-			// bank_id
-			$this->bank_id->LinkCustomAttributes = "";
-			$this->bank_id->HrefValue = "";
-
-			// No_Ref
-			$this->No_Ref->LinkCustomAttributes = "";
-			$this->No_Ref->HrefValue = "";
-
-			// Biaya_Administrasi
-			$this->Biaya_Administrasi->LinkCustomAttributes = "";
-			$this->Biaya_Administrasi->HrefValue = "";
-
-			// Biaya_Materai
-			$this->Biaya_Materai->LinkCustomAttributes = "";
-			$this->Biaya_Materai->HrefValue = "";
-
-			// Kontrak_Status
-			$this->Kontrak_Status->LinkCustomAttributes = "";
-			$this->Kontrak_Status->HrefValue = "";
-
-			// Jatuh_Tempo_Status
-			$this->Jatuh_Tempo_Status->LinkCustomAttributes = "";
-			$this->Jatuh_Tempo_Status->HrefValue = "";
-
-			// Bunga_Status
-			$this->Bunga_Status->LinkCustomAttributes = "";
-			$this->Bunga_Status->HrefValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
 
 			// Kontrak_No
@@ -2836,12 +2534,6 @@ class ct23_deposito_list extends ct23_deposito {
 			$this->Kontrak_Lama->EditCustomAttributes = "";
 			$this->Kontrak_Lama->EditValue = ew_HtmlEncode($this->Kontrak_Lama->AdvancedSearch->SearchValue);
 			$this->Kontrak_Lama->PlaceHolder = ew_RemoveHtml($this->Kontrak_Lama->FldCaption());
-
-			// Jatuh_Tempo_Tgl
-			$this->Jatuh_Tempo_Tgl->EditAttrs["class"] = "form-control";
-			$this->Jatuh_Tempo_Tgl->EditCustomAttributes = "style='width: 115px;'";
-			$this->Jatuh_Tempo_Tgl->EditValue = ew_HtmlEncode(ew_FormatDateTime(ew_UnFormatDateTime($this->Jatuh_Tempo_Tgl->AdvancedSearch->SearchValue, 7), 7));
-			$this->Jatuh_Tempo_Tgl->PlaceHolder = ew_RemoveHtml($this->Jatuh_Tempo_Tgl->FldCaption());
 
 			// Deposito
 			$this->Deposito->EditAttrs["class"] = "form-control";
@@ -2870,39 +2562,6 @@ class ct23_deposito_list extends ct23_deposito {
 			$this->nasabah_id->EditCustomAttributes = "";
 			$this->nasabah_id->EditValue2 = ew_HtmlEncode($this->nasabah_id->AdvancedSearch->SearchValue2);
 			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
-
-			// bank_id
-			$this->bank_id->EditCustomAttributes = "";
-
-			// No_Ref
-			$this->No_Ref->EditAttrs["class"] = "form-control";
-			$this->No_Ref->EditCustomAttributes = "";
-			$this->No_Ref->EditValue = ew_HtmlEncode($this->No_Ref->AdvancedSearch->SearchValue);
-			$this->No_Ref->PlaceHolder = ew_RemoveHtml($this->No_Ref->FldCaption());
-
-			// Biaya_Administrasi
-			$this->Biaya_Administrasi->EditAttrs["class"] = "form-control";
-			$this->Biaya_Administrasi->EditCustomAttributes = "";
-			$this->Biaya_Administrasi->EditValue = ew_HtmlEncode($this->Biaya_Administrasi->AdvancedSearch->SearchValue);
-			$this->Biaya_Administrasi->PlaceHolder = ew_RemoveHtml($this->Biaya_Administrasi->FldCaption());
-
-			// Biaya_Materai
-			$this->Biaya_Materai->EditAttrs["class"] = "form-control";
-			$this->Biaya_Materai->EditCustomAttributes = "";
-			$this->Biaya_Materai->EditValue = ew_HtmlEncode($this->Biaya_Materai->AdvancedSearch->SearchValue);
-			$this->Biaya_Materai->PlaceHolder = ew_RemoveHtml($this->Biaya_Materai->FldCaption());
-
-			// Kontrak_Status
-			$this->Kontrak_Status->EditCustomAttributes = "";
-			$this->Kontrak_Status->EditValue = $this->Kontrak_Status->Options(FALSE);
-
-			// Jatuh_Tempo_Status
-			$this->Jatuh_Tempo_Status->EditCustomAttributes = "";
-			$this->Jatuh_Tempo_Status->EditValue = $this->Jatuh_Tempo_Status->Options(FALSE);
-
-			// Bunga_Status
-			$this->Bunga_Status->EditCustomAttributes = "";
-			$this->Bunga_Status->EditValue = $this->Bunga_Status->Options(FALSE);
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -2963,12 +2622,6 @@ class ct23_deposito_list extends ct23_deposito {
 		if (!ew_CheckInteger($this->Kontrak_Lama->FormValue)) {
 			ew_AddMessage($gsFormError, $this->Kontrak_Lama->FldErrMsg());
 		}
-		if (!$this->Jatuh_Tempo_Tgl->FldIsDetailKey && !is_null($this->Jatuh_Tempo_Tgl->FormValue) && $this->Jatuh_Tempo_Tgl->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Jatuh_Tempo_Tgl->FldCaption(), $this->Jatuh_Tempo_Tgl->ReqErrMsg));
-		}
-		if (!ew_CheckEuroDate($this->Jatuh_Tempo_Tgl->FormValue)) {
-			ew_AddMessage($gsFormError, $this->Jatuh_Tempo_Tgl->FldErrMsg());
-		}
 		if (!$this->Deposito->FldIsDetailKey && !is_null($this->Deposito->FormValue) && $this->Deposito->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Deposito->FldCaption(), $this->Deposito->ReqErrMsg));
 		}
@@ -2989,27 +2642,6 @@ class ct23_deposito_list extends ct23_deposito {
 		}
 		if (!$this->nasabah_id->FldIsDetailKey && !is_null($this->nasabah_id->FormValue) && $this->nasabah_id->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->nasabah_id->FldCaption(), $this->nasabah_id->ReqErrMsg));
-		}
-		if (!$this->Biaya_Administrasi->FldIsDetailKey && !is_null($this->Biaya_Administrasi->FormValue) && $this->Biaya_Administrasi->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Biaya_Administrasi->FldCaption(), $this->Biaya_Administrasi->ReqErrMsg));
-		}
-		if (!ew_CheckNumber($this->Biaya_Administrasi->FormValue)) {
-			ew_AddMessage($gsFormError, $this->Biaya_Administrasi->FldErrMsg());
-		}
-		if (!$this->Biaya_Materai->FldIsDetailKey && !is_null($this->Biaya_Materai->FormValue) && $this->Biaya_Materai->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Biaya_Materai->FldCaption(), $this->Biaya_Materai->ReqErrMsg));
-		}
-		if (!ew_CheckNumber($this->Biaya_Materai->FormValue)) {
-			ew_AddMessage($gsFormError, $this->Biaya_Materai->FldErrMsg());
-		}
-		if ($this->Kontrak_Status->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Kontrak_Status->FldCaption(), $this->Kontrak_Status->ReqErrMsg));
-		}
-		if ($this->Jatuh_Tempo_Status->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Jatuh_Tempo_Status->FldCaption(), $this->Jatuh_Tempo_Status->ReqErrMsg));
-		}
-		if ($this->Bunga_Status->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Bunga_Status->FldCaption(), $this->Bunga_Status->ReqErrMsg));
 		}
 
 		// Return validate result
@@ -3056,9 +2688,6 @@ class ct23_deposito_list extends ct23_deposito {
 			// Kontrak_Lama
 			$this->Kontrak_Lama->SetDbValueDef($rsnew, $this->Kontrak_Lama->CurrentValue, 0, $this->Kontrak_Lama->ReadOnly);
 
-			// Jatuh_Tempo_Tgl
-			$this->Jatuh_Tempo_Tgl->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Jatuh_Tempo_Tgl->CurrentValue, 7), ew_CurrentDate(), $this->Jatuh_Tempo_Tgl->ReadOnly);
-
 			// Deposito
 			$this->Deposito->SetDbValueDef($rsnew, $this->Deposito->CurrentValue, 0, $this->Deposito->ReadOnly);
 
@@ -3070,27 +2699,6 @@ class ct23_deposito_list extends ct23_deposito {
 
 			// nasabah_id
 			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
-
-			// bank_id
-			$this->bank_id->SetDbValueDef($rsnew, $this->bank_id->CurrentValue, NULL, $this->bank_id->ReadOnly);
-
-			// No_Ref
-			$this->No_Ref->SetDbValueDef($rsnew, $this->No_Ref->CurrentValue, NULL, $this->No_Ref->ReadOnly);
-
-			// Biaya_Administrasi
-			$this->Biaya_Administrasi->SetDbValueDef($rsnew, $this->Biaya_Administrasi->CurrentValue, 0, $this->Biaya_Administrasi->ReadOnly);
-
-			// Biaya_Materai
-			$this->Biaya_Materai->SetDbValueDef($rsnew, $this->Biaya_Materai->CurrentValue, 0, $this->Biaya_Materai->ReadOnly);
-
-			// Kontrak_Status
-			$this->Kontrak_Status->SetDbValueDef($rsnew, $this->Kontrak_Status->CurrentValue, "", $this->Kontrak_Status->ReadOnly);
-
-			// Jatuh_Tempo_Status
-			$this->Jatuh_Tempo_Status->SetDbValueDef($rsnew, $this->Jatuh_Tempo_Status->CurrentValue, "", $this->Jatuh_Tempo_Status->ReadOnly);
-
-			// Bunga_Status
-			$this->Bunga_Status->SetDbValueDef($rsnew, $this->Bunga_Status->CurrentValue, "", $this->Bunga_Status->ReadOnly);
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -3144,9 +2752,6 @@ class ct23_deposito_list extends ct23_deposito {
 		// Kontrak_Lama
 		$this->Kontrak_Lama->SetDbValueDef($rsnew, $this->Kontrak_Lama->CurrentValue, 0, FALSE);
 
-		// Jatuh_Tempo_Tgl
-		$this->Jatuh_Tempo_Tgl->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Jatuh_Tempo_Tgl->CurrentValue, 7), ew_CurrentDate(), FALSE);
-
 		// Deposito
 		$this->Deposito->SetDbValueDef($rsnew, $this->Deposito->CurrentValue, 0, FALSE);
 
@@ -3158,27 +2763,6 @@ class ct23_deposito_list extends ct23_deposito {
 
 		// nasabah_id
 		$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, FALSE);
-
-		// bank_id
-		$this->bank_id->SetDbValueDef($rsnew, $this->bank_id->CurrentValue, NULL, FALSE);
-
-		// No_Ref
-		$this->No_Ref->SetDbValueDef($rsnew, $this->No_Ref->CurrentValue, NULL, FALSE);
-
-		// Biaya_Administrasi
-		$this->Biaya_Administrasi->SetDbValueDef($rsnew, $this->Biaya_Administrasi->CurrentValue, 0, strval($this->Biaya_Administrasi->CurrentValue) == "");
-
-		// Biaya_Materai
-		$this->Biaya_Materai->SetDbValueDef($rsnew, $this->Biaya_Materai->CurrentValue, 0, strval($this->Biaya_Materai->CurrentValue) == "");
-
-		// Kontrak_Status
-		$this->Kontrak_Status->SetDbValueDef($rsnew, $this->Kontrak_Status->CurrentValue, "", strval($this->Kontrak_Status->CurrentValue) == "");
-
-		// Jatuh_Tempo_Status
-		$this->Jatuh_Tempo_Status->SetDbValueDef($rsnew, $this->Jatuh_Tempo_Status->CurrentValue, "", strval($this->Jatuh_Tempo_Status->CurrentValue) == "");
-
-		// Bunga_Status
-		$this->Bunga_Status->SetDbValueDef($rsnew, $this->Bunga_Status->CurrentValue, "", strval($this->Bunga_Status->CurrentValue) == "");
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -3401,18 +2985,6 @@ class ct23_deposito_list extends ct23_deposito {
 			if ($sSqlWrk <> "")
 				$fld->LookupFilters["s"] .= $sSqlWrk;
 			break;
-		case "x_bank_id":
-			$sSqlWrk = "";
-			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t21_bank`";
-			$sWhereWrk = "{filter}";
-			$this->bank_id->LookupFilters = array();
-			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "", "f1" => '`nasabah_id` IN ({filter_value})', "t1" => "3", "fn1" => "");
-			$sSqlWrk = "";
-			$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			if ($sSqlWrk <> "")
-				$fld->LookupFilters["s"] .= $sSqlWrk;
-			break;
 			}
 		} elseif ($pageId == "extbs") {
 			switch ($fld->FldVar) {
@@ -3521,7 +3093,7 @@ class ct23_deposito_list extends ct23_deposito {
 		//$opt->OnLeft = TRUE; // Link on left
 		//$opt->MoveTo(0); // Move to first column
 
-		$opt = &$this->ListOptions->Add("rincian_bunga");
+		$opt = &$this->ListOptions->Add("rincian_pembayaran");
 		$opt->Header = "";
 		$opt->OnLeft = TRUE; // Link on left
 		$opt->MoveTo(0); // Move to first column
@@ -3586,23 +3158,23 @@ class ct23_deposito_list extends ct23_deposito {
 		//$this->ListOptions->Items["titipan"]->Body          = "<a class=\"ewAddEdit ewAdd\" title=\"Setor Titipan\"    data-caption=\"Setor Titipan\"    href=\"t06_pinjamantitipanlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\"                                           >Setor Titipan</a>";    // definisikan link, style, dan caption tombol //"xxx";
 		//$this->ListOptions->Items["potongan"]->Body         = "<a class=\"ewAddEdit ewAdd\" title=\"Potongan\"         data-caption=\"Potongan\"         href=\"t08_pinjamanpotonganlist.php?showmaster=t03_pinjaman&fk_id=".$pinjaman_id."\"                                          >Potongan</a>";         // definisikan link, style, dan caption tombol //"xxx";
 
-		$this->ListOptions->Items["rincian_bunga"]->Body = "
+		$this->ListOptions->Items["rincian_pembayaran"]->Body = "
 			<a
 				class=\"ewAddEdit ewAdd\"
-				title=\"Rincian Bunga\"
-				data-caption=\"Rincian Bunga\"
+				title=\"Rincian Pembayaran\"
+				data-caption=\"Rincian Pembayaran\"
 				href=\"t24_deposito_detaillist.php?showmaster=t23_deposito&fk_id=".$_SESSION["deposito_id"]."\"
 				>
-				Rincian Bunga
+				Rincian Pembayaran
 			</a>"; // definisikan link, style, dan caption tombol //"xxx";
 		$this->ListOptions->Items["pembayaran"]->Body = "
 			<a
 				class=\"ewAddEdit ewAdd\"
-				title=\"Bayar Bunga\"
-				data-caption=\"Bayar Bunga\"
+				title=\"Pembayaran\"
+				data-caption=\"Pembayaran\"
 				href=\"t24_deposito_detailedit.php?id=".$t24_pembayaranbaru."&showmaster=t23_deposito&fk_id=".$_SESSION["deposito_id"]."\"
 				>
-				Bayar Bunga
+				Pembayaran
 			</a>";   // definisikan link, style, dan caption tombol //"xxx";
 		$this->ListOptions->Items["edit_pembayaran"]->Body = "
 			<a
@@ -3706,12 +3278,6 @@ ft23_depositolist.Validate = function() {
 			elm = this.GetElements("x" + infix + "_Kontrak_Lama");
 			if (elm && !ew_CheckInteger(elm.value))
 				return this.OnError(elm, "<?php echo ew_JsEncode2($t23_deposito->Kontrak_Lama->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Jatuh_Tempo_Tgl");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t23_deposito->Jatuh_Tempo_Tgl->FldCaption(), $t23_deposito->Jatuh_Tempo_Tgl->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Jatuh_Tempo_Tgl");
-			if (elm && !ew_CheckEuroDate(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t23_deposito->Jatuh_Tempo_Tgl->FldErrMsg()) ?>");
 			elm = this.GetElements("x" + infix + "_Deposito");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t23_deposito->Deposito->FldCaption(), $t23_deposito->Deposito->ReqErrMsg)) ?>");
@@ -3733,27 +3299,6 @@ ft23_depositolist.Validate = function() {
 			elm = this.GetElements("x" + infix + "_nasabah_id");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t23_deposito->nasabah_id->FldCaption(), $t23_deposito->nasabah_id->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Biaya_Administrasi");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t23_deposito->Biaya_Administrasi->FldCaption(), $t23_deposito->Biaya_Administrasi->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Biaya_Administrasi");
-			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t23_deposito->Biaya_Administrasi->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Biaya_Materai");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t23_deposito->Biaya_Materai->FldCaption(), $t23_deposito->Biaya_Materai->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Biaya_Materai");
-			if (elm && !ew_CheckNumber(elm.value))
-				return this.OnError(elm, "<?php echo ew_JsEncode2($t23_deposito->Biaya_Materai->FldErrMsg()) ?>");
-			elm = this.GetElements("x" + infix + "_Kontrak_Status");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t23_deposito->Kontrak_Status->FldCaption(), $t23_deposito->Kontrak_Status->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Jatuh_Tempo_Status");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t23_deposito->Jatuh_Tempo_Status->FldCaption(), $t23_deposito->Jatuh_Tempo_Status->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Bunga_Status");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t23_deposito->Bunga_Status->FldCaption(), $t23_deposito->Bunga_Status->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -3779,13 +3324,6 @@ ft23_depositolist.ValidateRequired = false;
 
 // Dynamic selection lists
 ft23_depositolist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t22_peserta"};
-ft23_depositolist.Lists["x_bank_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nomor","x_Pemilik","x_Bank",""],"ParentFields":["x_nasabah_id"],"ChildFields":[],"FilterFields":["x_nasabah_id"],"Options":[],"Template":"","LinkTable":"t21_bank"};
-ft23_depositolist.Lists["x_Kontrak_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft23_depositolist.Lists["x_Kontrak_Status"].Options = <?php echo json_encode($t23_deposito->Kontrak_Status->Options()) ?>;
-ft23_depositolist.Lists["x_Jatuh_Tempo_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft23_depositolist.Lists["x_Jatuh_Tempo_Status"].Options = <?php echo json_encode($t23_deposito->Jatuh_Tempo_Status->Options()) ?>;
-ft23_depositolist.Lists["x_Bunga_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft23_depositolist.Lists["x_Bunga_Status"].Options = <?php echo json_encode($t23_deposito->Bunga_Status->Options()) ?>;
 
 // Form object for search
 var CurrentSearchForm = ft23_depositolistsrch = new ew_Form("ft23_depositolistsrch");
@@ -3989,15 +3527,6 @@ $t23_deposito_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t23_deposito->Jatuh_Tempo_Tgl->Visible) { // Jatuh_Tempo_Tgl ?>
-	<?php if ($t23_deposito->SortUrl($t23_deposito->Jatuh_Tempo_Tgl) == "") { ?>
-		<th data-name="Jatuh_Tempo_Tgl"><div id="elh_t23_deposito_Jatuh_Tempo_Tgl" class="t23_deposito_Jatuh_Tempo_Tgl"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->Jatuh_Tempo_Tgl->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Jatuh_Tempo_Tgl"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->Jatuh_Tempo_Tgl) ?>',2);"><div id="elh_t23_deposito_Jatuh_Tempo_Tgl" class="t23_deposito_Jatuh_Tempo_Tgl">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->Jatuh_Tempo_Tgl->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->Jatuh_Tempo_Tgl->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->Jatuh_Tempo_Tgl->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t23_deposito->Deposito->Visible) { // Deposito ?>
 	<?php if ($t23_deposito->SortUrl($t23_deposito->Deposito) == "") { ?>
 		<th data-name="Deposito"><div id="elh_t23_deposito_Deposito" class="t23_deposito_Deposito"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->Deposito->FldCaption() ?></div></div></th>
@@ -4031,69 +3560,6 @@ $t23_deposito_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="nasabah_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->nasabah_id) ?>',2);"><div id="elh_t23_deposito_nasabah_id" class="t23_deposito_nasabah_id">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->nasabah_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->nasabah_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->nasabah_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t23_deposito->bank_id->Visible) { // bank_id ?>
-	<?php if ($t23_deposito->SortUrl($t23_deposito->bank_id) == "") { ?>
-		<th data-name="bank_id"><div id="elh_t23_deposito_bank_id" class="t23_deposito_bank_id"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->bank_id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="bank_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->bank_id) ?>',2);"><div id="elh_t23_deposito_bank_id" class="t23_deposito_bank_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->bank_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->bank_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->bank_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t23_deposito->No_Ref->Visible) { // No_Ref ?>
-	<?php if ($t23_deposito->SortUrl($t23_deposito->No_Ref) == "") { ?>
-		<th data-name="No_Ref"><div id="elh_t23_deposito_No_Ref" class="t23_deposito_No_Ref"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->No_Ref->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="No_Ref"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->No_Ref) ?>',2);"><div id="elh_t23_deposito_No_Ref" class="t23_deposito_No_Ref">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->No_Ref->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->No_Ref->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->No_Ref->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t23_deposito->Biaya_Administrasi->Visible) { // Biaya_Administrasi ?>
-	<?php if ($t23_deposito->SortUrl($t23_deposito->Biaya_Administrasi) == "") { ?>
-		<th data-name="Biaya_Administrasi"><div id="elh_t23_deposito_Biaya_Administrasi" class="t23_deposito_Biaya_Administrasi"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->Biaya_Administrasi->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Biaya_Administrasi"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->Biaya_Administrasi) ?>',2);"><div id="elh_t23_deposito_Biaya_Administrasi" class="t23_deposito_Biaya_Administrasi">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->Biaya_Administrasi->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->Biaya_Administrasi->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->Biaya_Administrasi->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t23_deposito->Biaya_Materai->Visible) { // Biaya_Materai ?>
-	<?php if ($t23_deposito->SortUrl($t23_deposito->Biaya_Materai) == "") { ?>
-		<th data-name="Biaya_Materai"><div id="elh_t23_deposito_Biaya_Materai" class="t23_deposito_Biaya_Materai"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->Biaya_Materai->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Biaya_Materai"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->Biaya_Materai) ?>',2);"><div id="elh_t23_deposito_Biaya_Materai" class="t23_deposito_Biaya_Materai">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->Biaya_Materai->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->Biaya_Materai->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->Biaya_Materai->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t23_deposito->Kontrak_Status->Visible) { // Kontrak_Status ?>
-	<?php if ($t23_deposito->SortUrl($t23_deposito->Kontrak_Status) == "") { ?>
-		<th data-name="Kontrak_Status"><div id="elh_t23_deposito_Kontrak_Status" class="t23_deposito_Kontrak_Status"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->Kontrak_Status->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Kontrak_Status"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->Kontrak_Status) ?>',2);"><div id="elh_t23_deposito_Kontrak_Status" class="t23_deposito_Kontrak_Status">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->Kontrak_Status->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->Kontrak_Status->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->Kontrak_Status->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t23_deposito->Jatuh_Tempo_Status->Visible) { // Jatuh_Tempo_Status ?>
-	<?php if ($t23_deposito->SortUrl($t23_deposito->Jatuh_Tempo_Status) == "") { ?>
-		<th data-name="Jatuh_Tempo_Status"><div id="elh_t23_deposito_Jatuh_Tempo_Status" class="t23_deposito_Jatuh_Tempo_Status"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->Jatuh_Tempo_Status->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Jatuh_Tempo_Status"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->Jatuh_Tempo_Status) ?>',2);"><div id="elh_t23_deposito_Jatuh_Tempo_Status" class="t23_deposito_Jatuh_Tempo_Status">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->Jatuh_Tempo_Status->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->Jatuh_Tempo_Status->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->Jatuh_Tempo_Status->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t23_deposito->Bunga_Status->Visible) { // Bunga_Status ?>
-	<?php if ($t23_deposito->SortUrl($t23_deposito->Bunga_Status) == "") { ?>
-		<th data-name="Bunga_Status"><div id="elh_t23_deposito_Bunga_Status" class="t23_deposito_Bunga_Status"><div class="ewTableHeaderCaption"><?php echo $t23_deposito->Bunga_Status->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Bunga_Status"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t23_deposito->SortUrl($t23_deposito->Bunga_Status) ?>',2);"><div id="elh_t23_deposito_Bunga_Status" class="t23_deposito_Bunga_Status">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t23_deposito->Bunga_Status->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t23_deposito->Bunga_Status->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t23_deposito->Bunga_Status->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -4239,26 +3705,6 @@ ew_CreateCalendar("ft23_depositolist", "x<?php echo $t23_deposito_list->RowIndex
 <?php } ?>
 </td>
 	<?php } ?>
-	<?php if ($t23_deposito->Jatuh_Tempo_Tgl->Visible) { // Jatuh_Tempo_Tgl ?>
-		<td data-name="Jatuh_Tempo_Tgl"<?php echo $t23_deposito->Jatuh_Tempo_Tgl->CellAttributes() ?>>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Jatuh_Tempo_Tgl" class="form-group t23_deposito_Jatuh_Tempo_Tgl">
-<input type="text" data-table="t23_deposito" data-field="x_Jatuh_Tempo_Tgl" data-format="7" name="x<?php echo $t23_deposito_list->RowIndex ?>_Jatuh_Tempo_Tgl" id="x<?php echo $t23_deposito_list->RowIndex ?>_Jatuh_Tempo_Tgl" size="10" placeholder="<?php echo ew_HtmlEncode($t23_deposito->Jatuh_Tempo_Tgl->getPlaceHolder()) ?>" value="<?php echo $t23_deposito->Jatuh_Tempo_Tgl->EditValue ?>"<?php echo $t23_deposito->Jatuh_Tempo_Tgl->EditAttributes() ?>>
-<?php if (!$t23_deposito->Jatuh_Tempo_Tgl->ReadOnly && !$t23_deposito->Jatuh_Tempo_Tgl->Disabled && !isset($t23_deposito->Jatuh_Tempo_Tgl->EditAttrs["readonly"]) && !isset($t23_deposito->Jatuh_Tempo_Tgl->EditAttrs["disabled"])) { ?>
-<script type="text/javascript">
-ew_CreateCalendar("ft23_depositolist", "x<?php echo $t23_deposito_list->RowIndex ?>_Jatuh_Tempo_Tgl", 7);
-</script>
-<?php } ?>
-</span>
-<?php } ?>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Jatuh_Tempo_Tgl" class="t23_deposito_Jatuh_Tempo_Tgl">
-<span<?php echo $t23_deposito->Jatuh_Tempo_Tgl->ViewAttributes() ?>>
-<?php echo $t23_deposito->Jatuh_Tempo_Tgl->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
 	<?php if ($t23_deposito->Deposito->Visible) { // Deposito ?>
 		<td data-name="Deposito"<?php echo $t23_deposito->Deposito->CellAttributes() ?>>
 <?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
@@ -4308,7 +3754,6 @@ ew_CreateCalendar("ft23_depositolist", "x<?php echo $t23_deposito_list->RowIndex
 		<td data-name="nasabah_id"<?php echo $t23_deposito->nasabah_id->CellAttributes() ?>>
 <?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_nasabah_id" class="form-group t23_deposito_nasabah_id">
-<?php $t23_deposito->nasabah_id->EditAttrs["onchange"] = "ew_UpdateOpt.call(this); " . @$t23_deposito->nasabah_id->EditAttrs["onchange"]; ?>
 <span class="ewLookupList">
 	<span onclick="jQuery(this).parent().next().click();" tabindex="-1" class="form-control ewLookupText" id="lu_x<?php echo $t23_deposito_list->RowIndex ?>_nasabah_id"><?php echo (strval($t23_deposito->nasabah_id->ViewValue) == "" ? $Language->Phrase("PleaseSelect") : $t23_deposito->nasabah_id->ViewValue); ?></span>
 </span>
@@ -4321,133 +3766,6 @@ ew_CreateCalendar("ft23_depositolist", "x<?php echo $t23_deposito_list->RowIndex
 <span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_nasabah_id" class="t23_deposito_nasabah_id">
 <span<?php echo $t23_deposito->nasabah_id->ViewAttributes() ?>>
 <?php echo $t23_deposito->nasabah_id->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t23_deposito->bank_id->Visible) { // bank_id ?>
-		<td data-name="bank_id"<?php echo $t23_deposito->bank_id->CellAttributes() ?>>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_bank_id" class="form-group t23_deposito_bank_id">
-<div class="ewDropdownList has-feedback">
-	<span onclick="" class="form-control dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-		<?php echo $t23_deposito->bank_id->ViewValue ?>
-	</span>
-	<span class="glyphicon glyphicon-remove form-control-feedback ewDropdownListClear"></span>
-	<span class="form-control-feedback"><span class="caret"></span></span>
-	<div id="dsl_x<?php echo $t23_deposito_list->RowIndex ?>_bank_id" data-repeatcolumn="5" class="dropdown-menu">
-		<div class="ewItems" style="position: relative; overflow-x: hidden;">
-<?php echo $t23_deposito->bank_id->CheckBoxListHtml(TRUE, "x{$t23_deposito_list->RowIndex}_bank_id[]") ?>
-		</div>
-	</div>
-	<div id="tp_x<?php echo $t23_deposito_list->RowIndex ?>_bank_id" class="ewTemplate"><input type="checkbox" data-table="t23_deposito" data-field="x_bank_id" data-value-separator="<?php echo $t23_deposito->bank_id->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t23_deposito_list->RowIndex ?>_bank_id[]" id="x<?php echo $t23_deposito_list->RowIndex ?>_bank_id[]" value="{value}"<?php echo $t23_deposito->bank_id->EditAttributes() ?>></div>
-</div>
-<input type="hidden" name="s_x<?php echo $t23_deposito_list->RowIndex ?>_bank_id" id="s_x<?php echo $t23_deposito_list->RowIndex ?>_bank_id" value="<?php echo $t23_deposito->bank_id->LookupFilterQuery() ?>">
-</span>
-<?php } ?>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_bank_id" class="t23_deposito_bank_id">
-<span<?php echo $t23_deposito->bank_id->ViewAttributes() ?>>
-<?php echo $t23_deposito->bank_id->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t23_deposito->No_Ref->Visible) { // No_Ref ?>
-		<td data-name="No_Ref"<?php echo $t23_deposito->No_Ref->CellAttributes() ?>>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_No_Ref" class="form-group t23_deposito_No_Ref">
-<input type="text" data-table="t23_deposito" data-field="x_No_Ref" name="x<?php echo $t23_deposito_list->RowIndex ?>_No_Ref" id="x<?php echo $t23_deposito_list->RowIndex ?>_No_Ref" size="5" maxlength="25" placeholder="<?php echo ew_HtmlEncode($t23_deposito->No_Ref->getPlaceHolder()) ?>" value="<?php echo $t23_deposito->No_Ref->EditValue ?>"<?php echo $t23_deposito->No_Ref->EditAttributes() ?>>
-</span>
-<?php } ?>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_No_Ref" class="t23_deposito_No_Ref">
-<span<?php echo $t23_deposito->No_Ref->ViewAttributes() ?>>
-<?php echo $t23_deposito->No_Ref->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t23_deposito->Biaya_Administrasi->Visible) { // Biaya_Administrasi ?>
-		<td data-name="Biaya_Administrasi"<?php echo $t23_deposito->Biaya_Administrasi->CellAttributes() ?>>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Biaya_Administrasi" class="form-group t23_deposito_Biaya_Administrasi">
-<input type="text" data-table="t23_deposito" data-field="x_Biaya_Administrasi" name="x<?php echo $t23_deposito_list->RowIndex ?>_Biaya_Administrasi" id="x<?php echo $t23_deposito_list->RowIndex ?>_Biaya_Administrasi" size="10" placeholder="<?php echo ew_HtmlEncode($t23_deposito->Biaya_Administrasi->getPlaceHolder()) ?>" value="<?php echo $t23_deposito->Biaya_Administrasi->EditValue ?>"<?php echo $t23_deposito->Biaya_Administrasi->EditAttributes() ?>>
-</span>
-<?php } ?>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Biaya_Administrasi" class="t23_deposito_Biaya_Administrasi">
-<span<?php echo $t23_deposito->Biaya_Administrasi->ViewAttributes() ?>>
-<?php echo $t23_deposito->Biaya_Administrasi->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t23_deposito->Biaya_Materai->Visible) { // Biaya_Materai ?>
-		<td data-name="Biaya_Materai"<?php echo $t23_deposito->Biaya_Materai->CellAttributes() ?>>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Biaya_Materai" class="form-group t23_deposito_Biaya_Materai">
-<input type="text" data-table="t23_deposito" data-field="x_Biaya_Materai" name="x<?php echo $t23_deposito_list->RowIndex ?>_Biaya_Materai" id="x<?php echo $t23_deposito_list->RowIndex ?>_Biaya_Materai" size="10" placeholder="<?php echo ew_HtmlEncode($t23_deposito->Biaya_Materai->getPlaceHolder()) ?>" value="<?php echo $t23_deposito->Biaya_Materai->EditValue ?>"<?php echo $t23_deposito->Biaya_Materai->EditAttributes() ?>>
-</span>
-<?php } ?>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Biaya_Materai" class="t23_deposito_Biaya_Materai">
-<span<?php echo $t23_deposito->Biaya_Materai->ViewAttributes() ?>>
-<?php echo $t23_deposito->Biaya_Materai->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t23_deposito->Kontrak_Status->Visible) { // Kontrak_Status ?>
-		<td data-name="Kontrak_Status"<?php echo $t23_deposito->Kontrak_Status->CellAttributes() ?>>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Kontrak_Status" class="form-group t23_deposito_Kontrak_Status">
-<div id="tp_x<?php echo $t23_deposito_list->RowIndex ?>_Kontrak_Status" class="ewTemplate"><input type="radio" data-table="t23_deposito" data-field="x_Kontrak_Status" data-value-separator="<?php echo $t23_deposito->Kontrak_Status->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t23_deposito_list->RowIndex ?>_Kontrak_Status" id="x<?php echo $t23_deposito_list->RowIndex ?>_Kontrak_Status" value="{value}"<?php echo $t23_deposito->Kontrak_Status->EditAttributes() ?>></div>
-<div id="dsl_x<?php echo $t23_deposito_list->RowIndex ?>_Kontrak_Status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t23_deposito->Kontrak_Status->RadioButtonListHtml(FALSE, "x{$t23_deposito_list->RowIndex}_Kontrak_Status") ?>
-</div></div>
-</span>
-<?php } ?>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Kontrak_Status" class="t23_deposito_Kontrak_Status">
-<span<?php echo $t23_deposito->Kontrak_Status->ViewAttributes() ?>>
-<?php echo $t23_deposito->Kontrak_Status->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t23_deposito->Jatuh_Tempo_Status->Visible) { // Jatuh_Tempo_Status ?>
-		<td data-name="Jatuh_Tempo_Status"<?php echo $t23_deposito->Jatuh_Tempo_Status->CellAttributes() ?>>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Jatuh_Tempo_Status" class="form-group t23_deposito_Jatuh_Tempo_Status">
-<div id="tp_x<?php echo $t23_deposito_list->RowIndex ?>_Jatuh_Tempo_Status" class="ewTemplate"><input type="radio" data-table="t23_deposito" data-field="x_Jatuh_Tempo_Status" data-value-separator="<?php echo $t23_deposito->Jatuh_Tempo_Status->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t23_deposito_list->RowIndex ?>_Jatuh_Tempo_Status" id="x<?php echo $t23_deposito_list->RowIndex ?>_Jatuh_Tempo_Status" value="{value}"<?php echo $t23_deposito->Jatuh_Tempo_Status->EditAttributes() ?>></div>
-<div id="dsl_x<?php echo $t23_deposito_list->RowIndex ?>_Jatuh_Tempo_Status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t23_deposito->Jatuh_Tempo_Status->RadioButtonListHtml(FALSE, "x{$t23_deposito_list->RowIndex}_Jatuh_Tempo_Status") ?>
-</div></div>
-</span>
-<?php } ?>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Jatuh_Tempo_Status" class="t23_deposito_Jatuh_Tempo_Status">
-<span<?php echo $t23_deposito->Jatuh_Tempo_Status->ViewAttributes() ?>>
-<?php echo $t23_deposito->Jatuh_Tempo_Status->ListViewValue() ?></span>
-</span>
-<?php } ?>
-</td>
-	<?php } ?>
-	<?php if ($t23_deposito->Bunga_Status->Visible) { // Bunga_Status ?>
-		<td data-name="Bunga_Status"<?php echo $t23_deposito->Bunga_Status->CellAttributes() ?>>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Bunga_Status" class="form-group t23_deposito_Bunga_Status">
-<div id="tp_x<?php echo $t23_deposito_list->RowIndex ?>_Bunga_Status" class="ewTemplate"><input type="radio" data-table="t23_deposito" data-field="x_Bunga_Status" data-value-separator="<?php echo $t23_deposito->Bunga_Status->DisplayValueSeparatorAttribute() ?>" name="x<?php echo $t23_deposito_list->RowIndex ?>_Bunga_Status" id="x<?php echo $t23_deposito_list->RowIndex ?>_Bunga_Status" value="{value}"<?php echo $t23_deposito->Bunga_Status->EditAttributes() ?>></div>
-<div id="dsl_x<?php echo $t23_deposito_list->RowIndex ?>_Bunga_Status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t23_deposito->Bunga_Status->RadioButtonListHtml(FALSE, "x{$t23_deposito_list->RowIndex}_Bunga_Status") ?>
-</div></div>
-</span>
-<?php } ?>
-<?php if ($t23_deposito->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t23_deposito_list->RowCnt ?>_t23_deposito_Bunga_Status" class="t23_deposito_Bunga_Status">
-<span<?php echo $t23_deposito->Bunga_Status->ViewAttributes() ?>>
-<?php echo $t23_deposito->Bunga_Status->ListViewValue() ?></span>
 </span>
 <?php } ?>
 </td>

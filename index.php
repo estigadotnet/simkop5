@@ -306,6 +306,8 @@ class cdefault {
 			$this->Page_Terminate("cf42_pinjaman.php");
 		if ($Security->AllowList(CurrentProjectID() . 'cf43_deposito.php'))
 			$this->Page_Terminate("cf43_deposito.php");
+		if ($Security->AllowList(CurrentProjectID() . 'cf44_deposito.php'))
+			$this->Page_Terminate("cf44_deposito.php");
 		if ($Security->AllowList(CurrentProjectID() . 't01_nasabah'))
 			$this->Page_Terminate("t01_nasabahlist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't02_jaminan'))
@@ -340,6 +342,8 @@ class cdefault {
 			$this->Page_Terminate("t23_depositolist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't24_deposito_detail'))
 			$this->Page_Terminate("t24_deposito_detaillist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't71_depositolap'))
+			$this->Page_Terminate("t71_depositolaplist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't72_depositolap'))
 			$this->Page_Terminate("t72_depositolaplist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't73_pinjamanlap'))
