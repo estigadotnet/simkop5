@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2019/7/19" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2019/7/31" version="13.0.0" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!-- 
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -733,11 +733,20 @@
     <menu id="10768">
       <phrase id="menutext" value="Deposito" />
     </menu>
-    <menu id="10852">
+    <menu id="10856">
       <phrase id="menutext" value="Nasabah" />
+    </menu>
+    <menu id="10858">
+      <phrase id="menutext" value="Input Data" />
+    </menu>
+    <menu id="10859">
+      <phrase id="menutext" value="Pembayaran" />
     </menu>
     <menu id="10655">
       <phrase id="menutext" value="Input Data" />
+    </menu>
+    <menu id="10857">
+      <phrase id="menutext" value="Detail Pembayaran Bunga" />
     </menu>
     <menu id="10853">
       <phrase id="menutext" value="Laporan" />
@@ -1434,10 +1443,10 @@
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="no_urut">
-        <phrase id="fldcaption" value="No. Urut" />
+        <phrase id="fldcaption" value="No. Kontrak" />
       </field>
       <field id="tanggal_valuta">
-        <phrase id="fldcaption" value="Tgl. Valuta" />
+        <phrase id="fldcaption" value="Tgl. Kontrak" />
       </field>
       <field id="tanggal_jatuh_tempo">
         <phrase id="fldcaption" value="Tgl. Jatuh Tempo" />
@@ -1507,6 +1516,114 @@
       </field>
       <field id="cabang">
         <phrase id="fldcaption" value="Cabang" />
+      </field>
+    </table>
+    <table id="t22_peserta">
+      <phrase id="tblcaption" value="Nasabah" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="nama">
+        <phrase id="fldcaption" value="Nama" />
+      </field>
+      <field id="alamat">
+        <phrase id="fldcaption" value="Alamat" />
+      </field>
+      <field id="no_telp_hp">
+        <phrase id="fldcaption" value="No. Telp./HP" />
+      </field>
+      <field id="pekerjaan">
+        <phrase id="fldcaption" value="Pekerjaan" />
+      </field>
+      <field id="keterangan">
+        <phrase id="fldcaption" value="Keterangan" />
+      </field>
+    </table>
+    <table id="t23_deposito">
+      <phrase id="tblcaption" value="Deposito" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="kontrak_no">
+        <phrase id="fldcaption" value="No. Kontrak" />
+      </field>
+      <field id="kontrak_tgl">
+        <phrase id="fldcaption" value="Tgl. Kontrak" />
+      </field>
+      <field id="kontrak_lama">
+        <phrase id="fldcaption" value="Lama Kontrak (bulan)" />
+      </field>
+      <field id="jatuh_tempo_tgl">
+        <phrase id="fldcaption" value="Tgl. Jatuh Tempo" />
+      </field>
+      <field id="deposito">
+        <phrase id="fldcaption" value="Jumlah Deposito" />
+      </field>
+      <field id="bunga_suku">
+        <phrase id="fldcaption" value="Suku Bunga (% /tahun)" />
+      </field>
+      <field id="bunga">
+        <phrase id="fldcaption" value="Jumlah Bunga" />
+      </field>
+      <field id="nasabah_id">
+        <phrase id="fldcaption" value="Nasabah" />
+      </field>
+      <field id="bank_id">
+        <phrase id="fldcaption" value="No. Rek. Bank" />
+      </field>
+      <field id="no_ref">
+        <phrase id="fldcaption" value="No. Ref." />
+      </field>
+      <field id="biaya_administrasi">
+        <phrase id="fldcaption" value="Bi. Administrasi" />
+      </field>
+      <field id="biaya_materai">
+        <phrase id="fldcaption" value="Bi. Materai" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
+      </field>
+      <field id="kontrak_status">
+        <phrase id="fldcaption" value="Status Kontrak" />
+        <phrase id="fldtagvalue1" value="Ya" />
+        <phrase id="fldtagcaption1" value="Ya" />
+        <phrase id="fldtagvalue2" value="Selesai" />
+        <phrase id="fldtagcaption2" value="Selesai" />
+      </field>
+      <field id="jatuh_tempo_status">
+        <phrase id="fldcaption" value="Status Jatuh Tempo" />
+        <phrase id="fldtagvalue1" value="Dikredit" />
+        <phrase id="fldtagcaption1" value="Dikredit" />
+        <phrase id="fldtagvalue2" value="Diperpanjang" />
+        <phrase id="fldtagcaption2" value="Diperpanjang" />
+      </field>
+      <field id="bunga_status">
+        <phrase id="fldcaption" value="Status Bunga" />
+        <phrase id="fldtagvalue1" value="Tunai" />
+        <phrase id="fldtagcaption1" value="Tunai" />
+        <phrase id="fldtagvalue2" value="Transfer" />
+        <phrase id="fldtagcaption2" value="Transfer" />
+      </field>
+    </table>
+    <table id="t24_deposito_detail">
+      <phrase id="tblcaption" value="Pembayaran" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="deposito_id">
+        <phrase id="fldcaption" value="deposito id" />
+      </field>
+      <field id="pembayaran_ke">
+        <phrase id="fldcaption" value="Pembayaran Ke" />
+      </field>
+      <field id="bayar_tgl">
+        <phrase id="fldcaption" value="Tgl. Pembayaran" />
+      </field>
+      <field id="bayar_jumlah">
+        <phrase id="fldcaption" value="Jumlah Pembayaran" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="Periode" />
       </field>
     </table>
     <table id="t72_depositolap">
@@ -2505,20 +2622,8 @@
       <field id="pekerjaan">
         <phrase id="fldcaption" value="pekerjaan" />
       </field>
-      <field id="pekerjaan_alamat">
-        <phrase id="fldcaption" value="pekerjaan alamat" />
-      </field>
-      <field id="pekerjaan_no_telp_hp">
-        <phrase id="fldcaption" value="pekerjaan no telp hp" />
-      </field>
-      <field id="status">
-        <phrase id="fldcaption" value="status" />
-      </field>
       <field id="keterangan">
         <phrase id="fldcaption" value="keterangan" />
-      </field>
-      <field id="marketing_id">
-        <phrase id="fldcaption" value="marketing id" />
       </field>
       <field id="nomor">
         <phrase id="fldcaption" value="nomor" />
@@ -2535,21 +2640,30 @@
       <field id="cabang">
         <phrase id="fldcaption" value="cabang" />
       </field>
-      <field id="marketing_nama">
-        <phrase id="fldcaption" value="Marketing Nama" />
-      </field>
-      <field id="marketing_alamat">
-        <phrase id="fldcaption" value="Marketing Alamat" />
-      </field>
-      <field id="marketing_nohp">
-        <phrase id="fldcaption" value="Marketing No HP" />
-      </field>
       <field id="status_deposito">
         <phrase id="fldcaption" value="status deposito" />
         <phrase id="fldtagvalue1" value="Keluar" />
         <phrase id="fldtagcaption1" value="Keluar" />
         <phrase id="fldtagvalue2" value="Lanjut" />
         <phrase id="fldtagcaption2" value="Lanjut" />
+      </field>
+    </table>
+    <table id="v0402_deposito_detail">
+      <phrase id="tblcaption" value="Detail Pembayaran Bunga" />
+      <field id="dephead_id">
+        <phrase id="fldcaption" value="dephead id" />
+      </field>
+      <field id="jurnal_id">
+        <phrase id="fldcaption" value="jurnal id" />
+      </field>
+      <field id="tanggal">
+        <phrase id="fldcaption" value="tanggal" />
+      </field>
+      <field id="periode">
+        <phrase id="fldcaption" value="periode" />
+      </field>
+      <field id="jumlah_bayar">
+        <phrase id="fldcaption" value="jumlah bayar" />
       </field>
     </table>
     <table id="v30_mutasi">

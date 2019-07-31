@@ -5,7 +5,8 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t20_depositoinfo.php" ?>
+<?php include_once "t24_deposito_detailinfo.php" ?>
+<?php include_once "t23_depositoinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -14,9 +15,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t20_deposito_delete = NULL; // Initialize page object first
+$t24_deposito_detail_delete = NULL; // Initialize page object first
 
-class ct20_deposito_delete extends ct20_deposito {
+class ct24_deposito_detail_delete extends ct24_deposito_detail {
 
 	// Page ID
 	var $PageID = 'delete';
@@ -25,10 +26,10 @@ class ct20_deposito_delete extends ct20_deposito {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't20_deposito';
+	var $TableName = 't24_deposito_detail';
 
 	// Page object name
-	var $PageObjName = 't20_deposito_delete';
+	var $PageObjName = 't24_deposito_detail_delete';
 
 	// Page name
 	function PageName() {
@@ -226,11 +227,14 @@ class ct20_deposito_delete extends ct20_deposito {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t20_deposito)
-		if (!isset($GLOBALS["t20_deposito"]) || get_class($GLOBALS["t20_deposito"]) == "ct20_deposito") {
-			$GLOBALS["t20_deposito"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t20_deposito"];
+		// Table object (t24_deposito_detail)
+		if (!isset($GLOBALS["t24_deposito_detail"]) || get_class($GLOBALS["t24_deposito_detail"]) == "ct24_deposito_detail") {
+			$GLOBALS["t24_deposito_detail"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t24_deposito_detail"];
 		}
+
+		// Table object (t23_deposito)
+		if (!isset($GLOBALS['t23_deposito'])) $GLOBALS['t23_deposito'] = new ct23_deposito();
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -241,7 +245,7 @@ class ct20_deposito_delete extends ct20_deposito {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't20_deposito', TRUE);
+			define("EW_TABLE_NAME", 't24_deposito_detail', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -272,7 +276,7 @@ class ct20_deposito_delete extends ct20_deposito {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t20_depositolist.php"));
+				$this->Page_Terminate(ew_GetUrl("t24_deposito_detaillist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -282,13 +286,11 @@ class ct20_deposito_delete extends ct20_deposito {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->No_Urut->SetVisibility();
-		$this->Tanggal_Valuta->SetVisibility();
-		$this->Tanggal_Jatuh_Tempo->SetVisibility();
-		$this->nasabah_id->SetVisibility();
-		$this->Jumlah_Deposito->SetVisibility();
-		$this->Suku_Bunga->SetVisibility();
-		$this->Jumlah_Bunga->SetVisibility();
+		$this->id->SetVisibility();
+		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
+		$this->deposito_id->SetVisibility();
+		$this->Bayar_Tgl->SetVisibility();
+		$this->Bayar_Jumlah->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -320,13 +322,13 @@ class ct20_deposito_delete extends ct20_deposito {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t20_deposito;
+		global $EW_EXPORT, $t24_deposito_detail;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t20_deposito);
+				$doc = new $class($t24_deposito_detail);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -365,6 +367,9 @@ class ct20_deposito_delete extends ct20_deposito {
 	function Page_Main() {
 		global $Language;
 
+		// Set up master/detail parameters
+		$this->SetUpMasterParms();
+
 		// Set up Breadcrumb
 		$this->SetupBreadcrumb();
 
@@ -372,10 +377,10 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->RecKeys = $this->GetRecordKeys(); // Load record keys
 		$sFilter = $this->GetKeyFilter();
 		if ($sFilter == "")
-			$this->Page_Terminate("t20_depositolist.php"); // Prevent SQL injection, return to list
+			$this->Page_Terminate("t24_deposito_detaillist.php"); // Prevent SQL injection, return to list
 
 		// Set up filter (SQL WHHERE clause) and get return SQL
-		// SQL constructor in t20_deposito class, t20_depositoinfo.php
+		// SQL constructor in t24_deposito_detail class, t24_deposito_detailinfo.php
 
 		$this->CurrentFilter = $sFilter;
 
@@ -403,7 +408,7 @@ class ct20_deposito_delete extends ct20_deposito {
 			if ($this->TotalRecs <= 0) { // No record found, exit
 				if ($this->Recordset)
 					$this->Recordset->Close();
-				$this->Page_Terminate("t20_depositolist.php"); // Return to list
+				$this->Page_Terminate("t24_deposito_detaillist.php"); // Return to list
 			}
 		}
 	}
@@ -420,7 +425,7 @@ class ct20_deposito_delete extends ct20_deposito {
 		if ($this->UseSelectLimit) {
 			$conn->raiseErrorFn = $GLOBALS["EW_ERROR_FN"];
 			if ($dbtype == "MSSQL") {
-				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderByList())));
+				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset, array("_hasOrderBy" => trim($this->getOrderBy()) || trim($this->getSessionOrderBy())));
 			} else {
 				$rs = $conn->SelectLimit($sSql, $rowcnt, $offset);
 			}
@@ -464,24 +469,9 @@ class ct20_deposito_delete extends ct20_deposito {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->No_Urut->setDbValue($rs->fields('No_Urut'));
-		$this->Tanggal_Valuta->setDbValue($rs->fields('Tanggal_Valuta'));
-		$this->Tanggal_Jatuh_Tempo->setDbValue($rs->fields('Tanggal_Jatuh_Tempo'));
-		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		if (array_key_exists('EV__nasabah_id', $rs->fields)) {
-			$this->nasabah_id->VirtualValue = $rs->fields('EV__nasabah_id'); // Set up virtual field value
-		} else {
-			$this->nasabah_id->VirtualValue = ""; // Clear value
-		}
-		$this->bank_id->setDbValue($rs->fields('bank_id'));
-		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
-		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
-		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
-		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
-		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
-		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
-		$this->Status->setDbValue($rs->fields('Status'));
-		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->deposito_id->setDbValue($rs->fields('deposito_id'));
+		$this->Bayar_Tgl->setDbValue($rs->fields('Bayar_Tgl'));
+		$this->Bayar_Jumlah->setDbValue($rs->fields('Bayar_Jumlah'));
 	}
 
 	// Load DbValue from recordset
@@ -489,19 +479,9 @@ class ct20_deposito_delete extends ct20_deposito {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->No_Urut->DbValue = $row['No_Urut'];
-		$this->Tanggal_Valuta->DbValue = $row['Tanggal_Valuta'];
-		$this->Tanggal_Jatuh_Tempo->DbValue = $row['Tanggal_Jatuh_Tempo'];
-		$this->nasabah_id->DbValue = $row['nasabah_id'];
-		$this->bank_id->DbValue = $row['bank_id'];
-		$this->Jumlah_Deposito->DbValue = $row['Jumlah_Deposito'];
-		$this->Jumlah_Terbilang->DbValue = $row['Jumlah_Terbilang'];
-		$this->Suku_Bunga->DbValue = $row['Suku_Bunga'];
-		$this->Jumlah_Bunga->DbValue = $row['Jumlah_Bunga'];
-		$this->Dikredit_Diperpanjang->DbValue = $row['Dikredit_Diperpanjang'];
-		$this->Tunai_Transfer->DbValue = $row['Tunai_Transfer'];
-		$this->Status->DbValue = $row['Status'];
-		$this->Periode->DbValue = $row['Periode'];
+		$this->deposito_id->DbValue = $row['deposito_id'];
+		$this->Bayar_Tgl->DbValue = $row['Bayar_Tgl'];
+		$this->Bayar_Jumlah->DbValue = $row['Bayar_Jumlah'];
 	}
 
 	// Render row values based on field settings
@@ -511,35 +491,17 @@ class ct20_deposito_delete extends ct20_deposito {
 		// Initialize URLs
 		// Convert decimal values if posted back
 
-		if ($this->Jumlah_Deposito->FormValue == $this->Jumlah_Deposito->CurrentValue && is_numeric(ew_StrToFloat($this->Jumlah_Deposito->CurrentValue)))
-			$this->Jumlah_Deposito->CurrentValue = ew_StrToFloat($this->Jumlah_Deposito->CurrentValue);
-
-		// Convert decimal values if posted back
-		if ($this->Suku_Bunga->FormValue == $this->Suku_Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Suku_Bunga->CurrentValue)))
-			$this->Suku_Bunga->CurrentValue = ew_StrToFloat($this->Suku_Bunga->CurrentValue);
-
-		// Convert decimal values if posted back
-		if ($this->Jumlah_Bunga->FormValue == $this->Jumlah_Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Jumlah_Bunga->CurrentValue)))
-			$this->Jumlah_Bunga->CurrentValue = ew_StrToFloat($this->Jumlah_Bunga->CurrentValue);
+		if ($this->Bayar_Jumlah->FormValue == $this->Bayar_Jumlah->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Jumlah->CurrentValue)))
+			$this->Bayar_Jumlah->CurrentValue = ew_StrToFloat($this->Bayar_Jumlah->CurrentValue);
 
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// No_Urut
-		// Tanggal_Valuta
-		// Tanggal_Jatuh_Tempo
-		// nasabah_id
-		// bank_id
-		// Jumlah_Deposito
-		// Jumlah_Terbilang
-		// Suku_Bunga
-		// Jumlah_Bunga
-		// Dikredit_Diperpanjang
-		// Tunai_Transfer
-		// Status
-		// Periode
+		// deposito_id
+		// Bayar_Tgl
+		// Bayar_Jumlah
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -547,168 +509,38 @@ class ct20_deposito_delete extends ct20_deposito {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// No_Urut
-		$this->No_Urut->ViewValue = $this->No_Urut->CurrentValue;
-		$this->No_Urut->ViewCustomAttributes = "";
+		// deposito_id
+		$this->deposito_id->ViewValue = $this->deposito_id->CurrentValue;
+		$this->deposito_id->ViewCustomAttributes = "";
 
-		// Tanggal_Valuta
-		$this->Tanggal_Valuta->ViewValue = $this->Tanggal_Valuta->CurrentValue;
-		$this->Tanggal_Valuta->ViewValue = ew_FormatDateTime($this->Tanggal_Valuta->ViewValue, 7);
-		$this->Tanggal_Valuta->ViewCustomAttributes = "";
+		// Bayar_Tgl
+		$this->Bayar_Tgl->ViewValue = $this->Bayar_Tgl->CurrentValue;
+		$this->Bayar_Tgl->ViewValue = ew_FormatDateTime($this->Bayar_Tgl->ViewValue, 0);
+		$this->Bayar_Tgl->ViewCustomAttributes = "";
 
-		// Tanggal_Jatuh_Tempo
-		$this->Tanggal_Jatuh_Tempo->ViewValue = $this->Tanggal_Jatuh_Tempo->CurrentValue;
-		$this->Tanggal_Jatuh_Tempo->ViewValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->ViewValue, 7);
-		$this->Tanggal_Jatuh_Tempo->ViewCustomAttributes = "";
+		// Bayar_Jumlah
+		$this->Bayar_Jumlah->ViewValue = $this->Bayar_Jumlah->CurrentValue;
+		$this->Bayar_Jumlah->ViewCustomAttributes = "";
 
-		// nasabah_id
-		if ($this->nasabah_id->VirtualValue <> "") {
-			$this->nasabah_id->ViewValue = $this->nasabah_id->VirtualValue;
-		} else {
-		if (strval($this->nasabah_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t22_peserta`";
-		$sWhereWrk = "";
-		$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-			}
-		} else {
-			$this->nasabah_id->ViewValue = NULL;
-		}
-		}
-		$this->nasabah_id->ViewCustomAttributes = "";
+			// id
+			$this->id->LinkCustomAttributes = "";
+			$this->id->HrefValue = "";
+			$this->id->TooltipValue = "";
 
-		// bank_id
-		if (strval($this->bank_id->CurrentValue) <> "") {
-			$arwrk = explode(",", $this->bank_id->CurrentValue);
-			$sFilterWrk = "";
-			foreach ($arwrk as $wrk) {
-				if ($sFilterWrk <> "") $sFilterWrk .= " OR ";
-				$sFilterWrk .= "`id`" . ew_SearchString("=", trim($wrk), EW_DATATYPE_NUMBER, "");
-			}
-		$sSqlWrk = "SELECT `id`, `Nomor` AS `DispFld`, `Pemilik` AS `Disp2Fld`, `Bank` AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t21_bank`";
-		$sWhereWrk = "";
-		$this->bank_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->bank_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$this->bank_id->ViewValue = "";
-				$ari = 0;
-				while (!$rswrk->EOF) {
-					$arwrk = array();
-					$arwrk[1] = $rswrk->fields('DispFld');
-					$arwrk[2] = $rswrk->fields('Disp2Fld');
-					$arwrk[3] = $rswrk->fields('Disp3Fld');
-					$this->bank_id->ViewValue .= $this->bank_id->DisplayValue($arwrk);
-					$rswrk->MoveNext();
-					if (!$rswrk->EOF) $this->bank_id->ViewValue .= ew_ViewOptionSeparator($ari); // Separate Options
-					$ari++;
-				}
-				$rswrk->Close();
-			} else {
-				$this->bank_id->ViewValue = $this->bank_id->CurrentValue;
-			}
-		} else {
-			$this->bank_id->ViewValue = NULL;
-		}
-		$this->bank_id->ViewCustomAttributes = "";
+			// deposito_id
+			$this->deposito_id->LinkCustomAttributes = "";
+			$this->deposito_id->HrefValue = "";
+			$this->deposito_id->TooltipValue = "";
 
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
-		$this->Jumlah_Deposito->ViewValue = ew_FormatNumber($this->Jumlah_Deposito->ViewValue, 0, -2, -2, -2);
-		$this->Jumlah_Deposito->CellCssStyle .= "text-align: right;";
-		$this->Jumlah_Deposito->ViewCustomAttributes = "";
+			// Bayar_Tgl
+			$this->Bayar_Tgl->LinkCustomAttributes = "";
+			$this->Bayar_Tgl->HrefValue = "";
+			$this->Bayar_Tgl->TooltipValue = "";
 
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang->ViewValue = $this->Jumlah_Terbilang->CurrentValue;
-		$this->Jumlah_Terbilang->ViewCustomAttributes = "";
-
-		// Suku_Bunga
-		$this->Suku_Bunga->ViewValue = $this->Suku_Bunga->CurrentValue;
-		$this->Suku_Bunga->ViewValue = ew_FormatNumber($this->Suku_Bunga->ViewValue, 0, -2, -2, -2);
-		$this->Suku_Bunga->CellCssStyle .= "text-align: right;";
-		$this->Suku_Bunga->ViewCustomAttributes = "";
-
-		// Jumlah_Bunga
-		$this->Jumlah_Bunga->ViewValue = $this->Jumlah_Bunga->CurrentValue;
-		$this->Jumlah_Bunga->ViewValue = ew_FormatNumber($this->Jumlah_Bunga->ViewValue, 0, -2, -2, -2);
-		$this->Jumlah_Bunga->CellCssStyle .= "text-align: right;";
-		$this->Jumlah_Bunga->ViewCustomAttributes = "";
-
-		// Dikredit_Diperpanjang
-		if (strval($this->Dikredit_Diperpanjang->CurrentValue) <> "") {
-			$this->Dikredit_Diperpanjang->ViewValue = $this->Dikredit_Diperpanjang->OptionCaption($this->Dikredit_Diperpanjang->CurrentValue);
-		} else {
-			$this->Dikredit_Diperpanjang->ViewValue = NULL;
-		}
-		$this->Dikredit_Diperpanjang->ViewCustomAttributes = "";
-
-		// Tunai_Transfer
-		if (strval($this->Tunai_Transfer->CurrentValue) <> "") {
-			$this->Tunai_Transfer->ViewValue = $this->Tunai_Transfer->OptionCaption($this->Tunai_Transfer->CurrentValue);
-		} else {
-			$this->Tunai_Transfer->ViewValue = NULL;
-		}
-		$this->Tunai_Transfer->ViewCustomAttributes = "";
-
-		// Status
-		if (strval($this->Status->CurrentValue) <> "") {
-			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
-		} else {
-			$this->Status->ViewValue = NULL;
-		}
-		$this->Status->ViewCustomAttributes = "";
-
-		// Periode
-		$this->Periode->ViewValue = $this->Periode->CurrentValue;
-		$this->Periode->ViewCustomAttributes = "";
-
-			// No_Urut
-			$this->No_Urut->LinkCustomAttributes = "";
-			$this->No_Urut->HrefValue = "";
-			$this->No_Urut->TooltipValue = "";
-
-			// Tanggal_Valuta
-			$this->Tanggal_Valuta->LinkCustomAttributes = "";
-			$this->Tanggal_Valuta->HrefValue = "";
-			$this->Tanggal_Valuta->TooltipValue = "";
-
-			// Tanggal_Jatuh_Tempo
-			$this->Tanggal_Jatuh_Tempo->LinkCustomAttributes = "";
-			$this->Tanggal_Jatuh_Tempo->HrefValue = "";
-			$this->Tanggal_Jatuh_Tempo->TooltipValue = "";
-
-			// nasabah_id
-			$this->nasabah_id->LinkCustomAttributes = "";
-			$this->nasabah_id->HrefValue = "";
-			$this->nasabah_id->TooltipValue = "";
-
-			// Jumlah_Deposito
-			$this->Jumlah_Deposito->LinkCustomAttributes = "";
-			$this->Jumlah_Deposito->HrefValue = "";
-			$this->Jumlah_Deposito->TooltipValue = "";
-
-			// Suku_Bunga
-			$this->Suku_Bunga->LinkCustomAttributes = "";
-			$this->Suku_Bunga->HrefValue = "";
-			$this->Suku_Bunga->TooltipValue = "";
-
-			// Jumlah_Bunga
-			$this->Jumlah_Bunga->LinkCustomAttributes = "";
-			$this->Jumlah_Bunga->HrefValue = "";
-			$this->Jumlah_Bunga->TooltipValue = "";
+			// Bayar_Jumlah
+			$this->Bayar_Jumlah->LinkCustomAttributes = "";
+			$this->Bayar_Jumlah->HrefValue = "";
+			$this->Bayar_Jumlah->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -802,12 +634,72 @@ class ct20_deposito_delete extends ct20_deposito {
 		return $DeleteRows;
 	}
 
+	// Set up master/detail based on QueryString
+	function SetUpMasterParms() {
+		$bValidMaster = FALSE;
+
+		// Get the keys for master table
+		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t23_deposito") {
+				$bValidMaster = TRUE;
+				if (@$_GET["fk_id"] <> "") {
+					$GLOBALS["t23_deposito"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->deposito_id->setQueryStringValue($GLOBALS["t23_deposito"]->id->QueryStringValue);
+					$this->deposito_id->setSessionValue($this->deposito_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t23_deposito"]->id->QueryStringValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
+			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
+			if ($sMasterTblVar == "") {
+				$bValidMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($sMasterTblVar == "t23_deposito") {
+				$bValidMaster = TRUE;
+				if (@$_POST["fk_id"] <> "") {
+					$GLOBALS["t23_deposito"]->id->setFormValue($_POST["fk_id"]);
+					$this->deposito_id->setFormValue($GLOBALS["t23_deposito"]->id->FormValue);
+					$this->deposito_id->setSessionValue($this->deposito_id->FormValue);
+					if (!is_numeric($GLOBALS["t23_deposito"]->id->FormValue)) $bValidMaster = FALSE;
+				} else {
+					$bValidMaster = FALSE;
+				}
+			}
+		}
+		if ($bValidMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($sMasterTblVar);
+
+			// Reset start record counter (new master key)
+			$this->StartRec = 1;
+			$this->setStartRecordNumber($this->StartRec);
+
+			// Clear previous master key from Session
+			if ($sMasterTblVar <> "t23_deposito") {
+				if ($this->deposito_id->CurrentValue == "") $this->deposito_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
+	}
+
 	// Set up Breadcrumb
 	function SetupBreadcrumb() {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t20_depositolist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t24_deposito_detaillist.php"), "", $this->TableVar, TRUE);
 		$PageId = "delete";
 		$Breadcrumb->Add("delete", $PageId, $url);
 	}
@@ -893,29 +785,29 @@ class ct20_deposito_delete extends ct20_deposito {
 <?php
 
 // Create page object
-if (!isset($t20_deposito_delete)) $t20_deposito_delete = new ct20_deposito_delete();
+if (!isset($t24_deposito_detail_delete)) $t24_deposito_detail_delete = new ct24_deposito_detail_delete();
 
 // Page init
-$t20_deposito_delete->Page_Init();
+$t24_deposito_detail_delete->Page_Init();
 
 // Page main
-$t20_deposito_delete->Page_Main();
+$t24_deposito_detail_delete->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t20_deposito_delete->Page_Render();
+$t24_deposito_detail_delete->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "delete";
-var CurrentForm = ft20_depositodelete = new ew_Form("ft20_depositodelete", "delete");
+var CurrentForm = ft24_deposito_detaildelete = new ew_Form("ft24_deposito_detaildelete", "delete");
 
 // Form_CustomValidate event
-ft20_depositodelete.Form_CustomValidate = 
+ft24_deposito_detaildelete.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -924,15 +816,14 @@ ft20_depositodelete.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft20_depositodelete.ValidateRequired = true;
+ft24_deposito_detaildelete.ValidateRequired = true;
 <?php } else { ?>
-ft20_depositodelete.ValidateRequired = false; 
+ft24_deposito_detaildelete.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-ft20_depositodelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t22_peserta"};
-
 // Form object for search
+
 </script>
 <script type="text/javascript">
 
@@ -943,129 +834,96 @@ ft20_depositodelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"Aut
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
-<?php $t20_deposito_delete->ShowPageHeader(); ?>
+<?php $t24_deposito_detail_delete->ShowPageHeader(); ?>
 <?php
-$t20_deposito_delete->ShowMessage();
+$t24_deposito_detail_delete->ShowMessage();
 ?>
-<form name="ft20_depositodelete" id="ft20_depositodelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t20_deposito_delete->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t20_deposito_delete->Token ?>">
+<form name="ft24_deposito_detaildelete" id="ft24_deposito_detaildelete" class="form-inline ewForm ewDeleteForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t24_deposito_detail_delete->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t24_deposito_detail_delete->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t20_deposito">
+<input type="hidden" name="t" value="t24_deposito_detail">
 <input type="hidden" name="a_delete" id="a_delete" value="D">
-<?php foreach ($t20_deposito_delete->RecKeys as $key) { ?>
+<?php foreach ($t24_deposito_detail_delete->RecKeys as $key) { ?>
 <?php $keyvalue = is_array($key) ? implode($EW_COMPOSITE_KEY_SEPARATOR, $key) : $key; ?>
 <input type="hidden" name="key_m[]" value="<?php echo ew_HtmlEncode($keyvalue) ?>">
 <?php } ?>
 <div class="ewGrid">
 <div class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
 <table class="table ewTable">
-<?php echo $t20_deposito->TableCustomInnerHtml ?>
+<?php echo $t24_deposito_detail->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t20_deposito->No_Urut->Visible) { // No_Urut ?>
-		<th><span id="elh_t20_deposito_No_Urut" class="t20_deposito_No_Urut"><?php echo $t20_deposito->No_Urut->FldCaption() ?></span></th>
+<?php if ($t24_deposito_detail->id->Visible) { // id ?>
+		<th><span id="elh_t24_deposito_detail_id" class="t24_deposito_detail_id"><?php echo $t24_deposito_detail->id->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t20_deposito->Tanggal_Valuta->Visible) { // Tanggal_Valuta ?>
-		<th><span id="elh_t20_deposito_Tanggal_Valuta" class="t20_deposito_Tanggal_Valuta"><?php echo $t20_deposito->Tanggal_Valuta->FldCaption() ?></span></th>
+<?php if ($t24_deposito_detail->deposito_id->Visible) { // deposito_id ?>
+		<th><span id="elh_t24_deposito_detail_deposito_id" class="t24_deposito_detail_deposito_id"><?php echo $t24_deposito_detail->deposito_id->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t20_deposito->Tanggal_Jatuh_Tempo->Visible) { // Tanggal_Jatuh_Tempo ?>
-		<th><span id="elh_t20_deposito_Tanggal_Jatuh_Tempo" class="t20_deposito_Tanggal_Jatuh_Tempo"><?php echo $t20_deposito->Tanggal_Jatuh_Tempo->FldCaption() ?></span></th>
+<?php if ($t24_deposito_detail->Bayar_Tgl->Visible) { // Bayar_Tgl ?>
+		<th><span id="elh_t24_deposito_detail_Bayar_Tgl" class="t24_deposito_detail_Bayar_Tgl"><?php echo $t24_deposito_detail->Bayar_Tgl->FldCaption() ?></span></th>
 <?php } ?>
-<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
-		<th><span id="elh_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id"><?php echo $t20_deposito->nasabah_id->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
-		<th><span id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t20_deposito->Suku_Bunga->Visible) { // Suku_Bunga ?>
-		<th><span id="elh_t20_deposito_Suku_Bunga" class="t20_deposito_Suku_Bunga"><?php echo $t20_deposito->Suku_Bunga->FldCaption() ?></span></th>
-<?php } ?>
-<?php if ($t20_deposito->Jumlah_Bunga->Visible) { // Jumlah_Bunga ?>
-		<th><span id="elh_t20_deposito_Jumlah_Bunga" class="t20_deposito_Jumlah_Bunga"><?php echo $t20_deposito->Jumlah_Bunga->FldCaption() ?></span></th>
+<?php if ($t24_deposito_detail->Bayar_Jumlah->Visible) { // Bayar_Jumlah ?>
+		<th><span id="elh_t24_deposito_detail_Bayar_Jumlah" class="t24_deposito_detail_Bayar_Jumlah"><?php echo $t24_deposito_detail->Bayar_Jumlah->FldCaption() ?></span></th>
 <?php } ?>
 	</tr>
 	</thead>
 	<tbody>
 <?php
-$t20_deposito_delete->RecCnt = 0;
+$t24_deposito_detail_delete->RecCnt = 0;
 $i = 0;
-while (!$t20_deposito_delete->Recordset->EOF) {
-	$t20_deposito_delete->RecCnt++;
-	$t20_deposito_delete->RowCnt++;
+while (!$t24_deposito_detail_delete->Recordset->EOF) {
+	$t24_deposito_detail_delete->RecCnt++;
+	$t24_deposito_detail_delete->RowCnt++;
 
 	// Set row properties
-	$t20_deposito->ResetAttrs();
-	$t20_deposito->RowType = EW_ROWTYPE_VIEW; // View
+	$t24_deposito_detail->ResetAttrs();
+	$t24_deposito_detail->RowType = EW_ROWTYPE_VIEW; // View
 
 	// Get the field contents
-	$t20_deposito_delete->LoadRowValues($t20_deposito_delete->Recordset);
+	$t24_deposito_detail_delete->LoadRowValues($t24_deposito_detail_delete->Recordset);
 
 	// Render row
-	$t20_deposito_delete->RenderRow();
+	$t24_deposito_detail_delete->RenderRow();
 ?>
-	<tr<?php echo $t20_deposito->RowAttributes() ?>>
-<?php if ($t20_deposito->No_Urut->Visible) { // No_Urut ?>
-		<td<?php echo $t20_deposito->No_Urut->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_No_Urut" class="t20_deposito_No_Urut">
-<span<?php echo $t20_deposito->No_Urut->ViewAttributes() ?>>
-<?php echo $t20_deposito->No_Urut->ListViewValue() ?></span>
+	<tr<?php echo $t24_deposito_detail->RowAttributes() ?>>
+<?php if ($t24_deposito_detail->id->Visible) { // id ?>
+		<td<?php echo $t24_deposito_detail->id->CellAttributes() ?>>
+<span id="el<?php echo $t24_deposito_detail_delete->RowCnt ?>_t24_deposito_detail_id" class="t24_deposito_detail_id">
+<span<?php echo $t24_deposito_detail->id->ViewAttributes() ?>>
+<?php echo $t24_deposito_detail->id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t20_deposito->Tanggal_Valuta->Visible) { // Tanggal_Valuta ?>
-		<td<?php echo $t20_deposito->Tanggal_Valuta->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Tanggal_Valuta" class="t20_deposito_Tanggal_Valuta">
-<span<?php echo $t20_deposito->Tanggal_Valuta->ViewAttributes() ?>>
-<?php echo $t20_deposito->Tanggal_Valuta->ListViewValue() ?></span>
+<?php if ($t24_deposito_detail->deposito_id->Visible) { // deposito_id ?>
+		<td<?php echo $t24_deposito_detail->deposito_id->CellAttributes() ?>>
+<span id="el<?php echo $t24_deposito_detail_delete->RowCnt ?>_t24_deposito_detail_deposito_id" class="t24_deposito_detail_deposito_id">
+<span<?php echo $t24_deposito_detail->deposito_id->ViewAttributes() ?>>
+<?php echo $t24_deposito_detail->deposito_id->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t20_deposito->Tanggal_Jatuh_Tempo->Visible) { // Tanggal_Jatuh_Tempo ?>
-		<td<?php echo $t20_deposito->Tanggal_Jatuh_Tempo->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Tanggal_Jatuh_Tempo" class="t20_deposito_Tanggal_Jatuh_Tempo">
-<span<?php echo $t20_deposito->Tanggal_Jatuh_Tempo->ViewAttributes() ?>>
-<?php echo $t20_deposito->Tanggal_Jatuh_Tempo->ListViewValue() ?></span>
+<?php if ($t24_deposito_detail->Bayar_Tgl->Visible) { // Bayar_Tgl ?>
+		<td<?php echo $t24_deposito_detail->Bayar_Tgl->CellAttributes() ?>>
+<span id="el<?php echo $t24_deposito_detail_delete->RowCnt ?>_t24_deposito_detail_Bayar_Tgl" class="t24_deposito_detail_Bayar_Tgl">
+<span<?php echo $t24_deposito_detail->Bayar_Tgl->ViewAttributes() ?>>
+<?php echo $t24_deposito_detail->Bayar_Tgl->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($t20_deposito->nasabah_id->Visible) { // nasabah_id ?>
-		<td<?php echo $t20_deposito->nasabah_id->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_nasabah_id" class="t20_deposito_nasabah_id">
-<span<?php echo $t20_deposito->nasabah_id->ViewAttributes() ?>>
-<?php echo $t20_deposito->nasabah_id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
-		<td<?php echo $t20_deposito->Jumlah_Deposito->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
-<span<?php echo $t20_deposito->Jumlah_Deposito->ViewAttributes() ?>>
-<?php echo $t20_deposito->Jumlah_Deposito->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t20_deposito->Suku_Bunga->Visible) { // Suku_Bunga ?>
-		<td<?php echo $t20_deposito->Suku_Bunga->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Suku_Bunga" class="t20_deposito_Suku_Bunga">
-<span<?php echo $t20_deposito->Suku_Bunga->ViewAttributes() ?>>
-<?php echo $t20_deposito->Suku_Bunga->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
-<?php if ($t20_deposito->Jumlah_Bunga->Visible) { // Jumlah_Bunga ?>
-		<td<?php echo $t20_deposito->Jumlah_Bunga->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_delete->RowCnt ?>_t20_deposito_Jumlah_Bunga" class="t20_deposito_Jumlah_Bunga">
-<span<?php echo $t20_deposito->Jumlah_Bunga->ViewAttributes() ?>>
-<?php echo $t20_deposito->Jumlah_Bunga->ListViewValue() ?></span>
+<?php if ($t24_deposito_detail->Bayar_Jumlah->Visible) { // Bayar_Jumlah ?>
+		<td<?php echo $t24_deposito_detail->Bayar_Jumlah->CellAttributes() ?>>
+<span id="el<?php echo $t24_deposito_detail_delete->RowCnt ?>_t24_deposito_detail_Bayar_Jumlah" class="t24_deposito_detail_Bayar_Jumlah">
+<span<?php echo $t24_deposito_detail->Bayar_Jumlah->ViewAttributes() ?>>
+<?php echo $t24_deposito_detail->Bayar_Jumlah->ListViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
 	</tr>
 <?php
-	$t20_deposito_delete->Recordset->MoveNext();
+	$t24_deposito_detail_delete->Recordset->MoveNext();
 }
-$t20_deposito_delete->Recordset->Close();
+$t24_deposito_detail_delete->Recordset->Close();
 ?>
 </tbody>
 </table>
@@ -1073,14 +931,14 @@ $t20_deposito_delete->Recordset->Close();
 </div>
 <div>
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("DeleteBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t20_deposito_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t24_deposito_detail_delete->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 </div>
 </form>
 <script type="text/javascript">
-ft20_depositodelete.Init();
+ft24_deposito_detaildelete.Init();
 </script>
 <?php
-$t20_deposito_delete->ShowPageFooter();
+$t24_deposito_detail_delete->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1092,5 +950,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t20_deposito_delete->Page_Terminate();
+$t24_deposito_detail_delete->Page_Terminate();
 ?>

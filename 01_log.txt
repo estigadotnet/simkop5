@@ -1,4 +1,18 @@
 <strong>----- review -------------------------------------------------------------------------------</strong>
+12:57 PM 7/25/2019
+- deposito,
+transaksi deposito yang ada antara lain :
+1. terima uang, nasabah menaruh dananya
+2. keluar uang, nasabah menarik dananya
+3. keluar uang, bayar bunga deposito
+
+
+9:18 AM 7/23/2019
+- buat coa untuk deposito
+- deposito
+- biaya bunga deposito
+
+
 11:08 AM 7/19/2019
 deposito
 - dibuatkan inputan "status" apabila nasabah sudah tidak melanjutkan perjanjian deposito
@@ -8,38 +22,9 @@ deposito
 
 
 <strong>----- to do --------------------------------------------------------------------------------</strong>
-
-11:29 AM 4/26/2019
-- tambah view v0302_pinjamanlap
-- tambah table t73_pinjamanlap
-
-11:57 AM 4/15/2019
-- update view v40_mutasiold
-- t87_neraca,
-  - tambah field ::
-    - field04
-    - field05
-  - ubah lebar field ::
-    - field03
-    - field04
-    - field05
-
-7:52 AM 4/15/2019
-- update view v41_mutasiold
-
-1:04 PM 4/13/2019
-- t88_labarugi,
-  - tambah field ::
-    - field04
-    - field05
-  - ubah lebar field ::
-    - field03
-    - field04
-    - field05
-
-
-
-
+<font color="red">1:00 PM 7/25/2019
+- reminder bayar bunga deposito menjelang jatuh tempo</font>
 
 
 <strong>----- done --------------------------------------------------------------------------------</strong>
+-

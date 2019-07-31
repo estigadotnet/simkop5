@@ -1,0 +1,31 @@
+<form action="" method="post">
+Mulai: <input type="text" name="mulai" id="mulai"/>
+Selesai: <input type="text" name="selesai" id="selesai"/>
+</form>
+<!-- tambah jquery & jquery ui -->
+<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.19/themes/ui-lightness/jquery-ui.css" rel="stylesheet"/>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.19/jquery-ui.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#mulai').datepicker({
+		dateFormat:'yy-mm-dd',
+		showOn:'both',
+		changeYear:true,
+		changeMonth:true,
+		onSelect:function(selectedDate, inst){
+			var date = $.datepicker.parseDate(inst.settings.dateFormat ||$.datepicker._defaults.dateFormat,selectedDate, inst.settings);
+			var years = 5; // lima tahun
+			date.setFullYear(date.getFullYear() + years);
+			$('#selesai').datepicker('option', 'minDate', date);
+			$('#selesai').val($.datepicker.formatDate('yy-mm-dd', date));
+		}
+	});
+	$('#selesai').datepicker({
+		dateFormat:'yy-mm-dd',
+		showOn:'both',
+		changeYear:true,
+		changeMonth:true
+	});
+});
+</script>

@@ -25,8 +25,8 @@ $RootMenu->AddMenuItem(1, "mmi_t01_nasabah", $Language->MenuPhrase("1", "MenuTex
 $RootMenu->AddMenuItem(3, "mmi_t03_pinjaman", $Language->MenuPhrase("3", "MenuText"), "t03_pinjamanlist.php", 10334, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t03_pinjaman'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10772, "mmi_cf42_pinjaman_php", $Language->MenuPhrase("10772", "MenuText"), "cf42_pinjaman.php", 10334, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf42_pinjaman.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10768, "mmci_Deposito", $Language->MenuPhrase("10768", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
-$RootMenu->AddMenuItem(10852, "mmci_Nasabah", $Language->MenuPhrase("10852", "MenuText"), "t01_nasabahlist.php", 10768, "", IsLoggedIn(), FALSE, TRUE);
-$RootMenu->AddMenuItem(10655, "mmi_t20_deposito", $Language->MenuPhrase("10655", "MenuText"), "t20_depositolist.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t20_deposito'), FALSE, FALSE);
+$RootMenu->AddMenuItem(10856, "mmi_t22_peserta", $Language->MenuPhrase("10856", "MenuText"), "t22_pesertalist.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t22_peserta'), FALSE, FALSE);
+$RootMenu->AddMenuItem(10858, "mmi_t23_deposito", $Language->MenuPhrase("10858", "MenuText"), "t23_depositolist.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t23_deposito'), FALSE, FALSE);
 $RootMenu->AddMenuItem(10853, "mmi_cf43_deposito_php", $Language->MenuPhrase("10853", "MenuText"), "cf43_deposito.php", 10768, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}cf43_deposito.php'), FALSE, TRUE);
 $RootMenu->AddMenuItem(10338, "mmci_General", $Language->MenuPhrase("10338", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE);
 $RootMenu->AddMenuItem(10358, "mmi_t75_company", $Language->MenuPhrase("10358", "MenuText"), "t75_companylist.php", 10338, "", AllowListMenu('{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}t75_company'), FALSE, FALSE);

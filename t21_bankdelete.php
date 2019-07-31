@@ -6,7 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t21_bankinfo.php" ?>
-<?php include_once "t01_nasabahinfo.php" ?>
+<?php include_once "t22_pesertainfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -233,8 +233,8 @@ class ct21_bank_delete extends ct21_bank {
 			$GLOBALS["Table"] = &$GLOBALS["t21_bank"];
 		}
 
-		// Table object (t01_nasabah)
-		if (!isset($GLOBALS['t01_nasabah'])) $GLOBALS['t01_nasabah'] = new ct01_nasabah();
+		// Table object (t22_peserta)
+		if (!isset($GLOBALS['t22_peserta'])) $GLOBALS['t22_peserta'] = new ct22_peserta();
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -286,7 +286,6 @@ class ct21_bank_delete extends ct21_bank {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->nasabah_id->SetVisibility();
 		$this->Nomor->SetVisibility();
 		$this->Pemilik->SetVisibility();
 		$this->Bank->SetVisibility();
@@ -558,11 +557,6 @@ class ct21_bank_delete extends ct21_bank {
 		$this->Cabang->ViewValue = $this->Cabang->CurrentValue;
 		$this->Cabang->ViewCustomAttributes = "";
 
-			// nasabah_id
-			$this->nasabah_id->LinkCustomAttributes = "";
-			$this->nasabah_id->HrefValue = "";
-			$this->nasabah_id->TooltipValue = "";
-
 			// Nomor
 			$this->Nomor->LinkCustomAttributes = "";
 			$this->Nomor->HrefValue = "";
@@ -692,13 +686,13 @@ class ct21_bank_delete extends ct21_bank {
 				$this->DbMasterFilter = "";
 				$this->DbDetailFilter = "";
 			}
-			if ($sMasterTblVar == "t01_nasabah") {
+			if ($sMasterTblVar == "t22_peserta") {
 				$bValidMaster = TRUE;
 				if (@$_GET["fk_id"] <> "") {
-					$GLOBALS["t01_nasabah"]->id->setQueryStringValue($_GET["fk_id"]);
-					$this->nasabah_id->setQueryStringValue($GLOBALS["t01_nasabah"]->id->QueryStringValue);
+					$GLOBALS["t22_peserta"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->nasabah_id->setQueryStringValue($GLOBALS["t22_peserta"]->id->QueryStringValue);
 					$this->nasabah_id->setSessionValue($this->nasabah_id->QueryStringValue);
-					if (!is_numeric($GLOBALS["t01_nasabah"]->id->QueryStringValue)) $bValidMaster = FALSE;
+					if (!is_numeric($GLOBALS["t22_peserta"]->id->QueryStringValue)) $bValidMaster = FALSE;
 				} else {
 					$bValidMaster = FALSE;
 				}
@@ -710,13 +704,13 @@ class ct21_bank_delete extends ct21_bank {
 				$this->DbMasterFilter = "";
 				$this->DbDetailFilter = "";
 			}
-			if ($sMasterTblVar == "t01_nasabah") {
+			if ($sMasterTblVar == "t22_peserta") {
 				$bValidMaster = TRUE;
 				if (@$_POST["fk_id"] <> "") {
-					$GLOBALS["t01_nasabah"]->id->setFormValue($_POST["fk_id"]);
-					$this->nasabah_id->setFormValue($GLOBALS["t01_nasabah"]->id->FormValue);
+					$GLOBALS["t22_peserta"]->id->setFormValue($_POST["fk_id"]);
+					$this->nasabah_id->setFormValue($GLOBALS["t22_peserta"]->id->FormValue);
 					$this->nasabah_id->setSessionValue($this->nasabah_id->FormValue);
-					if (!is_numeric($GLOBALS["t01_nasabah"]->id->FormValue)) $bValidMaster = FALSE;
+					if (!is_numeric($GLOBALS["t22_peserta"]->id->FormValue)) $bValidMaster = FALSE;
 				} else {
 					$bValidMaster = FALSE;
 				}
@@ -732,7 +726,7 @@ class ct21_bank_delete extends ct21_bank {
 			$this->setStartRecordNumber($this->StartRec);
 
 			// Clear previous master key from Session
-			if ($sMasterTblVar <> "t01_nasabah") {
+			if ($sMasterTblVar <> "t22_peserta") {
 				if ($this->nasabah_id->CurrentValue == "") $this->nasabah_id->setSessionValue("");
 			}
 		}
@@ -868,9 +862,8 @@ ft21_bankdelete.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft21_bankdelete.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
-
 // Form object for search
+
 </script>
 <script type="text/javascript">
 
@@ -901,9 +894,6 @@ $t21_bank_delete->ShowMessage();
 <?php echo $t21_bank->TableCustomInnerHtml ?>
 	<thead>
 	<tr class="ewTableHeader">
-<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-		<th><span id="elh_t21_bank_nasabah_id" class="t21_bank_nasabah_id"><?php echo $t21_bank->nasabah_id->FldCaption() ?></span></th>
-<?php } ?>
 <?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 		<th><span id="elh_t21_bank_Nomor" class="t21_bank_Nomor"><?php echo $t21_bank->Nomor->FldCaption() ?></span></th>
 <?php } ?>
@@ -940,14 +930,6 @@ while (!$t21_bank_delete->Recordset->EOF) {
 	$t21_bank_delete->RenderRow();
 ?>
 	<tr<?php echo $t21_bank->RowAttributes() ?>>
-<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-		<td<?php echo $t21_bank->nasabah_id->CellAttributes() ?>>
-<span id="el<?php echo $t21_bank_delete->RowCnt ?>_t21_bank_nasabah_id" class="t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->ListViewValue() ?></span>
-</span>
-</td>
-<?php } ?>
 <?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 		<td<?php echo $t21_bank->Nomor->CellAttributes() ?>>
 <span id="el<?php echo $t21_bank_delete->RowCnt ?>_t21_bank_Nomor" class="t21_bank_Nomor">

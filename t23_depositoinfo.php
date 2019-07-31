@@ -1,12 +1,12 @@
 <?php
 
 // Global variable for table object
-$t20_deposito = NULL;
+$t23_deposito = NULL;
 
 //
-// Table class for t20_deposito
+// Table class for t23_deposito
 //
-class ct20_deposito extends cTable {
+class ct23_deposito extends cTable {
 	var $AuditTrailOnAdd = TRUE;
 	var $AuditTrailOnEdit = TRUE;
 	var $AuditTrailOnDelete = TRUE;
@@ -14,19 +14,22 @@ class ct20_deposito extends cTable {
 	var $AuditTrailOnViewData = FALSE;
 	var $AuditTrailOnSearch = FALSE;
 	var $id;
-	var $No_Urut;
-	var $Tanggal_Valuta;
-	var $Tanggal_Jatuh_Tempo;
+	var $Kontrak_No;
+	var $Kontrak_Tgl;
+	var $Kontrak_Lama;
+	var $Jatuh_Tempo_Tgl;
+	var $Deposito;
+	var $Bunga_Suku;
+	var $Bunga;
 	var $nasabah_id;
 	var $bank_id;
-	var $Jumlah_Deposito;
-	var $Jumlah_Terbilang;
-	var $Suku_Bunga;
-	var $Jumlah_Bunga;
-	var $Dikredit_Diperpanjang;
-	var $Tunai_Transfer;
-	var $Status;
+	var $No_Ref;
+	var $Biaya_Administrasi;
+	var $Biaya_Materai;
 	var $Periode;
+	var $Kontrak_Status;
+	var $Jatuh_Tempo_Status;
+	var $Bunga_Status;
 
 	//
 	// Table class constructor
@@ -36,12 +39,12 @@ class ct20_deposito extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 't20_deposito';
-		$this->TableName = 't20_deposito';
+		$this->TableVar = 't23_deposito';
+		$this->TableName = 't23_deposito';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t20_deposito`";
+		$this->UpdateTable = "`t23_deposito`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -59,30 +62,54 @@ class ct20_deposito extends cTable {
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
 		// id
-		$this->id = new cField('t20_deposito', 't20_deposito', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id = new cField('t23_deposito', 't23_deposito', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
 
-		// No_Urut
-		$this->No_Urut = new cField('t20_deposito', 't20_deposito', 'x_No_Urut', 'No_Urut', '`No_Urut`', '`No_Urut`', 200, -1, FALSE, '`No_Urut`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->No_Urut->Sortable = TRUE; // Allow sort
-		$this->fields['No_Urut'] = &$this->No_Urut;
+		// Kontrak_No
+		$this->Kontrak_No = new cField('t23_deposito', 't23_deposito', 'x_Kontrak_No', 'Kontrak_No', '`Kontrak_No`', '`Kontrak_No`', 200, -1, FALSE, '`Kontrak_No`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Kontrak_No->Sortable = TRUE; // Allow sort
+		$this->fields['Kontrak_No'] = &$this->Kontrak_No;
 
-		// Tanggal_Valuta
-		$this->Tanggal_Valuta = new cField('t20_deposito', 't20_deposito', 'x_Tanggal_Valuta', 'Tanggal_Valuta', '`Tanggal_Valuta`', ew_CastDateFieldForLike('`Tanggal_Valuta`', 7, "DB"), 133, 7, FALSE, '`Tanggal_Valuta`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Tanggal_Valuta->Sortable = TRUE; // Allow sort
-		$this->Tanggal_Valuta->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
-		$this->fields['Tanggal_Valuta'] = &$this->Tanggal_Valuta;
+		// Kontrak_Tgl
+		$this->Kontrak_Tgl = new cField('t23_deposito', 't23_deposito', 'x_Kontrak_Tgl', 'Kontrak_Tgl', '`Kontrak_Tgl`', ew_CastDateFieldForLike('`Kontrak_Tgl`', 7, "DB"), 133, 7, FALSE, '`Kontrak_Tgl`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Kontrak_Tgl->Sortable = TRUE; // Allow sort
+		$this->Kontrak_Tgl->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
+		$this->fields['Kontrak_Tgl'] = &$this->Kontrak_Tgl;
 
-		// Tanggal_Jatuh_Tempo
-		$this->Tanggal_Jatuh_Tempo = new cField('t20_deposito', 't20_deposito', 'x_Tanggal_Jatuh_Tempo', 'Tanggal_Jatuh_Tempo', '`Tanggal_Jatuh_Tempo`', ew_CastDateFieldForLike('`Tanggal_Jatuh_Tempo`', 7, "DB"), 133, 7, FALSE, '`Tanggal_Jatuh_Tempo`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Tanggal_Jatuh_Tempo->Sortable = TRUE; // Allow sort
-		$this->Tanggal_Jatuh_Tempo->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
-		$this->fields['Tanggal_Jatuh_Tempo'] = &$this->Tanggal_Jatuh_Tempo;
+		// Kontrak_Lama
+		$this->Kontrak_Lama = new cField('t23_deposito', 't23_deposito', 'x_Kontrak_Lama', 'Kontrak_Lama', '`Kontrak_Lama`', '`Kontrak_Lama`', 16, -1, FALSE, '`Kontrak_Lama`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Kontrak_Lama->Sortable = TRUE; // Allow sort
+		$this->Kontrak_Lama->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['Kontrak_Lama'] = &$this->Kontrak_Lama;
+
+		// Jatuh_Tempo_Tgl
+		$this->Jatuh_Tempo_Tgl = new cField('t23_deposito', 't23_deposito', 'x_Jatuh_Tempo_Tgl', 'Jatuh_Tempo_Tgl', '`Jatuh_Tempo_Tgl`', ew_CastDateFieldForLike('`Jatuh_Tempo_Tgl`', 7, "DB"), 133, 7, FALSE, '`Jatuh_Tempo_Tgl`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Jatuh_Tempo_Tgl->Sortable = TRUE; // Allow sort
+		$this->Jatuh_Tempo_Tgl->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_SEPARATOR"], $Language->Phrase("IncorrectDateDMY"));
+		$this->fields['Jatuh_Tempo_Tgl'] = &$this->Jatuh_Tempo_Tgl;
+
+		// Deposito
+		$this->Deposito = new cField('t23_deposito', 't23_deposito', 'x_Deposito', 'Deposito', '`Deposito`', '`Deposito`', 4, -1, FALSE, '`Deposito`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Deposito->Sortable = TRUE; // Allow sort
+		$this->Deposito->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Deposito'] = &$this->Deposito;
+
+		// Bunga_Suku
+		$this->Bunga_Suku = new cField('t23_deposito', 't23_deposito', 'x_Bunga_Suku', 'Bunga_Suku', '`Bunga_Suku`', '`Bunga_Suku`', 131, -1, FALSE, '`Bunga_Suku`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Bunga_Suku->Sortable = TRUE; // Allow sort
+		$this->Bunga_Suku->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Bunga_Suku'] = &$this->Bunga_Suku;
+
+		// Bunga
+		$this->Bunga = new cField('t23_deposito', 't23_deposito', 'x_Bunga', 'Bunga', '`Bunga`', '`Bunga`', 4, -1, FALSE, '`Bunga`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Bunga->Sortable = TRUE; // Allow sort
+		$this->Bunga->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Bunga'] = &$this->Bunga;
 
 		// nasabah_id
-		$this->nasabah_id = new cField('t20_deposito', 't20_deposito', 'x_nasabah_id', 'nasabah_id', '`nasabah_id`', '`nasabah_id`', 3, -1, FALSE, '`EV__nasabah_id`', TRUE, TRUE, TRUE, 'FORMATTED TEXT', 'SELECT');
+		$this->nasabah_id = new cField('t23_deposito', 't23_deposito', 'x_nasabah_id', 'nasabah_id', '`nasabah_id`', '`nasabah_id`', 3, -1, FALSE, '`EV__nasabah_id`', TRUE, TRUE, TRUE, 'FORMATTED TEXT', 'SELECT');
 		$this->nasabah_id->Sortable = TRUE; // Allow sort
 		$this->nasabah_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
 		$this->nasabah_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
@@ -90,55 +117,50 @@ class ct20_deposito extends cTable {
 		$this->fields['nasabah_id'] = &$this->nasabah_id;
 
 		// bank_id
-		$this->bank_id = new cField('t20_deposito', 't20_deposito', 'x_bank_id', 'bank_id', '`bank_id`', '`bank_id`', 200, -1, FALSE, '`bank_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'CHECKBOX');
+		$this->bank_id = new cField('t23_deposito', 't23_deposito', 'x_bank_id', 'bank_id', '`bank_id`', '`bank_id`', 3, -1, FALSE, '`bank_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'CHECKBOX');
 		$this->bank_id->Sortable = TRUE; // Allow sort
+		$this->bank_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
 		$this->fields['bank_id'] = &$this->bank_id;
 
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito = new cField('t20_deposito', 't20_deposito', 'x_Jumlah_Deposito', 'Jumlah_Deposito', '`Jumlah_Deposito`', '`Jumlah_Deposito`', 4, -1, FALSE, '`Jumlah_Deposito`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Jumlah_Deposito->Sortable = TRUE; // Allow sort
-		$this->Jumlah_Deposito->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
-		$this->fields['Jumlah_Deposito'] = &$this->Jumlah_Deposito;
+		// No_Ref
+		$this->No_Ref = new cField('t23_deposito', 't23_deposito', 'x_No_Ref', 'No_Ref', '`No_Ref`', '`No_Ref`', 200, -1, FALSE, '`No_Ref`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->No_Ref->Sortable = TRUE; // Allow sort
+		$this->fields['No_Ref'] = &$this->No_Ref;
 
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang = new cField('t20_deposito', 't20_deposito', 'x_Jumlah_Terbilang', 'Jumlah_Terbilang', '`Jumlah_Terbilang`', '`Jumlah_Terbilang`', 201, -1, FALSE, '`Jumlah_Terbilang`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->Jumlah_Terbilang->Sortable = TRUE; // Allow sort
-		$this->fields['Jumlah_Terbilang'] = &$this->Jumlah_Terbilang;
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi = new cField('t23_deposito', 't23_deposito', 'x_Biaya_Administrasi', 'Biaya_Administrasi', '`Biaya_Administrasi`', '`Biaya_Administrasi`', 4, -1, FALSE, '`Biaya_Administrasi`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Biaya_Administrasi->Sortable = TRUE; // Allow sort
+		$this->Biaya_Administrasi->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Biaya_Administrasi'] = &$this->Biaya_Administrasi;
 
-		// Suku_Bunga
-		$this->Suku_Bunga = new cField('t20_deposito', 't20_deposito', 'x_Suku_Bunga', 'Suku_Bunga', '`Suku_Bunga`', '`Suku_Bunga`', 131, -1, FALSE, '`Suku_Bunga`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Suku_Bunga->Sortable = TRUE; // Allow sort
-		$this->Suku_Bunga->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
-		$this->fields['Suku_Bunga'] = &$this->Suku_Bunga;
-
-		// Jumlah_Bunga
-		$this->Jumlah_Bunga = new cField('t20_deposito', 't20_deposito', 'x_Jumlah_Bunga', 'Jumlah_Bunga', '`Jumlah_Bunga`', '`Jumlah_Bunga`', 4, -1, FALSE, '`Jumlah_Bunga`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Jumlah_Bunga->Sortable = TRUE; // Allow sort
-		$this->Jumlah_Bunga->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
-		$this->fields['Jumlah_Bunga'] = &$this->Jumlah_Bunga;
-
-		// Dikredit_Diperpanjang
-		$this->Dikredit_Diperpanjang = new cField('t20_deposito', 't20_deposito', 'x_Dikredit_Diperpanjang', 'Dikredit_Diperpanjang', '`Dikredit_Diperpanjang`', '`Dikredit_Diperpanjang`', 202, -1, FALSE, '`Dikredit_Diperpanjang`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'RADIO');
-		$this->Dikredit_Diperpanjang->Sortable = TRUE; // Allow sort
-		$this->Dikredit_Diperpanjang->OptionCount = 2;
-		$this->fields['Dikredit_Diperpanjang'] = &$this->Dikredit_Diperpanjang;
-
-		// Tunai_Transfer
-		$this->Tunai_Transfer = new cField('t20_deposito', 't20_deposito', 'x_Tunai_Transfer', 'Tunai_Transfer', '`Tunai_Transfer`', '`Tunai_Transfer`', 202, -1, FALSE, '`Tunai_Transfer`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'RADIO');
-		$this->Tunai_Transfer->Sortable = TRUE; // Allow sort
-		$this->Tunai_Transfer->OptionCount = 2;
-		$this->fields['Tunai_Transfer'] = &$this->Tunai_Transfer;
-
-		// Status
-		$this->Status = new cField('t20_deposito', 't20_deposito', 'x_Status', 'Status', '`Status`', '`Status`', 202, -1, FALSE, '`Status`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'RADIO');
-		$this->Status->Sortable = TRUE; // Allow sort
-		$this->Status->OptionCount = 2;
-		$this->fields['Status'] = &$this->Status;
+		// Biaya_Materai
+		$this->Biaya_Materai = new cField('t23_deposito', 't23_deposito', 'x_Biaya_Materai', 'Biaya_Materai', '`Biaya_Materai`', '`Biaya_Materai`', 4, -1, FALSE, '`Biaya_Materai`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Biaya_Materai->Sortable = TRUE; // Allow sort
+		$this->Biaya_Materai->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['Biaya_Materai'] = &$this->Biaya_Materai;
 
 		// Periode
-		$this->Periode = new cField('t20_deposito', 't20_deposito', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->Periode = new cField('t23_deposito', 't23_deposito', 'x_Periode', 'Periode', '`Periode`', '`Periode`', 200, -1, FALSE, '`Periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
 		$this->Periode->Sortable = TRUE; // Allow sort
 		$this->fields['Periode'] = &$this->Periode;
+
+		// Kontrak_Status
+		$this->Kontrak_Status = new cField('t23_deposito', 't23_deposito', 'x_Kontrak_Status', 'Kontrak_Status', '`Kontrak_Status`', '`Kontrak_Status`', 202, -1, FALSE, '`Kontrak_Status`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'RADIO');
+		$this->Kontrak_Status->Sortable = TRUE; // Allow sort
+		$this->Kontrak_Status->OptionCount = 2;
+		$this->fields['Kontrak_Status'] = &$this->Kontrak_Status;
+
+		// Jatuh_Tempo_Status
+		$this->Jatuh_Tempo_Status = new cField('t23_deposito', 't23_deposito', 'x_Jatuh_Tempo_Status', 'Jatuh_Tempo_Status', '`Jatuh_Tempo_Status`', '`Jatuh_Tempo_Status`', 202, -1, FALSE, '`Jatuh_Tempo_Status`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'RADIO');
+		$this->Jatuh_Tempo_Status->Sortable = TRUE; // Allow sort
+		$this->Jatuh_Tempo_Status->OptionCount = 2;
+		$this->fields['Jatuh_Tempo_Status'] = &$this->Jatuh_Tempo_Status;
+
+		// Bunga_Status
+		$this->Bunga_Status = new cField('t23_deposito', 't23_deposito', 'x_Bunga_Status', 'Bunga_Status', '`Bunga_Status`', '`Bunga_Status`', 202, -1, FALSE, '`Bunga_Status`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'RADIO');
+		$this->Bunga_Status->Sortable = TRUE; // Allow sort
+		$this->Bunga_Status->OptionCount = 2;
+		$this->fields['Bunga_Status'] = &$this->Bunga_Status;
 	}
 
 	// Set Field Visibility
@@ -197,11 +219,35 @@ class ct20_deposito extends cTable {
 		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_ORDER_BY_LIST] = $v;
 	}
 
+	// Current detail table name
+	function getCurrentDetailTable() {
+		return @$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE];
+	}
+
+	function setCurrentDetailTable($v) {
+		$_SESSION[EW_PROJECT_NAME . "_" . $this->TableVar . "_" . EW_TABLE_DETAIL_TABLE] = $v;
+	}
+
+	// Get detail url
+	function GetDetailUrl() {
+
+		// Detail url
+		$sDetailUrl = "";
+		if ($this->getCurrentDetailTable() == "t24_deposito_detail") {
+			$sDetailUrl = $GLOBALS["t24_deposito_detail"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
+			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
+		}
+		if ($sDetailUrl == "") {
+			$sDetailUrl = "t23_depositolist.php";
+		}
+		return $sDetailUrl;
+	}
+
 	// Table level SQL
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t20_deposito`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t23_deposito`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -229,7 +275,7 @@ class ct20_deposito extends cTable {
 	function getSqlSelectList() { // Select for List page
 		$select = "";
 		$select = "SELECT * FROM (" .
-			"SELECT *, (SELECT `Nama` FROM `t22_peserta` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t20_deposito`.`nasabah_id` LIMIT 1) AS `EV__nasabah_id` FROM `t20_deposito`" .
+			"SELECT *, (SELECT `Nama` FROM `t22_peserta` `EW_TMP_LOOKUPTABLE` WHERE `EW_TMP_LOOKUPTABLE`.`id` = `t23_deposito`.`nasabah_id` LIMIT 1) AS `EV__nasabah_id` FROM `t23_deposito`" .
 			") `EW_TMP_TABLE`";
 		return ($this->_SqlSelectList <> "") ? $this->_SqlSelectList : $select;
 	}
@@ -494,6 +540,26 @@ class ct20_deposito extends cTable {
 	// Update
 	function Update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE) {
 		$conn = &$this->Connection();
+
+		// Cascade Update detail table 't24_deposito_detail'
+		$bCascadeUpdate = FALSE;
+		$rscascade = array();
+		if (!is_null($rsold) && (isset($rs['id']) && $rsold['id'] <> $rs['id'])) { // Update detail field 'deposito_id'
+			$bCascadeUpdate = TRUE;
+			$rscascade['deposito_id'] = $rs['id']; 
+		}
+		if ($bCascadeUpdate) {
+			if (!isset($GLOBALS["t24_deposito_detail"])) $GLOBALS["t24_deposito_detail"] = new ct24_deposito_detail();
+			$rswrk = $GLOBALS["t24_deposito_detail"]->LoadRs("`deposito_id` = " . ew_QuotedValue($rsold['id'], EW_DATATYPE_NUMBER, 'DB')); 
+			while ($rswrk && !$rswrk->EOF) {
+				$rskey = array();
+				$fldname = 'id';
+				$rskey[$fldname] = $rswrk->fields[$fldname];
+				$bUpdate = $GLOBALS["t24_deposito_detail"]->Update($rscascade, $rskey, $rswrk->fields);
+				if (!$bUpdate) return FALSE;
+				$rswrk->MoveNext();
+			}
+		}
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
@@ -525,6 +591,14 @@ class ct20_deposito extends cTable {
 	// Delete
 	function Delete(&$rs, $where = "", $curfilter = TRUE) {
 		$conn = &$this->Connection();
+
+		// Cascade delete detail table 't24_deposito_detail'
+		if (!isset($GLOBALS["t24_deposito_detail"])) $GLOBALS["t24_deposito_detail"] = new ct24_deposito_detail();
+		$rscascade = $GLOBALS["t24_deposito_detail"]->LoadRs("`deposito_id` = " . ew_QuotedValue($rs['id'], EW_DATATYPE_NUMBER, "DB")); 
+		while ($rscascade && !$rscascade->EOF) {
+			$GLOBALS["t24_deposito_detail"]->Delete($rscascade->fields);
+			$rscascade->MoveNext();
+		}
 		$bDelete = $conn->Execute($this->DeleteSQL($rs, $where, $curfilter));
 		if ($bDelete && $this->AuditTrailOnDelete)
 			$this->WriteAuditTrailOnDelete($rs);
@@ -555,7 +629,7 @@ class ct20_deposito extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "t20_depositolist.php";
+			return "t23_depositolist.php";
 		}
 	}
 
@@ -565,30 +639,33 @@ class ct20_deposito extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "t20_depositolist.php";
+		return "t23_depositolist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("t20_depositoview.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("t23_depositoview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("t20_depositoview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("t23_depositoview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "t20_depositoadd.php?" . $this->UrlParm($parm);
+			$url = "t23_depositoadd.php?" . $this->UrlParm($parm);
 		else
-			$url = "t20_depositoadd.php";
+			$url = "t23_depositoadd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		$url = $this->KeyUrl("t20_depositoedit.php", $this->UrlParm($parm));
+		if ($parm <> "")
+			$url = $this->KeyUrl("t23_depositoedit.php", $this->UrlParm($parm));
+		else
+			$url = $this->KeyUrl("t23_depositoedit.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -600,7 +677,10 @@ class ct20_deposito extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		$url = $this->KeyUrl("t20_depositoadd.php", $this->UrlParm($parm));
+		if ($parm <> "")
+			$url = $this->KeyUrl("t23_depositoadd.php", $this->UrlParm($parm));
+		else
+			$url = $this->KeyUrl("t23_depositoadd.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -612,7 +692,7 @@ class ct20_deposito extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("t20_depositodelete.php", $this->UrlParm());
+		return $this->KeyUrl("t23_depositodelete.php", $this->UrlParm());
 	}
 
 	// Add master url
@@ -714,19 +794,22 @@ class ct20_deposito extends cTable {
 	// Load row values from recordset
 	function LoadListRowValues(&$rs) {
 		$this->id->setDbValue($rs->fields('id'));
-		$this->No_Urut->setDbValue($rs->fields('No_Urut'));
-		$this->Tanggal_Valuta->setDbValue($rs->fields('Tanggal_Valuta'));
-		$this->Tanggal_Jatuh_Tempo->setDbValue($rs->fields('Tanggal_Jatuh_Tempo'));
+		$this->Kontrak_No->setDbValue($rs->fields('Kontrak_No'));
+		$this->Kontrak_Tgl->setDbValue($rs->fields('Kontrak_Tgl'));
+		$this->Kontrak_Lama->setDbValue($rs->fields('Kontrak_Lama'));
+		$this->Jatuh_Tempo_Tgl->setDbValue($rs->fields('Jatuh_Tempo_Tgl'));
+		$this->Deposito->setDbValue($rs->fields('Deposito'));
+		$this->Bunga_Suku->setDbValue($rs->fields('Bunga_Suku'));
+		$this->Bunga->setDbValue($rs->fields('Bunga'));
 		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
 		$this->bank_id->setDbValue($rs->fields('bank_id'));
-		$this->Jumlah_Deposito->setDbValue($rs->fields('Jumlah_Deposito'));
-		$this->Jumlah_Terbilang->setDbValue($rs->fields('Jumlah_Terbilang'));
-		$this->Suku_Bunga->setDbValue($rs->fields('Suku_Bunga'));
-		$this->Jumlah_Bunga->setDbValue($rs->fields('Jumlah_Bunga'));
-		$this->Dikredit_Diperpanjang->setDbValue($rs->fields('Dikredit_Diperpanjang'));
-		$this->Tunai_Transfer->setDbValue($rs->fields('Tunai_Transfer'));
-		$this->Status->setDbValue($rs->fields('Status'));
+		$this->No_Ref->setDbValue($rs->fields('No_Ref'));
+		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
+		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
 		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Kontrak_Status->setDbValue($rs->fields('Kontrak_Status'));
+		$this->Jatuh_Tempo_Status->setDbValue($rs->fields('Jatuh_Tempo_Status'));
+		$this->Bunga_Status->setDbValue($rs->fields('Bunga_Status'));
 	}
 
 	// Render list row values
@@ -738,37 +821,64 @@ class ct20_deposito extends cTable {
 
    // Common render codes
 		// id
-		// No_Urut
-		// Tanggal_Valuta
-		// Tanggal_Jatuh_Tempo
+		// Kontrak_No
+		// Kontrak_Tgl
+		// Kontrak_Lama
+		// Jatuh_Tempo_Tgl
+		// Deposito
+		// Bunga_Suku
+		// Bunga
 		// nasabah_id
 		// bank_id
-		// Jumlah_Deposito
-		// Jumlah_Terbilang
-		// Suku_Bunga
-		// Jumlah_Bunga
-		// Dikredit_Diperpanjang
-		// Tunai_Transfer
-		// Status
+		// No_Ref
+		// Biaya_Administrasi
+		// Biaya_Materai
 		// Periode
+		// Kontrak_Status
+		// Jatuh_Tempo_Status
+		// Bunga_Status
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// No_Urut
-		$this->No_Urut->ViewValue = $this->No_Urut->CurrentValue;
-		$this->No_Urut->ViewCustomAttributes = "";
+		// Kontrak_No
+		$this->Kontrak_No->ViewValue = $this->Kontrak_No->CurrentValue;
+		$this->Kontrak_No->ViewCustomAttributes = "";
 
-		// Tanggal_Valuta
-		$this->Tanggal_Valuta->ViewValue = $this->Tanggal_Valuta->CurrentValue;
-		$this->Tanggal_Valuta->ViewValue = ew_FormatDateTime($this->Tanggal_Valuta->ViewValue, 7);
-		$this->Tanggal_Valuta->ViewCustomAttributes = "";
+		// Kontrak_Tgl
+		$this->Kontrak_Tgl->ViewValue = $this->Kontrak_Tgl->CurrentValue;
+		$this->Kontrak_Tgl->ViewValue = ew_FormatDateTime($this->Kontrak_Tgl->ViewValue, 7);
+		$this->Kontrak_Tgl->ViewCustomAttributes = "";
 
-		// Tanggal_Jatuh_Tempo
-		$this->Tanggal_Jatuh_Tempo->ViewValue = $this->Tanggal_Jatuh_Tempo->CurrentValue;
-		$this->Tanggal_Jatuh_Tempo->ViewValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->ViewValue, 7);
-		$this->Tanggal_Jatuh_Tempo->ViewCustomAttributes = "";
+		// Kontrak_Lama
+		$this->Kontrak_Lama->ViewValue = $this->Kontrak_Lama->CurrentValue;
+		$this->Kontrak_Lama->ViewValue = ew_FormatNumber($this->Kontrak_Lama->ViewValue, 0, -2, -2, -2);
+		$this->Kontrak_Lama->CellCssStyle .= "text-align: right;";
+		$this->Kontrak_Lama->ViewCustomAttributes = "";
+
+		// Jatuh_Tempo_Tgl
+		$this->Jatuh_Tempo_Tgl->ViewValue = $this->Jatuh_Tempo_Tgl->CurrentValue;
+		$this->Jatuh_Tempo_Tgl->ViewValue = ew_FormatDateTime($this->Jatuh_Tempo_Tgl->ViewValue, 7);
+		$this->Jatuh_Tempo_Tgl->ViewCustomAttributes = "";
+
+		// Deposito
+		$this->Deposito->ViewValue = $this->Deposito->CurrentValue;
+		$this->Deposito->ViewValue = ew_FormatNumber($this->Deposito->ViewValue, 2, -2, -2, -2);
+		$this->Deposito->CellCssStyle .= "text-align: right;";
+		$this->Deposito->ViewCustomAttributes = "";
+
+		// Bunga_Suku
+		$this->Bunga_Suku->ViewValue = $this->Bunga_Suku->CurrentValue;
+		$this->Bunga_Suku->ViewValue = ew_FormatNumber($this->Bunga_Suku->ViewValue, 2, -2, -2, -2);
+		$this->Bunga_Suku->CellCssStyle .= "text-align: right;";
+		$this->Bunga_Suku->ViewCustomAttributes = "";
+
+		// Bunga
+		$this->Bunga->ViewValue = $this->Bunga->CurrentValue;
+		$this->Bunga->ViewValue = ew_FormatNumber($this->Bunga->ViewValue, 2, -2, -2, -2);
+		$this->Bunga->CellCssStyle .= "text-align: right;";
+		$this->Bunga->ViewCustomAttributes = "";
 
 		// nasabah_id
 		if ($this->nasabah_id->VirtualValue <> "") {
@@ -834,75 +944,89 @@ class ct20_deposito extends cTable {
 		}
 		$this->bank_id->ViewCustomAttributes = "";
 
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->ViewValue = $this->Jumlah_Deposito->CurrentValue;
-		$this->Jumlah_Deposito->ViewValue = ew_FormatNumber($this->Jumlah_Deposito->ViewValue, 0, -2, -2, -2);
-		$this->Jumlah_Deposito->CellCssStyle .= "text-align: right;";
-		$this->Jumlah_Deposito->ViewCustomAttributes = "";
+		// No_Ref
+		$this->No_Ref->ViewValue = $this->No_Ref->CurrentValue;
+		$this->No_Ref->ViewCustomAttributes = "";
 
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang->ViewValue = $this->Jumlah_Terbilang->CurrentValue;
-		$this->Jumlah_Terbilang->ViewCustomAttributes = "";
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi->ViewValue = $this->Biaya_Administrasi->CurrentValue;
+		$this->Biaya_Administrasi->ViewValue = ew_FormatNumber($this->Biaya_Administrasi->ViewValue, 2, -2, -2, -2);
+		$this->Biaya_Administrasi->CellCssStyle .= "text-align: right;";
+		$this->Biaya_Administrasi->ViewCustomAttributes = "";
 
-		// Suku_Bunga
-		$this->Suku_Bunga->ViewValue = $this->Suku_Bunga->CurrentValue;
-		$this->Suku_Bunga->ViewValue = ew_FormatNumber($this->Suku_Bunga->ViewValue, 0, -2, -2, -2);
-		$this->Suku_Bunga->CellCssStyle .= "text-align: right;";
-		$this->Suku_Bunga->ViewCustomAttributes = "";
-
-		// Jumlah_Bunga
-		$this->Jumlah_Bunga->ViewValue = $this->Jumlah_Bunga->CurrentValue;
-		$this->Jumlah_Bunga->ViewValue = ew_FormatNumber($this->Jumlah_Bunga->ViewValue, 0, -2, -2, -2);
-		$this->Jumlah_Bunga->CellCssStyle .= "text-align: right;";
-		$this->Jumlah_Bunga->ViewCustomAttributes = "";
-
-		// Dikredit_Diperpanjang
-		if (strval($this->Dikredit_Diperpanjang->CurrentValue) <> "") {
-			$this->Dikredit_Diperpanjang->ViewValue = $this->Dikredit_Diperpanjang->OptionCaption($this->Dikredit_Diperpanjang->CurrentValue);
-		} else {
-			$this->Dikredit_Diperpanjang->ViewValue = NULL;
-		}
-		$this->Dikredit_Diperpanjang->ViewCustomAttributes = "";
-
-		// Tunai_Transfer
-		if (strval($this->Tunai_Transfer->CurrentValue) <> "") {
-			$this->Tunai_Transfer->ViewValue = $this->Tunai_Transfer->OptionCaption($this->Tunai_Transfer->CurrentValue);
-		} else {
-			$this->Tunai_Transfer->ViewValue = NULL;
-		}
-		$this->Tunai_Transfer->ViewCustomAttributes = "";
-
-		// Status
-		if (strval($this->Status->CurrentValue) <> "") {
-			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
-		} else {
-			$this->Status->ViewValue = NULL;
-		}
-		$this->Status->ViewCustomAttributes = "";
+		// Biaya_Materai
+		$this->Biaya_Materai->ViewValue = $this->Biaya_Materai->CurrentValue;
+		$this->Biaya_Materai->ViewValue = ew_FormatNumber($this->Biaya_Materai->ViewValue, 2, -2, -2, -2);
+		$this->Biaya_Materai->CellCssStyle .= "text-align: right;";
+		$this->Biaya_Materai->ViewCustomAttributes = "";
 
 		// Periode
 		$this->Periode->ViewValue = $this->Periode->CurrentValue;
 		$this->Periode->ViewCustomAttributes = "";
+
+		// Kontrak_Status
+		if (strval($this->Kontrak_Status->CurrentValue) <> "") {
+			$this->Kontrak_Status->ViewValue = $this->Kontrak_Status->OptionCaption($this->Kontrak_Status->CurrentValue);
+		} else {
+			$this->Kontrak_Status->ViewValue = NULL;
+		}
+		$this->Kontrak_Status->ViewCustomAttributes = "";
+
+		// Jatuh_Tempo_Status
+		if (strval($this->Jatuh_Tempo_Status->CurrentValue) <> "") {
+			$this->Jatuh_Tempo_Status->ViewValue = $this->Jatuh_Tempo_Status->OptionCaption($this->Jatuh_Tempo_Status->CurrentValue);
+		} else {
+			$this->Jatuh_Tempo_Status->ViewValue = NULL;
+		}
+		$this->Jatuh_Tempo_Status->ViewCustomAttributes = "";
+
+		// Bunga_Status
+		if (strval($this->Bunga_Status->CurrentValue) <> "") {
+			$this->Bunga_Status->ViewValue = $this->Bunga_Status->OptionCaption($this->Bunga_Status->CurrentValue);
+		} else {
+			$this->Bunga_Status->ViewValue = NULL;
+		}
+		$this->Bunga_Status->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
 		$this->id->TooltipValue = "";
 
-		// No_Urut
-		$this->No_Urut->LinkCustomAttributes = "";
-		$this->No_Urut->HrefValue = "";
-		$this->No_Urut->TooltipValue = "";
+		// Kontrak_No
+		$this->Kontrak_No->LinkCustomAttributes = "";
+		$this->Kontrak_No->HrefValue = "";
+		$this->Kontrak_No->TooltipValue = "";
 
-		// Tanggal_Valuta
-		$this->Tanggal_Valuta->LinkCustomAttributes = "";
-		$this->Tanggal_Valuta->HrefValue = "";
-		$this->Tanggal_Valuta->TooltipValue = "";
+		// Kontrak_Tgl
+		$this->Kontrak_Tgl->LinkCustomAttributes = "";
+		$this->Kontrak_Tgl->HrefValue = "";
+		$this->Kontrak_Tgl->TooltipValue = "";
 
-		// Tanggal_Jatuh_Tempo
-		$this->Tanggal_Jatuh_Tempo->LinkCustomAttributes = "";
-		$this->Tanggal_Jatuh_Tempo->HrefValue = "";
-		$this->Tanggal_Jatuh_Tempo->TooltipValue = "";
+		// Kontrak_Lama
+		$this->Kontrak_Lama->LinkCustomAttributes = "";
+		$this->Kontrak_Lama->HrefValue = "";
+		$this->Kontrak_Lama->TooltipValue = "";
+
+		// Jatuh_Tempo_Tgl
+		$this->Jatuh_Tempo_Tgl->LinkCustomAttributes = "";
+		$this->Jatuh_Tempo_Tgl->HrefValue = "";
+		$this->Jatuh_Tempo_Tgl->TooltipValue = "";
+
+		// Deposito
+		$this->Deposito->LinkCustomAttributes = "";
+		$this->Deposito->HrefValue = "";
+		$this->Deposito->TooltipValue = "";
+
+		// Bunga_Suku
+		$this->Bunga_Suku->LinkCustomAttributes = "";
+		$this->Bunga_Suku->HrefValue = "";
+		$this->Bunga_Suku->TooltipValue = "";
+
+		// Bunga
+		$this->Bunga->LinkCustomAttributes = "";
+		$this->Bunga->HrefValue = "";
+		$this->Bunga->TooltipValue = "";
 
 		// nasabah_id
 		$this->nasabah_id->LinkCustomAttributes = "";
@@ -914,45 +1038,40 @@ class ct20_deposito extends cTable {
 		$this->bank_id->HrefValue = "";
 		$this->bank_id->TooltipValue = "";
 
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->LinkCustomAttributes = "";
-		$this->Jumlah_Deposito->HrefValue = "";
-		$this->Jumlah_Deposito->TooltipValue = "";
+		// No_Ref
+		$this->No_Ref->LinkCustomAttributes = "";
+		$this->No_Ref->HrefValue = "";
+		$this->No_Ref->TooltipValue = "";
 
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang->LinkCustomAttributes = "";
-		$this->Jumlah_Terbilang->HrefValue = "";
-		$this->Jumlah_Terbilang->TooltipValue = "";
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi->LinkCustomAttributes = "";
+		$this->Biaya_Administrasi->HrefValue = "";
+		$this->Biaya_Administrasi->TooltipValue = "";
 
-		// Suku_Bunga
-		$this->Suku_Bunga->LinkCustomAttributes = "";
-		$this->Suku_Bunga->HrefValue = "";
-		$this->Suku_Bunga->TooltipValue = "";
-
-		// Jumlah_Bunga
-		$this->Jumlah_Bunga->LinkCustomAttributes = "";
-		$this->Jumlah_Bunga->HrefValue = "";
-		$this->Jumlah_Bunga->TooltipValue = "";
-
-		// Dikredit_Diperpanjang
-		$this->Dikredit_Diperpanjang->LinkCustomAttributes = "";
-		$this->Dikredit_Diperpanjang->HrefValue = "";
-		$this->Dikredit_Diperpanjang->TooltipValue = "";
-
-		// Tunai_Transfer
-		$this->Tunai_Transfer->LinkCustomAttributes = "";
-		$this->Tunai_Transfer->HrefValue = "";
-		$this->Tunai_Transfer->TooltipValue = "";
-
-		// Status
-		$this->Status->LinkCustomAttributes = "";
-		$this->Status->HrefValue = "";
-		$this->Status->TooltipValue = "";
+		// Biaya_Materai
+		$this->Biaya_Materai->LinkCustomAttributes = "";
+		$this->Biaya_Materai->HrefValue = "";
+		$this->Biaya_Materai->TooltipValue = "";
 
 		// Periode
 		$this->Periode->LinkCustomAttributes = "";
 		$this->Periode->HrefValue = "";
 		$this->Periode->TooltipValue = "";
+
+		// Kontrak_Status
+		$this->Kontrak_Status->LinkCustomAttributes = "";
+		$this->Kontrak_Status->HrefValue = "";
+		$this->Kontrak_Status->TooltipValue = "";
+
+		// Jatuh_Tempo_Status
+		$this->Jatuh_Tempo_Status->LinkCustomAttributes = "";
+		$this->Jatuh_Tempo_Status->HrefValue = "";
+		$this->Jatuh_Tempo_Status->TooltipValue = "";
+
+		// Bunga_Status
+		$this->Bunga_Status->LinkCustomAttributes = "";
+		$this->Bunga_Status->HrefValue = "";
+		$this->Bunga_Status->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -971,23 +1090,50 @@ class ct20_deposito extends cTable {
 		$this->id->EditValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// No_Urut
-		$this->No_Urut->EditAttrs["class"] = "form-control";
-		$this->No_Urut->EditCustomAttributes = "";
-		$this->No_Urut->EditValue = $this->No_Urut->CurrentValue;
-		$this->No_Urut->PlaceHolder = ew_RemoveHtml($this->No_Urut->FldCaption());
+		// Kontrak_No
+		$this->Kontrak_No->EditAttrs["class"] = "form-control";
+		$this->Kontrak_No->EditCustomAttributes = "";
+		$this->Kontrak_No->EditValue = $this->Kontrak_No->CurrentValue;
+		$this->Kontrak_No->PlaceHolder = ew_RemoveHtml($this->Kontrak_No->FldCaption());
 
-		// Tanggal_Valuta
-		$this->Tanggal_Valuta->EditAttrs["class"] = "form-control";
-		$this->Tanggal_Valuta->EditCustomAttributes = "style='width: 112px;''";
-		$this->Tanggal_Valuta->EditValue = ew_FormatDateTime($this->Tanggal_Valuta->CurrentValue, 7);
-		$this->Tanggal_Valuta->PlaceHolder = ew_RemoveHtml($this->Tanggal_Valuta->FldCaption());
+		// Kontrak_Tgl
+		$this->Kontrak_Tgl->EditAttrs["class"] = "form-control";
+		$this->Kontrak_Tgl->EditCustomAttributes = "style='width: 115px;'";
+		$this->Kontrak_Tgl->EditValue = ew_FormatDateTime($this->Kontrak_Tgl->CurrentValue, 7);
+		$this->Kontrak_Tgl->PlaceHolder = ew_RemoveHtml($this->Kontrak_Tgl->FldCaption());
 
-		// Tanggal_Jatuh_Tempo
-		$this->Tanggal_Jatuh_Tempo->EditAttrs["class"] = "form-control";
-		$this->Tanggal_Jatuh_Tempo->EditCustomAttributes = "style='width: 112px;''";
-		$this->Tanggal_Jatuh_Tempo->EditValue = ew_FormatDateTime($this->Tanggal_Jatuh_Tempo->CurrentValue, 7);
-		$this->Tanggal_Jatuh_Tempo->PlaceHolder = ew_RemoveHtml($this->Tanggal_Jatuh_Tempo->FldCaption());
+		// Kontrak_Lama
+		$this->Kontrak_Lama->EditAttrs["class"] = "form-control";
+		$this->Kontrak_Lama->EditCustomAttributes = "";
+		$this->Kontrak_Lama->EditValue = $this->Kontrak_Lama->CurrentValue;
+		$this->Kontrak_Lama->PlaceHolder = ew_RemoveHtml($this->Kontrak_Lama->FldCaption());
+
+		// Jatuh_Tempo_Tgl
+		$this->Jatuh_Tempo_Tgl->EditAttrs["class"] = "form-control";
+		$this->Jatuh_Tempo_Tgl->EditCustomAttributes = "style='width: 115px;'";
+		$this->Jatuh_Tempo_Tgl->EditValue = ew_FormatDateTime($this->Jatuh_Tempo_Tgl->CurrentValue, 7);
+		$this->Jatuh_Tempo_Tgl->PlaceHolder = ew_RemoveHtml($this->Jatuh_Tempo_Tgl->FldCaption());
+
+		// Deposito
+		$this->Deposito->EditAttrs["class"] = "form-control";
+		$this->Deposito->EditCustomAttributes = "";
+		$this->Deposito->EditValue = $this->Deposito->CurrentValue;
+		$this->Deposito->PlaceHolder = ew_RemoveHtml($this->Deposito->FldCaption());
+		if (strval($this->Deposito->EditValue) <> "" && is_numeric($this->Deposito->EditValue)) $this->Deposito->EditValue = ew_FormatNumber($this->Deposito->EditValue, -2, -2, -2, -2);
+
+		// Bunga_Suku
+		$this->Bunga_Suku->EditAttrs["class"] = "form-control";
+		$this->Bunga_Suku->EditCustomAttributes = "";
+		$this->Bunga_Suku->EditValue = $this->Bunga_Suku->CurrentValue;
+		$this->Bunga_Suku->PlaceHolder = ew_RemoveHtml($this->Bunga_Suku->FldCaption());
+		if (strval($this->Bunga_Suku->EditValue) <> "" && is_numeric($this->Bunga_Suku->EditValue)) $this->Bunga_Suku->EditValue = ew_FormatNumber($this->Bunga_Suku->EditValue, -2, -2, -2, -2);
+
+		// Bunga
+		$this->Bunga->EditAttrs["class"] = "form-control";
+		$this->Bunga->EditCustomAttributes = "";
+		$this->Bunga->EditValue = $this->Bunga->CurrentValue;
+		$this->Bunga->PlaceHolder = ew_RemoveHtml($this->Bunga->FldCaption());
+		if (strval($this->Bunga->EditValue) <> "" && is_numeric($this->Bunga->EditValue)) $this->Bunga->EditValue = ew_FormatNumber($this->Bunga->EditValue, -2, -2, -2, -2);
 
 		// nasabah_id
 		$this->nasabah_id->EditAttrs["class"] = "form-control";
@@ -996,50 +1142,43 @@ class ct20_deposito extends cTable {
 		// bank_id
 		$this->bank_id->EditCustomAttributes = "";
 
-		// Jumlah_Deposito
-		$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
-		$this->Jumlah_Deposito->EditCustomAttributes = "";
-		$this->Jumlah_Deposito->EditValue = $this->Jumlah_Deposito->CurrentValue;
-		$this->Jumlah_Deposito->PlaceHolder = ew_RemoveHtml($this->Jumlah_Deposito->FldCaption());
-		if (strval($this->Jumlah_Deposito->EditValue) <> "" && is_numeric($this->Jumlah_Deposito->EditValue)) $this->Jumlah_Deposito->EditValue = ew_FormatNumber($this->Jumlah_Deposito->EditValue, -2, -2, -2, -2);
+		// No_Ref
+		$this->No_Ref->EditAttrs["class"] = "form-control";
+		$this->No_Ref->EditCustomAttributes = "";
+		$this->No_Ref->EditValue = $this->No_Ref->CurrentValue;
+		$this->No_Ref->PlaceHolder = ew_RemoveHtml($this->No_Ref->FldCaption());
 
-		// Jumlah_Terbilang
-		$this->Jumlah_Terbilang->EditAttrs["class"] = "form-control";
-		$this->Jumlah_Terbilang->EditCustomAttributes = "";
-		$this->Jumlah_Terbilang->EditValue = $this->Jumlah_Terbilang->CurrentValue;
-		$this->Jumlah_Terbilang->PlaceHolder = ew_RemoveHtml($this->Jumlah_Terbilang->FldCaption());
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi->EditAttrs["class"] = "form-control";
+		$this->Biaya_Administrasi->EditCustomAttributes = "";
+		$this->Biaya_Administrasi->EditValue = $this->Biaya_Administrasi->CurrentValue;
+		$this->Biaya_Administrasi->PlaceHolder = ew_RemoveHtml($this->Biaya_Administrasi->FldCaption());
+		if (strval($this->Biaya_Administrasi->EditValue) <> "" && is_numeric($this->Biaya_Administrasi->EditValue)) $this->Biaya_Administrasi->EditValue = ew_FormatNumber($this->Biaya_Administrasi->EditValue, -2, -2, -2, -2);
 
-		// Suku_Bunga
-		$this->Suku_Bunga->EditAttrs["class"] = "form-control";
-		$this->Suku_Bunga->EditCustomAttributes = "";
-		$this->Suku_Bunga->EditValue = $this->Suku_Bunga->CurrentValue;
-		$this->Suku_Bunga->PlaceHolder = ew_RemoveHtml($this->Suku_Bunga->FldCaption());
-		if (strval($this->Suku_Bunga->EditValue) <> "" && is_numeric($this->Suku_Bunga->EditValue)) $this->Suku_Bunga->EditValue = ew_FormatNumber($this->Suku_Bunga->EditValue, -2, -2, -2, -2);
-
-		// Jumlah_Bunga
-		$this->Jumlah_Bunga->EditAttrs["class"] = "form-control";
-		$this->Jumlah_Bunga->EditCustomAttributes = "";
-		$this->Jumlah_Bunga->EditValue = $this->Jumlah_Bunga->CurrentValue;
-		$this->Jumlah_Bunga->PlaceHolder = ew_RemoveHtml($this->Jumlah_Bunga->FldCaption());
-		if (strval($this->Jumlah_Bunga->EditValue) <> "" && is_numeric($this->Jumlah_Bunga->EditValue)) $this->Jumlah_Bunga->EditValue = ew_FormatNumber($this->Jumlah_Bunga->EditValue, -2, -2, -2, -2);
-
-		// Dikredit_Diperpanjang
-		$this->Dikredit_Diperpanjang->EditCustomAttributes = "";
-		$this->Dikredit_Diperpanjang->EditValue = $this->Dikredit_Diperpanjang->Options(FALSE);
-
-		// Tunai_Transfer
-		$this->Tunai_Transfer->EditCustomAttributes = "";
-		$this->Tunai_Transfer->EditValue = $this->Tunai_Transfer->Options(FALSE);
-
-		// Status
-		$this->Status->EditCustomAttributes = "";
-		$this->Status->EditValue = $this->Status->Options(FALSE);
+		// Biaya_Materai
+		$this->Biaya_Materai->EditAttrs["class"] = "form-control";
+		$this->Biaya_Materai->EditCustomAttributes = "";
+		$this->Biaya_Materai->EditValue = $this->Biaya_Materai->CurrentValue;
+		$this->Biaya_Materai->PlaceHolder = ew_RemoveHtml($this->Biaya_Materai->FldCaption());
+		if (strval($this->Biaya_Materai->EditValue) <> "" && is_numeric($this->Biaya_Materai->EditValue)) $this->Biaya_Materai->EditValue = ew_FormatNumber($this->Biaya_Materai->EditValue, -2, -2, -2, -2);
 
 		// Periode
 		$this->Periode->EditAttrs["class"] = "form-control";
 		$this->Periode->EditCustomAttributes = "";
 		$this->Periode->EditValue = $this->Periode->CurrentValue;
 		$this->Periode->PlaceHolder = ew_RemoveHtml($this->Periode->FldCaption());
+
+		// Kontrak_Status
+		$this->Kontrak_Status->EditCustomAttributes = "";
+		$this->Kontrak_Status->EditValue = $this->Kontrak_Status->Options(FALSE);
+
+		// Jatuh_Tempo_Status
+		$this->Jatuh_Tempo_Status->EditCustomAttributes = "";
+		$this->Jatuh_Tempo_Status->EditValue = $this->Jatuh_Tempo_Status->Options(FALSE);
+
+		// Bunga_Status
+		$this->Bunga_Status->EditCustomAttributes = "";
+		$this->Bunga_Status->EditValue = $this->Bunga_Status->Options(FALSE);
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -1068,33 +1207,39 @@ class ct20_deposito extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->No_Urut->Exportable) $Doc->ExportCaption($this->No_Urut);
-					if ($this->Tanggal_Valuta->Exportable) $Doc->ExportCaption($this->Tanggal_Valuta);
-					if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportCaption($this->Tanggal_Jatuh_Tempo);
+					if ($this->Kontrak_No->Exportable) $Doc->ExportCaption($this->Kontrak_No);
+					if ($this->Kontrak_Tgl->Exportable) $Doc->ExportCaption($this->Kontrak_Tgl);
+					if ($this->Kontrak_Lama->Exportable) $Doc->ExportCaption($this->Kontrak_Lama);
+					if ($this->Jatuh_Tempo_Tgl->Exportable) $Doc->ExportCaption($this->Jatuh_Tempo_Tgl);
+					if ($this->Deposito->Exportable) $Doc->ExportCaption($this->Deposito);
+					if ($this->Bunga_Suku->Exportable) $Doc->ExportCaption($this->Bunga_Suku);
+					if ($this->Bunga->Exportable) $Doc->ExportCaption($this->Bunga);
 					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
 					if ($this->bank_id->Exportable) $Doc->ExportCaption($this->bank_id);
-					if ($this->Jumlah_Deposito->Exportable) $Doc->ExportCaption($this->Jumlah_Deposito);
-					if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportCaption($this->Jumlah_Terbilang);
-					if ($this->Suku_Bunga->Exportable) $Doc->ExportCaption($this->Suku_Bunga);
-					if ($this->Jumlah_Bunga->Exportable) $Doc->ExportCaption($this->Jumlah_Bunga);
-					if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportCaption($this->Dikredit_Diperpanjang);
-					if ($this->Tunai_Transfer->Exportable) $Doc->ExportCaption($this->Tunai_Transfer);
-					if ($this->Status->Exportable) $Doc->ExportCaption($this->Status);
+					if ($this->No_Ref->Exportable) $Doc->ExportCaption($this->No_Ref);
+					if ($this->Biaya_Administrasi->Exportable) $Doc->ExportCaption($this->Biaya_Administrasi);
+					if ($this->Biaya_Materai->Exportable) $Doc->ExportCaption($this->Biaya_Materai);
+					if ($this->Kontrak_Status->Exportable) $Doc->ExportCaption($this->Kontrak_Status);
+					if ($this->Jatuh_Tempo_Status->Exportable) $Doc->ExportCaption($this->Jatuh_Tempo_Status);
+					if ($this->Bunga_Status->Exportable) $Doc->ExportCaption($this->Bunga_Status);
 				} else {
 					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->No_Urut->Exportable) $Doc->ExportCaption($this->No_Urut);
-					if ($this->Tanggal_Valuta->Exportable) $Doc->ExportCaption($this->Tanggal_Valuta);
-					if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportCaption($this->Tanggal_Jatuh_Tempo);
+					if ($this->Kontrak_No->Exportable) $Doc->ExportCaption($this->Kontrak_No);
+					if ($this->Kontrak_Tgl->Exportable) $Doc->ExportCaption($this->Kontrak_Tgl);
+					if ($this->Kontrak_Lama->Exportable) $Doc->ExportCaption($this->Kontrak_Lama);
+					if ($this->Jatuh_Tempo_Tgl->Exportable) $Doc->ExportCaption($this->Jatuh_Tempo_Tgl);
+					if ($this->Deposito->Exportable) $Doc->ExportCaption($this->Deposito);
+					if ($this->Bunga_Suku->Exportable) $Doc->ExportCaption($this->Bunga_Suku);
+					if ($this->Bunga->Exportable) $Doc->ExportCaption($this->Bunga);
 					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
 					if ($this->bank_id->Exportable) $Doc->ExportCaption($this->bank_id);
-					if ($this->Jumlah_Deposito->Exportable) $Doc->ExportCaption($this->Jumlah_Deposito);
-					if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportCaption($this->Jumlah_Terbilang);
-					if ($this->Suku_Bunga->Exportable) $Doc->ExportCaption($this->Suku_Bunga);
-					if ($this->Jumlah_Bunga->Exportable) $Doc->ExportCaption($this->Jumlah_Bunga);
-					if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportCaption($this->Dikredit_Diperpanjang);
-					if ($this->Tunai_Transfer->Exportable) $Doc->ExportCaption($this->Tunai_Transfer);
-					if ($this->Status->Exportable) $Doc->ExportCaption($this->Status);
+					if ($this->No_Ref->Exportable) $Doc->ExportCaption($this->No_Ref);
+					if ($this->Biaya_Administrasi->Exportable) $Doc->ExportCaption($this->Biaya_Administrasi);
+					if ($this->Biaya_Materai->Exportable) $Doc->ExportCaption($this->Biaya_Materai);
 					if ($this->Periode->Exportable) $Doc->ExportCaption($this->Periode);
+					if ($this->Kontrak_Status->Exportable) $Doc->ExportCaption($this->Kontrak_Status);
+					if ($this->Jatuh_Tempo_Status->Exportable) $Doc->ExportCaption($this->Jatuh_Tempo_Status);
+					if ($this->Bunga_Status->Exportable) $Doc->ExportCaption($this->Bunga_Status);
 				}
 				$Doc->EndExportRow();
 			}
@@ -1126,33 +1271,39 @@ class ct20_deposito extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->No_Urut->Exportable) $Doc->ExportField($this->No_Urut);
-						if ($this->Tanggal_Valuta->Exportable) $Doc->ExportField($this->Tanggal_Valuta);
-						if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportField($this->Tanggal_Jatuh_Tempo);
+						if ($this->Kontrak_No->Exportable) $Doc->ExportField($this->Kontrak_No);
+						if ($this->Kontrak_Tgl->Exportable) $Doc->ExportField($this->Kontrak_Tgl);
+						if ($this->Kontrak_Lama->Exportable) $Doc->ExportField($this->Kontrak_Lama);
+						if ($this->Jatuh_Tempo_Tgl->Exportable) $Doc->ExportField($this->Jatuh_Tempo_Tgl);
+						if ($this->Deposito->Exportable) $Doc->ExportField($this->Deposito);
+						if ($this->Bunga_Suku->Exportable) $Doc->ExportField($this->Bunga_Suku);
+						if ($this->Bunga->Exportable) $Doc->ExportField($this->Bunga);
 						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
 						if ($this->bank_id->Exportable) $Doc->ExportField($this->bank_id);
-						if ($this->Jumlah_Deposito->Exportable) $Doc->ExportField($this->Jumlah_Deposito);
-						if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportField($this->Jumlah_Terbilang);
-						if ($this->Suku_Bunga->Exportable) $Doc->ExportField($this->Suku_Bunga);
-						if ($this->Jumlah_Bunga->Exportable) $Doc->ExportField($this->Jumlah_Bunga);
-						if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportField($this->Dikredit_Diperpanjang);
-						if ($this->Tunai_Transfer->Exportable) $Doc->ExportField($this->Tunai_Transfer);
-						if ($this->Status->Exportable) $Doc->ExportField($this->Status);
+						if ($this->No_Ref->Exportable) $Doc->ExportField($this->No_Ref);
+						if ($this->Biaya_Administrasi->Exportable) $Doc->ExportField($this->Biaya_Administrasi);
+						if ($this->Biaya_Materai->Exportable) $Doc->ExportField($this->Biaya_Materai);
+						if ($this->Kontrak_Status->Exportable) $Doc->ExportField($this->Kontrak_Status);
+						if ($this->Jatuh_Tempo_Status->Exportable) $Doc->ExportField($this->Jatuh_Tempo_Status);
+						if ($this->Bunga_Status->Exportable) $Doc->ExportField($this->Bunga_Status);
 					} else {
 						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->No_Urut->Exportable) $Doc->ExportField($this->No_Urut);
-						if ($this->Tanggal_Valuta->Exportable) $Doc->ExportField($this->Tanggal_Valuta);
-						if ($this->Tanggal_Jatuh_Tempo->Exportable) $Doc->ExportField($this->Tanggal_Jatuh_Tempo);
+						if ($this->Kontrak_No->Exportable) $Doc->ExportField($this->Kontrak_No);
+						if ($this->Kontrak_Tgl->Exportable) $Doc->ExportField($this->Kontrak_Tgl);
+						if ($this->Kontrak_Lama->Exportable) $Doc->ExportField($this->Kontrak_Lama);
+						if ($this->Jatuh_Tempo_Tgl->Exportable) $Doc->ExportField($this->Jatuh_Tempo_Tgl);
+						if ($this->Deposito->Exportable) $Doc->ExportField($this->Deposito);
+						if ($this->Bunga_Suku->Exportable) $Doc->ExportField($this->Bunga_Suku);
+						if ($this->Bunga->Exportable) $Doc->ExportField($this->Bunga);
 						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
 						if ($this->bank_id->Exportable) $Doc->ExportField($this->bank_id);
-						if ($this->Jumlah_Deposito->Exportable) $Doc->ExportField($this->Jumlah_Deposito);
-						if ($this->Jumlah_Terbilang->Exportable) $Doc->ExportField($this->Jumlah_Terbilang);
-						if ($this->Suku_Bunga->Exportable) $Doc->ExportField($this->Suku_Bunga);
-						if ($this->Jumlah_Bunga->Exportable) $Doc->ExportField($this->Jumlah_Bunga);
-						if ($this->Dikredit_Diperpanjang->Exportable) $Doc->ExportField($this->Dikredit_Diperpanjang);
-						if ($this->Tunai_Transfer->Exportable) $Doc->ExportField($this->Tunai_Transfer);
-						if ($this->Status->Exportable) $Doc->ExportField($this->Status);
+						if ($this->No_Ref->Exportable) $Doc->ExportField($this->No_Ref);
+						if ($this->Biaya_Administrasi->Exportable) $Doc->ExportField($this->Biaya_Administrasi);
+						if ($this->Biaya_Materai->Exportable) $Doc->ExportField($this->Biaya_Materai);
 						if ($this->Periode->Exportable) $Doc->ExportField($this->Periode);
+						if ($this->Kontrak_Status->Exportable) $Doc->ExportField($this->Kontrak_Status);
+						if ($this->Jatuh_Tempo_Status->Exportable) $Doc->ExportField($this->Jatuh_Tempo_Status);
+						if ($this->Bunga_Status->Exportable) $Doc->ExportField($this->Bunga_Status);
 					}
 					$Doc->EndExportRow();
 				}
@@ -1196,7 +1347,7 @@ class ct20_deposito extends cTable {
 
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
-		$table = 't20_deposito';
+		$table = 't23_deposito';
 		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -1205,7 +1356,7 @@ class ct20_deposito extends cTable {
 	function WriteAuditTrailOnAdd(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnAdd) return;
-		$table = 't20_deposito';
+		$table = 't23_deposito';
 
 		// Get key value
 		$key = "";
@@ -1239,7 +1390,7 @@ class ct20_deposito extends cTable {
 	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
 		global $Language;
 		if (!$this->AuditTrailOnEdit) return;
-		$table = 't20_deposito';
+		$table = 't23_deposito';
 
 		// Get key value
 		$key = "";
@@ -1286,7 +1437,7 @@ class ct20_deposito extends cTable {
 	function WriteAuditTrailOnDelete(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnDelete) return;
-		$table = 't20_deposito';
+		$table = 't23_deposito';
 
 		// Get key value
 		$key = "";
@@ -1363,14 +1514,16 @@ class ct20_deposito extends cTable {
 		// To cancel, set return value to FALSE
 
 		if (
-			(date_format(date_create($rsnew["Tanggal_Valuta"]),"Ym") <> $GLOBALS["Periode"])
+			(date_format(date_create($rsnew["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
 			and
-			(date_format(date_create($rsold["Tanggal_Valuta"]),"Ym") <> $GLOBALS["Periode"])
+			(date_format(date_create($rsold["Kontrak_Tgl"]),"Ym") <> $GLOBALS["Periode"])
 			) {
 			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
 			return false;
 		}
 		$rsnew["Periode"] = $GLOBALS["Periode"];
+
+		//$rsnew["Kontrak_No"] = GetNextNoKontrak(); // mengantisipasi lebih satu user menginput data saat bersamaan
 		return TRUE;
 	}
 
@@ -1378,28 +1531,7 @@ class ct20_deposito extends cTable {
 	function Row_Inserted($rsold, &$rsnew) {
 
 		//echo "Row Inserted"
-		// kodetransaksi = 14
-
-		$rek_d = ew_ExecuteScalar("select DebetRekening  from t89_rektran where KodeTransaksi = '14'");
-		$rek_k = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '14'");
-		f_buatjurnal(
-			$rsnew["Periode"],
-			$rsnew["id"].".DEPM",
-			$rek_d,
-			$rsnew["Jumlah_Deposito"],
-			0,
-			"Deposito Masuk No. Kontrak ".$rsnew["No_Urut"],
-			$rsnew["Tanggal_Valuta"]
-			);
-		f_buatjurnal(
-			$rsnew["Periode"],
-			$rsnew["id"].".DEPM",
-			$rek_k,
-			0,
-			$rsnew["Jumlah_Deposito"],
-			"Deposito Masuk No. Kontrak ".$rsnew["No_Urut"],
-			$rsnew["Tanggal_Valuta"]
-			);
+		f_create_rincian_pembayaran($rsnew);
 	}
 
 	// Row Updating event
@@ -1408,14 +1540,6 @@ class ct20_deposito extends cTable {
 		// Enter your code here
 		// To cancel, set return value to FALSE
 
-		if (
-			(date_format(date_create($rsnew["Tanggal_Valuta"]),"Ym") <> $GLOBALS["Periode"])
-			and
-			(date_format(date_create($rsold["Tanggal_Valuta"]),"Ym") <> $GLOBALS["Periode"])
-			) {
-			$this->setFailureMessage("Tanggal Transaksi tidak sesuai dengan Periode saat ini");
-			return false;
-		}
 		return TRUE;
 	}
 
@@ -1423,35 +1547,6 @@ class ct20_deposito extends cTable {
 	function Row_Updated($rsold, &$rsnew) {
 
 		//echo "Row Updated";
-		// kodetransaksi = 14
-
-		/*$rek_d = ew_ExecuteScalar("select DebetRekening  from t89_rektran where KodeTransaksi = '14'");
-		$rek_k = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '14'");
-		f_hapusjurnal(
-			$rsold["Periode"],
-			$rsold["id"].".DEPM",
-			$rek_d, "Deposito Masuk No. Kontrak ".$rsold["No_Urut"]);
-		f_buatjurnal(
-			$rsold["Periode"],
-			$rsold["id"].".DEPM",
-			$rek_d,
-			$rsupdate["Pinjaman"],
-			0,
-			"Deposito Masuk No. Kontrak ".$rsupdate["No_Urut"],
-			$rsupdate["Kontrak_Tgl"]);
-		f_hapusjurnal(
-			$rsold["Periode"],
-			$rsold["id"].".PINJ",
-			$rekkredit,
-			"Pinjaman No. Kontrak ".$rsold["Kontrak_No"]);
-		f_buatjurnal(
-			$rsold["Periode"],
-			$rsold["id"].".PINJ",
-			$rekkredit,
-			0,
-			$rsupdate["Pinjaman"],
-			"Pinjaman No. Kontrak ".$rsupdate["Kontrak_No"],
-			$rsupdate["Kontrak_Tgl"]);*/
 	}
 
 	// Row Update Conflict event
@@ -1506,21 +1601,6 @@ class ct20_deposito extends cTable {
 	function Row_Deleted(&$rs) {
 
 		//echo "Row Deleted";
-		// kodetransaksi = 14
-
-		/*$rek_d = ew_ExecuteScalar("select DebetRekening  from t89_rektran where KodeTransaksi = '14'");
-		$rek_k = ew_ExecuteScalar("select KreditRekening from t89_rektran where KodeTransaksi = '14'");
-		f_hapusjurnal(
-			$rs["Periode"],
-			$rs["id"].".DEPM",
-			$rek_d,
-			"Deposito Masuk No. Kontrak ".$rs["No_Urut"]
-			);
-		f_hapusjurnal(
-			$rs["Periode"],
-			$rs["id"].".DEPM",
-			$rek_k,
-			"Deposito Masuk No. Kontrak ".$rs["No_Urut"]);*/
 	}
 
 	// Email Sending event
@@ -1549,14 +1629,13 @@ class ct20_deposito extends cTable {
 
 		// To view properties of field class, use:
 		//var_dump($this-><FieldName>);
-		//if ($this->PageID == "list") {
 
 		if (CurrentPageID() == "list") {
-			$q = "select * from t20_deposito order by No_Urut desc";
+			$q = "select * from t23_deposito order by Kontrak_No desc";
 			$r = Conn()->Execute($q);
-			$this->No_Urut->EditValue = $r->fields["No_Urut"];
-			if (isset($_GET["x_No_Urut"])) {
-				$this->No_Urut->EditValue = $_GET["x_No_Urut"];
+			$this->Kontrak_No->EditValue = $r->fields["Kontrak_No"];
+			if (isset($_GET["x_Kontrak_No"])) {
+				$this->Kontrak_No->EditValue = $_GET["x_Kontrak_No"];
 			}
 		}
 
@@ -1569,12 +1648,12 @@ class ct20_deposito extends cTable {
 				//echo "id ".$_GET["id"];
 				// proses copy
 
-				$this->No_Urut->CurrentValue = GetNextNoUrut2($_GET["id"]); // trik
+				$this->Kontrak_No->CurrentValue = GetNextNoKontrakDepCopy($_GET["id"]); // trik
 			}
 			else {
-				$this->No_Urut->CurrentValue = GetNextNoUrut(); // trik
+				$this->Kontrak_No->CurrentValue = GetNextNoKontrakDep(); // trik
 			}
-			$this->No_Urut->EditValue = $this->No_Urut->CurrentValue; // tampilkan
+			$this->Kontrak_No->EditValue = $this->Kontrak_No->CurrentValue; // tampilkan
 
 			//$this->Kode->ReadOnly = TRUE; // supaya tidak bisa diubah
 			if (isset($_GET["id"])) {
@@ -1587,7 +1666,7 @@ class ct20_deposito extends cTable {
 
 		// Kondisi saat form Tambah sedang dalam mode konfirmasi
 		if ($this->CurrentAction == "add" && $this->CurrentAction=="F") {
-			$this->No_Urut->ViewValue = $this->No_Urut->CurrentValue; // ambil dari mode sebelumnya
+			$this->Kontrak_No->ViewValue = $this->Kontrak_No->CurrentValue; // ambil dari mode sebelumnya
 		}
 	}
 

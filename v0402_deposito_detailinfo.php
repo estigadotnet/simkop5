@@ -1,25 +1,23 @@
 <?php
 
 // Global variable for table object
-$t21_bank = NULL;
+$v0402_deposito_detail = NULL;
 
 //
-// Table class for t21_bank
+// Table class for v0402_deposito_detail
 //
-class ct21_bank extends cTable {
+class cv0402_deposito_detail extends cTable {
 	var $AuditTrailOnAdd = TRUE;
 	var $AuditTrailOnEdit = TRUE;
 	var $AuditTrailOnDelete = TRUE;
 	var $AuditTrailOnView = FALSE;
 	var $AuditTrailOnViewData = FALSE;
 	var $AuditTrailOnSearch = FALSE;
-	var $id;
-	var $nasabah_id;
-	var $Nomor;
-	var $Pemilik;
-	var $Bank;
-	var $Kota;
-	var $Cabang;
+	var $dephead_id;
+	var $jurnal_id;
+	var $tanggal;
+	var $periode;
+	var $jumlah_bayar;
 
 	//
 	// Table class constructor
@@ -29,12 +27,12 @@ class ct21_bank extends cTable {
 
 		// Language object
 		if (!isset($Language)) $Language = new cLanguage();
-		$this->TableVar = 't21_bank';
-		$this->TableName = 't21_bank';
-		$this->TableType = 'TABLE';
+		$this->TableVar = 'v0402_deposito_detail';
+		$this->TableName = 'v0402_deposito_detail';
+		$this->TableType = 'VIEW';
 
 		// Update Table
-		$this->UpdateTable = "`t21_bank`";
+		$this->UpdateTable = "`v0402_deposito_detail`";
 		$this->DBID = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -51,44 +49,33 @@ class ct21_bank extends cTable {
 		$this->UserIDAllowSecurity = 0; // User ID Allow
 		$this->BasicSearch = new cBasicSearch($this->TableVar);
 
-		// id
-		$this->id = new cField('t21_bank', 't21_bank', 'x_id', 'id', '`id`', '`id`', 3, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
-		$this->id->Sortable = TRUE; // Allow sort
-		$this->id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['id'] = &$this->id;
+		// dephead_id
+		$this->dephead_id = new cField('v0402_deposito_detail', 'v0402_deposito_detail', 'x_dephead_id', 'dephead_id', '`dephead_id`', '`dephead_id`', 200, -1, FALSE, '`dephead_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->dephead_id->Sortable = TRUE; // Allow sort
+		$this->fields['dephead_id'] = &$this->dephead_id;
 
-		// nasabah_id
-		$this->nasabah_id = new cField('t21_bank', 't21_bank', 'x_nasabah_id', 'nasabah_id', '`nasabah_id`', '`nasabah_id`', 3, -1, FALSE, '`nasabah_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
-		$this->nasabah_id->Sortable = TRUE; // Allow sort
-		$this->nasabah_id->UsePleaseSelect = TRUE; // Use PleaseSelect by default
-		$this->nasabah_id->PleaseSelectText = $Language->Phrase("PleaseSelect"); // PleaseSelect text
-		$this->nasabah_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
-		$this->fields['nasabah_id'] = &$this->nasabah_id;
+		// jurnal_id
+		$this->jurnal_id = new cField('v0402_deposito_detail', 'v0402_deposito_detail', 'x_jurnal_id', 'jurnal_id', '`jurnal_id`', '`jurnal_id`', 3, -1, FALSE, '`jurnal_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->jurnal_id->Sortable = TRUE; // Allow sort
+		$this->jurnal_id->FldDefaultErrMsg = $Language->Phrase("IncorrectInteger");
+		$this->fields['jurnal_id'] = &$this->jurnal_id;
 
-		// Nomor
-		$this->Nomor = new cField('t21_bank', 't21_bank', 'x_Nomor', 'Nomor', '`Nomor`', '`Nomor`', 200, -1, FALSE, '`Nomor`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Nomor->Sortable = TRUE; // Allow sort
-		$this->fields['Nomor'] = &$this->Nomor;
+		// tanggal
+		$this->tanggal = new cField('v0402_deposito_detail', 'v0402_deposito_detail', 'x_tanggal', 'tanggal', '`tanggal`', ew_CastDateFieldForLike('`tanggal`', 0, "DB"), 133, 0, FALSE, '`tanggal`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->tanggal->Sortable = TRUE; // Allow sort
+		$this->tanggal->FldDefaultErrMsg = str_replace("%s", $GLOBALS["EW_DATE_FORMAT"], $Language->Phrase("IncorrectDate"));
+		$this->fields['tanggal'] = &$this->tanggal;
 
-		// Pemilik
-		$this->Pemilik = new cField('t21_bank', 't21_bank', 'x_Pemilik', 'Pemilik', '`Pemilik`', '`Pemilik`', 200, -1, FALSE, '`Pemilik`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Pemilik->Sortable = TRUE; // Allow sort
-		$this->fields['Pemilik'] = &$this->Pemilik;
+		// periode
+		$this->periode = new cField('v0402_deposito_detail', 'v0402_deposito_detail', 'x_periode', 'periode', '`periode`', '`periode`', 200, -1, FALSE, '`periode`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->periode->Sortable = TRUE; // Allow sort
+		$this->fields['periode'] = &$this->periode;
 
-		// Bank
-		$this->Bank = new cField('t21_bank', 't21_bank', 'x_Bank', 'Bank', '`Bank`', '`Bank`', 200, -1, FALSE, '`Bank`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Bank->Sortable = TRUE; // Allow sort
-		$this->fields['Bank'] = &$this->Bank;
-
-		// Kota
-		$this->Kota = new cField('t21_bank', 't21_bank', 'x_Kota', 'Kota', '`Kota`', '`Kota`', 200, -1, FALSE, '`Kota`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Kota->Sortable = TRUE; // Allow sort
-		$this->fields['Kota'] = &$this->Kota;
-
-		// Cabang
-		$this->Cabang = new cField('t21_bank', 't21_bank', 'x_Cabang', 'Cabang', '`Cabang`', '`Cabang`', 200, -1, FALSE, '`Cabang`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->Cabang->Sortable = TRUE; // Allow sort
-		$this->fields['Cabang'] = &$this->Cabang;
+		// jumlah_bayar
+		$this->jumlah_bayar = new cField('v0402_deposito_detail', 'v0402_deposito_detail', 'x_jumlah_bayar', 'jumlah_bayar', '`jumlah_bayar`', '`jumlah_bayar`', 4, -1, FALSE, '`jumlah_bayar`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->jumlah_bayar->Sortable = TRUE; // Allow sort
+		$this->jumlah_bayar->FldDefaultErrMsg = $Language->Phrase("IncorrectFloat");
+		$this->fields['jumlah_bayar'] = &$this->jumlah_bayar;
 	}
 
 	// Set Field Visibility
@@ -139,9 +126,9 @@ class ct21_bank extends cTable {
 
 		// Master filter
 		$sMasterFilter = "";
-		if ($this->getCurrentMasterTable() == "t22_peserta") {
-			if ($this->nasabah_id->getSessionValue() <> "")
-				$sMasterFilter .= "`id`=" . ew_QuotedValue($this->nasabah_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+		if ($this->getCurrentMasterTable() == "t20_deposito") {
+			if ($this->dephead_id->getSessionValue() <> "")
+				$sMasterFilter .= "`id`=" . ew_QuotedValue($this->dephead_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
 			else
 				return "";
 		}
@@ -153,9 +140,9 @@ class ct21_bank extends cTable {
 
 		// Detail filter
 		$sDetailFilter = "";
-		if ($this->getCurrentMasterTable() == "t22_peserta") {
-			if ($this->nasabah_id->getSessionValue() <> "")
-				$sDetailFilter .= "`nasabah_id`=" . ew_QuotedValue($this->nasabah_id->getSessionValue(), EW_DATATYPE_NUMBER, "DB");
+		if ($this->getCurrentMasterTable() == "t20_deposito") {
+			if ($this->dephead_id->getSessionValue() <> "")
+				$sDetailFilter .= "`dephead_id`=" . ew_QuotedValue($this->dephead_id->getSessionValue(), EW_DATATYPE_STRING, "DB");
 			else
 				return "";
 		}
@@ -163,20 +150,20 @@ class ct21_bank extends cTable {
 	}
 
 	// Master filter
-	function SqlMasterFilter_t22_peserta() {
+	function SqlMasterFilter_t20_deposito() {
 		return "`id`=@id@";
 	}
 
 	// Detail filter
-	function SqlDetailFilter_t22_peserta() {
-		return "`nasabah_id`=@nasabah_id@";
+	function SqlDetailFilter_t20_deposito() {
+		return "`dephead_id`='@dephead_id@'";
 	}
 
 	// Table level SQL
 	var $_SqlFrom = "";
 
 	function getSqlFrom() { // From
-		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`t21_bank`";
+		return ($this->_SqlFrom <> "") ? $this->_SqlFrom : "`v0402_deposito_detail`";
 	}
 
 	function SqlFrom() { // For backward compatibility
@@ -399,8 +386,8 @@ class ct21_bank extends cTable {
 		if ($bInsert) {
 
 			// Get insert id if necessary
-			$this->id->setDbValue($conn->Insert_ID());
-			$rs['id'] = $this->id->DbValue;
+			$this->jurnal_id->setDbValue($conn->Insert_ID());
+			$rs['jurnal_id'] = $this->jurnal_id->DbValue;
 			if ($this->AuditTrailOnAdd)
 				$this->WriteAuditTrailOnAdd($rs);
 		}
@@ -432,7 +419,7 @@ class ct21_bank extends cTable {
 		$bUpdate = $conn->Execute($this->UpdateSQL($rs, $where, $curfilter));
 		if ($bUpdate && $this->AuditTrailOnEdit) {
 			$rsaudit = $rs;
-			$fldname = 'id';
+			$fldname = 'jurnal_id';
 			if (!array_key_exists($fldname, $rsaudit)) $rsaudit[$fldname] = $rsold[$fldname];
 			$this->WriteAuditTrailOnEdit($rsold, $rsaudit);
 		}
@@ -445,8 +432,8 @@ class ct21_bank extends cTable {
 		if (is_array($where))
 			$where = $this->ArrayToFilter($where);
 		if ($rs) {
-			if (array_key_exists('id', $rs))
-				ew_AddFilter($where, ew_QuotedName('id', $this->DBID) . '=' . ew_QuotedValue($rs['id'], $this->id->FldDataType, $this->DBID));
+			if (array_key_exists('jurnal_id', $rs))
+				ew_AddFilter($where, ew_QuotedName('jurnal_id', $this->DBID) . '=' . ew_QuotedValue($rs['jurnal_id'], $this->jurnal_id->FldDataType, $this->DBID));
 		}
 		$filter = ($curfilter) ? $this->CurrentFilter : "";
 		ew_AddFilter($filter, $where);
@@ -468,15 +455,15 @@ class ct21_bank extends cTable {
 
 	// Key filter WHERE clause
 	function SqlKeyFilter() {
-		return "`id` = @id@";
+		return "`jurnal_id` = @jurnal_id@";
 	}
 
 	// Key filter
 	function KeyFilter() {
 		$sKeyFilter = $this->SqlKeyFilter();
-		if (!is_numeric($this->id->CurrentValue))
+		if (!is_numeric($this->jurnal_id->CurrentValue))
 			$sKeyFilter = "0=1"; // Invalid key
-		$sKeyFilter = str_replace("@id@", ew_AdjustSql($this->id->CurrentValue, $this->DBID), $sKeyFilter); // Replace key value
+		$sKeyFilter = str_replace("@jurnal_id@", ew_AdjustSql($this->jurnal_id->CurrentValue, $this->DBID), $sKeyFilter); // Replace key value
 		return $sKeyFilter;
 	}
 
@@ -490,7 +477,7 @@ class ct21_bank extends cTable {
 		if (@$_SESSION[$name] <> "") {
 			return $_SESSION[$name];
 		} else {
-			return "t21_banklist.php";
+			return "v0402_deposito_detaillist.php";
 		}
 	}
 
@@ -500,30 +487,30 @@ class ct21_bank extends cTable {
 
 	// List URL
 	function GetListUrl() {
-		return "t21_banklist.php";
+		return "v0402_deposito_detaillist.php";
 	}
 
 	// View URL
 	function GetViewUrl($parm = "") {
 		if ($parm <> "")
-			$url = $this->KeyUrl("t21_bankview.php", $this->UrlParm($parm));
+			$url = $this->KeyUrl("v0402_deposito_detailview.php", $this->UrlParm($parm));
 		else
-			$url = $this->KeyUrl("t21_bankview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
+			$url = $this->KeyUrl("v0402_deposito_detailview.php", $this->UrlParm(EW_TABLE_SHOW_DETAIL . "="));
 		return $this->AddMasterUrl($url);
 	}
 
 	// Add URL
 	function GetAddUrl($parm = "") {
 		if ($parm <> "")
-			$url = "t21_bankadd.php?" . $this->UrlParm($parm);
+			$url = "v0402_deposito_detailadd.php?" . $this->UrlParm($parm);
 		else
-			$url = "t21_bankadd.php";
+			$url = "v0402_deposito_detailadd.php";
 		return $this->AddMasterUrl($url);
 	}
 
 	// Edit URL
 	function GetEditUrl($parm = "") {
-		$url = $this->KeyUrl("t21_bankedit.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("v0402_deposito_detailedit.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -535,7 +522,7 @@ class ct21_bank extends cTable {
 
 	// Copy URL
 	function GetCopyUrl($parm = "") {
-		$url = $this->KeyUrl("t21_bankadd.php", $this->UrlParm($parm));
+		$url = $this->KeyUrl("v0402_deposito_detailadd.php", $this->UrlParm($parm));
 		return $this->AddMasterUrl($url);
 	}
 
@@ -547,21 +534,21 @@ class ct21_bank extends cTable {
 
 	// Delete URL
 	function GetDeleteUrl() {
-		return $this->KeyUrl("t21_bankdelete.php", $this->UrlParm());
+		return $this->KeyUrl("v0402_deposito_detaildelete.php", $this->UrlParm());
 	}
 
 	// Add master url
 	function AddMasterUrl($url) {
-		if ($this->getCurrentMasterTable() == "t22_peserta" && strpos($url, EW_TABLE_SHOW_MASTER . "=") === FALSE) {
+		if ($this->getCurrentMasterTable() == "t20_deposito" && strpos($url, EW_TABLE_SHOW_MASTER . "=") === FALSE) {
 			$url .= (strpos($url, "?") !== FALSE ? "&" : "?") . EW_TABLE_SHOW_MASTER . "=" . $this->getCurrentMasterTable();
-			$url .= "&fk_id=" . urlencode($this->nasabah_id->CurrentValue);
+			$url .= "&fk_id=" . urlencode($this->dephead_id->CurrentValue);
 		}
 		return $url;
 	}
 
 	function KeyToJson() {
 		$json = "";
-		$json .= "id:" . ew_VarToJson($this->id->CurrentValue, "number", "'");
+		$json .= "jurnal_id:" . ew_VarToJson($this->jurnal_id->CurrentValue, "number", "'");
 		return "{" . $json . "}";
 	}
 
@@ -569,8 +556,8 @@ class ct21_bank extends cTable {
 	function KeyUrl($url, $parm = "") {
 		$sUrl = $url . "?";
 		if ($parm <> "") $sUrl .= $parm . "&";
-		if (!is_null($this->id->CurrentValue)) {
-			$sUrl .= "id=" . urlencode($this->id->CurrentValue);
+		if (!is_null($this->jurnal_id->CurrentValue)) {
+			$sUrl .= "jurnal_id=" . urlencode($this->jurnal_id->CurrentValue);
 		} else {
 			return "javascript:ew_Alert(ewLanguage.Phrase('InvalidRecord'));";
 		}
@@ -603,10 +590,10 @@ class ct21_bank extends cTable {
 			$cnt = count($arKeys);
 		} elseif (!empty($_GET) || !empty($_POST)) {
 			$isPost = ew_IsHttpPost();
-			if ($isPost && isset($_POST["id"]))
-				$arKeys[] = ew_StripSlashes($_POST["id"]);
-			elseif (isset($_GET["id"]))
-				$arKeys[] = ew_StripSlashes($_GET["id"]);
+			if ($isPost && isset($_POST["jurnal_id"]))
+				$arKeys[] = ew_StripSlashes($_POST["jurnal_id"]);
+			elseif (isset($_GET["jurnal_id"]))
+				$arKeys[] = ew_StripSlashes($_GET["jurnal_id"]);
 			else
 				$arKeys = NULL; // Do not setup
 
@@ -631,7 +618,7 @@ class ct21_bank extends cTable {
 		$sKeyFilter = "";
 		foreach ($arKeys as $key) {
 			if ($sKeyFilter <> "") $sKeyFilter .= " OR ";
-			$this->id->CurrentValue = $key;
+			$this->jurnal_id->CurrentValue = $key;
 			$sKeyFilter .= "(" . $this->KeyFilter() . ")";
 		}
 		return $sKeyFilter;
@@ -652,13 +639,11 @@ class ct21_bank extends cTable {
 
 	// Load row values from recordset
 	function LoadListRowValues(&$rs) {
-		$this->id->setDbValue($rs->fields('id'));
-		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->Nomor->setDbValue($rs->fields('Nomor'));
-		$this->Pemilik->setDbValue($rs->fields('Pemilik'));
-		$this->Bank->setDbValue($rs->fields('Bank'));
-		$this->Kota->setDbValue($rs->fields('Kota'));
-		$this->Cabang->setDbValue($rs->fields('Cabang'));
+		$this->dephead_id->setDbValue($rs->fields('dephead_id'));
+		$this->jurnal_id->setDbValue($rs->fields('jurnal_id'));
+		$this->tanggal->setDbValue($rs->fields('tanggal'));
+		$this->periode->setDbValue($rs->fields('periode'));
+		$this->jumlah_bayar->setDbValue($rs->fields('jumlah_bayar'));
 	}
 
 	// Render list row values
@@ -669,95 +654,57 @@ class ct21_bank extends cTable {
 		$this->Row_Rendering();
 
    // Common render codes
-		// id
-		// nasabah_id
-		// Nomor
-		// Pemilik
-		// Bank
-		// Kota
-		// Cabang
-		// id
+		// dephead_id
+		// jurnal_id
+		// tanggal
+		// periode
+		// jumlah_bayar
+		// dephead_id
 
-		$this->id->ViewValue = $this->id->CurrentValue;
-		$this->id->ViewCustomAttributes = "";
+		$this->dephead_id->ViewValue = $this->dephead_id->CurrentValue;
+		$this->dephead_id->ViewCustomAttributes = "";
 
-		// nasabah_id
-		if (strval($this->nasabah_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
-		$sWhereWrk = "";
-		$this->nasabah_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-			}
-		} else {
-			$this->nasabah_id->ViewValue = NULL;
-		}
-		$this->nasabah_id->ViewCustomAttributes = "";
+		// jurnal_id
+		$this->jurnal_id->ViewValue = $this->jurnal_id->CurrentValue;
+		$this->jurnal_id->ViewCustomAttributes = "";
 
-		// Nomor
-		$this->Nomor->ViewValue = $this->Nomor->CurrentValue;
-		$this->Nomor->ViewCustomAttributes = "";
+		// tanggal
+		$this->tanggal->ViewValue = $this->tanggal->CurrentValue;
+		$this->tanggal->ViewValue = ew_FormatDateTime($this->tanggal->ViewValue, 0);
+		$this->tanggal->ViewCustomAttributes = "";
 
-		// Pemilik
-		$this->Pemilik->ViewValue = $this->Pemilik->CurrentValue;
-		$this->Pemilik->ViewCustomAttributes = "";
+		// periode
+		$this->periode->ViewValue = $this->periode->CurrentValue;
+		$this->periode->ViewCustomAttributes = "";
 
-		// Bank
-		$this->Bank->ViewValue = $this->Bank->CurrentValue;
-		$this->Bank->ViewCustomAttributes = "";
+		// jumlah_bayar
+		$this->jumlah_bayar->ViewValue = $this->jumlah_bayar->CurrentValue;
+		$this->jumlah_bayar->ViewCustomAttributes = "";
 
-		// Kota
-		$this->Kota->ViewValue = $this->Kota->CurrentValue;
-		$this->Kota->ViewCustomAttributes = "";
+		// dephead_id
+		$this->dephead_id->LinkCustomAttributes = "";
+		$this->dephead_id->HrefValue = "";
+		$this->dephead_id->TooltipValue = "";
 
-		// Cabang
-		$this->Cabang->ViewValue = $this->Cabang->CurrentValue;
-		$this->Cabang->ViewCustomAttributes = "";
+		// jurnal_id
+		$this->jurnal_id->LinkCustomAttributes = "";
+		$this->jurnal_id->HrefValue = "";
+		$this->jurnal_id->TooltipValue = "";
 
-		// id
-		$this->id->LinkCustomAttributes = "";
-		$this->id->HrefValue = "";
-		$this->id->TooltipValue = "";
+		// tanggal
+		$this->tanggal->LinkCustomAttributes = "";
+		$this->tanggal->HrefValue = "";
+		$this->tanggal->TooltipValue = "";
 
-		// nasabah_id
-		$this->nasabah_id->LinkCustomAttributes = "";
-		$this->nasabah_id->HrefValue = "";
-		$this->nasabah_id->TooltipValue = "";
+		// periode
+		$this->periode->LinkCustomAttributes = "";
+		$this->periode->HrefValue = "";
+		$this->periode->TooltipValue = "";
 
-		// Nomor
-		$this->Nomor->LinkCustomAttributes = "";
-		$this->Nomor->HrefValue = "";
-		$this->Nomor->TooltipValue = "";
-
-		// Pemilik
-		$this->Pemilik->LinkCustomAttributes = "";
-		$this->Pemilik->HrefValue = "";
-		$this->Pemilik->TooltipValue = "";
-
-		// Bank
-		$this->Bank->LinkCustomAttributes = "";
-		$this->Bank->HrefValue = "";
-		$this->Bank->TooltipValue = "";
-
-		// Kota
-		$this->Kota->LinkCustomAttributes = "";
-		$this->Kota->HrefValue = "";
-		$this->Kota->TooltipValue = "";
-
-		// Cabang
-		$this->Cabang->LinkCustomAttributes = "";
-		$this->Cabang->HrefValue = "";
-		$this->Cabang->TooltipValue = "";
+		// jumlah_bayar
+		$this->jumlah_bayar->LinkCustomAttributes = "";
+		$this->jumlah_bayar->HrefValue = "";
+		$this->jumlah_bayar->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -770,70 +717,42 @@ class ct21_bank extends cTable {
 		// Call Row Rendering event
 		$this->Row_Rendering();
 
-		// id
-		$this->id->EditAttrs["class"] = "form-control";
-		$this->id->EditCustomAttributes = "";
-		$this->id->EditValue = $this->id->CurrentValue;
-		$this->id->ViewCustomAttributes = "";
-
-		// nasabah_id
-		$this->nasabah_id->EditAttrs["class"] = "form-control";
-		$this->nasabah_id->EditCustomAttributes = "";
-		if ($this->nasabah_id->getSessionValue() <> "") {
-			$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
-		if (strval($this->nasabah_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
-		$sWhereWrk = "";
-		$this->nasabah_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-			}
+		// dephead_id
+		$this->dephead_id->EditAttrs["class"] = "form-control";
+		$this->dephead_id->EditCustomAttributes = "";
+		if ($this->dephead_id->getSessionValue() <> "") {
+			$this->dephead_id->CurrentValue = $this->dephead_id->getSessionValue();
+		$this->dephead_id->ViewValue = $this->dephead_id->CurrentValue;
+		$this->dephead_id->ViewCustomAttributes = "";
 		} else {
-			$this->nasabah_id->ViewValue = NULL;
-		}
-		$this->nasabah_id->ViewCustomAttributes = "";
-		} else {
+		$this->dephead_id->EditValue = $this->dephead_id->CurrentValue;
+		$this->dephead_id->PlaceHolder = ew_RemoveHtml($this->dephead_id->FldCaption());
 		}
 
-		// Nomor
-		$this->Nomor->EditAttrs["class"] = "form-control";
-		$this->Nomor->EditCustomAttributes = "";
-		$this->Nomor->EditValue = $this->Nomor->CurrentValue;
-		$this->Nomor->PlaceHolder = ew_RemoveHtml($this->Nomor->FldCaption());
+		// jurnal_id
+		$this->jurnal_id->EditAttrs["class"] = "form-control";
+		$this->jurnal_id->EditCustomAttributes = "";
+		$this->jurnal_id->EditValue = $this->jurnal_id->CurrentValue;
+		$this->jurnal_id->ViewCustomAttributes = "";
 
-		// Pemilik
-		$this->Pemilik->EditAttrs["class"] = "form-control";
-		$this->Pemilik->EditCustomAttributes = "";
-		$this->Pemilik->EditValue = $this->Pemilik->CurrentValue;
-		$this->Pemilik->PlaceHolder = ew_RemoveHtml($this->Pemilik->FldCaption());
+		// tanggal
+		$this->tanggal->EditAttrs["class"] = "form-control";
+		$this->tanggal->EditCustomAttributes = "";
+		$this->tanggal->EditValue = ew_FormatDateTime($this->tanggal->CurrentValue, 8);
+		$this->tanggal->PlaceHolder = ew_RemoveHtml($this->tanggal->FldCaption());
 
-		// Bank
-		$this->Bank->EditAttrs["class"] = "form-control";
-		$this->Bank->EditCustomAttributes = "";
-		$this->Bank->EditValue = $this->Bank->CurrentValue;
-		$this->Bank->PlaceHolder = ew_RemoveHtml($this->Bank->FldCaption());
+		// periode
+		$this->periode->EditAttrs["class"] = "form-control";
+		$this->periode->EditCustomAttributes = "";
+		$this->periode->EditValue = $this->periode->CurrentValue;
+		$this->periode->PlaceHolder = ew_RemoveHtml($this->periode->FldCaption());
 
-		// Kota
-		$this->Kota->EditAttrs["class"] = "form-control";
-		$this->Kota->EditCustomAttributes = "";
-		$this->Kota->EditValue = $this->Kota->CurrentValue;
-		$this->Kota->PlaceHolder = ew_RemoveHtml($this->Kota->FldCaption());
-
-		// Cabang
-		$this->Cabang->EditAttrs["class"] = "form-control";
-		$this->Cabang->EditCustomAttributes = "";
-		$this->Cabang->EditValue = $this->Cabang->CurrentValue;
-		$this->Cabang->PlaceHolder = ew_RemoveHtml($this->Cabang->FldCaption());
+		// jumlah_bayar
+		$this->jumlah_bayar->EditAttrs["class"] = "form-control";
+		$this->jumlah_bayar->EditCustomAttributes = "";
+		$this->jumlah_bayar->EditValue = $this->jumlah_bayar->CurrentValue;
+		$this->jumlah_bayar->PlaceHolder = ew_RemoveHtml($this->jumlah_bayar->FldCaption());
+		if (strval($this->jumlah_bayar->EditValue) <> "" && is_numeric($this->jumlah_bayar->EditValue)) $this->jumlah_bayar->EditValue = ew_FormatNumber($this->jumlah_bayar->EditValue, -2, -1, -2, 0);
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -862,19 +781,17 @@ class ct21_bank extends cTable {
 			if ($Doc->Horizontal) { // Horizontal format, write header
 				$Doc->BeginExportRow();
 				if ($ExportPageType == "view") {
-					if ($this->Nomor->Exportable) $Doc->ExportCaption($this->Nomor);
-					if ($this->Pemilik->Exportable) $Doc->ExportCaption($this->Pemilik);
-					if ($this->Bank->Exportable) $Doc->ExportCaption($this->Bank);
-					if ($this->Kota->Exportable) $Doc->ExportCaption($this->Kota);
-					if ($this->Cabang->Exportable) $Doc->ExportCaption($this->Cabang);
+					if ($this->dephead_id->Exportable) $Doc->ExportCaption($this->dephead_id);
+					if ($this->jurnal_id->Exportable) $Doc->ExportCaption($this->jurnal_id);
+					if ($this->tanggal->Exportable) $Doc->ExportCaption($this->tanggal);
+					if ($this->periode->Exportable) $Doc->ExportCaption($this->periode);
+					if ($this->jumlah_bayar->Exportable) $Doc->ExportCaption($this->jumlah_bayar);
 				} else {
-					if ($this->id->Exportable) $Doc->ExportCaption($this->id);
-					if ($this->nasabah_id->Exportable) $Doc->ExportCaption($this->nasabah_id);
-					if ($this->Nomor->Exportable) $Doc->ExportCaption($this->Nomor);
-					if ($this->Pemilik->Exportable) $Doc->ExportCaption($this->Pemilik);
-					if ($this->Bank->Exportable) $Doc->ExportCaption($this->Bank);
-					if ($this->Kota->Exportable) $Doc->ExportCaption($this->Kota);
-					if ($this->Cabang->Exportable) $Doc->ExportCaption($this->Cabang);
+					if ($this->dephead_id->Exportable) $Doc->ExportCaption($this->dephead_id);
+					if ($this->jurnal_id->Exportable) $Doc->ExportCaption($this->jurnal_id);
+					if ($this->tanggal->Exportable) $Doc->ExportCaption($this->tanggal);
+					if ($this->periode->Exportable) $Doc->ExportCaption($this->periode);
+					if ($this->jumlah_bayar->Exportable) $Doc->ExportCaption($this->jumlah_bayar);
 				}
 				$Doc->EndExportRow();
 			}
@@ -906,19 +823,17 @@ class ct21_bank extends cTable {
 				if (!$Doc->ExportCustom) {
 					$Doc->BeginExportRow($RowCnt); // Allow CSS styles if enabled
 					if ($ExportPageType == "view") {
-						if ($this->Nomor->Exportable) $Doc->ExportField($this->Nomor);
-						if ($this->Pemilik->Exportable) $Doc->ExportField($this->Pemilik);
-						if ($this->Bank->Exportable) $Doc->ExportField($this->Bank);
-						if ($this->Kota->Exportable) $Doc->ExportField($this->Kota);
-						if ($this->Cabang->Exportable) $Doc->ExportField($this->Cabang);
+						if ($this->dephead_id->Exportable) $Doc->ExportField($this->dephead_id);
+						if ($this->jurnal_id->Exportable) $Doc->ExportField($this->jurnal_id);
+						if ($this->tanggal->Exportable) $Doc->ExportField($this->tanggal);
+						if ($this->periode->Exportable) $Doc->ExportField($this->periode);
+						if ($this->jumlah_bayar->Exportable) $Doc->ExportField($this->jumlah_bayar);
 					} else {
-						if ($this->id->Exportable) $Doc->ExportField($this->id);
-						if ($this->nasabah_id->Exportable) $Doc->ExportField($this->nasabah_id);
-						if ($this->Nomor->Exportable) $Doc->ExportField($this->Nomor);
-						if ($this->Pemilik->Exportable) $Doc->ExportField($this->Pemilik);
-						if ($this->Bank->Exportable) $Doc->ExportField($this->Bank);
-						if ($this->Kota->Exportable) $Doc->ExportField($this->Kota);
-						if ($this->Cabang->Exportable) $Doc->ExportField($this->Cabang);
+						if ($this->dephead_id->Exportable) $Doc->ExportField($this->dephead_id);
+						if ($this->jurnal_id->Exportable) $Doc->ExportField($this->jurnal_id);
+						if ($this->tanggal->Exportable) $Doc->ExportField($this->tanggal);
+						if ($this->periode->Exportable) $Doc->ExportField($this->periode);
+						if ($this->jumlah_bayar->Exportable) $Doc->ExportField($this->jumlah_bayar);
 					}
 					$Doc->EndExportRow();
 				}
@@ -962,7 +877,7 @@ class ct21_bank extends cTable {
 
 	// Write Audit Trail start/end for grid update
 	function WriteAuditTrailDummy($typ) {
-		$table = 't21_bank';
+		$table = 'v0402_deposito_detail';
 		$usr = CurrentUserID();
 		ew_WriteAuditTrail("log", ew_StdCurrentDateTime(), ew_ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -971,12 +886,12 @@ class ct21_bank extends cTable {
 	function WriteAuditTrailOnAdd(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnAdd) return;
-		$table = 't21_bank';
+		$table = 'v0402_deposito_detail';
 
 		// Get key value
 		$key = "";
 		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
-		$key .= $rs['id'];
+		$key .= $rs['jurnal_id'];
 
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
@@ -1005,12 +920,12 @@ class ct21_bank extends cTable {
 	function WriteAuditTrailOnEdit(&$rsold, &$rsnew) {
 		global $Language;
 		if (!$this->AuditTrailOnEdit) return;
-		$table = 't21_bank';
+		$table = 'v0402_deposito_detail';
 
 		// Get key value
 		$key = "";
 		if ($key <> "") $key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
-		$key .= $rsold['id'];
+		$key .= $rsold['jurnal_id'];
 
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();
@@ -1052,13 +967,13 @@ class ct21_bank extends cTable {
 	function WriteAuditTrailOnDelete(&$rs) {
 		global $Language;
 		if (!$this->AuditTrailOnDelete) return;
-		$table = 't21_bank';
+		$table = 'v0402_deposito_detail';
 
 		// Get key value
 		$key = "";
 		if ($key <> "")
 			$key .= $GLOBALS["EW_COMPOSITE_KEY_SEPARATOR"];
-		$key .= $rs['id'];
+		$key .= $rs['jurnal_id'];
 
 		// Write Audit Trail
 		$dt = ew_StdCurrentDateTime();

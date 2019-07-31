@@ -41,9 +41,6 @@ ft21_bankgrid.Validate = function() {
 		var checkrow = (gridinsert) ? !this.EmptyRow(infix) : true;
 		if (checkrow) {
 			addcnt++;
-			elm = this.GetElements("x" + infix + "_nasabah_id");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->nasabah_id->FldCaption(), $t21_bank->nasabah_id->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Nomor");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->Nomor->FldCaption(), $t21_bank->Nomor->ReqErrMsg)) ?>");
@@ -71,7 +68,6 @@ ft21_bankgrid.Validate = function() {
 // Check empty row
 ft21_bankgrid.EmptyRow = function(infix) {
 	var fobj = this.Form;
-	if (ew_ValueChanged(fobj, infix, "nasabah_id", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Nomor", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Pemilik", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Bank", false)) return false;
@@ -96,9 +92,8 @@ ft21_bankgrid.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft21_bankgrid.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
-
 // Form object for search
+
 </script>
 <?php } ?>
 <?php
@@ -170,15 +165,6 @@ $t21_bank_grid->RenderListOptions();
 // Render list options (header, left)
 $t21_bank_grid->ListOptions->Render("header", "left");
 ?>
-<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-	<?php if ($t21_bank->SortUrl($t21_bank->nasabah_id) == "") { ?>
-		<th data-name="nasabah_id"><div id="elh_t21_bank_nasabah_id" class="t21_bank_nasabah_id"><div class="ewTableHeaderCaption"><?php echo $t21_bank->nasabah_id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="nasabah_id"><div><div id="elh_t21_bank_nasabah_id" class="t21_bank_nasabah_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t21_bank->nasabah_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t21_bank->nasabah_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t21_bank->nasabah_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 	<?php if ($t21_bank->SortUrl($t21_bank->Nomor) == "") { ?>
 		<th data-name="Nomor"><div id="elh_t21_bank_Nomor" class="t21_bank_Nomor"><div class="ewTableHeaderCaption"><?php echo $t21_bank->Nomor->FldCaption() ?></div></div></th>
@@ -333,63 +319,6 @@ while ($t21_bank_grid->RecCnt < $t21_bank_grid->StopRec) {
 // Render list options (body, left)
 $t21_bank_grid->ListOptions->Render("body", "left", $t21_bank_grid->RowCnt);
 ?>
-	<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-		<td data-name="nasabah_id"<?php echo $t21_bank->nasabah_id->CellAttributes() ?>>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
-<?php if ($t21_bank->nasabah_id->getSessionValue() <> "") { ?>
-<span id="el<?php echo $t21_bank_grid->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t21_bank->nasabah_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el<?php echo $t21_bank_grid->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<select data-table="t21_bank" data-field="x_nasabah_id" data-value-separator="<?php echo $t21_bank->nasabah_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id"<?php echo $t21_bank->nasabah_id->EditAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->SelectOptionListHtml("x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="s_x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo $t21_bank->nasabah_id->LookupFilterQuery() ?>">
-</span>
-<?php } ?>
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="o<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="o<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->OldValue) ?>">
-<?php } ?>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<?php if ($t21_bank->nasabah_id->getSessionValue() <> "") { ?>
-<span id="el<?php echo $t21_bank_grid->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t21_bank->nasabah_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el<?php echo $t21_bank_grid->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<select data-table="t21_bank" data-field="x_nasabah_id" data-value-separator="<?php echo $t21_bank->nasabah_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id"<?php echo $t21_bank->nasabah_id->EditAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->SelectOptionListHtml("x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="s_x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo $t21_bank->nasabah_id->LookupFilterQuery() ?>">
-</span>
-<?php } ?>
-<?php } ?>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t21_bank_grid->RowCnt ?>_t21_bank_nasabah_id" class="t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->ListViewValue() ?></span>
-</span>
-<?php if ($t21_bank->CurrentAction <> "F") { ?>
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->FormValue) ?>">
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="o<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="o<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->OldValue) ?>">
-<?php } else { ?>
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="ft21_bankgrid$x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="ft21_bankgrid$x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->FormValue) ?>">
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="ft21_bankgrid$o<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="ft21_bankgrid$o<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->OldValue) ?>">
-<?php } ?>
-<?php } ?>
-<a id="<?php echo $t21_bank_grid->PageObjName . "_row_" . $t21_bank_grid->RowCnt ?>"></a></td>
-	<?php } ?>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
-<input type="hidden" data-table="t21_bank" data-field="x_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_id" id="x<?php echo $t21_bank_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->CurrentValue) ?>">
-<input type="hidden" data-table="t21_bank" data-field="x_id" name="o<?php echo $t21_bank_grid->RowIndex ?>_id" id="o<?php echo $t21_bank_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->OldValue) ?>">
-<?php } ?>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_EDIT || $t21_bank->CurrentMode == "edit") { ?>
-<input type="hidden" data-table="t21_bank" data-field="x_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_id" id="x<?php echo $t21_bank_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->CurrentValue) ?>">
-<?php } ?>
 	<?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 		<td data-name="Nomor"<?php echo $t21_bank->Nomor->CellAttributes() ?>>
 <?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
@@ -416,8 +345,15 @@ $t21_bank_grid->ListOptions->Render("body", "left", $t21_bank_grid->RowCnt);
 <input type="hidden" data-table="t21_bank" data-field="x_Nomor" name="ft21_bankgrid$o<?php echo $t21_bank_grid->RowIndex ?>_Nomor" id="ft21_bankgrid$o<?php echo $t21_bank_grid->RowIndex ?>_Nomor" value="<?php echo ew_HtmlEncode($t21_bank->Nomor->OldValue) ?>">
 <?php } ?>
 <?php } ?>
-</td>
+<a id="<?php echo $t21_bank_grid->PageObjName . "_row_" . $t21_bank_grid->RowCnt ?>"></a></td>
 	<?php } ?>
+<?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
+<input type="hidden" data-table="t21_bank" data-field="x_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_id" id="x<?php echo $t21_bank_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->CurrentValue) ?>">
+<input type="hidden" data-table="t21_bank" data-field="x_id" name="o<?php echo $t21_bank_grid->RowIndex ?>_id" id="o<?php echo $t21_bank_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->OldValue) ?>">
+<?php } ?>
+<?php if ($t21_bank->RowType == EW_ROWTYPE_EDIT || $t21_bank->CurrentMode == "edit") { ?>
+<input type="hidden" data-table="t21_bank" data-field="x_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_id" id="x<?php echo $t21_bank_grid->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->CurrentValue) ?>">
+<?php } ?>
 	<?php if ($t21_bank->Pemilik->Visible) { // Pemilik ?>
 		<td data-name="Pemilik"<?php echo $t21_bank->Pemilik->CellAttributes() ?>>
 <?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
@@ -572,33 +508,6 @@ ft21_bankgrid.UpdateOpts(<?php echo $t21_bank_grid->RowIndex ?>);
 // Render list options (body, left)
 $t21_bank_grid->ListOptions->Render("body", "left", $t21_bank_grid->RowIndex);
 ?>
-	<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-		<td data-name="nasabah_id">
-<?php if ($t21_bank->CurrentAction <> "F") { ?>
-<?php if ($t21_bank->nasabah_id->getSessionValue() <> "") { ?>
-<span id="el$rowindex$_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t21_bank->nasabah_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el$rowindex$_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<select data-table="t21_bank" data-field="x_nasabah_id" data-value-separator="<?php echo $t21_bank->nasabah_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id"<?php echo $t21_bank->nasabah_id->EditAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->SelectOptionListHtml("x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="s_x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo $t21_bank->nasabah_id->LookupFilterQuery() ?>">
-</span>
-<?php } ?>
-<?php } else { ?>
-<span id="el$rowindex$_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t21_bank->nasabah_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="x<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->FormValue) ?>">
-<?php } ?>
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="o<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" id="o<?php echo $t21_bank_grid->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->OldValue) ?>">
-</td>
-	<?php } ?>
 	<?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 		<td data-name="Nomor">
 <?php if ($t21_bank->CurrentAction <> "F") { ?>

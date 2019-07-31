@@ -13,6 +13,8 @@ function Page_Loading() {
 	//echo "0".$GLOBALS["Periode"]; //exit;
 	//$GLOBALS["t03_pinjaman"]->Angsuran_Denda->CurrentValue;
 
+	$_SESSION["pinjaman_id"] = 0;
+	$_SESSION["deposito_id"] = 0;
 }
 
 // Page Rendering event
@@ -30,6 +32,243 @@ function Page_Unloaded() {
 
 function yang dibuat untuk memudahkan memproses data
 */
+
+function f_caripembayaranbaru($deposito_id) { // -----------------------------------------
+	$q = "
+		select
+			*
+		from
+			t24_deposito_detail
+		where
+			deposito_id = ".$deposito_id."
+			and Periode is null
+		order by
+			id
+		";
+	$r = Conn()->Execute($q); //echo $q;
+	$Pembayaran_Ke = 0;
+	if ($r->EOF) { // belum ada data ber-Periode
+
+		//$Angsuran_Ke = 1;
+		//echo "1";
+		//return $Angsuran_Ke;
+
+	}
+	else {
+
+		//echo "2";
+		// sudah ada data ber-Periode
+		//$Periode = $r->fields["Periode"];
+		// bandingkan data Periode yang ada di database dengan data Periode berjalan
+		//if ($r->fields["Periode"] == $GLOBALS["Periode"]) {
+			// data Periode di database masih pada Periode berjalan
+
+			$Pembayaran_Ke = $r->fields["Pembayaran_Ke"];
+
+			//return $Angsuran_Ke; //$r->fields["Angsuran_Ke"];
+		//}
+		//else {
+			// data Periode di database sudah tidak sama dengan Periode berjalan
+			//$Angsuran_Ke = ++$r->fields["Angsuran_Ke"];
+			//return $Angsuran_Ke;
+		//}
+
+	}
+	$t24_deposito_detail_id = 0;
+	$q = "select id from t24_deposito_detail where deposito_id = ".
+		$deposito_id." and Pembayaran_Ke = ".$Pembayaran_Ke."";
+	$t24_deposito_detail_id = ew_ExecuteScalar($q); //echo $Angsuran_Ke." - "; exit;
+	return $t24_deposito_detail_id;
+} // end of function f_cariangsuranbaru ----------------------------------------------------
+
+function f_create_tanggal_pembayaran($sTanggal, $sTgl) { // ----------------------------------
+	$akhir_bulan = 0;
+	$dBln2829 = array(2);
+	$dBln30 = array(4, 6, 9, 11);
+	$dBln31 = array(1, 3, 5, 7, 8, 10, 12);
+
+	//$dTgl = date("j", strtotime($sTanggal));
+	$dTgl = $sTgl; //date("j", strtotime($sTanggal));
+	$dBln = date("n", strtotime($sTanggal));
+	$dThn = date("Y", strtotime($sTanggal));
+
+	// check apakah bulan kontrak adalah desember
+	if  ($dBln == 12) {
+		$dBln = "01";
+		$dThn++;
+	}
+	else {
+		$dBln++;
+	}
+	if ($dTgl >= 1 and $dTgl <= 27) {
+	}
+	else {
+		if (($dTgl == 28 or $dTgl == 29) and in_array($dBln, $dBln2829)) {
+			$akhir_bulan = 1;
+		}
+		elseif ($dTgl == 30 and in_array($dBln, $dBln30)) {
+			$akhir_bulan = 1;
+		}
+		elseif ($dTgl == 31 and in_array($dBln, $dBln31)) {
+			$akhir_bulan = 1;
+		}
+	}
+	if ($akhir_bulan == 0) { //$akhir_bulan = 0 (bukan tanggal akhir bulan)
+		do {
+			$hasil_check = checkdate(
+				substr("00".$dBln, -2),
+				substr("00".$dTgl, -2),
+				$dThn
+				);
+			$sTanggalAngsuran = $dThn . "-" . substr("00".$dBln, -2) . "-" . substr("00".$dTgl, -2);
+			/*echo substr("00".$dBln, -2).substr("00".$dTgl, -2).$dThn;
+			echo " - ";
+			echo $hasil_check;
+			echo "<br/>";*/
+			$dTgl--;
+		}
+		while ($hasil_check == false);
+	}
+	else { //$akhir_bulan = 1;
+		$sTanggalAngsuran = $dThn . "-" . substr("00".$dBln, -2) . "-" . date("t", mktime(0, 0, 0, $dBln, 1, $dThn));
+	}
+
+	//echo $akhir_bulan;
+	return $sTanggalAngsuran;
+} // end of function f_create_tanggal_angsuran ---------------------------------------------
+
+function f_create_rincian_pembayaran($rsnew) { // --------------------------------------------
+
+	// create data rincian pembayaran
+	$deposito_id = $rsnew["id"];
+	$Bayar_Tgl   = $rsnew["Kontrak_Tgl"];
+	$Bayar_Tgl2  = substr($Bayar_Tgl, -2);
+
+	//for ($i; $i <= 12; $i++) {
+	for ($Pembayaran_Ke = 1; $Pembayaran_Ke <= $rsnew["Kontrak_Lama"]; $Pembayaran_Ke++) {
+		$Bayar_Tgl = f_create_tanggal_pembayaran($Bayar_Tgl, $Bayar_Tgl2);
+		$q = "insert into t24_deposito_detail (
+			deposito_id,
+			Pembayaran_Ke,
+			Bayar_Tgl,
+			Bayar_Jumlah
+			) values (
+			'".$deposito_id."',
+			'".$Pembayaran_Ke."',
+			'".$Bayar_Tgl."',
+			0
+			)";
+		ew_Execute($q);
+	}
+} // end of function f_create_rincian_pembayaran -------------------------------------------
+
+function f_cari_detail_pembayaran($deposito_id) { // -----------------------------------------
+	$q = "
+		select
+			*
+		from
+			t24_deposito_detail
+		where
+			deposito_id = ".$deposito_id."
+			and Periode is not null
+		order by
+			id desc
+		";
+	$r = Conn()->Execute($q);
+	$Pembayaran_Ke = 0;
+	if ($r->EOF) { // belum ada data ber-Periode
+		$Pembayaran_Ke = 1;
+
+		//return $Angsuran_Ke;
+	}
+	else {
+
+		// sudah ada data ber-Periode
+		$Periode = $r->fields["Periode"];
+
+		// bandingkan data Periode yang ada di database dengan data Periode berjalan
+		if ($r->fields["Periode"] == $GLOBALS["Periode"]) {
+
+			// data Periode di database masih pada Periode berjalan
+			$Pembayaran_Ke = $r->fields["Pembayaran_Ke"];
+
+			//return $Angsuran_Ke; //$r->fields["Angsuran_Ke"];
+		}
+		else {
+
+			// data Periode di database sudah tidak sama dengan Periode berjalan
+			$Pembayaran_Ke = ++$r->fields["Pembayaran_Ke"];
+
+			//return $Angsuran_Ke;
+		}
+	}
+	$t24_deposito_detail_id = 0;
+	$q = "select id from t24_deposito_detail where deposito_id = ".
+		$deposito_id." and Pembayaran_Ke = ".$Pembayaran_Ke."";
+	$t24_deposito_detail_id = ew_ExecuteScalar($q);
+	return $t24_deposito_detail_id;
+} // end of function f_cari_detail_pembayaran ----------------------------------------------
+
+function GetNextNoKontrakDepCopy($id) {
+	$sNextNoKontrak = "";
+	$sLastNoKontrak = "";
+	$value = ew_ExecuteScalar("SELECT Kontrak_No FROM t23_deposito where id = ".$id." ORDER BY Kontrak_No DESC");
+	if ($value != "") { // jika sudah ada, langsung ambil dan proses...
+		$kode_terakhir = substr(rtrim($value, " "), -1);
+		$value2 = substr($value, 0, 5);
+		if ($kode_terakhir >= '0' and $kode_terakhir <= '9') {
+
+			// berarti kode terakhir nomor kontrak bukan huruf
+			$kode_terakhir = "B";
+			$sNextNoKontrak = $value2 . $kode_terakhir;
+		}
+		else {
+			switch($kode_terakhir) {
+				case "B":
+					$kode_terakhir = "C";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "C":
+					$kode_terakhir = "D";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "D":
+					$kode_terakhir = "E";
+					$sNextNoKontrak = $value2 . $kode_terakhir;
+					break;
+				case "E":
+					$sLastNoKontrak = intval($value); // ambil 4 digit terakhir
+					$sLastNoKontrak = intval($sLastNoKontrak) + 1; // konversi ke integer, lalu tambahkan satu
+					$sNextNoKontrak = sprintf('%05s', $sLastNoKontrak); // format hasilnya dan tambahkan prefix
+					if (strlen($sNextNoKontrak) > 5) {
+						$sNextNoKontrak = "9999";
+					}
+					break;
+			}
+		}
+	}
+	else { // jika belum ada, gunakan kode yang pertama
+		$sNextNoKontrak = "00001";
+	}
+	return $sNextNoKontrak;
+}
+
+function GetNextNoKontrakDep() {
+	$sNextNoKontrak = "";
+	$sLastNoKontrak = "";
+	$value = ew_ExecuteScalar("SELECT Kontrak_No FROM t23_deposito ORDER BY Kontrak_No DESC");
+	if ($value != "") { // jika sudah ada, langsung ambil dan proses...
+		$sLastNoKontrak = intval($value); //intval(substr($value, 1, 4)); // ambil 4 digit terakhir
+		$sLastNoKontrak = intval($sLastNoKontrak) + 1; // konversi ke integer, lalu tambahkan satu
+		$sNextNoKontrak = sprintf('%05s', $sLastNoKontrak); // format hasilnya dan tambahkan prefix
+		if (strlen($sNextNoKontrak) > 5) {
+			$sNextNoKontrak = "99999";
+		}
+	} else { // jika belum ada, gunakan kode yang pertama
+		$sNextNoKontrak = "00001";
+	}
+	return $sNextNoKontrak;
+}
 
 function GetNextNoUrut() {
 	$sNextNoUrut = "";

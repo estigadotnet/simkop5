@@ -35,6 +35,81 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 
 // Write your global startup script here
 // document.write("page loaded");
+
+	$('input[name=x_Kontrak_Tgl]').on(
+		{'change': function(e)
+			{
+				f_hitung_jatuh_tempo();
+			}
+		}
+	);
+	$('input[name=x_Kontrak_Lama]').on(
+		{'change': function(e)
+			{
+				f_hitung_jatuh_tempo();
+			}
+		}
+	);
+
+	function f_hitung_jatuh_tempo() {
+
+		//var kontrak_tgl = $("x_Kontrak_Tgl").val();
+		//var kontrak_lama = parseInt($("x_Kontrak_Lama").val());
+		// var date = new Date($("#x_Kontrak_Tgl").val());
+
+		var date = new Date(
+			$("#x_Kontrak_Tgl").val().substring(6,10),
+			$("#x_Kontrak_Tgl").val().substring(3,5) - 1,
+			$("#x_Kontrak_Tgl").val().substring(0,2)
+			);
+
+		//alert(date);
+		//alert(new Date(2019, 6, 30, 0, 0, 0, 0));
+
+		var lastDay = new Date(date.getFullYear(), date.getMonth() + parseInt($("#x_Kontrak_Lama").val()), date.getDate());
+		lastMonth = ( (lastDay.getMonth() + 1) < 10) ? '0' + (lastDay.getMonth() + 1) : (lastDay.getMonth() + 1);
+		lastDate = ( lastDay.getDate() < 10 ) ? '0' + lastDay.getDate() : lastDay.getDate();
+
+		//var newDate =  lastDay.getFullYear() + EW_DATE_SEPARATOR + lastMonth + EW_DATE_SEPARATOR + lastDate;
+		var newDate =  lastDate + EW_DATE_SEPARATOR + lastMonth + EW_DATE_SEPARATOR + lastDay.getFullYear();
+		if (isNaN(lastMonth) == false) $("#x_Jatuh_Tempo_Tgl").val(newDate);
+	}
+
+	// Table 't23_deposito' Field 'Deposito'
+	$('[data-table=t23_deposito][data-field=x_Deposito]').on(
+		{
+			'change': function (e) {
+				var $row = $(this).fields();
+
+				// f_terbilang($row["Jumlah_Deposito"].val(), "x_Jumlah_Terbilang");
+				f_hitung_bunga_2();
+			}
+		}
+	);
+
+	function f_hitung_bunga_2() {
+		var jumlah_deposito = parseFloat($("#x_Deposito").val());
+		var suku_bunga = parseFloat($("#x_Bunga_Suku").val());
+		var jumlah_bunga = ((suku_bunga / 12) / 100) * jumlah_deposito;
+
+		//eval('var '+$('#x_Jumlah_Bunga').autoNumeric('getString'));
+		$("#x_Bunga").val(jumlah_bunga);
+
+		//$("#x_Jumlah_Bunga").autoNumeric('update');
+	}
+
+	// Table 't23_deposito' Field 'Bunga_Suku'
+	$('[data-table=t23_deposito][data-field=x_Bunga_Suku]').on(
+		{
+			'change': function (e) {
+				var $row = $(this).fields();
+
+				//f_terbilang($row["Jumlah_Deposito"].val(), "x_Jumlah_Terbilang");
+				f_hitung_bunga_2();
+			}
+		}
+	);
+
 	function f_hitung_bunga() {
 		var jumlah_deposito = parseFloat($("#x_Jumlah_Deposito").val());
 		var suku_bunga = parseFloat($("#x_Suku_Bunga").val());
@@ -69,7 +144,7 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 		}
 	);
 
-function f_terbilang(bilanganx, terbilangx){
+	function f_terbilang(bilanganx, terbilangx){
 	var bilangan=bilanganx; /* document.getElementById("nominal").value; */
 	var kalimat="";
 	var angka   = new Array('0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0');
@@ -145,7 +220,7 @@ function f_terbilang(bilanganx, terbilangx){
 	}
 	kalimat = kalimat + " Rupiah";
 	document.getElementById(terbilangx).innerHTML=kalimat;
-};
+	};
 
 	function f_hitung(xparam) {
 		eval('var '+$('#x_Total_Denda').autoNumeric('getString'));

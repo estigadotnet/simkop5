@@ -5,9 +5,9 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t01_nasabahinfo.php" ?>
+<?php include_once "t22_pesertainfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
-<?php include_once "t02_jaminangridcls.php" ?>
+<?php include_once "t21_bankgridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -15,9 +15,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t01_nasabah_view = NULL; // Initialize page object first
+$t22_peserta_view = NULL; // Initialize page object first
 
-class ct01_nasabah_view extends ct01_nasabah {
+class ct22_peserta_view extends ct22_peserta {
 
 	// Page ID
 	var $PageID = 'view';
@@ -26,10 +26,10 @@ class ct01_nasabah_view extends ct01_nasabah {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't01_nasabah';
+	var $TableName = 't22_peserta';
 
 	// Page object name
-	var $PageObjName = 't01_nasabah_view';
+	var $PageObjName = 't22_peserta_view';
 
 	// Page name
 	function PageName() {
@@ -259,10 +259,10 @@ class ct01_nasabah_view extends ct01_nasabah {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t01_nasabah)
-		if (!isset($GLOBALS["t01_nasabah"]) || get_class($GLOBALS["t01_nasabah"]) == "ct01_nasabah") {
-			$GLOBALS["t01_nasabah"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t01_nasabah"];
+		// Table object (t22_peserta)
+		if (!isset($GLOBALS["t22_peserta"]) || get_class($GLOBALS["t22_peserta"]) == "ct22_peserta") {
+			$GLOBALS["t22_peserta"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t22_peserta"];
 		}
 		$KeyUrl = "";
 		if (@$_GET["id"] <> "") {
@@ -286,7 +286,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't01_nasabah', TRUE);
+			define("EW_TABLE_NAME", 't22_peserta', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -330,7 +330,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t01_nasabahlist.php"));
+				$this->Page_Terminate(ew_GetUrl("t22_pesertalist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -344,11 +344,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Alamat->SetVisibility();
 		$this->No_Telp_Hp->SetVisibility();
 		$this->Pekerjaan->SetVisibility();
-		$this->Pekerjaan_Alamat->SetVisibility();
-		$this->Pekerjaan_No_Telp_Hp->SetVisibility();
-		$this->Status->SetVisibility();
 		$this->Keterangan->SetVisibility();
-		$this->marketing_id->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -380,13 +376,13 @@ class ct01_nasabah_view extends ct01_nasabah {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t01_nasabah;
+		global $EW_EXPORT, $t22_peserta;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t01_nasabah);
+				$doc = new $class($t22_peserta);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -455,7 +451,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$sReturnUrl = "t01_nasabahlist.php"; // Return to list
+				$sReturnUrl = "t22_pesertalist.php"; // Return to list
 			}
 
 			// Get action
@@ -465,11 +461,11 @@ class ct01_nasabah_view extends ct01_nasabah {
 					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$sReturnUrl = "t01_nasabahlist.php"; // No matching record, return to list
+						$sReturnUrl = "t22_pesertalist.php"; // No matching record, return to list
 					}
 			}
 		} else {
-			$sReturnUrl = "t01_nasabahlist.php"; // Not page request, return to list
+			$sReturnUrl = "t22_pesertalist.php"; // Not page request, return to list
 		}
 		if ($sReturnUrl <> "")
 			$this->Page_Terminate($sReturnUrl);
@@ -533,25 +529,25 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$DetailCopyTblVar = "";
 		$DetailEditTblVar = "";
 
-		// "detail_t02_jaminan"
-		$item = &$option->Add("detail_t02_jaminan");
-		$body = $Language->Phrase("ViewPageDetailLink") . $Language->TablePhrase("t02_jaminan", "TblCaption");
-		$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t02_jaminanlist.php?" . EW_TABLE_SHOW_MASTER . "=t01_nasabah&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
+		// "detail_t21_bank"
+		$item = &$option->Add("detail_t21_bank");
+		$body = $Language->Phrase("ViewPageDetailLink") . $Language->TablePhrase("t21_bank", "TblCaption");
+		$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t21_banklist.php?" . EW_TABLE_SHOW_MASTER . "=t22_peserta&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
 		$links = "";
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailView && $Security->CanView() && $Security->AllowView(CurrentProjectID() . 't02_jaminan')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
+		if ($GLOBALS["t21_bank_grid"] && $GLOBALS["t21_bank_grid"]->DetailView && $Security->CanView() && $Security->AllowView(CurrentProjectID() . 't21_bank')) {
+			$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t21_bank")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
 			if ($DetailViewTblVar <> "") $DetailViewTblVar .= ",";
-			$DetailViewTblVar .= "t02_jaminan";
+			$DetailViewTblVar .= "t21_bank";
 		}
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't02_jaminan')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
+		if ($GLOBALS["t21_bank_grid"] && $GLOBALS["t21_bank_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't21_bank')) {
+			$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t21_bank")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
 			if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
-			$DetailEditTblVar .= "t02_jaminan";
+			$DetailEditTblVar .= "t21_bank";
 		}
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailAdd && $Security->CanAdd() && $Security->AllowAdd(CurrentProjectID() . 't02_jaminan')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
+		if ($GLOBALS["t21_bank_grid"] && $GLOBALS["t21_bank_grid"]->DetailAdd && $Security->CanAdd() && $Security->AllowAdd(CurrentProjectID() . 't21_bank')) {
+			$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=t21_bank")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
 			if ($DetailCopyTblVar <> "") $DetailCopyTblVar .= ",";
-			$DetailCopyTblVar .= "t02_jaminan";
+			$DetailCopyTblVar .= "t21_bank";
 		}
 		if ($links <> "") {
 			$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
@@ -559,10 +555,10 @@ class ct01_nasabah_view extends ct01_nasabah {
 		}
 		$body = "<div class=\"btn-group\">" . $body . "</div>";
 		$item->Body = $body;
-		$item->Visible = $Security->AllowList(CurrentProjectID() . 't02_jaminan');
+		$item->Visible = $Security->AllowList(CurrentProjectID() . 't21_bank');
 		if ($item->Visible) {
 			if ($DetailTableLink <> "") $DetailTableLink .= ",";
-			$DetailTableLink .= "t02_jaminan";
+			$DetailTableLink .= "t21_bank";
 		}
 		if ($this->ShowMultipleDetails) $item->Visible = FALSE;
 
@@ -685,11 +681,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Alamat->setDbValue($rs->fields('Alamat'));
 		$this->No_Telp_Hp->setDbValue($rs->fields('No_Telp_Hp'));
 		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
-		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
-		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
-		$this->Status->setDbValue($rs->fields('Status'));
 		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
-		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
 	}
 
 	// Load DbValue from recordset
@@ -701,11 +693,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Alamat->DbValue = $row['Alamat'];
 		$this->No_Telp_Hp->DbValue = $row['No_Telp_Hp'];
 		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
-		$this->Pekerjaan_Alamat->DbValue = $row['Pekerjaan_Alamat'];
-		$this->Pekerjaan_No_Telp_Hp->DbValue = $row['Pekerjaan_No_Telp_Hp'];
-		$this->Status->DbValue = $row['Status'];
 		$this->Keterangan->DbValue = $row['Keterangan'];
-		$this->marketing_id->DbValue = $row['marketing_id'];
 	}
 
 	// Render row values based on field settings
@@ -729,11 +717,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 		// Alamat
 		// No_Telp_Hp
 		// Pekerjaan
-		// Pekerjaan_Alamat
-		// Pekerjaan_No_Telp_Hp
-		// Status
 		// Keterangan
-		// marketing_id
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -757,49 +741,9 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
 		$this->Pekerjaan->ViewCustomAttributes = "";
 
-		// Pekerjaan_Alamat
-		$this->Pekerjaan_Alamat->ViewValue = $this->Pekerjaan_Alamat->CurrentValue;
-		$this->Pekerjaan_Alamat->ViewCustomAttributes = "";
-
-		// Pekerjaan_No_Telp_Hp
-		$this->Pekerjaan_No_Telp_Hp->ViewValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
-		$this->Pekerjaan_No_Telp_Hp->ViewCustomAttributes = "";
-
-		// Status
-		if (strval($this->Status->CurrentValue) <> "") {
-			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
-		} else {
-			$this->Status->ViewValue = NULL;
-		}
-		$this->Status->ViewCustomAttributes = "";
-
 		// Keterangan
 		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
 		$this->Keterangan->ViewCustomAttributes = "";
-
-		// marketing_id
-		if (strval($this->marketing_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `NoHP` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
-		$sWhereWrk = "";
-		$this->marketing_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$arwrk[2] = $rswrk->fields('Disp2Fld');
-				$this->marketing_id->ViewValue = $this->marketing_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
-			}
-		} else {
-			$this->marketing_id->ViewValue = NULL;
-		}
-		$this->marketing_id->ViewCustomAttributes = "";
 
 			// Nama
 			$this->Nama->LinkCustomAttributes = "";
@@ -821,30 +765,10 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$this->Pekerjaan->HrefValue = "";
 			$this->Pekerjaan->TooltipValue = "";
 
-			// Pekerjaan_Alamat
-			$this->Pekerjaan_Alamat->LinkCustomAttributes = "";
-			$this->Pekerjaan_Alamat->HrefValue = "";
-			$this->Pekerjaan_Alamat->TooltipValue = "";
-
-			// Pekerjaan_No_Telp_Hp
-			$this->Pekerjaan_No_Telp_Hp->LinkCustomAttributes = "";
-			$this->Pekerjaan_No_Telp_Hp->HrefValue = "";
-			$this->Pekerjaan_No_Telp_Hp->TooltipValue = "";
-
-			// Status
-			$this->Status->LinkCustomAttributes = "";
-			$this->Status->HrefValue = "";
-			$this->Status->TooltipValue = "";
-
 			// Keterangan
 			$this->Keterangan->LinkCustomAttributes = "";
 			$this->Keterangan->HrefValue = "";
 			$this->Keterangan->TooltipValue = "";
-
-			// marketing_id
-			$this->marketing_id->LinkCustomAttributes = "";
-			$this->marketing_id->HrefValue = "";
-			$this->marketing_id->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -864,18 +788,18 @@ class ct01_nasabah_view extends ct01_nasabah {
 		}
 		if ($sDetailTblVar <> "") {
 			$DetailTblVar = explode(",", $sDetailTblVar);
-			if (in_array("t02_jaminan", $DetailTblVar)) {
-				if (!isset($GLOBALS["t02_jaminan_grid"]))
-					$GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid;
-				if ($GLOBALS["t02_jaminan_grid"]->DetailView) {
-					$GLOBALS["t02_jaminan_grid"]->CurrentMode = "view";
+			if (in_array("t21_bank", $DetailTblVar)) {
+				if (!isset($GLOBALS["t21_bank_grid"]))
+					$GLOBALS["t21_bank_grid"] = new ct21_bank_grid;
+				if ($GLOBALS["t21_bank_grid"]->DetailView) {
+					$GLOBALS["t21_bank_grid"]->CurrentMode = "view";
 
 					// Save current master table to detail table
-					$GLOBALS["t02_jaminan_grid"]->setCurrentMasterTable($this->TableVar);
-					$GLOBALS["t02_jaminan_grid"]->setStartRecordNumber(1);
-					$GLOBALS["t02_jaminan_grid"]->nasabah_id->FldIsDetailKey = TRUE;
-					$GLOBALS["t02_jaminan_grid"]->nasabah_id->CurrentValue = $this->id->CurrentValue;
-					$GLOBALS["t02_jaminan_grid"]->nasabah_id->setSessionValue($GLOBALS["t02_jaminan_grid"]->nasabah_id->CurrentValue);
+					$GLOBALS["t21_bank_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t21_bank_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t21_bank_grid"]->nasabah_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t21_bank_grid"]->nasabah_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t21_bank_grid"]->nasabah_id->setSessionValue($GLOBALS["t21_bank_grid"]->nasabah_id->CurrentValue);
 				}
 			}
 		}
@@ -886,7 +810,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t01_nasabahlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t22_pesertalist.php"), "", $this->TableVar, TRUE);
 		$PageId = "view";
 		$Breadcrumb->Add("view", $PageId, $url);
 	}
@@ -949,12 +873,6 @@ class ct01_nasabah_view extends ct01_nasabah {
 	function Page_Render() {
 
 		//echo "Page Render";
-		// sembunyikan add, delete di halaman view master/detail
-
-		$this->OtherOptions["action"]->Items["add"]->Visible = FALSE;
-		$this->OtherOptions["action"]->Items["edit"]->Visible = FALSE;
-		$this->OtherOptions["action"]->Items["copy"]->Visible = FALSE;
-		$this->OtherOptions["action"]->Items["delete"]->Visible = FALSE;
 	}
 
 	// Page Data Rendering event
@@ -1004,29 +922,29 @@ class ct01_nasabah_view extends ct01_nasabah {
 <?php
 
 // Create page object
-if (!isset($t01_nasabah_view)) $t01_nasabah_view = new ct01_nasabah_view();
+if (!isset($t22_peserta_view)) $t22_peserta_view = new ct22_peserta_view();
 
 // Page init
-$t01_nasabah_view->Page_Init();
+$t22_peserta_view->Page_Init();
 
 // Page main
-$t01_nasabah_view->Page_Main();
+$t22_peserta_view->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t01_nasabah_view->Page_Render();
+$t22_peserta_view->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "view";
-var CurrentForm = ft01_nasabahview = new ew_Form("ft01_nasabahview", "view");
+var CurrentForm = ft22_pesertaview = new ew_Form("ft22_pesertaview", "view");
 
 // Form_CustomValidate event
-ft01_nasabahview.Form_CustomValidate = 
+ft22_pesertaview.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -1035,163 +953,116 @@ ft01_nasabahview.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft01_nasabahview.ValidateRequired = true;
+ft22_pesertaview.ValidateRequired = true;
 <?php } else { ?>
-ft01_nasabahview.ValidateRequired = false; 
+ft22_pesertaview.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-ft01_nasabahview.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft01_nasabahview.Lists["x_Status"].Options = <?php echo json_encode($t01_nasabah->Status->Options()) ?>;
-ft01_nasabahview.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_NoHP","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
-
 // Form object for search
+
 </script>
 <script type="text/javascript">
 
 // Write your client script here, no need to add script tags.
 </script>
 <div class="ewToolbar">
-<?php if (!$t01_nasabah_view->IsModal) { ?>
+<?php if (!$t22_peserta_view->IsModal) { ?>
 <?php $Breadcrumb->Render(); ?>
 <?php } ?>
-<?php $t01_nasabah_view->ExportOptions->Render("body") ?>
+<?php $t22_peserta_view->ExportOptions->Render("body") ?>
 <?php
-	foreach ($t01_nasabah_view->OtherOptions as &$option)
+	foreach ($t22_peserta_view->OtherOptions as &$option)
 		$option->Render("body");
 ?>
-<?php if (!$t01_nasabah_view->IsModal) { ?>
+<?php if (!$t22_peserta_view->IsModal) { ?>
 <?php echo $Language->SelectionForm(); ?>
 <?php } ?>
 <div class="clearfix"></div>
 </div>
-<?php $t01_nasabah_view->ShowPageHeader(); ?>
+<?php $t22_peserta_view->ShowPageHeader(); ?>
 <?php
-$t01_nasabah_view->ShowMessage();
+$t22_peserta_view->ShowMessage();
 ?>
-<form name="ft01_nasabahview" id="ft01_nasabahview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t01_nasabah_view->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t01_nasabah_view->Token ?>">
+<form name="ft22_pesertaview" id="ft22_pesertaview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t22_peserta_view->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t22_peserta_view->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t01_nasabah">
-<?php if ($t01_nasabah_view->IsModal) { ?>
+<input type="hidden" name="t" value="t22_peserta">
+<?php if ($t22_peserta_view->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t01_nasabah->Nama->Visible) { // Nama ?>
+<?php if ($t22_peserta->Nama->Visible) { // Nama ?>
 	<tr id="r_Nama">
-		<td><span id="elh_t01_nasabah_Nama"><?php echo $t01_nasabah->Nama->FldCaption() ?></span></td>
-		<td data-name="Nama"<?php echo $t01_nasabah->Nama->CellAttributes() ?>>
-<span id="el_t01_nasabah_Nama">
-<span<?php echo $t01_nasabah->Nama->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Nama->ViewValue ?></span>
+		<td><span id="elh_t22_peserta_Nama"><?php echo $t22_peserta->Nama->FldCaption() ?></span></td>
+		<td data-name="Nama"<?php echo $t22_peserta->Nama->CellAttributes() ?>>
+<span id="el_t22_peserta_Nama">
+<span<?php echo $t22_peserta->Nama->ViewAttributes() ?>>
+<?php echo $t22_peserta->Nama->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Alamat->Visible) { // Alamat ?>
+<?php if ($t22_peserta->Alamat->Visible) { // Alamat ?>
 	<tr id="r_Alamat">
-		<td><span id="elh_t01_nasabah_Alamat"><?php echo $t01_nasabah->Alamat->FldCaption() ?></span></td>
-		<td data-name="Alamat"<?php echo $t01_nasabah->Alamat->CellAttributes() ?>>
-<span id="el_t01_nasabah_Alamat">
-<span<?php echo $t01_nasabah->Alamat->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Alamat->ViewValue ?></span>
+		<td><span id="elh_t22_peserta_Alamat"><?php echo $t22_peserta->Alamat->FldCaption() ?></span></td>
+		<td data-name="Alamat"<?php echo $t22_peserta->Alamat->CellAttributes() ?>>
+<span id="el_t22_peserta_Alamat">
+<span<?php echo $t22_peserta->Alamat->ViewAttributes() ?>>
+<?php echo $t22_peserta->Alamat->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->No_Telp_Hp->Visible) { // No_Telp_Hp ?>
+<?php if ($t22_peserta->No_Telp_Hp->Visible) { // No_Telp_Hp ?>
 	<tr id="r_No_Telp_Hp">
-		<td><span id="elh_t01_nasabah_No_Telp_Hp"><?php echo $t01_nasabah->No_Telp_Hp->FldCaption() ?></span></td>
-		<td data-name="No_Telp_Hp"<?php echo $t01_nasabah->No_Telp_Hp->CellAttributes() ?>>
-<span id="el_t01_nasabah_No_Telp_Hp">
-<span<?php echo $t01_nasabah->No_Telp_Hp->ViewAttributes() ?>>
-<?php echo $t01_nasabah->No_Telp_Hp->ViewValue ?></span>
+		<td><span id="elh_t22_peserta_No_Telp_Hp"><?php echo $t22_peserta->No_Telp_Hp->FldCaption() ?></span></td>
+		<td data-name="No_Telp_Hp"<?php echo $t22_peserta->No_Telp_Hp->CellAttributes() ?>>
+<span id="el_t22_peserta_No_Telp_Hp">
+<span<?php echo $t22_peserta->No_Telp_Hp->ViewAttributes() ?>>
+<?php echo $t22_peserta->No_Telp_Hp->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
+<?php if ($t22_peserta->Pekerjaan->Visible) { // Pekerjaan ?>
 	<tr id="r_Pekerjaan">
-		<td><span id="elh_t01_nasabah_Pekerjaan"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?></span></td>
-		<td data-name="Pekerjaan"<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
-<span id="el_t01_nasabah_Pekerjaan">
-<span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan->ViewValue ?></span>
+		<td><span id="elh_t22_peserta_Pekerjaan"><?php echo $t22_peserta->Pekerjaan->FldCaption() ?></span></td>
+		<td data-name="Pekerjaan"<?php echo $t22_peserta->Pekerjaan->CellAttributes() ?>>
+<span id="el_t22_peserta_Pekerjaan">
+<span<?php echo $t22_peserta->Pekerjaan->ViewAttributes() ?>>
+<?php echo $t22_peserta->Pekerjaan->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Pekerjaan_Alamat->Visible) { // Pekerjaan_Alamat ?>
-	<tr id="r_Pekerjaan_Alamat">
-		<td><span id="elh_t01_nasabah_Pekerjaan_Alamat"><?php echo $t01_nasabah->Pekerjaan_Alamat->FldCaption() ?></span></td>
-		<td data-name="Pekerjaan_Alamat"<?php echo $t01_nasabah->Pekerjaan_Alamat->CellAttributes() ?>>
-<span id="el_t01_nasabah_Pekerjaan_Alamat">
-<span<?php echo $t01_nasabah->Pekerjaan_Alamat->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan_Alamat->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t01_nasabah->Pekerjaan_No_Telp_Hp->Visible) { // Pekerjaan_No_Telp_Hp ?>
-	<tr id="r_Pekerjaan_No_Telp_Hp">
-		<td><span id="elh_t01_nasabah_Pekerjaan_No_Telp_Hp"><?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->FldCaption() ?></span></td>
-		<td data-name="Pekerjaan_No_Telp_Hp"<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->CellAttributes() ?>>
-<span id="el_t01_nasabah_Pekerjaan_No_Telp_Hp">
-<span<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t01_nasabah->Status->Visible) { // Status ?>
-	<tr id="r_Status">
-		<td><span id="elh_t01_nasabah_Status"><?php echo $t01_nasabah->Status->FldCaption() ?></span></td>
-		<td data-name="Status"<?php echo $t01_nasabah->Status->CellAttributes() ?>>
-<span id="el_t01_nasabah_Status">
-<span<?php echo $t01_nasabah->Status->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Status->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t01_nasabah->Keterangan->Visible) { // Keterangan ?>
+<?php if ($t22_peserta->Keterangan->Visible) { // Keterangan ?>
 	<tr id="r_Keterangan">
-		<td><span id="elh_t01_nasabah_Keterangan"><?php echo $t01_nasabah->Keterangan->FldCaption() ?></span></td>
-		<td data-name="Keterangan"<?php echo $t01_nasabah->Keterangan->CellAttributes() ?>>
-<span id="el_t01_nasabah_Keterangan">
-<span<?php echo $t01_nasabah->Keterangan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Keterangan->ViewValue ?></span>
-</span>
-</td>
-	</tr>
-<?php } ?>
-<?php if ($t01_nasabah->marketing_id->Visible) { // marketing_id ?>
-	<tr id="r_marketing_id">
-		<td><span id="elh_t01_nasabah_marketing_id"><?php echo $t01_nasabah->marketing_id->FldCaption() ?></span></td>
-		<td data-name="marketing_id"<?php echo $t01_nasabah->marketing_id->CellAttributes() ?>>
-<span id="el_t01_nasabah_marketing_id">
-<span<?php echo $t01_nasabah->marketing_id->ViewAttributes() ?>>
-<?php echo $t01_nasabah->marketing_id->ViewValue ?></span>
+		<td><span id="elh_t22_peserta_Keterangan"><?php echo $t22_peserta->Keterangan->FldCaption() ?></span></td>
+		<td data-name="Keterangan"<?php echo $t22_peserta->Keterangan->CellAttributes() ?>>
+<span id="el_t22_peserta_Keterangan">
+<span<?php echo $t22_peserta->Keterangan->ViewAttributes() ?>>
+<?php echo $t22_peserta->Keterangan->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
 </table>
 <?php
-	if (in_array("t02_jaminan", explode(",", $t01_nasabah->getCurrentDetailTable())) && $t02_jaminan->DetailView) {
+	if (in_array("t21_bank", explode(",", $t22_peserta->getCurrentDetailTable())) && $t21_bank->DetailView) {
 ?>
-<?php if ($t01_nasabah->getCurrentDetailTable() <> "") { ?>
-<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t02_jaminan", "TblCaption") ?></h4>
+<?php if ($t22_peserta->getCurrentDetailTable() <> "") { ?>
+<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t21_bank", "TblCaption") ?></h4>
 <?php } ?>
-<?php include_once "t02_jaminangrid.php" ?>
+<?php include_once "t21_bankgrid.php" ?>
 <?php } ?>
 </form>
 <script type="text/javascript">
-ft01_nasabahview.Init();
+ft22_pesertaview.Init();
 </script>
 <?php
-$t01_nasabah_view->ShowPageFooter();
+$t22_peserta_view->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1203,5 +1074,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t01_nasabah_view->Page_Terminate();
+$t22_peserta_view->Page_Terminate();
 ?>

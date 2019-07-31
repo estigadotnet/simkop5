@@ -414,14 +414,9 @@ class ct20_deposito_list extends ct20_deposito {
 		$this->Tanggal_Valuta->SetVisibility();
 		$this->Tanggal_Jatuh_Tempo->SetVisibility();
 		$this->nasabah_id->SetVisibility();
-		$this->bank_id->SetVisibility();
 		$this->Jumlah_Deposito->SetVisibility();
-		$this->Jumlah_Terbilang->SetVisibility();
 		$this->Suku_Bunga->SetVisibility();
 		$this->Jumlah_Bunga->SetVisibility();
-		$this->Dikredit_Diperpanjang->SetVisibility();
-		$this->Tunai_Transfer->SetVisibility();
-		$this->Status->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -1137,14 +1132,9 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->UpdateSort($this->Tanggal_Valuta, $bCtrl); // Tanggal_Valuta
 			$this->UpdateSort($this->Tanggal_Jatuh_Tempo, $bCtrl); // Tanggal_Jatuh_Tempo
 			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
-			$this->UpdateSort($this->bank_id, $bCtrl); // bank_id
 			$this->UpdateSort($this->Jumlah_Deposito, $bCtrl); // Jumlah_Deposito
-			$this->UpdateSort($this->Jumlah_Terbilang, $bCtrl); // Jumlah_Terbilang
 			$this->UpdateSort($this->Suku_Bunga, $bCtrl); // Suku_Bunga
 			$this->UpdateSort($this->Jumlah_Bunga, $bCtrl); // Jumlah_Bunga
-			$this->UpdateSort($this->Dikredit_Diperpanjang, $bCtrl); // Dikredit_Diperpanjang
-			$this->UpdateSort($this->Tunai_Transfer, $bCtrl); // Tunai_Transfer
-			$this->UpdateSort($this->Status, $bCtrl); // Status
 			$this->setStartRecordNumber(1); // Reset start position
 		}
 	}
@@ -1182,14 +1172,9 @@ class ct20_deposito_list extends ct20_deposito {
 				$this->Tanggal_Valuta->setSort("");
 				$this->Tanggal_Jatuh_Tempo->setSort("");
 				$this->nasabah_id->setSort("");
-				$this->bank_id->setSort("");
 				$this->Jumlah_Deposito->setSort("");
-				$this->Jumlah_Terbilang->setSort("");
 				$this->Suku_Bunga->setSort("");
 				$this->Jumlah_Bunga->setSort("");
-				$this->Dikredit_Diperpanjang->setSort("");
-				$this->Tunai_Transfer->setSort("");
-				$this->Status->setSort("");
 			}
 
 			// Reset start position
@@ -1858,7 +1843,7 @@ class ct20_deposito_list extends ct20_deposito {
 		} else {
 		if (strval($this->nasabah_id->CurrentValue) <> "") {
 			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
+		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t22_peserta`";
 		$sWhereWrk = "";
 		$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
 		ew_AddFilter($sWhereWrk, $sFilterWrk);
@@ -1986,20 +1971,10 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->nasabah_id->HrefValue = "";
 			$this->nasabah_id->TooltipValue = "";
 
-			// bank_id
-			$this->bank_id->LinkCustomAttributes = "";
-			$this->bank_id->HrefValue = "";
-			$this->bank_id->TooltipValue = "";
-
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->LinkCustomAttributes = "";
 			$this->Jumlah_Deposito->HrefValue = "";
 			$this->Jumlah_Deposito->TooltipValue = "";
-
-			// Jumlah_Terbilang
-			$this->Jumlah_Terbilang->LinkCustomAttributes = "";
-			$this->Jumlah_Terbilang->HrefValue = "";
-			$this->Jumlah_Terbilang->TooltipValue = "";
 
 			// Suku_Bunga
 			$this->Suku_Bunga->LinkCustomAttributes = "";
@@ -2010,21 +1985,6 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Jumlah_Bunga->LinkCustomAttributes = "";
 			$this->Jumlah_Bunga->HrefValue = "";
 			$this->Jumlah_Bunga->TooltipValue = "";
-
-			// Dikredit_Diperpanjang
-			$this->Dikredit_Diperpanjang->LinkCustomAttributes = "";
-			$this->Dikredit_Diperpanjang->HrefValue = "";
-			$this->Dikredit_Diperpanjang->TooltipValue = "";
-
-			// Tunai_Transfer
-			$this->Tunai_Transfer->LinkCustomAttributes = "";
-			$this->Tunai_Transfer->HrefValue = "";
-			$this->Tunai_Transfer->TooltipValue = "";
-
-			// Status
-			$this->Status->LinkCustomAttributes = "";
-			$this->Status->HrefValue = "";
-			$this->Status->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_SEARCH) { // Search row
 
 			// No_Urut
@@ -2055,20 +2015,11 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->nasabah_id->EditValue2 = ew_HtmlEncode($this->nasabah_id->AdvancedSearch->SearchValue2);
 			$this->nasabah_id->PlaceHolder = ew_RemoveHtml($this->nasabah_id->FldCaption());
 
-			// bank_id
-			$this->bank_id->EditCustomAttributes = "";
-
 			// Jumlah_Deposito
 			$this->Jumlah_Deposito->EditAttrs["class"] = "form-control";
 			$this->Jumlah_Deposito->EditCustomAttributes = "";
 			$this->Jumlah_Deposito->EditValue = ew_HtmlEncode($this->Jumlah_Deposito->AdvancedSearch->SearchValue);
 			$this->Jumlah_Deposito->PlaceHolder = ew_RemoveHtml($this->Jumlah_Deposito->FldCaption());
-
-			// Jumlah_Terbilang
-			$this->Jumlah_Terbilang->EditAttrs["class"] = "form-control";
-			$this->Jumlah_Terbilang->EditCustomAttributes = "";
-			$this->Jumlah_Terbilang->EditValue = ew_HtmlEncode($this->Jumlah_Terbilang->AdvancedSearch->SearchValue);
-			$this->Jumlah_Terbilang->PlaceHolder = ew_RemoveHtml($this->Jumlah_Terbilang->FldCaption());
 
 			// Suku_Bunga
 			$this->Suku_Bunga->EditAttrs["class"] = "form-control";
@@ -2081,18 +2032,6 @@ class ct20_deposito_list extends ct20_deposito {
 			$this->Jumlah_Bunga->EditCustomAttributes = "";
 			$this->Jumlah_Bunga->EditValue = ew_HtmlEncode($this->Jumlah_Bunga->AdvancedSearch->SearchValue);
 			$this->Jumlah_Bunga->PlaceHolder = ew_RemoveHtml($this->Jumlah_Bunga->FldCaption());
-
-			// Dikredit_Diperpanjang
-			$this->Dikredit_Diperpanjang->EditCustomAttributes = "";
-			$this->Dikredit_Diperpanjang->EditValue = $this->Dikredit_Diperpanjang->Options(FALSE);
-
-			// Tunai_Transfer
-			$this->Tunai_Transfer->EditCustomAttributes = "";
-			$this->Tunai_Transfer->EditValue = $this->Tunai_Transfer->Options(FALSE);
-
-			// Status
-			$this->Status->EditCustomAttributes = "";
-			$this->Status->EditValue = $this->Status->Options(FALSE);
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -2309,7 +2248,7 @@ class ct20_deposito_list extends ct20_deposito {
 			switch ($fld->FldVar) {
 		case "x_nasabah_id":
 			$sSqlWrk = "";
-			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `v02_nasabahjaminan`";
+			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t22_peserta`";
 			$sWhereWrk = "{filter}";
 			$this->nasabah_id->LookupFilters = array("dx1" => '`Nama`');
 			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
@@ -2412,6 +2351,10 @@ class ct20_deposito_list extends ct20_deposito {
 		//$opt->OnLeft = TRUE; // Link on left
 		//$opt->MoveTo(0); // Move to first column
 
+		$opt = &$this->ListOptions->Add("bayar_bunga");
+		$opt->Header = "";
+		$opt->OnLeft = TRUE; // Link on left
+		$opt->MoveTo(0); // Move to first column
 	}
 
 	// ListOptions Rendered event
@@ -2420,6 +2363,15 @@ class ct20_deposito_list extends ct20_deposito {
 		// Example: 
 		//$this->ListOptions->Items["new"]->Body = "xxx";
 
+		$this->ListOptions->Items["bayar_bunga"]->Body =
+			"<a
+				class=\"ewAddEdit ewAdd\"
+				title=\"Bayar Bunga\"
+				data-caption=\"Bayar Bunga\"
+				href=\"t04_pinjamanangsurantemplist.php?showmaster=t03_pinjaman&fk_id=".$_SESSION["pinjaman_id"]."\"
+				>
+				Bayar Bunga
+			</a>"; // definisikan link, style, dan caption tombol //"xxx";
 	}
 
 	// Row Custom Action event
@@ -2499,14 +2451,7 @@ ft20_depositolist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft20_depositolist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
-ft20_depositolist.Lists["x_bank_id[]"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nomor","x_Pemilik","x_Bank",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t21_bank"};
-ft20_depositolist.Lists["x_Dikredit_Diperpanjang"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft20_depositolist.Lists["x_Dikredit_Diperpanjang"].Options = <?php echo json_encode($t20_deposito->Dikredit_Diperpanjang->Options()) ?>;
-ft20_depositolist.Lists["x_Tunai_Transfer"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft20_depositolist.Lists["x_Tunai_Transfer"].Options = <?php echo json_encode($t20_deposito->Tunai_Transfer->Options()) ?>;
-ft20_depositolist.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft20_depositolist.Lists["x_Status"].Options = <?php echo json_encode($t20_deposito->Status->Options()) ?>;
+ft20_depositolist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t22_peserta"};
 
 // Form object for search
 var CurrentSearchForm = ft20_depositolistsrch = new ew_Form("ft20_depositolistsrch");
@@ -2540,9 +2485,7 @@ ft20_depositolistsrch.ValidateRequired = false; // No JavaScript validation
 <?php } ?>
 
 // Dynamic selection lists
-ft20_depositolistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"v02_nasabahjaminan"};
-ft20_depositolistsrch.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft20_depositolistsrch.Lists["x_Status"].Options = <?php echo json_encode($t20_deposito->Status->Options()) ?>;
+ft20_depositolistsrch.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":["x_bank_id[]"],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t22_peserta"};
 </script>
 <script type="text/javascript">
 
@@ -2650,20 +2593,6 @@ $t20_deposito_list->RenderRow();
 <?php } ?>
 </div>
 <div id="xsr_3" class="ewRow">
-<?php if ($t20_deposito->Status->Visible) { // Status ?>
-	<div id="xsc_Status" class="ewCell form-group">
-		<label class="ewSearchCaption ewLabel"><?php echo $t20_deposito->Status->FldCaption() ?></label>
-		<span class="ewSearchOperator"><?php echo $Language->Phrase("=") ?><input type="hidden" name="z_Status" id="z_Status" value="="></span>
-		<span class="ewSearchField">
-<div id="tp_x_Status" class="ewTemplate"><input type="radio" data-table="t20_deposito" data-field="x_Status" data-value-separator="<?php echo $t20_deposito->Status->DisplayValueSeparatorAttribute() ?>" name="x_Status" id="x_Status" value="{value}"<?php echo $t20_deposito->Status->EditAttributes() ?>></div>
-<div id="dsl_x_Status" data-repeatcolumn="5" class="ewItemList" style="display: none;"><div>
-<?php echo $t20_deposito->Status->RadioButtonListHtml(FALSE, "x_Status") ?>
-</div></div>
-</span>
-	</div>
-<?php } ?>
-</div>
-<div id="xsr_4" class="ewRow">
 	<button class="btn btn-primary ewButton" name="btnsubmit" id="btnsubmit" type="submit"><?php echo $Language->Phrase("QuickSearchBtn") ?></button>
 </div>
 	</div>
@@ -2735,30 +2664,12 @@ $t20_deposito_list->ListOptions->Render("header", "left");
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
-<?php if ($t20_deposito->bank_id->Visible) { // bank_id ?>
-	<?php if ($t20_deposito->SortUrl($t20_deposito->bank_id) == "") { ?>
-		<th data-name="bank_id"><div id="elh_t20_deposito_bank_id" class="t20_deposito_bank_id"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->bank_id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="bank_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->bank_id) ?>',2);"><div id="elh_t20_deposito_bank_id" class="t20_deposito_bank_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->bank_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->bank_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->bank_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
 	<?php if ($t20_deposito->SortUrl($t20_deposito->Jumlah_Deposito) == "") { ?>
 		<th data-name="Jumlah_Deposito"><div id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></div></div></th>
 	<?php } else { ?>
 		<th data-name="Jumlah_Deposito"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Jumlah_Deposito) ?>',2);"><div id="elh_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Deposito->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Jumlah_Deposito->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Jumlah_Deposito->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t20_deposito->Jumlah_Terbilang->Visible) { // Jumlah_Terbilang ?>
-	<?php if ($t20_deposito->SortUrl($t20_deposito->Jumlah_Terbilang) == "") { ?>
-		<th data-name="Jumlah_Terbilang"><div id="elh_t20_deposito_Jumlah_Terbilang" class="t20_deposito_Jumlah_Terbilang"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Terbilang->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Jumlah_Terbilang"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Jumlah_Terbilang) ?>',2);"><div id="elh_t20_deposito_Jumlah_Terbilang" class="t20_deposito_Jumlah_Terbilang">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Terbilang->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Jumlah_Terbilang->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Jumlah_Terbilang->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2777,33 +2688,6 @@ $t20_deposito_list->ListOptions->Render("header", "left");
 	<?php } else { ?>
 		<th data-name="Jumlah_Bunga"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Jumlah_Bunga) ?>',2);"><div id="elh_t20_deposito_Jumlah_Bunga" class="t20_deposito_Jumlah_Bunga">
 			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Jumlah_Bunga->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Jumlah_Bunga->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Jumlah_Bunga->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t20_deposito->Dikredit_Diperpanjang->Visible) { // Dikredit_Diperpanjang ?>
-	<?php if ($t20_deposito->SortUrl($t20_deposito->Dikredit_Diperpanjang) == "") { ?>
-		<th data-name="Dikredit_Diperpanjang"><div id="elh_t20_deposito_Dikredit_Diperpanjang" class="t20_deposito_Dikredit_Diperpanjang"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Dikredit_Diperpanjang->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Dikredit_Diperpanjang"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Dikredit_Diperpanjang) ?>',2);"><div id="elh_t20_deposito_Dikredit_Diperpanjang" class="t20_deposito_Dikredit_Diperpanjang">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Dikredit_Diperpanjang->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Dikredit_Diperpanjang->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Dikredit_Diperpanjang->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t20_deposito->Tunai_Transfer->Visible) { // Tunai_Transfer ?>
-	<?php if ($t20_deposito->SortUrl($t20_deposito->Tunai_Transfer) == "") { ?>
-		<th data-name="Tunai_Transfer"><div id="elh_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Tunai_Transfer->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Tunai_Transfer"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Tunai_Transfer) ?>',2);"><div id="elh_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Tunai_Transfer->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Tunai_Transfer->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Tunai_Transfer->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
-<?php if ($t20_deposito->Status->Visible) { // Status ?>
-	<?php if ($t20_deposito->SortUrl($t20_deposito->Status) == "") { ?>
-		<th data-name="Status"><div id="elh_t20_deposito_Status" class="t20_deposito_Status"><div class="ewTableHeaderCaption"><?php echo $t20_deposito->Status->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="Status"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t20_deposito->SortUrl($t20_deposito->Status) ?>',2);"><div id="elh_t20_deposito_Status" class="t20_deposito_Status">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t20_deposito->Status->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t20_deposito->Status->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t20_deposito->Status->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
         </div></div></th>
 	<?php } ?>
 <?php } ?>		
@@ -2904,27 +2788,11 @@ $t20_deposito_list->ListOptions->Render("body", "left", $t20_deposito_list->RowC
 </span>
 </td>
 	<?php } ?>
-	<?php if ($t20_deposito->bank_id->Visible) { // bank_id ?>
-		<td data-name="bank_id"<?php echo $t20_deposito->bank_id->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_bank_id" class="t20_deposito_bank_id">
-<span<?php echo $t20_deposito->bank_id->ViewAttributes() ?>>
-<?php echo $t20_deposito->bank_id->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
 	<?php if ($t20_deposito->Jumlah_Deposito->Visible) { // Jumlah_Deposito ?>
 		<td data-name="Jumlah_Deposito"<?php echo $t20_deposito->Jumlah_Deposito->CellAttributes() ?>>
 <span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Jumlah_Deposito" class="t20_deposito_Jumlah_Deposito">
 <span<?php echo $t20_deposito->Jumlah_Deposito->ViewAttributes() ?>>
 <?php echo $t20_deposito->Jumlah_Deposito->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t20_deposito->Jumlah_Terbilang->Visible) { // Jumlah_Terbilang ?>
-		<td data-name="Jumlah_Terbilang"<?php echo $t20_deposito->Jumlah_Terbilang->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Jumlah_Terbilang" class="t20_deposito_Jumlah_Terbilang">
-<span<?php echo $t20_deposito->Jumlah_Terbilang->ViewAttributes() ?>>
-<?php echo $t20_deposito->Jumlah_Terbilang->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>
@@ -2941,30 +2809,6 @@ $t20_deposito_list->ListOptions->Render("body", "left", $t20_deposito_list->RowC
 <span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Jumlah_Bunga" class="t20_deposito_Jumlah_Bunga">
 <span<?php echo $t20_deposito->Jumlah_Bunga->ViewAttributes() ?>>
 <?php echo $t20_deposito->Jumlah_Bunga->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t20_deposito->Dikredit_Diperpanjang->Visible) { // Dikredit_Diperpanjang ?>
-		<td data-name="Dikredit_Diperpanjang"<?php echo $t20_deposito->Dikredit_Diperpanjang->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Dikredit_Diperpanjang" class="t20_deposito_Dikredit_Diperpanjang">
-<span<?php echo $t20_deposito->Dikredit_Diperpanjang->ViewAttributes() ?>>
-<?php echo $t20_deposito->Dikredit_Diperpanjang->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t20_deposito->Tunai_Transfer->Visible) { // Tunai_Transfer ?>
-		<td data-name="Tunai_Transfer"<?php echo $t20_deposito->Tunai_Transfer->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Tunai_Transfer" class="t20_deposito_Tunai_Transfer">
-<span<?php echo $t20_deposito->Tunai_Transfer->ViewAttributes() ?>>
-<?php echo $t20_deposito->Tunai_Transfer->ListViewValue() ?></span>
-</span>
-</td>
-	<?php } ?>
-	<?php if ($t20_deposito->Status->Visible) { // Status ?>
-		<td data-name="Status"<?php echo $t20_deposito->Status->CellAttributes() ?>>
-<span id="el<?php echo $t20_deposito_list->RowCnt ?>_t20_deposito_Status" class="t20_deposito_Status">
-<span<?php echo $t20_deposito->Status->ViewAttributes() ?>>
-<?php echo $t20_deposito->Status->ListViewValue() ?></span>
 </span>
 </td>
 	<?php } ?>

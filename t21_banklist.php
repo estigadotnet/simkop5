@@ -6,7 +6,7 @@ ob_start(); // Turn on output buffering
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
 <?php include_once "t21_bankinfo.php" ?>
-<?php include_once "t01_nasabahinfo.php" ?>
+<?php include_once "t22_pesertainfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
@@ -288,8 +288,8 @@ class ct21_bank_list extends ct21_bank {
 		$this->MultiDeleteUrl = "t21_bankdelete.php";
 		$this->MultiUpdateUrl = "t21_bankupdate.php";
 
-		// Table object (t01_nasabah)
-		if (!isset($GLOBALS['t01_nasabah'])) $GLOBALS['t01_nasabah'] = new ct01_nasabah();
+		// Table object (t22_peserta)
+		if (!isset($GLOBALS['t22_peserta'])) $GLOBALS['t22_peserta'] = new ct22_peserta();
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -417,7 +417,6 @@ class ct21_bank_list extends ct21_bank {
 
 		// Setup export options
 		$this->SetupExportOptions();
-		$this->nasabah_id->SetVisibility();
 		$this->Nomor->SetVisibility();
 		$this->Pemilik->SetVisibility();
 		$this->Bank->SetVisibility();
@@ -755,17 +754,17 @@ class ct21_bank_list extends ct21_bank {
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
 		// Load master record
-		if ($this->CurrentMode <> "add" && $this->GetMasterFilter() <> "" && $this->getCurrentMasterTable() == "t01_nasabah") {
-			global $t01_nasabah;
-			$rsmaster = $t01_nasabah->LoadRs($this->DbMasterFilter);
+		if ($this->CurrentMode <> "add" && $this->GetMasterFilter() <> "" && $this->getCurrentMasterTable() == "t22_peserta") {
+			global $t22_peserta;
+			$rsmaster = $t22_peserta->LoadRs($this->DbMasterFilter);
 			$this->MasterRecordExists = ($rsmaster && !$rsmaster->EOF);
 			if (!$this->MasterRecordExists) {
 				$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record found
-				$this->Page_Terminate("t01_nasabahlist.php"); // Return to master page
+				$this->Page_Terminate("t22_pesertalist.php"); // Return to master page
 			} else {
-				$t01_nasabah->LoadListRowValues($rsmaster);
-				$t01_nasabah->RowType = EW_ROWTYPE_MASTER; // Master row
-				$t01_nasabah->RenderListRow();
+				$t22_peserta->LoadListRowValues($rsmaster);
+				$t22_peserta->RowType = EW_ROWTYPE_MASTER; // Master row
+				$t22_peserta->RenderListRow();
 				$rsmaster->Close();
 			}
 		}
@@ -1180,8 +1179,6 @@ class ct21_bank_list extends ct21_bank {
 	// Check if empty row
 	function EmptyRow() {
 		global $objForm;
-		if ($objForm->HasValue("x_nasabah_id") && $objForm->HasValue("o_nasabah_id") && $this->nasabah_id->CurrentValue <> $this->nasabah_id->OldValue)
-			return FALSE;
 		if ($objForm->HasValue("x_Nomor") && $objForm->HasValue("o_Nomor") && $this->Nomor->CurrentValue <> $this->Nomor->OldValue)
 			return FALSE;
 		if ($objForm->HasValue("x_Pemilik") && $objForm->HasValue("o_Pemilik") && $this->Pemilik->CurrentValue <> $this->Pemilik->OldValue)
@@ -1562,7 +1559,6 @@ class ct21_bank_list extends ct21_bank {
 		if (@$_GET["order"] <> "") {
 			$this->CurrentOrder = ew_StripSlashes(@$_GET["order"]);
 			$this->CurrentOrderType = @$_GET["ordertype"];
-			$this->UpdateSort($this->nasabah_id, $bCtrl); // nasabah_id
 			$this->UpdateSort($this->Nomor, $bCtrl); // Nomor
 			$this->UpdateSort($this->Pemilik, $bCtrl); // Pemilik
 			$this->UpdateSort($this->Bank, $bCtrl); // Bank
@@ -1608,7 +1604,6 @@ class ct21_bank_list extends ct21_bank {
 			if ($this->Command == "resetsort") {
 				$sOrderBy = "";
 				$this->setSessionOrderBy($sOrderBy);
-				$this->nasabah_id->setSort("");
 				$this->Nomor->setSort("");
 				$this->Pemilik->setSort("");
 				$this->Bank->setSort("");
@@ -2148,8 +2143,6 @@ class ct21_bank_list extends ct21_bank {
 
 	// Load default values
 	function LoadDefaultValues() {
-		$this->nasabah_id->CurrentValue = NULL;
-		$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
 		$this->Nomor->CurrentValue = NULL;
 		$this->Nomor->OldValue = $this->Nomor->CurrentValue;
 		$this->Pemilik->CurrentValue = NULL;
@@ -2174,10 +2167,6 @@ class ct21_bank_list extends ct21_bank {
 
 		// Load from form
 		global $objForm;
-		if (!$this->nasabah_id->FldIsDetailKey) {
-			$this->nasabah_id->setFormValue($objForm->GetValue("x_nasabah_id"));
-		}
-		$this->nasabah_id->setOldValue($objForm->GetValue("o_nasabah_id"));
 		if (!$this->Nomor->FldIsDetailKey) {
 			$this->Nomor->setFormValue($objForm->GetValue("x_Nomor"));
 		}
@@ -2207,7 +2196,6 @@ class ct21_bank_list extends ct21_bank {
 		global $objForm;
 		if ($this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
 			$this->id->CurrentValue = $this->id->FormValue;
-		$this->nasabah_id->CurrentValue = $this->nasabah_id->FormValue;
 		$this->Nomor->CurrentValue = $this->Nomor->FormValue;
 		$this->Pemilik->CurrentValue = $this->Pemilik->FormValue;
 		$this->Bank->CurrentValue = $this->Bank->FormValue;
@@ -2388,11 +2376,6 @@ class ct21_bank_list extends ct21_bank {
 		$this->Cabang->ViewValue = $this->Cabang->CurrentValue;
 		$this->Cabang->ViewCustomAttributes = "";
 
-			// nasabah_id
-			$this->nasabah_id->LinkCustomAttributes = "";
-			$this->nasabah_id->HrefValue = "";
-			$this->nasabah_id->TooltipValue = "";
-
 			// Nomor
 			$this->Nomor->LinkCustomAttributes = "";
 			$this->Nomor->HrefValue = "";
@@ -2418,51 +2401,6 @@ class ct21_bank_list extends ct21_bank {
 			$this->Cabang->HrefValue = "";
 			$this->Cabang->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
-
-			// nasabah_id
-			$this->nasabah_id->EditAttrs["class"] = "form-control";
-			$this->nasabah_id->EditCustomAttributes = "";
-			if ($this->nasabah_id->getSessionValue() <> "") {
-				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
-				$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
-			if (strval($this->nasabah_id->CurrentValue) <> "") {
-				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
-			$sWhereWrk = "";
-			$this->nasabah_id->LookupFilters = array();
-			ew_AddFilter($sWhereWrk, $sFilterWrk);
-			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-				$rswrk = Conn()->Execute($sSqlWrk);
-				if ($rswrk && !$rswrk->EOF) { // Lookup values found
-					$arwrk = array();
-					$arwrk[1] = $rswrk->fields('DispFld');
-					$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
-					$rswrk->Close();
-				} else {
-					$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-				}
-			} else {
-				$this->nasabah_id->ViewValue = NULL;
-			}
-			$this->nasabah_id->ViewCustomAttributes = "";
-			} else {
-			if (trim(strval($this->nasabah_id->CurrentValue)) == "") {
-				$sFilterWrk = "0=1";
-			} else {
-				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-			}
-			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t01_nasabah`";
-			$sWhereWrk = "";
-			$this->nasabah_id->LookupFilters = array();
-			ew_AddFilter($sWhereWrk, $sFilterWrk);
-			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
-			if ($rswrk) $rswrk->Close();
-			$this->nasabah_id->EditValue = $arwrk;
-			}
 
 			// Nomor
 			$this->Nomor->EditAttrs["class"] = "form-control";
@@ -2495,12 +2433,8 @@ class ct21_bank_list extends ct21_bank {
 			$this->Cabang->PlaceHolder = ew_RemoveHtml($this->Cabang->FldCaption());
 
 			// Add refer script
-			// nasabah_id
-
-			$this->nasabah_id->LinkCustomAttributes = "";
-			$this->nasabah_id->HrefValue = "";
-
 			// Nomor
+
 			$this->Nomor->LinkCustomAttributes = "";
 			$this->Nomor->HrefValue = "";
 
@@ -2520,51 +2454,6 @@ class ct21_bank_list extends ct21_bank {
 			$this->Cabang->LinkCustomAttributes = "";
 			$this->Cabang->HrefValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
-
-			// nasabah_id
-			$this->nasabah_id->EditAttrs["class"] = "form-control";
-			$this->nasabah_id->EditCustomAttributes = "";
-			if ($this->nasabah_id->getSessionValue() <> "") {
-				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
-				$this->nasabah_id->OldValue = $this->nasabah_id->CurrentValue;
-			if (strval($this->nasabah_id->CurrentValue) <> "") {
-				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
-			$sWhereWrk = "";
-			$this->nasabah_id->LookupFilters = array();
-			ew_AddFilter($sWhereWrk, $sFilterWrk);
-			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-				$rswrk = Conn()->Execute($sSqlWrk);
-				if ($rswrk && !$rswrk->EOF) { // Lookup values found
-					$arwrk = array();
-					$arwrk[1] = $rswrk->fields('DispFld');
-					$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
-					$rswrk->Close();
-				} else {
-					$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-				}
-			} else {
-				$this->nasabah_id->ViewValue = NULL;
-			}
-			$this->nasabah_id->ViewCustomAttributes = "";
-			} else {
-			if (trim(strval($this->nasabah_id->CurrentValue)) == "") {
-				$sFilterWrk = "0=1";
-			} else {
-				$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-			}
-			$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld`, '' AS `SelectFilterFld`, '' AS `SelectFilterFld2`, '' AS `SelectFilterFld3`, '' AS `SelectFilterFld4` FROM `t01_nasabah`";
-			$sWhereWrk = "";
-			$this->nasabah_id->LookupFilters = array();
-			ew_AddFilter($sWhereWrk, $sFilterWrk);
-			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			$arwrk = ($rswrk) ? $rswrk->GetRows() : array();
-			if ($rswrk) $rswrk->Close();
-			$this->nasabah_id->EditValue = $arwrk;
-			}
 
 			// Nomor
 			$this->Nomor->EditAttrs["class"] = "form-control";
@@ -2597,12 +2486,8 @@ class ct21_bank_list extends ct21_bank {
 			$this->Cabang->PlaceHolder = ew_RemoveHtml($this->Cabang->FldCaption());
 
 			// Edit refer script
-			// nasabah_id
-
-			$this->nasabah_id->LinkCustomAttributes = "";
-			$this->nasabah_id->HrefValue = "";
-
 			// Nomor
+
 			$this->Nomor->LinkCustomAttributes = "";
 			$this->Nomor->HrefValue = "";
 
@@ -2643,9 +2528,6 @@ class ct21_bank_list extends ct21_bank {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->nasabah_id->FldIsDetailKey && !is_null($this->nasabah_id->FormValue) && $this->nasabah_id->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->nasabah_id->FldCaption(), $this->nasabah_id->ReqErrMsg));
-		}
 		if (!$this->Nomor->FldIsDetailKey && !is_null($this->Nomor->FormValue) && $this->Nomor->FormValue == "") {
 			ew_AddMessage($gsFormError, str_replace("%s", $this->Nomor->FldCaption(), $this->Nomor->ReqErrMsg));
 		}
@@ -2779,9 +2661,6 @@ class ct21_bank_list extends ct21_bank {
 			$this->LoadDbValues($rsold);
 			$rsnew = array();
 
-			// nasabah_id
-			$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, $this->nasabah_id->ReadOnly);
-
 			// Nomor
 			$this->Nomor->SetDbValueDef($rsnew, $this->Nomor->CurrentValue, "", $this->Nomor->ReadOnly);
 
@@ -2796,6 +2675,28 @@ class ct21_bank_list extends ct21_bank {
 
 			// Cabang
 			$this->Cabang->SetDbValueDef($rsnew, $this->Cabang->CurrentValue, "", $this->Cabang->ReadOnly);
+
+			// Check referential integrity for master table 't22_peserta'
+			$bValidMasterRecord = TRUE;
+			$sMasterFilter = $this->SqlMasterFilter_t22_peserta();
+			$KeyValue = isset($rsnew['nasabah_id']) ? $rsnew['nasabah_id'] : $rsold['nasabah_id'];
+			if (strval($KeyValue) <> "") {
+				$sMasterFilter = str_replace("@id@", ew_AdjustSql($KeyValue), $sMasterFilter);
+			} else {
+				$bValidMasterRecord = FALSE;
+			}
+			if ($bValidMasterRecord) {
+				if (!isset($GLOBALS["t22_peserta"])) $GLOBALS["t22_peserta"] = new ct22_peserta();
+				$rsmaster = $GLOBALS["t22_peserta"]->LoadRs($sMasterFilter);
+				$bValidMasterRecord = ($rsmaster && !$rsmaster->EOF);
+				$rsmaster->Close();
+			}
+			if (!$bValidMasterRecord) {
+				$sRelatedRecordMsg = str_replace("%t", "t22_peserta", $Language->Phrase("RelatedRecordRequired"));
+				$this->setFailureMessage($sRelatedRecordMsg);
+				$rs->Close();
+				return FALSE;
+			}
 
 			// Call Row Updating event
 			$bUpdateRow = $this->Row_Updating($rsold, $rsnew);
@@ -2832,6 +2733,26 @@ class ct21_bank_list extends ct21_bank {
 	// Add record
 	function AddRow($rsold = NULL) {
 		global $Language, $Security;
+
+		// Check referential integrity for master table 't22_peserta'
+		$bValidMasterRecord = TRUE;
+		$sMasterFilter = $this->SqlMasterFilter_t22_peserta();
+		if ($this->nasabah_id->getSessionValue() <> "") {
+			$sMasterFilter = str_replace("@id@", ew_AdjustSql($this->nasabah_id->getSessionValue(), "DB"), $sMasterFilter);
+		} else {
+			$bValidMasterRecord = FALSE;
+		}
+		if ($bValidMasterRecord) {
+			if (!isset($GLOBALS["t22_peserta"])) $GLOBALS["t22_peserta"] = new ct22_peserta();
+			$rsmaster = $GLOBALS["t22_peserta"]->LoadRs($sMasterFilter);
+			$bValidMasterRecord = ($rsmaster && !$rsmaster->EOF);
+			$rsmaster->Close();
+		}
+		if (!$bValidMasterRecord) {
+			$sRelatedRecordMsg = str_replace("%t", "t22_peserta", $Language->Phrase("RelatedRecordRequired"));
+			$this->setFailureMessage($sRelatedRecordMsg);
+			return FALSE;
+		}
 		$conn = &$this->Connection();
 
 		// Load db values from rsold
@@ -2839,9 +2760,6 @@ class ct21_bank_list extends ct21_bank {
 			$this->LoadDbValues($rsold);
 		}
 		$rsnew = array();
-
-		// nasabah_id
-		$this->nasabah_id->SetDbValueDef($rsnew, $this->nasabah_id->CurrentValue, 0, FALSE);
 
 		// Nomor
 		$this->Nomor->SetDbValueDef($rsnew, $this->Nomor->CurrentValue, "", FALSE);
@@ -2857,6 +2775,11 @@ class ct21_bank_list extends ct21_bank {
 
 		// Cabang
 		$this->Cabang->SetDbValueDef($rsnew, $this->Cabang->CurrentValue, "", FALSE);
+
+		// nasabah_id
+		if ($this->nasabah_id->getSessionValue() <> "") {
+			$rsnew['nasabah_id'] = $this->nasabah_id->getSessionValue();
+		}
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -3004,16 +2927,16 @@ class ct21_bank_list extends ct21_bank {
 		$ParentTable = "";
 
 		// Export master record
-		if (EW_EXPORT_MASTER_RECORD && $this->GetMasterFilter() <> "" && $this->getCurrentMasterTable() == "t01_nasabah") {
-			global $t01_nasabah;
-			if (!isset($t01_nasabah)) $t01_nasabah = new ct01_nasabah;
-			$rsmaster = $t01_nasabah->LoadRs($this->DbMasterFilter); // Load master record
+		if (EW_EXPORT_MASTER_RECORD && $this->GetMasterFilter() <> "" && $this->getCurrentMasterTable() == "t22_peserta") {
+			global $t22_peserta;
+			if (!isset($t22_peserta)) $t22_peserta = new ct22_peserta;
+			$rsmaster = $t22_peserta->LoadRs($this->DbMasterFilter); // Load master record
 			if ($rsmaster && !$rsmaster->EOF) {
 				$ExportStyle = $Doc->Style;
 				$Doc->SetStyle("v"); // Change to vertical
 				if ($this->Export <> "csv" || EW_EXPORT_MASTER_RECORD_FOR_CSV) {
-					$Doc->Table = &$t01_nasabah;
-					$t01_nasabah->ExportDocument($Doc, $rsmaster, 1, 1);
+					$Doc->Table = &$t22_peserta;
+					$t22_peserta->ExportDocument($Doc, $rsmaster, 1, 1);
 					$Doc->ExportEmptyRow();
 					$Doc->Table = &$this;
 				}
@@ -3062,13 +2985,13 @@ class ct21_bank_list extends ct21_bank {
 				$this->DbMasterFilter = "";
 				$this->DbDetailFilter = "";
 			}
-			if ($sMasterTblVar == "t01_nasabah") {
+			if ($sMasterTblVar == "t22_peserta") {
 				$bValidMaster = TRUE;
 				if (@$_GET["fk_id"] <> "") {
-					$GLOBALS["t01_nasabah"]->id->setQueryStringValue($_GET["fk_id"]);
-					$this->nasabah_id->setQueryStringValue($GLOBALS["t01_nasabah"]->id->QueryStringValue);
+					$GLOBALS["t22_peserta"]->id->setQueryStringValue($_GET["fk_id"]);
+					$this->nasabah_id->setQueryStringValue($GLOBALS["t22_peserta"]->id->QueryStringValue);
 					$this->nasabah_id->setSessionValue($this->nasabah_id->QueryStringValue);
-					if (!is_numeric($GLOBALS["t01_nasabah"]->id->QueryStringValue)) $bValidMaster = FALSE;
+					if (!is_numeric($GLOBALS["t22_peserta"]->id->QueryStringValue)) $bValidMaster = FALSE;
 				} else {
 					$bValidMaster = FALSE;
 				}
@@ -3080,13 +3003,13 @@ class ct21_bank_list extends ct21_bank {
 				$this->DbMasterFilter = "";
 				$this->DbDetailFilter = "";
 			}
-			if ($sMasterTblVar == "t01_nasabah") {
+			if ($sMasterTblVar == "t22_peserta") {
 				$bValidMaster = TRUE;
 				if (@$_POST["fk_id"] <> "") {
-					$GLOBALS["t01_nasabah"]->id->setFormValue($_POST["fk_id"]);
-					$this->nasabah_id->setFormValue($GLOBALS["t01_nasabah"]->id->FormValue);
+					$GLOBALS["t22_peserta"]->id->setFormValue($_POST["fk_id"]);
+					$this->nasabah_id->setFormValue($GLOBALS["t22_peserta"]->id->FormValue);
 					$this->nasabah_id->setSessionValue($this->nasabah_id->FormValue);
-					if (!is_numeric($GLOBALS["t01_nasabah"]->id->FormValue)) $bValidMaster = FALSE;
+					if (!is_numeric($GLOBALS["t22_peserta"]->id->FormValue)) $bValidMaster = FALSE;
 				} else {
 					$bValidMaster = FALSE;
 				}
@@ -3108,7 +3031,7 @@ class ct21_bank_list extends ct21_bank {
 			$this->setStartRecordNumber($this->StartRec);
 
 			// Clear previous master key from Session
-			if ($sMasterTblVar <> "t01_nasabah") {
+			if ($sMasterTblVar <> "t22_peserta") {
 				if ($this->nasabah_id->CurrentValue == "") $this->nasabah_id->setSessionValue("");
 			}
 		}
@@ -3130,18 +3053,6 @@ class ct21_bank_list extends ct21_bank {
 		global $gsLanguage;
 		$pageId = $pageId ?: $this->PageID;
 		switch ($fld->FldVar) {
-		case "x_nasabah_id":
-			$sSqlWrk = "";
-			$sSqlWrk = "SELECT `id` AS `LinkFld`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
-			$sWhereWrk = "";
-			$this->nasabah_id->LookupFilters = array();
-			$fld->LookupFilters += array("s" => $sSqlWrk, "d" => "", "f0" => '`id` = {filter_value}', "t0" => "3", "fn0" => "");
-			$sSqlWrk = "";
-			$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-			if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			if ($sSqlWrk <> "")
-				$fld->LookupFilters["s"] .= $sSqlWrk;
-			break;
 		}
 	}
 
@@ -3318,9 +3229,6 @@ ft21_banklist.Validate = function() {
 		var checkrow = (gridinsert) ? !this.EmptyRow(infix) : true;
 		if (checkrow) {
 			addcnt++;
-			elm = this.GetElements("x" + infix + "_nasabah_id");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->nasabah_id->FldCaption(), $t21_bank->nasabah_id->ReqErrMsg)) ?>");
 			elm = this.GetElements("x" + infix + "_Nomor");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
 				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->Nomor->FldCaption(), $t21_bank->Nomor->ReqErrMsg)) ?>");
@@ -3352,7 +3260,6 @@ ft21_banklist.Validate = function() {
 // Check empty row
 ft21_banklist.EmptyRow = function(infix) {
 	var fobj = this.Form;
-	if (ew_ValueChanged(fobj, infix, "nasabah_id", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Nomor", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Pemilik", false)) return false;
 	if (ew_ValueChanged(fobj, infix, "Bank", false)) return false;
@@ -3377,9 +3284,8 @@ ft21_banklist.ValidateRequired = false;
 <?php } ?>
 
 // Dynamic selection lists
-ft21_banklist.Lists["x_nasabah_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t01_nasabah"};
-
 // Form object for search
+
 var CurrentSearchForm = ft21_banklistsrch = new ew_Form("ft21_banklistsrch");
 </script>
 <script type="text/javascript">
@@ -3409,10 +3315,10 @@ var CurrentSearchForm = ft21_banklistsrch = new ew_Form("ft21_banklistsrch");
 <?php } ?>
 <?php if (($t21_bank->Export == "") || (EW_EXPORT_MASTER_RECORD && $t21_bank->Export == "print")) { ?>
 <?php
-if ($t21_bank_list->DbMasterFilter <> "" && $t21_bank->getCurrentMasterTable() == "t01_nasabah") {
+if ($t21_bank_list->DbMasterFilter <> "" && $t21_bank->getCurrentMasterTable() == "t22_peserta") {
 	if ($t21_bank_list->MasterRecordExists) {
 ?>
-<?php include_once "t01_nasabahmaster.php" ?>
+<?php include_once "t22_pesertamaster.php" ?>
 <?php
 	}
 }
@@ -3501,8 +3407,8 @@ $t21_bank_list->ShowMessage();
 <input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t21_bank_list->Token ?>">
 <?php } ?>
 <input type="hidden" name="t" value="t21_bank">
-<?php if ($t21_bank->getCurrentMasterTable() == "t01_nasabah" && $t21_bank->CurrentAction <> "") { ?>
-<input type="hidden" name="<?php echo EW_TABLE_SHOW_MASTER ?>" value="t01_nasabah">
+<?php if ($t21_bank->getCurrentMasterTable() == "t22_peserta" && $t21_bank->CurrentAction <> "") { ?>
+<input type="hidden" name="<?php echo EW_TABLE_SHOW_MASTER ?>" value="t22_peserta">
 <input type="hidden" name="fk_id" value="<?php echo $t21_bank->nasabah_id->getSessionValue() ?>">
 <?php } ?>
 <div id="gmp_t21_bank" class="<?php if (ew_IsResponsiveLayout()) { echo "table-responsive "; } ?>ewGridMiddlePanel">
@@ -3522,15 +3428,6 @@ $t21_bank_list->RenderListOptions();
 // Render list options (header, left)
 $t21_bank_list->ListOptions->Render("header", "left");
 ?>
-<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-	<?php if ($t21_bank->SortUrl($t21_bank->nasabah_id) == "") { ?>
-		<th data-name="nasabah_id"><div id="elh_t21_bank_nasabah_id" class="t21_bank_nasabah_id"><div class="ewTableHeaderCaption"><?php echo $t21_bank->nasabah_id->FldCaption() ?></div></div></th>
-	<?php } else { ?>
-		<th data-name="nasabah_id"><div class="ewPointer" onclick="ew_Sort(event,'<?php echo $t21_bank->SortUrl($t21_bank->nasabah_id) ?>',2);"><div id="elh_t21_bank_nasabah_id" class="t21_bank_nasabah_id">
-			<div class="ewTableHeaderBtn"><span class="ewTableHeaderCaption"><?php echo $t21_bank->nasabah_id->FldCaption() ?></span><span class="ewTableHeaderSort"><?php if ($t21_bank->nasabah_id->getSort() == "ASC") { ?><span class="caret ewSortUp"></span><?php } elseif ($t21_bank->nasabah_id->getSort() == "DESC") { ?><span class="caret"></span><?php } ?></span></div>
-        </div></div></th>
-	<?php } ?>
-<?php } ?>		
 <?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 	<?php if ($t21_bank->SortUrl($t21_bank->Nomor) == "") { ?>
 		<th data-name="Nomor"><div id="elh_t21_bank_Nomor" class="t21_bank_Nomor"><div class="ewTableHeaderCaption"><?php echo $t21_bank->Nomor->FldCaption() ?></div></div></th>
@@ -3613,25 +3510,6 @@ $t21_bank_list->ListOptions->Render("header", "right");
 // Render list options (body, left)
 $t21_bank_list->ListOptions->Render("body", "left", $t21_bank_list->RowCnt);
 ?>
-	<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-		<td data-name="nasabah_id">
-<?php if ($t21_bank->nasabah_id->getSessionValue() <> "") { ?>
-<span id="el<?php echo $t21_bank_list->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t21_bank->nasabah_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el<?php echo $t21_bank_list->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<select data-table="t21_bank" data-field="x_nasabah_id" data-value-separator="<?php echo $t21_bank->nasabah_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id"<?php echo $t21_bank->nasabah_id->EditAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->SelectOptionListHtml("x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" id="s_x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo $t21_bank->nasabah_id->LookupFilterQuery() ?>">
-</span>
-<?php } ?>
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="o<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" id="o<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->OldValue) ?>">
-</td>
-	<?php } ?>
 	<?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 		<td data-name="Nomor">
 <span id="el<?php echo $t21_bank_list->RowCnt ?>_t21_bank_Nomor" class="form-group t21_bank_Nomor">
@@ -3797,56 +3675,6 @@ while ($t21_bank_list->RecCnt < $t21_bank_list->StopRec) {
 // Render list options (body, left)
 $t21_bank_list->ListOptions->Render("body", "left", $t21_bank_list->RowCnt);
 ?>
-	<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-		<td data-name="nasabah_id"<?php echo $t21_bank->nasabah_id->CellAttributes() ?>>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
-<?php if ($t21_bank->nasabah_id->getSessionValue() <> "") { ?>
-<span id="el<?php echo $t21_bank_list->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t21_bank->nasabah_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el<?php echo $t21_bank_list->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<select data-table="t21_bank" data-field="x_nasabah_id" data-value-separator="<?php echo $t21_bank->nasabah_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id"<?php echo $t21_bank->nasabah_id->EditAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->SelectOptionListHtml("x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" id="s_x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo $t21_bank->nasabah_id->LookupFilterQuery() ?>">
-</span>
-<?php } ?>
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="o<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" id="o<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->OldValue) ?>">
-<?php } ?>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_EDIT) { // Edit record ?>
-<?php if ($t21_bank->nasabah_id->getSessionValue() <> "") { ?>
-<span id="el<?php echo $t21_bank_list->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t21_bank->nasabah_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el<?php echo $t21_bank_list->RowCnt ?>_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<select data-table="t21_bank" data-field="x_nasabah_id" data-value-separator="<?php echo $t21_bank->nasabah_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id"<?php echo $t21_bank->nasabah_id->EditAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->SelectOptionListHtml("x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" id="s_x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo $t21_bank->nasabah_id->LookupFilterQuery() ?>">
-</span>
-<?php } ?>
-<?php } ?>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_VIEW) { // View record ?>
-<span id="el<?php echo $t21_bank_list->RowCnt ?>_t21_bank_nasabah_id" class="t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->ListViewValue() ?></span>
-</span>
-<?php } ?>
-<a id="<?php echo $t21_bank_list->PageObjName . "_row_" . $t21_bank_list->RowCnt ?>"></a></td>
-	<?php } ?>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
-<input type="hidden" data-table="t21_bank" data-field="x_id" name="x<?php echo $t21_bank_list->RowIndex ?>_id" id="x<?php echo $t21_bank_list->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->CurrentValue) ?>">
-<input type="hidden" data-table="t21_bank" data-field="x_id" name="o<?php echo $t21_bank_list->RowIndex ?>_id" id="o<?php echo $t21_bank_list->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->OldValue) ?>">
-<?php } ?>
-<?php if ($t21_bank->RowType == EW_ROWTYPE_EDIT || $t21_bank->CurrentMode == "edit") { ?>
-<input type="hidden" data-table="t21_bank" data-field="x_id" name="x<?php echo $t21_bank_list->RowIndex ?>_id" id="x<?php echo $t21_bank_list->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->CurrentValue) ?>">
-<?php } ?>
 	<?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 		<td data-name="Nomor"<?php echo $t21_bank->Nomor->CellAttributes() ?>>
 <?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
@@ -3866,8 +3694,15 @@ $t21_bank_list->ListOptions->Render("body", "left", $t21_bank_list->RowCnt);
 <?php echo $t21_bank->Nomor->ListViewValue() ?></span>
 </span>
 <?php } ?>
-</td>
+<a id="<?php echo $t21_bank_list->PageObjName . "_row_" . $t21_bank_list->RowCnt ?>"></a></td>
 	<?php } ?>
+<?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
+<input type="hidden" data-table="t21_bank" data-field="x_id" name="x<?php echo $t21_bank_list->RowIndex ?>_id" id="x<?php echo $t21_bank_list->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->CurrentValue) ?>">
+<input type="hidden" data-table="t21_bank" data-field="x_id" name="o<?php echo $t21_bank_list->RowIndex ?>_id" id="o<?php echo $t21_bank_list->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->OldValue) ?>">
+<?php } ?>
+<?php if ($t21_bank->RowType == EW_ROWTYPE_EDIT || $t21_bank->CurrentMode == "edit") { ?>
+<input type="hidden" data-table="t21_bank" data-field="x_id" name="x<?php echo $t21_bank_list->RowIndex ?>_id" id="x<?php echo $t21_bank_list->RowIndex ?>_id" value="<?php echo ew_HtmlEncode($t21_bank->id->CurrentValue) ?>">
+<?php } ?>
 	<?php if ($t21_bank->Pemilik->Visible) { // Pemilik ?>
 		<td data-name="Pemilik"<?php echo $t21_bank->Pemilik->CellAttributes() ?>>
 <?php if ($t21_bank->RowType == EW_ROWTYPE_ADD) { // Add record ?>
@@ -3994,25 +3829,6 @@ ft21_banklist.UpdateOpts(<?php echo $t21_bank_list->RowIndex ?>);
 // Render list options (body, left)
 $t21_bank_list->ListOptions->Render("body", "left", $t21_bank_list->RowIndex);
 ?>
-	<?php if ($t21_bank->nasabah_id->Visible) { // nasabah_id ?>
-		<td data-name="nasabah_id">
-<?php if ($t21_bank->nasabah_id->getSessionValue() <> "") { ?>
-<span id="el$rowindex$_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<span<?php echo $t21_bank->nasabah_id->ViewAttributes() ?>>
-<p class="form-control-static"><?php echo $t21_bank->nasabah_id->ViewValue ?></p></span>
-</span>
-<input type="hidden" id="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->CurrentValue) ?>">
-<?php } else { ?>
-<span id="el$rowindex$_t21_bank_nasabah_id" class="form-group t21_bank_nasabah_id">
-<select data-table="t21_bank" data-field="x_nasabah_id" data-value-separator="<?php echo $t21_bank->nasabah_id->DisplayValueSeparatorAttribute() ?>" id="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" name="x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id"<?php echo $t21_bank->nasabah_id->EditAttributes() ?>>
-<?php echo $t21_bank->nasabah_id->SelectOptionListHtml("x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id") ?>
-</select>
-<input type="hidden" name="s_x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" id="s_x<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo $t21_bank->nasabah_id->LookupFilterQuery() ?>">
-</span>
-<?php } ?>
-<input type="hidden" data-table="t21_bank" data-field="x_nasabah_id" name="o<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" id="o<?php echo $t21_bank_list->RowIndex ?>_nasabah_id" value="<?php echo ew_HtmlEncode($t21_bank->nasabah_id->OldValue) ?>">
-</td>
-	<?php } ?>
 	<?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
 		<td data-name="Nomor">
 <span id="el$rowindex$_t21_bank_Nomor" class="form-group t21_bank_Nomor">

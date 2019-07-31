@@ -1,4 +1,4 @@
-<?php include_once "t21_bankinfo.php" ?>
+<?php include_once "t24_deposito_detailinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
 <?php
 
@@ -6,9 +6,9 @@
 // Page class
 //
 
-$t21_bank_grid = NULL; // Initialize page object first
+$t24_deposito_detail_grid = NULL; // Initialize page object first
 
-class ct21_bank_grid extends ct21_bank {
+class ct24_deposito_detail_grid extends ct24_deposito_detail {
 
 	// Page ID
 	var $PageID = 'grid';
@@ -17,13 +17,13 @@ class ct21_bank_grid extends ct21_bank {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't21_bank';
+	var $TableName = 't24_deposito_detail';
 
 	// Page object name
-	var $PageObjName = 't21_bank_grid';
+	var $PageObjName = 't24_deposito_detail_grid';
 
 	// Grid form hidden field names
-	var $FormName = 'ft21_bankgrid';
+	var $FormName = 'ft24_deposito_detailgrid';
 	var $FormActionName = 'k_action';
 	var $FormKeyName = 'k_key';
 	var $FormOldKeyName = 'k_oldkey';
@@ -239,15 +239,15 @@ class ct21_bank_grid extends ct21_bank {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t21_bank)
-		if (!isset($GLOBALS["t21_bank"]) || get_class($GLOBALS["t21_bank"]) == "ct21_bank") {
-			$GLOBALS["t21_bank"] = &$this;
+		// Table object (t24_deposito_detail)
+		if (!isset($GLOBALS["t24_deposito_detail"]) || get_class($GLOBALS["t24_deposito_detail"]) == "ct24_deposito_detail") {
+			$GLOBALS["t24_deposito_detail"] = &$this;
 
 //			$GLOBALS["MasterTable"] = &$GLOBALS["Table"];
-//			if (!isset($GLOBALS["Table"])) $GLOBALS["Table"] = &$GLOBALS["t21_bank"];
+//			if (!isset($GLOBALS["Table"])) $GLOBALS["Table"] = &$GLOBALS["t24_deposito_detail"];
 
 		}
-		$this->AddUrl = "t21_bankadd.php";
+		$this->AddUrl = "t24_deposito_detailadd.php";
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -258,7 +258,7 @@ class ct21_bank_grid extends ct21_bank {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't21_bank', TRUE);
+			define("EW_TABLE_NAME", 't24_deposito_detail', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -312,11 +312,9 @@ class ct21_bank_grid extends ct21_bank {
 
 		// Set up list options
 		$this->SetupListOptions();
-		$this->Nomor->SetVisibility();
-		$this->Pemilik->SetVisibility();
-		$this->Bank->SetVisibility();
-		$this->Kota->SetVisibility();
-		$this->Cabang->SetVisibility();
+		$this->Pembayaran_Ke->SetVisibility();
+		$this->Bayar_Tgl->SetVisibility();
+		$this->Bayar_Jumlah->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -362,13 +360,13 @@ class ct21_bank_grid extends ct21_bank {
 		global $gsExportFile, $gTmpImages;
 
 		// Export
-		global $EW_EXPORT, $t21_bank;
+		global $EW_EXPORT, $t24_deposito_detail;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t21_bank);
+				$doc = new $class($t24_deposito_detail);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -504,17 +502,17 @@ class ct21_bank_grid extends ct21_bank {
 		ew_AddFilter($sFilter, $this->SearchWhere);
 
 		// Load master record
-		if ($this->CurrentMode <> "add" && $this->GetMasterFilter() <> "" && $this->getCurrentMasterTable() == "t22_peserta") {
-			global $t22_peserta;
-			$rsmaster = $t22_peserta->LoadRs($this->DbMasterFilter);
+		if ($this->CurrentMode <> "add" && $this->GetMasterFilter() <> "" && $this->getCurrentMasterTable() == "t23_deposito") {
+			global $t23_deposito;
+			$rsmaster = $t23_deposito->LoadRs($this->DbMasterFilter);
 			$this->MasterRecordExists = ($rsmaster && !$rsmaster->EOF);
 			if (!$this->MasterRecordExists) {
 				$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record found
-				$this->Page_Terminate("t22_pesertalist.php"); // Return to master page
+				$this->Page_Terminate("t23_depositolist.php"); // Return to master page
 			} else {
-				$t22_peserta->LoadListRowValues($rsmaster);
-				$t22_peserta->RowType = EW_ROWTYPE_MASTER; // Master row
-				$t22_peserta->RenderListRow();
+				$t23_deposito->LoadListRowValues($rsmaster);
+				$t23_deposito->RowType = EW_ROWTYPE_MASTER; // Master row
+				$t23_deposito->RenderListRow();
 				$rsmaster->Close();
 			}
 		}
@@ -558,6 +556,7 @@ class ct21_bank_grid extends ct21_bank {
 
 	//  Exit inline mode
 	function ClearInlineMode() {
+		$this->Bayar_Jumlah->FormValue = ""; // Clear form value
 		$this->LastAction = $this->CurrentAction; // Save last action
 		$this->CurrentAction = ""; // Clear action
 		$_SESSION[EW_SESSION_INLINE_MODE] = ""; // Clear inline mode
@@ -803,15 +802,11 @@ class ct21_bank_grid extends ct21_bank {
 	// Check if empty row
 	function EmptyRow() {
 		global $objForm;
-		if ($objForm->HasValue("x_Nomor") && $objForm->HasValue("o_Nomor") && $this->Nomor->CurrentValue <> $this->Nomor->OldValue)
+		if ($objForm->HasValue("x_Pembayaran_Ke") && $objForm->HasValue("o_Pembayaran_Ke") && $this->Pembayaran_Ke->CurrentValue <> $this->Pembayaran_Ke->OldValue)
 			return FALSE;
-		if ($objForm->HasValue("x_Pemilik") && $objForm->HasValue("o_Pemilik") && $this->Pemilik->CurrentValue <> $this->Pemilik->OldValue)
+		if ($objForm->HasValue("x_Bayar_Tgl") && $objForm->HasValue("o_Bayar_Tgl") && $this->Bayar_Tgl->CurrentValue <> $this->Bayar_Tgl->OldValue)
 			return FALSE;
-		if ($objForm->HasValue("x_Bank") && $objForm->HasValue("o_Bank") && $this->Bank->CurrentValue <> $this->Bank->OldValue)
-			return FALSE;
-		if ($objForm->HasValue("x_Kota") && $objForm->HasValue("o_Kota") && $this->Kota->CurrentValue <> $this->Kota->OldValue)
-			return FALSE;
-		if ($objForm->HasValue("x_Cabang") && $objForm->HasValue("o_Cabang") && $this->Cabang->CurrentValue <> $this->Cabang->OldValue)
+		if ($objForm->HasValue("x_Bayar_Jumlah") && $objForm->HasValue("o_Bayar_Jumlah") && $this->Bayar_Jumlah->CurrentValue <> $this->Bayar_Jumlah->OldValue)
 			return FALSE;
 		return TRUE;
 	}
@@ -920,7 +915,7 @@ class ct21_bank_grid extends ct21_bank {
 				$this->setCurrentMasterTable(""); // Clear master table
 				$this->DbMasterFilter = "";
 				$this->DbDetailFilter = "";
-				$this->nasabah_id->setSessionValue("");
+				$this->deposito_id->setSessionValue("");
 			}
 
 			// Reset sorting order
@@ -953,28 +948,10 @@ class ct21_bank_grid extends ct21_bank {
 		$item->OnLeft = TRUE;
 		$item->Visible = FALSE;
 
-		// "view"
-		$item = &$this->ListOptions->Add("view");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = $Security->CanView();
-		$item->OnLeft = TRUE;
-
 		// "edit"
 		$item = &$this->ListOptions->Add("edit");
 		$item->CssStyle = "white-space: nowrap;";
 		$item->Visible = $Security->CanEdit();
-		$item->OnLeft = TRUE;
-
-		// "copy"
-		$item = &$this->ListOptions->Add("copy");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = $Security->CanAdd();
-		$item->OnLeft = TRUE;
-
-		// "delete"
-		$item = &$this->ListOptions->Add("delete");
-		$item->CssStyle = "white-space: nowrap;";
-		$item->Visible = $Security->CanDelete();
 		$item->OnLeft = TRUE;
 
 		// "sequence"
@@ -1030,7 +1007,7 @@ class ct21_bank_grid extends ct21_bank {
 				$option->UseButtonGroup = TRUE; // Use button group for grid delete button
 				$option->UseImageAndText = TRUE; // Use image and text for grid delete button
 				$oListOpt = &$option->Items["griddelete"];
-				if (!$Security->CanDelete() && is_numeric($this->RowIndex) && ($this->RowAction == "" || $this->RowAction == "edit")) { // Do not allow delete existing record
+				if (is_numeric($this->RowIndex) && ($this->RowAction == "" || $this->RowAction == "edit")) { // Do not allow delete existing record
 					$oListOpt->Body = "&nbsp;";
 				} else {
 					$oListOpt->Body = "<a class=\"ewGridLink ewGridDelete\" title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" onclick=\"return ew_DeleteGridRow(this, " . $this->RowIndex . ");\">" . $Language->Phrase("DeleteLink") . "</a>";
@@ -1043,15 +1020,6 @@ class ct21_bank_grid extends ct21_bank {
 		$oListOpt->Body = ew_FormatSeqNo($this->RecCnt);
 		if ($this->CurrentMode == "view") { // View mode
 
-		// "view"
-		$oListOpt = &$this->ListOptions->Items["view"];
-		$viewcaption = ew_HtmlTitle($Language->Phrase("ViewLink"));
-		if ($Security->CanView()) {
-			$oListOpt->Body = "<a class=\"ewRowLink ewView\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . ew_HtmlEncode($this->ViewUrl) . "\">" . $Language->Phrase("ViewLink") . "</a>";
-		} else {
-			$oListOpt->Body = "";
-		}
-
 		// "edit"
 		$oListOpt = &$this->ListOptions->Items["edit"];
 		$editcaption = ew_HtmlTitle($Language->Phrase("EditLink"));
@@ -1060,22 +1028,6 @@ class ct21_bank_grid extends ct21_bank {
 		} else {
 			$oListOpt->Body = "";
 		}
-
-		// "copy"
-		$oListOpt = &$this->ListOptions->Items["copy"];
-		$copycaption = ew_HtmlTitle($Language->Phrase("CopyLink"));
-		if ($Security->CanAdd()) {
-			$oListOpt->Body = "<a class=\"ewRowLink ewCopy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . ew_HtmlEncode($this->CopyUrl) . "\">" . $Language->Phrase("CopyLink") . "</a>";
-		} else {
-			$oListOpt->Body = "";
-		}
-
-		// "delete"
-		$oListOpt = &$this->ListOptions->Items["delete"];
-		if ($Security->CanDelete())
-			$oListOpt->Body = "<a class=\"ewRowLink ewDelete\"" . "" . " title=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("DeleteLink")) . "\" href=\"" . ew_HtmlEncode($this->DeleteUrl) . "\">" . $Language->Phrase("DeleteLink") . "</a>";
-		else
-			$oListOpt->Body = "";
 		} // End View mode
 		if ($this->CurrentMode == "edit" && is_numeric($this->RowIndex)) {
 			$this->MultiSelectKey .= "<input type=\"hidden\" name=\"" . $KeyName . "\" id=\"" . $KeyName . "\" value=\"" . $this->id->CurrentValue . "\">";
@@ -1101,14 +1053,6 @@ class ct21_bank_grid extends ct21_bank {
 		$item = &$option->Add($option->GroupOptionName);
 		$item->Body = "";
 		$item->Visible = FALSE;
-
-		// Add
-		if ($this->CurrentMode == "view") { // Check view mode
-			$item = &$option->Add("add");
-			$addcaption = ew_HtmlTitle($Language->Phrase("AddLink"));
-			$item->Body = "<a class=\"ewAddEdit ewAdd\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . ew_HtmlEncode($this->AddUrl) . "\">" . $Language->Phrase("AddLink") . "</a>";
-			$item->Visible = ($this->AddUrl <> "" && $Security->CanAdd());
-		}
 	}
 
 	// Render other options
@@ -1122,7 +1066,7 @@ class ct21_bank_grid extends ct21_bank {
 				$option->UseImageAndText = TRUE;
 				$item = &$option->Add("addblankrow");
 				$item->Body = "<a class=\"ewAddEdit ewAddBlankRow\" title=\"" . ew_HtmlTitle($Language->Phrase("AddBlankRow")) . "\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("AddBlankRow")) . "\" href=\"javascript:void(0);\" onclick=\"ew_AddGridRow(this);\">" . $Language->Phrase("AddBlankRow") . "</a>";
-				$item->Visible = $Security->CanAdd();
+				$item->Visible = FALSE;
 				$this->ShowOtherOptions = $item->Visible;
 			}
 		}
@@ -1182,16 +1126,12 @@ class ct21_bank_grid extends ct21_bank {
 
 	// Load default values
 	function LoadDefaultValues() {
-		$this->Nomor->CurrentValue = NULL;
-		$this->Nomor->OldValue = $this->Nomor->CurrentValue;
-		$this->Pemilik->CurrentValue = NULL;
-		$this->Pemilik->OldValue = $this->Pemilik->CurrentValue;
-		$this->Bank->CurrentValue = NULL;
-		$this->Bank->OldValue = $this->Bank->CurrentValue;
-		$this->Kota->CurrentValue = NULL;
-		$this->Kota->OldValue = $this->Kota->CurrentValue;
-		$this->Cabang->CurrentValue = NULL;
-		$this->Cabang->OldValue = $this->Cabang->CurrentValue;
+		$this->Pembayaran_Ke->CurrentValue = 0;
+		$this->Pembayaran_Ke->OldValue = $this->Pembayaran_Ke->CurrentValue;
+		$this->Bayar_Tgl->CurrentValue = NULL;
+		$this->Bayar_Tgl->OldValue = $this->Bayar_Tgl->CurrentValue;
+		$this->Bayar_Jumlah->CurrentValue = NULL;
+		$this->Bayar_Jumlah->OldValue = $this->Bayar_Jumlah->CurrentValue;
 	}
 
 	// Load form values
@@ -1200,26 +1140,19 @@ class ct21_bank_grid extends ct21_bank {
 		// Load from form
 		global $objForm;
 		$objForm->FormName = $this->FormName;
-		if (!$this->Nomor->FldIsDetailKey) {
-			$this->Nomor->setFormValue($objForm->GetValue("x_Nomor"));
+		if (!$this->Pembayaran_Ke->FldIsDetailKey) {
+			$this->Pembayaran_Ke->setFormValue($objForm->GetValue("x_Pembayaran_Ke"));
 		}
-		$this->Nomor->setOldValue($objForm->GetValue("o_Nomor"));
-		if (!$this->Pemilik->FldIsDetailKey) {
-			$this->Pemilik->setFormValue($objForm->GetValue("x_Pemilik"));
+		$this->Pembayaran_Ke->setOldValue($objForm->GetValue("o_Pembayaran_Ke"));
+		if (!$this->Bayar_Tgl->FldIsDetailKey) {
+			$this->Bayar_Tgl->setFormValue($objForm->GetValue("x_Bayar_Tgl"));
+			$this->Bayar_Tgl->CurrentValue = ew_UnFormatDateTime($this->Bayar_Tgl->CurrentValue, 7);
 		}
-		$this->Pemilik->setOldValue($objForm->GetValue("o_Pemilik"));
-		if (!$this->Bank->FldIsDetailKey) {
-			$this->Bank->setFormValue($objForm->GetValue("x_Bank"));
+		$this->Bayar_Tgl->setOldValue($objForm->GetValue("o_Bayar_Tgl"));
+		if (!$this->Bayar_Jumlah->FldIsDetailKey) {
+			$this->Bayar_Jumlah->setFormValue($objForm->GetValue("x_Bayar_Jumlah"));
 		}
-		$this->Bank->setOldValue($objForm->GetValue("o_Bank"));
-		if (!$this->Kota->FldIsDetailKey) {
-			$this->Kota->setFormValue($objForm->GetValue("x_Kota"));
-		}
-		$this->Kota->setOldValue($objForm->GetValue("o_Kota"));
-		if (!$this->Cabang->FldIsDetailKey) {
-			$this->Cabang->setFormValue($objForm->GetValue("x_Cabang"));
-		}
-		$this->Cabang->setOldValue($objForm->GetValue("o_Cabang"));
+		$this->Bayar_Jumlah->setOldValue($objForm->GetValue("o_Bayar_Jumlah"));
 		if (!$this->id->FldIsDetailKey && $this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
 			$this->id->setFormValue($objForm->GetValue("x_id"));
 	}
@@ -1229,11 +1162,10 @@ class ct21_bank_grid extends ct21_bank {
 		global $objForm;
 		if ($this->CurrentAction <> "gridadd" && $this->CurrentAction <> "add")
 			$this->id->CurrentValue = $this->id->FormValue;
-		$this->Nomor->CurrentValue = $this->Nomor->FormValue;
-		$this->Pemilik->CurrentValue = $this->Pemilik->FormValue;
-		$this->Bank->CurrentValue = $this->Bank->FormValue;
-		$this->Kota->CurrentValue = $this->Kota->FormValue;
-		$this->Cabang->CurrentValue = $this->Cabang->FormValue;
+		$this->Pembayaran_Ke->CurrentValue = $this->Pembayaran_Ke->FormValue;
+		$this->Bayar_Tgl->CurrentValue = $this->Bayar_Tgl->FormValue;
+		$this->Bayar_Tgl->CurrentValue = ew_UnFormatDateTime($this->Bayar_Tgl->CurrentValue, 7);
+		$this->Bayar_Jumlah->CurrentValue = $this->Bayar_Jumlah->FormValue;
 	}
 
 	// Load recordset
@@ -1292,12 +1224,11 @@ class ct21_bank_grid extends ct21_bank {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->Nomor->setDbValue($rs->fields('Nomor'));
-		$this->Pemilik->setDbValue($rs->fields('Pemilik'));
-		$this->Bank->setDbValue($rs->fields('Bank'));
-		$this->Kota->setDbValue($rs->fields('Kota'));
-		$this->Cabang->setDbValue($rs->fields('Cabang'));
+		$this->deposito_id->setDbValue($rs->fields('deposito_id'));
+		$this->Pembayaran_Ke->setDbValue($rs->fields('Pembayaran_Ke'));
+		$this->Bayar_Tgl->setDbValue($rs->fields('Bayar_Tgl'));
+		$this->Bayar_Jumlah->setDbValue($rs->fields('Bayar_Jumlah'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
 	}
 
 	// Load DbValue from recordset
@@ -1305,12 +1236,11 @@ class ct21_bank_grid extends ct21_bank {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->nasabah_id->DbValue = $row['nasabah_id'];
-		$this->Nomor->DbValue = $row['Nomor'];
-		$this->Pemilik->DbValue = $row['Pemilik'];
-		$this->Bank->DbValue = $row['Bank'];
-		$this->Kota->DbValue = $row['Kota'];
-		$this->Cabang->DbValue = $row['Cabang'];
+		$this->deposito_id->DbValue = $row['deposito_id'];
+		$this->Pembayaran_Ke->DbValue = $row['Pembayaran_Ke'];
+		$this->Bayar_Tgl->DbValue = $row['Bayar_Tgl'];
+		$this->Bayar_Jumlah->DbValue = $row['Bayar_Jumlah'];
+		$this->Periode->DbValue = $row['Periode'];
 	}
 
 	// Load old record
@@ -1352,17 +1282,20 @@ class ct21_bank_grid extends ct21_bank {
 		$this->CopyUrl = $this->GetCopyUrl();
 		$this->DeleteUrl = $this->GetDeleteUrl();
 
+		// Convert decimal values if posted back
+		if ($this->Bayar_Jumlah->FormValue == $this->Bayar_Jumlah->CurrentValue && is_numeric(ew_StrToFloat($this->Bayar_Jumlah->CurrentValue)))
+			$this->Bayar_Jumlah->CurrentValue = ew_StrToFloat($this->Bayar_Jumlah->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// nasabah_id
-		// Nomor
-		// Pemilik
-		// Bank
-		// Kota
-		// Cabang
+		// deposito_id
+		// Pembayaran_Ke
+		// Bayar_Tgl
+		// Bayar_Jumlah
+		// Periode
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -1370,179 +1303,117 @@ class ct21_bank_grid extends ct21_bank {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// nasabah_id
-		if (strval($this->nasabah_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
-		$sWhereWrk = "";
-		$this->nasabah_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-			}
-		} else {
-			$this->nasabah_id->ViewValue = NULL;
-		}
-		$this->nasabah_id->ViewCustomAttributes = "";
+		// deposito_id
+		$this->deposito_id->ViewValue = $this->deposito_id->CurrentValue;
+		$this->deposito_id->ViewCustomAttributes = "";
 
-		// Nomor
-		$this->Nomor->ViewValue = $this->Nomor->CurrentValue;
-		$this->Nomor->ViewCustomAttributes = "";
+		// Pembayaran_Ke
+		$this->Pembayaran_Ke->ViewValue = $this->Pembayaran_Ke->CurrentValue;
+		$this->Pembayaran_Ke->ViewCustomAttributes = "";
 
-		// Pemilik
-		$this->Pemilik->ViewValue = $this->Pemilik->CurrentValue;
-		$this->Pemilik->ViewCustomAttributes = "";
+		// Bayar_Tgl
+		$this->Bayar_Tgl->ViewValue = $this->Bayar_Tgl->CurrentValue;
+		$this->Bayar_Tgl->ViewValue = ew_FormatDateTime($this->Bayar_Tgl->ViewValue, 7);
+		$this->Bayar_Tgl->ViewCustomAttributes = "";
 
-		// Bank
-		$this->Bank->ViewValue = $this->Bank->CurrentValue;
-		$this->Bank->ViewCustomAttributes = "";
+		// Bayar_Jumlah
+		$this->Bayar_Jumlah->ViewValue = $this->Bayar_Jumlah->CurrentValue;
+		$this->Bayar_Jumlah->ViewValue = ew_FormatNumber($this->Bayar_Jumlah->ViewValue, 2, -2, -2, -2);
+		$this->Bayar_Jumlah->CellCssStyle .= "text-align: right;";
+		$this->Bayar_Jumlah->ViewCustomAttributes = "";
 
-		// Kota
-		$this->Kota->ViewValue = $this->Kota->CurrentValue;
-		$this->Kota->ViewCustomAttributes = "";
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
 
-		// Cabang
-		$this->Cabang->ViewValue = $this->Cabang->CurrentValue;
-		$this->Cabang->ViewCustomAttributes = "";
+			// Pembayaran_Ke
+			$this->Pembayaran_Ke->LinkCustomAttributes = "";
+			$this->Pembayaran_Ke->HrefValue = "";
+			$this->Pembayaran_Ke->TooltipValue = "";
 
-			// Nomor
-			$this->Nomor->LinkCustomAttributes = "";
-			$this->Nomor->HrefValue = "";
-			$this->Nomor->TooltipValue = "";
+			// Bayar_Tgl
+			$this->Bayar_Tgl->LinkCustomAttributes = "";
+			$this->Bayar_Tgl->HrefValue = "";
+			$this->Bayar_Tgl->TooltipValue = "";
 
-			// Pemilik
-			$this->Pemilik->LinkCustomAttributes = "";
-			$this->Pemilik->HrefValue = "";
-			$this->Pemilik->TooltipValue = "";
-
-			// Bank
-			$this->Bank->LinkCustomAttributes = "";
-			$this->Bank->HrefValue = "";
-			$this->Bank->TooltipValue = "";
-
-			// Kota
-			$this->Kota->LinkCustomAttributes = "";
-			$this->Kota->HrefValue = "";
-			$this->Kota->TooltipValue = "";
-
-			// Cabang
-			$this->Cabang->LinkCustomAttributes = "";
-			$this->Cabang->HrefValue = "";
-			$this->Cabang->TooltipValue = "";
+			// Bayar_Jumlah
+			$this->Bayar_Jumlah->LinkCustomAttributes = "";
+			$this->Bayar_Jumlah->HrefValue = "";
+			$this->Bayar_Jumlah->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
-			// Nomor
-			$this->Nomor->EditAttrs["class"] = "form-control";
-			$this->Nomor->EditCustomAttributes = "";
-			$this->Nomor->EditValue = ew_HtmlEncode($this->Nomor->CurrentValue);
-			$this->Nomor->PlaceHolder = ew_RemoveHtml($this->Nomor->FldCaption());
+			// Pembayaran_Ke
+			$this->Pembayaran_Ke->EditAttrs["class"] = "form-control";
+			$this->Pembayaran_Ke->EditCustomAttributes = "";
+			$this->Pembayaran_Ke->EditValue = ew_HtmlEncode($this->Pembayaran_Ke->CurrentValue);
+			$this->Pembayaran_Ke->PlaceHolder = ew_RemoveHtml($this->Pembayaran_Ke->FldCaption());
 
-			// Pemilik
-			$this->Pemilik->EditAttrs["class"] = "form-control";
-			$this->Pemilik->EditCustomAttributes = "";
-			$this->Pemilik->EditValue = ew_HtmlEncode($this->Pemilik->CurrentValue);
-			$this->Pemilik->PlaceHolder = ew_RemoveHtml($this->Pemilik->FldCaption());
+			// Bayar_Tgl
+			$this->Bayar_Tgl->EditAttrs["class"] = "form-control";
+			$this->Bayar_Tgl->EditCustomAttributes = "";
+			$this->Bayar_Tgl->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Bayar_Tgl->CurrentValue, 7));
+			$this->Bayar_Tgl->PlaceHolder = ew_RemoveHtml($this->Bayar_Tgl->FldCaption());
 
-			// Bank
-			$this->Bank->EditAttrs["class"] = "form-control";
-			$this->Bank->EditCustomAttributes = "";
-			$this->Bank->EditValue = ew_HtmlEncode($this->Bank->CurrentValue);
-			$this->Bank->PlaceHolder = ew_RemoveHtml($this->Bank->FldCaption());
-
-			// Kota
-			$this->Kota->EditAttrs["class"] = "form-control";
-			$this->Kota->EditCustomAttributes = "";
-			$this->Kota->EditValue = ew_HtmlEncode($this->Kota->CurrentValue);
-			$this->Kota->PlaceHolder = ew_RemoveHtml($this->Kota->FldCaption());
-
-			// Cabang
-			$this->Cabang->EditAttrs["class"] = "form-control";
-			$this->Cabang->EditCustomAttributes = "";
-			$this->Cabang->EditValue = ew_HtmlEncode($this->Cabang->CurrentValue);
-			$this->Cabang->PlaceHolder = ew_RemoveHtml($this->Cabang->FldCaption());
+			// Bayar_Jumlah
+			$this->Bayar_Jumlah->EditAttrs["class"] = "form-control";
+			$this->Bayar_Jumlah->EditCustomAttributes = "";
+			$this->Bayar_Jumlah->EditValue = ew_HtmlEncode($this->Bayar_Jumlah->CurrentValue);
+			$this->Bayar_Jumlah->PlaceHolder = ew_RemoveHtml($this->Bayar_Jumlah->FldCaption());
+			if (strval($this->Bayar_Jumlah->EditValue) <> "" && is_numeric($this->Bayar_Jumlah->EditValue)) {
+			$this->Bayar_Jumlah->EditValue = ew_FormatNumber($this->Bayar_Jumlah->EditValue, -2, -2, -2, -2);
+			$this->Bayar_Jumlah->OldValue = $this->Bayar_Jumlah->EditValue;
+			}
 
 			// Add refer script
-			// Nomor
+			// Pembayaran_Ke
 
-			$this->Nomor->LinkCustomAttributes = "";
-			$this->Nomor->HrefValue = "";
+			$this->Pembayaran_Ke->LinkCustomAttributes = "";
+			$this->Pembayaran_Ke->HrefValue = "";
 
-			// Pemilik
-			$this->Pemilik->LinkCustomAttributes = "";
-			$this->Pemilik->HrefValue = "";
+			// Bayar_Tgl
+			$this->Bayar_Tgl->LinkCustomAttributes = "";
+			$this->Bayar_Tgl->HrefValue = "";
 
-			// Bank
-			$this->Bank->LinkCustomAttributes = "";
-			$this->Bank->HrefValue = "";
-
-			// Kota
-			$this->Kota->LinkCustomAttributes = "";
-			$this->Kota->HrefValue = "";
-
-			// Cabang
-			$this->Cabang->LinkCustomAttributes = "";
-			$this->Cabang->HrefValue = "";
+			// Bayar_Jumlah
+			$this->Bayar_Jumlah->LinkCustomAttributes = "";
+			$this->Bayar_Jumlah->HrefValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_EDIT) { // Edit row
 
-			// Nomor
-			$this->Nomor->EditAttrs["class"] = "form-control";
-			$this->Nomor->EditCustomAttributes = "";
-			$this->Nomor->EditValue = ew_HtmlEncode($this->Nomor->CurrentValue);
-			$this->Nomor->PlaceHolder = ew_RemoveHtml($this->Nomor->FldCaption());
+			// Pembayaran_Ke
+			$this->Pembayaran_Ke->EditAttrs["class"] = "form-control";
+			$this->Pembayaran_Ke->EditCustomAttributes = "";
+			$this->Pembayaran_Ke->EditValue = ew_HtmlEncode($this->Pembayaran_Ke->CurrentValue);
+			$this->Pembayaran_Ke->PlaceHolder = ew_RemoveHtml($this->Pembayaran_Ke->FldCaption());
 
-			// Pemilik
-			$this->Pemilik->EditAttrs["class"] = "form-control";
-			$this->Pemilik->EditCustomAttributes = "";
-			$this->Pemilik->EditValue = ew_HtmlEncode($this->Pemilik->CurrentValue);
-			$this->Pemilik->PlaceHolder = ew_RemoveHtml($this->Pemilik->FldCaption());
+			// Bayar_Tgl
+			$this->Bayar_Tgl->EditAttrs["class"] = "form-control";
+			$this->Bayar_Tgl->EditCustomAttributes = "";
+			$this->Bayar_Tgl->EditValue = ew_HtmlEncode(ew_FormatDateTime($this->Bayar_Tgl->CurrentValue, 7));
+			$this->Bayar_Tgl->PlaceHolder = ew_RemoveHtml($this->Bayar_Tgl->FldCaption());
 
-			// Bank
-			$this->Bank->EditAttrs["class"] = "form-control";
-			$this->Bank->EditCustomAttributes = "";
-			$this->Bank->EditValue = ew_HtmlEncode($this->Bank->CurrentValue);
-			$this->Bank->PlaceHolder = ew_RemoveHtml($this->Bank->FldCaption());
-
-			// Kota
-			$this->Kota->EditAttrs["class"] = "form-control";
-			$this->Kota->EditCustomAttributes = "";
-			$this->Kota->EditValue = ew_HtmlEncode($this->Kota->CurrentValue);
-			$this->Kota->PlaceHolder = ew_RemoveHtml($this->Kota->FldCaption());
-
-			// Cabang
-			$this->Cabang->EditAttrs["class"] = "form-control";
-			$this->Cabang->EditCustomAttributes = "";
-			$this->Cabang->EditValue = ew_HtmlEncode($this->Cabang->CurrentValue);
-			$this->Cabang->PlaceHolder = ew_RemoveHtml($this->Cabang->FldCaption());
+			// Bayar_Jumlah
+			$this->Bayar_Jumlah->EditAttrs["class"] = "form-control";
+			$this->Bayar_Jumlah->EditCustomAttributes = "";
+			$this->Bayar_Jumlah->EditValue = ew_HtmlEncode($this->Bayar_Jumlah->CurrentValue);
+			$this->Bayar_Jumlah->PlaceHolder = ew_RemoveHtml($this->Bayar_Jumlah->FldCaption());
+			if (strval($this->Bayar_Jumlah->EditValue) <> "" && is_numeric($this->Bayar_Jumlah->EditValue)) {
+			$this->Bayar_Jumlah->EditValue = ew_FormatNumber($this->Bayar_Jumlah->EditValue, -2, -2, -2, -2);
+			$this->Bayar_Jumlah->OldValue = $this->Bayar_Jumlah->EditValue;
+			}
 
 			// Edit refer script
-			// Nomor
+			// Pembayaran_Ke
 
-			$this->Nomor->LinkCustomAttributes = "";
-			$this->Nomor->HrefValue = "";
+			$this->Pembayaran_Ke->LinkCustomAttributes = "";
+			$this->Pembayaran_Ke->HrefValue = "";
 
-			// Pemilik
-			$this->Pemilik->LinkCustomAttributes = "";
-			$this->Pemilik->HrefValue = "";
+			// Bayar_Tgl
+			$this->Bayar_Tgl->LinkCustomAttributes = "";
+			$this->Bayar_Tgl->HrefValue = "";
 
-			// Bank
-			$this->Bank->LinkCustomAttributes = "";
-			$this->Bank->HrefValue = "";
-
-			// Kota
-			$this->Kota->LinkCustomAttributes = "";
-			$this->Kota->HrefValue = "";
-
-			// Cabang
-			$this->Cabang->LinkCustomAttributes = "";
-			$this->Cabang->HrefValue = "";
+			// Bayar_Jumlah
+			$this->Bayar_Jumlah->LinkCustomAttributes = "";
+			$this->Bayar_Jumlah->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -1562,20 +1433,23 @@ class ct21_bank_grid extends ct21_bank {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->Nomor->FldIsDetailKey && !is_null($this->Nomor->FormValue) && $this->Nomor->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Nomor->FldCaption(), $this->Nomor->ReqErrMsg));
+		if (!$this->Pembayaran_Ke->FldIsDetailKey && !is_null($this->Pembayaran_Ke->FormValue) && $this->Pembayaran_Ke->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Pembayaran_Ke->FldCaption(), $this->Pembayaran_Ke->ReqErrMsg));
 		}
-		if (!$this->Pemilik->FldIsDetailKey && !is_null($this->Pemilik->FormValue) && $this->Pemilik->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Pemilik->FldCaption(), $this->Pemilik->ReqErrMsg));
+		if (!ew_CheckInteger($this->Pembayaran_Ke->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Pembayaran_Ke->FldErrMsg());
 		}
-		if (!$this->Bank->FldIsDetailKey && !is_null($this->Bank->FormValue) && $this->Bank->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Bank->FldCaption(), $this->Bank->ReqErrMsg));
+		if (!$this->Bayar_Tgl->FldIsDetailKey && !is_null($this->Bayar_Tgl->FormValue) && $this->Bayar_Tgl->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Bayar_Tgl->FldCaption(), $this->Bayar_Tgl->ReqErrMsg));
 		}
-		if (!$this->Kota->FldIsDetailKey && !is_null($this->Kota->FormValue) && $this->Kota->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Kota->FldCaption(), $this->Kota->ReqErrMsg));
+		if (!ew_CheckEuroDate($this->Bayar_Tgl->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Bayar_Tgl->FldErrMsg());
 		}
-		if (!$this->Cabang->FldIsDetailKey && !is_null($this->Cabang->FormValue) && $this->Cabang->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Cabang->FldCaption(), $this->Cabang->ReqErrMsg));
+		if (!$this->Bayar_Jumlah->FldIsDetailKey && !is_null($this->Bayar_Jumlah->FormValue) && $this->Bayar_Jumlah->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Bayar_Jumlah->FldCaption(), $this->Bayar_Jumlah->ReqErrMsg));
+		}
+		if (!ew_CheckNumber($this->Bayar_Jumlah->FormValue)) {
+			ew_AddMessage($gsFormError, $this->Bayar_Jumlah->FldErrMsg());
 		}
 
 		// Return validate result
@@ -1695,38 +1569,32 @@ class ct21_bank_grid extends ct21_bank {
 			$this->LoadDbValues($rsold);
 			$rsnew = array();
 
-			// Nomor
-			$this->Nomor->SetDbValueDef($rsnew, $this->Nomor->CurrentValue, "", $this->Nomor->ReadOnly);
+			// Pembayaran_Ke
+			$this->Pembayaran_Ke->SetDbValueDef($rsnew, $this->Pembayaran_Ke->CurrentValue, 0, $this->Pembayaran_Ke->ReadOnly);
 
-			// Pemilik
-			$this->Pemilik->SetDbValueDef($rsnew, $this->Pemilik->CurrentValue, "", $this->Pemilik->ReadOnly);
+			// Bayar_Tgl
+			$this->Bayar_Tgl->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Bayar_Tgl->CurrentValue, 7), ew_CurrentDate(), $this->Bayar_Tgl->ReadOnly);
 
-			// Bank
-			$this->Bank->SetDbValueDef($rsnew, $this->Bank->CurrentValue, "", $this->Bank->ReadOnly);
+			// Bayar_Jumlah
+			$this->Bayar_Jumlah->SetDbValueDef($rsnew, $this->Bayar_Jumlah->CurrentValue, 0, $this->Bayar_Jumlah->ReadOnly);
 
-			// Kota
-			$this->Kota->SetDbValueDef($rsnew, $this->Kota->CurrentValue, "", $this->Kota->ReadOnly);
-
-			// Cabang
-			$this->Cabang->SetDbValueDef($rsnew, $this->Cabang->CurrentValue, "", $this->Cabang->ReadOnly);
-
-			// Check referential integrity for master table 't22_peserta'
+			// Check referential integrity for master table 't23_deposito'
 			$bValidMasterRecord = TRUE;
-			$sMasterFilter = $this->SqlMasterFilter_t22_peserta();
-			$KeyValue = isset($rsnew['nasabah_id']) ? $rsnew['nasabah_id'] : $rsold['nasabah_id'];
+			$sMasterFilter = $this->SqlMasterFilter_t23_deposito();
+			$KeyValue = isset($rsnew['deposito_id']) ? $rsnew['deposito_id'] : $rsold['deposito_id'];
 			if (strval($KeyValue) <> "") {
 				$sMasterFilter = str_replace("@id@", ew_AdjustSql($KeyValue), $sMasterFilter);
 			} else {
 				$bValidMasterRecord = FALSE;
 			}
 			if ($bValidMasterRecord) {
-				if (!isset($GLOBALS["t22_peserta"])) $GLOBALS["t22_peserta"] = new ct22_peserta();
-				$rsmaster = $GLOBALS["t22_peserta"]->LoadRs($sMasterFilter);
+				if (!isset($GLOBALS["t23_deposito"])) $GLOBALS["t23_deposito"] = new ct23_deposito();
+				$rsmaster = $GLOBALS["t23_deposito"]->LoadRs($sMasterFilter);
 				$bValidMasterRecord = ($rsmaster && !$rsmaster->EOF);
 				$rsmaster->Close();
 			}
 			if (!$bValidMasterRecord) {
-				$sRelatedRecordMsg = str_replace("%t", "t22_peserta", $Language->Phrase("RelatedRecordRequired"));
+				$sRelatedRecordMsg = str_replace("%t", "t23_deposito", $Language->Phrase("RelatedRecordRequired"));
 				$this->setFailureMessage($sRelatedRecordMsg);
 				$rs->Close();
 				return FALSE;
@@ -1769,26 +1637,26 @@ class ct21_bank_grid extends ct21_bank {
 		global $Language, $Security;
 
 		// Set up foreign key field value from Session
-			if ($this->getCurrentMasterTable() == "t22_peserta") {
-				$this->nasabah_id->CurrentValue = $this->nasabah_id->getSessionValue();
+			if ($this->getCurrentMasterTable() == "t23_deposito") {
+				$this->deposito_id->CurrentValue = $this->deposito_id->getSessionValue();
 			}
 
-		// Check referential integrity for master table 't22_peserta'
+		// Check referential integrity for master table 't23_deposito'
 		$bValidMasterRecord = TRUE;
-		$sMasterFilter = $this->SqlMasterFilter_t22_peserta();
-		if ($this->nasabah_id->getSessionValue() <> "") {
-			$sMasterFilter = str_replace("@id@", ew_AdjustSql($this->nasabah_id->getSessionValue(), "DB"), $sMasterFilter);
+		$sMasterFilter = $this->SqlMasterFilter_t23_deposito();
+		if ($this->deposito_id->getSessionValue() <> "") {
+			$sMasterFilter = str_replace("@id@", ew_AdjustSql($this->deposito_id->getSessionValue(), "DB"), $sMasterFilter);
 		} else {
 			$bValidMasterRecord = FALSE;
 		}
 		if ($bValidMasterRecord) {
-			if (!isset($GLOBALS["t22_peserta"])) $GLOBALS["t22_peserta"] = new ct22_peserta();
-			$rsmaster = $GLOBALS["t22_peserta"]->LoadRs($sMasterFilter);
+			if (!isset($GLOBALS["t23_deposito"])) $GLOBALS["t23_deposito"] = new ct23_deposito();
+			$rsmaster = $GLOBALS["t23_deposito"]->LoadRs($sMasterFilter);
 			$bValidMasterRecord = ($rsmaster && !$rsmaster->EOF);
 			$rsmaster->Close();
 		}
 		if (!$bValidMasterRecord) {
-			$sRelatedRecordMsg = str_replace("%t", "t22_peserta", $Language->Phrase("RelatedRecordRequired"));
+			$sRelatedRecordMsg = str_replace("%t", "t23_deposito", $Language->Phrase("RelatedRecordRequired"));
 			$this->setFailureMessage($sRelatedRecordMsg);
 			return FALSE;
 		}
@@ -1800,24 +1668,18 @@ class ct21_bank_grid extends ct21_bank {
 		}
 		$rsnew = array();
 
-		// Nomor
-		$this->Nomor->SetDbValueDef($rsnew, $this->Nomor->CurrentValue, "", FALSE);
+		// Pembayaran_Ke
+		$this->Pembayaran_Ke->SetDbValueDef($rsnew, $this->Pembayaran_Ke->CurrentValue, 0, strval($this->Pembayaran_Ke->CurrentValue) == "");
 
-		// Pemilik
-		$this->Pemilik->SetDbValueDef($rsnew, $this->Pemilik->CurrentValue, "", FALSE);
+		// Bayar_Tgl
+		$this->Bayar_Tgl->SetDbValueDef($rsnew, ew_UnFormatDateTime($this->Bayar_Tgl->CurrentValue, 7), ew_CurrentDate(), FALSE);
 
-		// Bank
-		$this->Bank->SetDbValueDef($rsnew, $this->Bank->CurrentValue, "", FALSE);
+		// Bayar_Jumlah
+		$this->Bayar_Jumlah->SetDbValueDef($rsnew, $this->Bayar_Jumlah->CurrentValue, 0, strval($this->Bayar_Jumlah->CurrentValue) == "");
 
-		// Kota
-		$this->Kota->SetDbValueDef($rsnew, $this->Kota->CurrentValue, "", FALSE);
-
-		// Cabang
-		$this->Cabang->SetDbValueDef($rsnew, $this->Cabang->CurrentValue, "", FALSE);
-
-		// nasabah_id
-		if ($this->nasabah_id->getSessionValue() <> "") {
-			$rsnew['nasabah_id'] = $this->nasabah_id->getSessionValue();
+		// deposito_id
+		if ($this->deposito_id->getSessionValue() <> "") {
+			$rsnew['deposito_id'] = $this->deposito_id->getSessionValue();
 		}
 
 		// Call Row Inserting event
@@ -1855,9 +1717,9 @@ class ct21_bank_grid extends ct21_bank {
 
 		// Hide foreign keys
 		$sMasterTblVar = $this->getCurrentMasterTable();
-		if ($sMasterTblVar == "t22_peserta") {
-			$this->nasabah_id->Visible = FALSE;
-			if ($GLOBALS["t22_peserta"]->EventCancelled) $this->EventCancelled = TRUE;
+		if ($sMasterTblVar == "t23_deposito") {
+			$this->deposito_id->Visible = FALSE;
+			if ($GLOBALS["t23_deposito"]->EventCancelled) $this->EventCancelled = TRUE;
 		}
 		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
 		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter

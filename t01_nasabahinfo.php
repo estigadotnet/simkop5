@@ -48,7 +48,7 @@ class ct01_nasabah extends cTable {
 		$this->DetailAdd = FALSE; // Allow detail add
 		$this->DetailEdit = FALSE; // Allow detail edit
 		$this->DetailView = FALSE; // Allow detail view
-		$this->ShowMultipleDetails = TRUE; // Show multiple details
+		$this->ShowMultipleDetails = FALSE; // Show multiple details
 		$this->GridAddRowCount = 2;
 		$this->AllowAddDeleteRow = ew_AllowAddDeleteRow(); // Allow add/delete row
 		$this->UserIDAllowSecurity = 0; // User ID Allow
@@ -163,10 +163,6 @@ class ct01_nasabah extends cTable {
 		$sDetailUrl = "";
 		if ($this->getCurrentDetailTable() == "t02_jaminan") {
 			$sDetailUrl = $GLOBALS["t02_jaminan"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
-			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
-		}
-		if ($this->getCurrentDetailTable() == "t21_bank") {
-			$sDetailUrl = $GLOBALS["t21_bank"]->GetListUrl() . "?" . EW_TABLE_SHOW_MASTER . "=" . $this->TableVar;
 			$sDetailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
 		}
 		if ($sDetailUrl == "") {

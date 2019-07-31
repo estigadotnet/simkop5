@@ -334,6 +334,12 @@ class cdefault {
 			$this->Page_Terminate("t20_depositolist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't21_bank'))
 			$this->Page_Terminate("t21_banklist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't22_peserta'))
+			$this->Page_Terminate("t22_pesertalist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't23_deposito'))
+			$this->Page_Terminate("t23_depositolist.php");
+		if ($Security->AllowList(CurrentProjectID() . 't24_deposito_detail'))
+			$this->Page_Terminate("t24_deposito_detaillist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't72_depositolap'))
 			$this->Page_Terminate("t72_depositolaplist.php");
 		if ($Security->AllowList(CurrentProjectID() . 't73_pinjamanlap'))

@@ -5,9 +5,9 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t01_nasabahinfo.php" ?>
+<?php include_once "t23_depositoinfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
-<?php include_once "t02_jaminangridcls.php" ?>
+<?php include_once "t24_deposito_detailgridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -15,9 +15,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t01_nasabah_view = NULL; // Initialize page object first
+$t23_deposito_view = NULL; // Initialize page object first
 
-class ct01_nasabah_view extends ct01_nasabah {
+class ct23_deposito_view extends ct23_deposito {
 
 	// Page ID
 	var $PageID = 'view';
@@ -26,10 +26,10 @@ class ct01_nasabah_view extends ct01_nasabah {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't01_nasabah';
+	var $TableName = 't23_deposito';
 
 	// Page object name
-	var $PageObjName = 't01_nasabah_view';
+	var $PageObjName = 't23_deposito_view';
 
 	// Page name
 	function PageName() {
@@ -259,10 +259,10 @@ class ct01_nasabah_view extends ct01_nasabah {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t01_nasabah)
-		if (!isset($GLOBALS["t01_nasabah"]) || get_class($GLOBALS["t01_nasabah"]) == "ct01_nasabah") {
-			$GLOBALS["t01_nasabah"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t01_nasabah"];
+		// Table object (t23_deposito)
+		if (!isset($GLOBALS["t23_deposito"]) || get_class($GLOBALS["t23_deposito"]) == "ct23_deposito") {
+			$GLOBALS["t23_deposito"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t23_deposito"];
 		}
 		$KeyUrl = "";
 		if (@$_GET["id"] <> "") {
@@ -286,7 +286,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't01_nasabah', TRUE);
+			define("EW_TABLE_NAME", 't23_deposito', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -330,7 +330,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t01_nasabahlist.php"));
+				$this->Page_Terminate(ew_GetUrl("t23_depositolist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -340,15 +340,24 @@ class ct01_nasabah_view extends ct01_nasabah {
 			$Security->UserID_Loaded();
 		}
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->Nama->SetVisibility();
-		$this->Alamat->SetVisibility();
-		$this->No_Telp_Hp->SetVisibility();
-		$this->Pekerjaan->SetVisibility();
-		$this->Pekerjaan_Alamat->SetVisibility();
-		$this->Pekerjaan_No_Telp_Hp->SetVisibility();
-		$this->Status->SetVisibility();
-		$this->Keterangan->SetVisibility();
-		$this->marketing_id->SetVisibility();
+		$this->id->SetVisibility();
+		$this->id->Visible = !$this->IsAdd() && !$this->IsCopy() && !$this->IsGridAdd();
+		$this->Kontrak_No->SetVisibility();
+		$this->Kontrak_Tgl->SetVisibility();
+		$this->Kontrak_Lama->SetVisibility();
+		$this->Jatuh_Tempo_Tgl->SetVisibility();
+		$this->Deposito->SetVisibility();
+		$this->Bunga_Suku->SetVisibility();
+		$this->Bunga->SetVisibility();
+		$this->nasabah_id->SetVisibility();
+		$this->bank_id->SetVisibility();
+		$this->No_Ref->SetVisibility();
+		$this->Biaya_Administrasi->SetVisibility();
+		$this->Biaya_Materai->SetVisibility();
+		$this->Periode->SetVisibility();
+		$this->Kontrak_Status->SetVisibility();
+		$this->Jatuh_Tempo_Status->SetVisibility();
+		$this->Bunga_Status->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -380,13 +389,13 @@ class ct01_nasabah_view extends ct01_nasabah {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t01_nasabah;
+		global $EW_EXPORT, $t23_deposito;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t01_nasabah);
+				$doc = new $class($t23_deposito);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -455,7 +464,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 				$this->id->setFormValue($_POST["id"]);
 				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$sReturnUrl = "t01_nasabahlist.php"; // Return to list
+				$sReturnUrl = "t23_depositolist.php"; // Return to list
 			}
 
 			// Get action
@@ -465,11 +474,11 @@ class ct01_nasabah_view extends ct01_nasabah {
 					if (!$this->LoadRow()) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->Phrase("NoRecord")); // Set no record message
-						$sReturnUrl = "t01_nasabahlist.php"; // No matching record, return to list
+						$sReturnUrl = "t23_depositolist.php"; // No matching record, return to list
 					}
 			}
 		} else {
-			$sReturnUrl = "t01_nasabahlist.php"; // Not page request, return to list
+			$sReturnUrl = "t23_depositolist.php"; // Not page request, return to list
 		}
 		if ($sReturnUrl <> "")
 			$this->Page_Terminate($sReturnUrl);
@@ -533,25 +542,25 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$DetailCopyTblVar = "";
 		$DetailEditTblVar = "";
 
-		// "detail_t02_jaminan"
-		$item = &$option->Add("detail_t02_jaminan");
-		$body = $Language->Phrase("ViewPageDetailLink") . $Language->TablePhrase("t02_jaminan", "TblCaption");
-		$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t02_jaminanlist.php?" . EW_TABLE_SHOW_MASTER . "=t01_nasabah&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
+		// "detail_t24_deposito_detail"
+		$item = &$option->Add("detail_t24_deposito_detail");
+		$body = $Language->Phrase("ViewPageDetailLink") . $Language->TablePhrase("t24_deposito_detail", "TblCaption");
+		$body = "<a class=\"btn btn-default btn-sm ewRowLink ewDetail\" data-action=\"list\" href=\"" . ew_HtmlEncode("t24_deposito_detaillist.php?" . EW_TABLE_SHOW_MASTER . "=t23_deposito&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
 		$links = "";
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailView && $Security->CanView() && $Security->AllowView(CurrentProjectID() . 't02_jaminan')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
+		if ($GLOBALS["t24_deposito_detail_grid"] && $GLOBALS["t24_deposito_detail_grid"]->DetailView && $Security->CanView() && $Security->AllowView(CurrentProjectID() . 't24_deposito_detail')) {
+			$links .= "<li><a class=\"ewRowLink ewDetailView\" data-action=\"view\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailViewLink")) . "\" href=\"" . ew_HtmlEncode($this->GetViewUrl(EW_TABLE_SHOW_DETAIL . "=t24_deposito_detail")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailViewLink")) . "</a></li>";
 			if ($DetailViewTblVar <> "") $DetailViewTblVar .= ",";
-			$DetailViewTblVar .= "t02_jaminan";
+			$DetailViewTblVar .= "t24_deposito_detail";
 		}
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't02_jaminan')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
+		if ($GLOBALS["t24_deposito_detail_grid"] && $GLOBALS["t24_deposito_detail_grid"]->DetailEdit && $Security->CanEdit() && $Security->AllowEdit(CurrentProjectID() . 't24_deposito_detail')) {
+			$links .= "<li><a class=\"ewRowLink ewDetailEdit\" data-action=\"edit\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailEditLink")) . "\" href=\"" . ew_HtmlEncode($this->GetEditUrl(EW_TABLE_SHOW_DETAIL . "=t24_deposito_detail")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailEditLink")) . "</a></li>";
 			if ($DetailEditTblVar <> "") $DetailEditTblVar .= ",";
-			$DetailEditTblVar .= "t02_jaminan";
+			$DetailEditTblVar .= "t24_deposito_detail";
 		}
-		if ($GLOBALS["t02_jaminan_grid"] && $GLOBALS["t02_jaminan_grid"]->DetailAdd && $Security->CanAdd() && $Security->AllowAdd(CurrentProjectID() . 't02_jaminan')) {
-			$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=t02_jaminan")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
+		if ($GLOBALS["t24_deposito_detail_grid"] && $GLOBALS["t24_deposito_detail_grid"]->DetailAdd && $Security->CanAdd() && $Security->AllowAdd(CurrentProjectID() . 't24_deposito_detail')) {
+			$links .= "<li><a class=\"ewRowLink ewDetailCopy\" data-action=\"add\" data-caption=\"" . ew_HtmlTitle($Language->Phrase("MasterDetailCopyLink")) . "\" href=\"" . ew_HtmlEncode($this->GetCopyUrl(EW_TABLE_SHOW_DETAIL . "=t24_deposito_detail")) . "\">" . ew_HtmlImageAndText($Language->Phrase("MasterDetailCopyLink")) . "</a></li>";
 			if ($DetailCopyTblVar <> "") $DetailCopyTblVar .= ",";
-			$DetailCopyTblVar .= "t02_jaminan";
+			$DetailCopyTblVar .= "t24_deposito_detail";
 		}
 		if ($links <> "") {
 			$body .= "<button class=\"dropdown-toggle btn btn-default btn-sm ewDetail\" data-toggle=\"dropdown\"><b class=\"caret\"></b></button>";
@@ -559,10 +568,10 @@ class ct01_nasabah_view extends ct01_nasabah {
 		}
 		$body = "<div class=\"btn-group\">" . $body . "</div>";
 		$item->Body = $body;
-		$item->Visible = $Security->AllowList(CurrentProjectID() . 't02_jaminan');
+		$item->Visible = $Security->AllowList(CurrentProjectID() . 't24_deposito_detail');
 		if ($item->Visible) {
 			if ($DetailTableLink <> "") $DetailTableLink .= ",";
-			$DetailTableLink .= "t02_jaminan";
+			$DetailTableLink .= "t24_deposito_detail";
 		}
 		if ($this->ShowMultipleDetails) $item->Visible = FALSE;
 
@@ -681,15 +690,22 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->Row_Selected($row);
 		if ($this->AuditTrailOnView) $this->WriteAuditTrailOnView($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->Nama->setDbValue($rs->fields('Nama'));
-		$this->Alamat->setDbValue($rs->fields('Alamat'));
-		$this->No_Telp_Hp->setDbValue($rs->fields('No_Telp_Hp'));
-		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
-		$this->Pekerjaan_Alamat->setDbValue($rs->fields('Pekerjaan_Alamat'));
-		$this->Pekerjaan_No_Telp_Hp->setDbValue($rs->fields('Pekerjaan_No_Telp_Hp'));
-		$this->Status->setDbValue($rs->fields('Status'));
-		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
-		$this->marketing_id->setDbValue($rs->fields('marketing_id'));
+		$this->Kontrak_No->setDbValue($rs->fields('Kontrak_No'));
+		$this->Kontrak_Tgl->setDbValue($rs->fields('Kontrak_Tgl'));
+		$this->Kontrak_Lama->setDbValue($rs->fields('Kontrak_Lama'));
+		$this->Jatuh_Tempo_Tgl->setDbValue($rs->fields('Jatuh_Tempo_Tgl'));
+		$this->Deposito->setDbValue($rs->fields('Deposito'));
+		$this->Bunga_Suku->setDbValue($rs->fields('Bunga_Suku'));
+		$this->Bunga->setDbValue($rs->fields('Bunga'));
+		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
+		$this->bank_id->setDbValue($rs->fields('bank_id'));
+		$this->No_Ref->setDbValue($rs->fields('No_Ref'));
+		$this->Biaya_Administrasi->setDbValue($rs->fields('Biaya_Administrasi'));
+		$this->Biaya_Materai->setDbValue($rs->fields('Biaya_Materai'));
+		$this->Periode->setDbValue($rs->fields('Periode'));
+		$this->Kontrak_Status->setDbValue($rs->fields('Kontrak_Status'));
+		$this->Jatuh_Tempo_Status->setDbValue($rs->fields('Jatuh_Tempo_Status'));
+		$this->Bunga_Status->setDbValue($rs->fields('Bunga_Status'));
 	}
 
 	// Load DbValue from recordset
@@ -697,15 +713,22 @@ class ct01_nasabah_view extends ct01_nasabah {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->Nama->DbValue = $row['Nama'];
-		$this->Alamat->DbValue = $row['Alamat'];
-		$this->No_Telp_Hp->DbValue = $row['No_Telp_Hp'];
-		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
-		$this->Pekerjaan_Alamat->DbValue = $row['Pekerjaan_Alamat'];
-		$this->Pekerjaan_No_Telp_Hp->DbValue = $row['Pekerjaan_No_Telp_Hp'];
-		$this->Status->DbValue = $row['Status'];
-		$this->Keterangan->DbValue = $row['Keterangan'];
-		$this->marketing_id->DbValue = $row['marketing_id'];
+		$this->Kontrak_No->DbValue = $row['Kontrak_No'];
+		$this->Kontrak_Tgl->DbValue = $row['Kontrak_Tgl'];
+		$this->Kontrak_Lama->DbValue = $row['Kontrak_Lama'];
+		$this->Jatuh_Tempo_Tgl->DbValue = $row['Jatuh_Tempo_Tgl'];
+		$this->Deposito->DbValue = $row['Deposito'];
+		$this->Bunga_Suku->DbValue = $row['Bunga_Suku'];
+		$this->Bunga->DbValue = $row['Bunga'];
+		$this->nasabah_id->DbValue = $row['nasabah_id'];
+		$this->bank_id->DbValue = $row['bank_id'];
+		$this->No_Ref->DbValue = $row['No_Ref'];
+		$this->Biaya_Administrasi->DbValue = $row['Biaya_Administrasi'];
+		$this->Biaya_Materai->DbValue = $row['Biaya_Materai'];
+		$this->Periode->DbValue = $row['Periode'];
+		$this->Kontrak_Status->DbValue = $row['Kontrak_Status'];
+		$this->Jatuh_Tempo_Status->DbValue = $row['Jatuh_Tempo_Status'];
+		$this->Bunga_Status->DbValue = $row['Bunga_Status'];
 	}
 
 	// Render row values based on field settings
@@ -720,20 +743,47 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->ListUrl = $this->GetListUrl();
 		$this->SetupOtherOptions();
 
+		// Convert decimal values if posted back
+		if ($this->Deposito->FormValue == $this->Deposito->CurrentValue && is_numeric(ew_StrToFloat($this->Deposito->CurrentValue)))
+			$this->Deposito->CurrentValue = ew_StrToFloat($this->Deposito->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Bunga_Suku->FormValue == $this->Bunga_Suku->CurrentValue && is_numeric(ew_StrToFloat($this->Bunga_Suku->CurrentValue)))
+			$this->Bunga_Suku->CurrentValue = ew_StrToFloat($this->Bunga_Suku->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Bunga->FormValue == $this->Bunga->CurrentValue && is_numeric(ew_StrToFloat($this->Bunga->CurrentValue)))
+			$this->Bunga->CurrentValue = ew_StrToFloat($this->Bunga->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Biaya_Administrasi->FormValue == $this->Biaya_Administrasi->CurrentValue && is_numeric(ew_StrToFloat($this->Biaya_Administrasi->CurrentValue)))
+			$this->Biaya_Administrasi->CurrentValue = ew_StrToFloat($this->Biaya_Administrasi->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->Biaya_Materai->FormValue == $this->Biaya_Materai->CurrentValue && is_numeric(ew_StrToFloat($this->Biaya_Materai->CurrentValue)))
+			$this->Biaya_Materai->CurrentValue = ew_StrToFloat($this->Biaya_Materai->CurrentValue);
+
 		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// Nama
-		// Alamat
-		// No_Telp_Hp
-		// Pekerjaan
-		// Pekerjaan_Alamat
-		// Pekerjaan_No_Telp_Hp
-		// Status
-		// Keterangan
-		// marketing_id
+		// Kontrak_No
+		// Kontrak_Tgl
+		// Kontrak_Lama
+		// Jatuh_Tempo_Tgl
+		// Deposito
+		// Bunga_Suku
+		// Bunga
+		// nasabah_id
+		// bank_id
+		// No_Ref
+		// Biaya_Administrasi
+		// Biaya_Materai
+		// Periode
+		// Kontrak_Status
+		// Jatuh_Tempo_Status
+		// Bunga_Status
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -741,110 +791,168 @@ class ct01_nasabah_view extends ct01_nasabah {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// Nama
-		$this->Nama->ViewValue = $this->Nama->CurrentValue;
-		$this->Nama->ViewCustomAttributes = "";
+		// Kontrak_No
+		$this->Kontrak_No->ViewValue = $this->Kontrak_No->CurrentValue;
+		$this->Kontrak_No->ViewCustomAttributes = "";
 
-		// Alamat
-		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
-		$this->Alamat->ViewCustomAttributes = "";
+		// Kontrak_Tgl
+		$this->Kontrak_Tgl->ViewValue = $this->Kontrak_Tgl->CurrentValue;
+		$this->Kontrak_Tgl->ViewValue = ew_FormatDateTime($this->Kontrak_Tgl->ViewValue, 0);
+		$this->Kontrak_Tgl->ViewCustomAttributes = "";
 
-		// No_Telp_Hp
-		$this->No_Telp_Hp->ViewValue = $this->No_Telp_Hp->CurrentValue;
-		$this->No_Telp_Hp->ViewCustomAttributes = "";
+		// Kontrak_Lama
+		$this->Kontrak_Lama->ViewValue = $this->Kontrak_Lama->CurrentValue;
+		$this->Kontrak_Lama->ViewCustomAttributes = "";
 
-		// Pekerjaan
-		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
-		$this->Pekerjaan->ViewCustomAttributes = "";
+		// Jatuh_Tempo_Tgl
+		$this->Jatuh_Tempo_Tgl->ViewValue = $this->Jatuh_Tempo_Tgl->CurrentValue;
+		$this->Jatuh_Tempo_Tgl->ViewValue = ew_FormatDateTime($this->Jatuh_Tempo_Tgl->ViewValue, 0);
+		$this->Jatuh_Tempo_Tgl->ViewCustomAttributes = "";
 
-		// Pekerjaan_Alamat
-		$this->Pekerjaan_Alamat->ViewValue = $this->Pekerjaan_Alamat->CurrentValue;
-		$this->Pekerjaan_Alamat->ViewCustomAttributes = "";
+		// Deposito
+		$this->Deposito->ViewValue = $this->Deposito->CurrentValue;
+		$this->Deposito->ViewCustomAttributes = "";
 
-		// Pekerjaan_No_Telp_Hp
-		$this->Pekerjaan_No_Telp_Hp->ViewValue = $this->Pekerjaan_No_Telp_Hp->CurrentValue;
-		$this->Pekerjaan_No_Telp_Hp->ViewCustomAttributes = "";
+		// Bunga_Suku
+		$this->Bunga_Suku->ViewValue = $this->Bunga_Suku->CurrentValue;
+		$this->Bunga_Suku->ViewCustomAttributes = "";
 
-		// Status
-		if (strval($this->Status->CurrentValue) <> "") {
-			$this->Status->ViewValue = $this->Status->OptionCaption($this->Status->CurrentValue);
+		// Bunga
+		$this->Bunga->ViewValue = $this->Bunga->CurrentValue;
+		$this->Bunga->ViewCustomAttributes = "";
+
+		// nasabah_id
+		$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
+		$this->nasabah_id->ViewCustomAttributes = "";
+
+		// bank_id
+		$this->bank_id->ViewValue = $this->bank_id->CurrentValue;
+		$this->bank_id->ViewCustomAttributes = "";
+
+		// No_Ref
+		$this->No_Ref->ViewValue = $this->No_Ref->CurrentValue;
+		$this->No_Ref->ViewCustomAttributes = "";
+
+		// Biaya_Administrasi
+		$this->Biaya_Administrasi->ViewValue = $this->Biaya_Administrasi->CurrentValue;
+		$this->Biaya_Administrasi->ViewCustomAttributes = "";
+
+		// Biaya_Materai
+		$this->Biaya_Materai->ViewValue = $this->Biaya_Materai->CurrentValue;
+		$this->Biaya_Materai->ViewCustomAttributes = "";
+
+		// Periode
+		$this->Periode->ViewValue = $this->Periode->CurrentValue;
+		$this->Periode->ViewCustomAttributes = "";
+
+		// Kontrak_Status
+		if (strval($this->Kontrak_Status->CurrentValue) <> "") {
+			$this->Kontrak_Status->ViewValue = $this->Kontrak_Status->OptionCaption($this->Kontrak_Status->CurrentValue);
 		} else {
-			$this->Status->ViewValue = NULL;
+			$this->Kontrak_Status->ViewValue = NULL;
 		}
-		$this->Status->ViewCustomAttributes = "";
+		$this->Kontrak_Status->ViewCustomAttributes = "";
 
-		// Keterangan
-		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
-		$this->Keterangan->ViewCustomAttributes = "";
-
-		// marketing_id
-		if (strval($this->marketing_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->marketing_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, `NoHP` AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t07_marketing`";
-		$sWhereWrk = "";
-		$this->marketing_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->marketing_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$arwrk[2] = $rswrk->fields('Disp2Fld');
-				$this->marketing_id->ViewValue = $this->marketing_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->marketing_id->ViewValue = $this->marketing_id->CurrentValue;
-			}
+		// Jatuh_Tempo_Status
+		if (strval($this->Jatuh_Tempo_Status->CurrentValue) <> "") {
+			$this->Jatuh_Tempo_Status->ViewValue = $this->Jatuh_Tempo_Status->OptionCaption($this->Jatuh_Tempo_Status->CurrentValue);
 		} else {
-			$this->marketing_id->ViewValue = NULL;
+			$this->Jatuh_Tempo_Status->ViewValue = NULL;
 		}
-		$this->marketing_id->ViewCustomAttributes = "";
+		$this->Jatuh_Tempo_Status->ViewCustomAttributes = "";
 
-			// Nama
-			$this->Nama->LinkCustomAttributes = "";
-			$this->Nama->HrefValue = "";
-			$this->Nama->TooltipValue = "";
+		// Bunga_Status
+		if (strval($this->Bunga_Status->CurrentValue) <> "") {
+			$this->Bunga_Status->ViewValue = $this->Bunga_Status->OptionCaption($this->Bunga_Status->CurrentValue);
+		} else {
+			$this->Bunga_Status->ViewValue = NULL;
+		}
+		$this->Bunga_Status->ViewCustomAttributes = "";
 
-			// Alamat
-			$this->Alamat->LinkCustomAttributes = "";
-			$this->Alamat->HrefValue = "";
-			$this->Alamat->TooltipValue = "";
+			// id
+			$this->id->LinkCustomAttributes = "";
+			$this->id->HrefValue = "";
+			$this->id->TooltipValue = "";
 
-			// No_Telp_Hp
-			$this->No_Telp_Hp->LinkCustomAttributes = "";
-			$this->No_Telp_Hp->HrefValue = "";
-			$this->No_Telp_Hp->TooltipValue = "";
+			// Kontrak_No
+			$this->Kontrak_No->LinkCustomAttributes = "";
+			$this->Kontrak_No->HrefValue = "";
+			$this->Kontrak_No->TooltipValue = "";
 
-			// Pekerjaan
-			$this->Pekerjaan->LinkCustomAttributes = "";
-			$this->Pekerjaan->HrefValue = "";
-			$this->Pekerjaan->TooltipValue = "";
+			// Kontrak_Tgl
+			$this->Kontrak_Tgl->LinkCustomAttributes = "";
+			$this->Kontrak_Tgl->HrefValue = "";
+			$this->Kontrak_Tgl->TooltipValue = "";
 
-			// Pekerjaan_Alamat
-			$this->Pekerjaan_Alamat->LinkCustomAttributes = "";
-			$this->Pekerjaan_Alamat->HrefValue = "";
-			$this->Pekerjaan_Alamat->TooltipValue = "";
+			// Kontrak_Lama
+			$this->Kontrak_Lama->LinkCustomAttributes = "";
+			$this->Kontrak_Lama->HrefValue = "";
+			$this->Kontrak_Lama->TooltipValue = "";
 
-			// Pekerjaan_No_Telp_Hp
-			$this->Pekerjaan_No_Telp_Hp->LinkCustomAttributes = "";
-			$this->Pekerjaan_No_Telp_Hp->HrefValue = "";
-			$this->Pekerjaan_No_Telp_Hp->TooltipValue = "";
+			// Jatuh_Tempo_Tgl
+			$this->Jatuh_Tempo_Tgl->LinkCustomAttributes = "";
+			$this->Jatuh_Tempo_Tgl->HrefValue = "";
+			$this->Jatuh_Tempo_Tgl->TooltipValue = "";
 
-			// Status
-			$this->Status->LinkCustomAttributes = "";
-			$this->Status->HrefValue = "";
-			$this->Status->TooltipValue = "";
+			// Deposito
+			$this->Deposito->LinkCustomAttributes = "";
+			$this->Deposito->HrefValue = "";
+			$this->Deposito->TooltipValue = "";
 
-			// Keterangan
-			$this->Keterangan->LinkCustomAttributes = "";
-			$this->Keterangan->HrefValue = "";
-			$this->Keterangan->TooltipValue = "";
+			// Bunga_Suku
+			$this->Bunga_Suku->LinkCustomAttributes = "";
+			$this->Bunga_Suku->HrefValue = "";
+			$this->Bunga_Suku->TooltipValue = "";
 
-			// marketing_id
-			$this->marketing_id->LinkCustomAttributes = "";
-			$this->marketing_id->HrefValue = "";
-			$this->marketing_id->TooltipValue = "";
+			// Bunga
+			$this->Bunga->LinkCustomAttributes = "";
+			$this->Bunga->HrefValue = "";
+			$this->Bunga->TooltipValue = "";
+
+			// nasabah_id
+			$this->nasabah_id->LinkCustomAttributes = "";
+			$this->nasabah_id->HrefValue = "";
+			$this->nasabah_id->TooltipValue = "";
+
+			// bank_id
+			$this->bank_id->LinkCustomAttributes = "";
+			$this->bank_id->HrefValue = "";
+			$this->bank_id->TooltipValue = "";
+
+			// No_Ref
+			$this->No_Ref->LinkCustomAttributes = "";
+			$this->No_Ref->HrefValue = "";
+			$this->No_Ref->TooltipValue = "";
+
+			// Biaya_Administrasi
+			$this->Biaya_Administrasi->LinkCustomAttributes = "";
+			$this->Biaya_Administrasi->HrefValue = "";
+			$this->Biaya_Administrasi->TooltipValue = "";
+
+			// Biaya_Materai
+			$this->Biaya_Materai->LinkCustomAttributes = "";
+			$this->Biaya_Materai->HrefValue = "";
+			$this->Biaya_Materai->TooltipValue = "";
+
+			// Periode
+			$this->Periode->LinkCustomAttributes = "";
+			$this->Periode->HrefValue = "";
+			$this->Periode->TooltipValue = "";
+
+			// Kontrak_Status
+			$this->Kontrak_Status->LinkCustomAttributes = "";
+			$this->Kontrak_Status->HrefValue = "";
+			$this->Kontrak_Status->TooltipValue = "";
+
+			// Jatuh_Tempo_Status
+			$this->Jatuh_Tempo_Status->LinkCustomAttributes = "";
+			$this->Jatuh_Tempo_Status->HrefValue = "";
+			$this->Jatuh_Tempo_Status->TooltipValue = "";
+
+			// Bunga_Status
+			$this->Bunga_Status->LinkCustomAttributes = "";
+			$this->Bunga_Status->HrefValue = "";
+			$this->Bunga_Status->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
@@ -864,18 +972,18 @@ class ct01_nasabah_view extends ct01_nasabah {
 		}
 		if ($sDetailTblVar <> "") {
 			$DetailTblVar = explode(",", $sDetailTblVar);
-			if (in_array("t02_jaminan", $DetailTblVar)) {
-				if (!isset($GLOBALS["t02_jaminan_grid"]))
-					$GLOBALS["t02_jaminan_grid"] = new ct02_jaminan_grid;
-				if ($GLOBALS["t02_jaminan_grid"]->DetailView) {
-					$GLOBALS["t02_jaminan_grid"]->CurrentMode = "view";
+			if (in_array("t24_deposito_detail", $DetailTblVar)) {
+				if (!isset($GLOBALS["t24_deposito_detail_grid"]))
+					$GLOBALS["t24_deposito_detail_grid"] = new ct24_deposito_detail_grid;
+				if ($GLOBALS["t24_deposito_detail_grid"]->DetailView) {
+					$GLOBALS["t24_deposito_detail_grid"]->CurrentMode = "view";
 
 					// Save current master table to detail table
-					$GLOBALS["t02_jaminan_grid"]->setCurrentMasterTable($this->TableVar);
-					$GLOBALS["t02_jaminan_grid"]->setStartRecordNumber(1);
-					$GLOBALS["t02_jaminan_grid"]->nasabah_id->FldIsDetailKey = TRUE;
-					$GLOBALS["t02_jaminan_grid"]->nasabah_id->CurrentValue = $this->id->CurrentValue;
-					$GLOBALS["t02_jaminan_grid"]->nasabah_id->setSessionValue($GLOBALS["t02_jaminan_grid"]->nasabah_id->CurrentValue);
+					$GLOBALS["t24_deposito_detail_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t24_deposito_detail_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t24_deposito_detail_grid"]->deposito_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t24_deposito_detail_grid"]->deposito_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t24_deposito_detail_grid"]->deposito_id->setSessionValue($GLOBALS["t24_deposito_detail_grid"]->deposito_id->CurrentValue);
 				}
 			}
 		}
@@ -886,7 +994,7 @@ class ct01_nasabah_view extends ct01_nasabah {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t01_nasabahlist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t23_depositolist.php"), "", $this->TableVar, TRUE);
 		$PageId = "view";
 		$Breadcrumb->Add("view", $PageId, $url);
 	}
@@ -949,12 +1057,6 @@ class ct01_nasabah_view extends ct01_nasabah {
 	function Page_Render() {
 
 		//echo "Page Render";
-		// sembunyikan add, delete di halaman view master/detail
-
-		$this->OtherOptions["action"]->Items["add"]->Visible = FALSE;
-		$this->OtherOptions["action"]->Items["edit"]->Visible = FALSE;
-		$this->OtherOptions["action"]->Items["copy"]->Visible = FALSE;
-		$this->OtherOptions["action"]->Items["delete"]->Visible = FALSE;
 	}
 
 	// Page Data Rendering event
@@ -1004,29 +1106,29 @@ class ct01_nasabah_view extends ct01_nasabah {
 <?php
 
 // Create page object
-if (!isset($t01_nasabah_view)) $t01_nasabah_view = new ct01_nasabah_view();
+if (!isset($t23_deposito_view)) $t23_deposito_view = new ct23_deposito_view();
 
 // Page init
-$t01_nasabah_view->Page_Init();
+$t23_deposito_view->Page_Init();
 
 // Page main
-$t01_nasabah_view->Page_Main();
+$t23_deposito_view->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t01_nasabah_view->Page_Render();
+$t23_deposito_view->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "view";
-var CurrentForm = ft01_nasabahview = new ew_Form("ft01_nasabahview", "view");
+var CurrentForm = ft23_depositoview = new ew_Form("ft23_depositoview", "view");
 
 // Form_CustomValidate event
-ft01_nasabahview.Form_CustomValidate = 
+ft23_depositoview.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -1035,15 +1137,18 @@ ft01_nasabahview.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft01_nasabahview.ValidateRequired = true;
+ft23_depositoview.ValidateRequired = true;
 <?php } else { ?>
-ft01_nasabahview.ValidateRequired = false; 
+ft23_depositoview.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
-ft01_nasabahview.Lists["x_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
-ft01_nasabahview.Lists["x_Status"].Options = <?php echo json_encode($t01_nasabah->Status->Options()) ?>;
-ft01_nasabahview.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"AutoFill":false,"DisplayFields":["x_Nama","x_NoHP","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":"","LinkTable":"t07_marketing"};
+ft23_depositoview.Lists["x_Kontrak_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft23_depositoview.Lists["x_Kontrak_Status"].Options = <?php echo json_encode($t23_deposito->Kontrak_Status->Options()) ?>;
+ft23_depositoview.Lists["x_Jatuh_Tempo_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft23_depositoview.Lists["x_Jatuh_Tempo_Status"].Options = <?php echo json_encode($t23_deposito->Jatuh_Tempo_Status->Options()) ?>;
+ft23_depositoview.Lists["x_Bunga_Status"] = {"LinkField":"","Ajax":null,"AutoFill":false,"DisplayFields":["","","",""],"ParentFields":[],"ChildFields":[],"FilterFields":[],"Options":[],"Template":""};
+ft23_depositoview.Lists["x_Bunga_Status"].Options = <?php echo json_encode($t23_deposito->Bunga_Status->Options()) ?>;
 
 // Form object for search
 </script>
@@ -1052,146 +1157,234 @@ ft01_nasabahview.Lists["x_marketing_id"] = {"LinkField":"x_id","Ajax":true,"Auto
 // Write your client script here, no need to add script tags.
 </script>
 <div class="ewToolbar">
-<?php if (!$t01_nasabah_view->IsModal) { ?>
+<?php if (!$t23_deposito_view->IsModal) { ?>
 <?php $Breadcrumb->Render(); ?>
 <?php } ?>
-<?php $t01_nasabah_view->ExportOptions->Render("body") ?>
+<?php $t23_deposito_view->ExportOptions->Render("body") ?>
 <?php
-	foreach ($t01_nasabah_view->OtherOptions as &$option)
+	foreach ($t23_deposito_view->OtherOptions as &$option)
 		$option->Render("body");
 ?>
-<?php if (!$t01_nasabah_view->IsModal) { ?>
+<?php if (!$t23_deposito_view->IsModal) { ?>
 <?php echo $Language->SelectionForm(); ?>
 <?php } ?>
 <div class="clearfix"></div>
 </div>
-<?php $t01_nasabah_view->ShowPageHeader(); ?>
+<?php $t23_deposito_view->ShowPageHeader(); ?>
 <?php
-$t01_nasabah_view->ShowMessage();
+$t23_deposito_view->ShowMessage();
 ?>
-<form name="ft01_nasabahview" id="ft01_nasabahview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t01_nasabah_view->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t01_nasabah_view->Token ?>">
+<form name="ft23_depositoview" id="ft23_depositoview" class="form-inline ewForm ewViewForm" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t23_deposito_view->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t23_deposito_view->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t01_nasabah">
-<?php if ($t01_nasabah_view->IsModal) { ?>
+<input type="hidden" name="t" value="t23_deposito">
+<?php if ($t23_deposito_view->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
 <table class="table table-bordered table-striped ewViewTable">
-<?php if ($t01_nasabah->Nama->Visible) { // Nama ?>
-	<tr id="r_Nama">
-		<td><span id="elh_t01_nasabah_Nama"><?php echo $t01_nasabah->Nama->FldCaption() ?></span></td>
-		<td data-name="Nama"<?php echo $t01_nasabah->Nama->CellAttributes() ?>>
-<span id="el_t01_nasabah_Nama">
-<span<?php echo $t01_nasabah->Nama->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Nama->ViewValue ?></span>
+<?php if ($t23_deposito->id->Visible) { // id ?>
+	<tr id="r_id">
+		<td><span id="elh_t23_deposito_id"><?php echo $t23_deposito->id->FldCaption() ?></span></td>
+		<td data-name="id"<?php echo $t23_deposito->id->CellAttributes() ?>>
+<span id="el_t23_deposito_id">
+<span<?php echo $t23_deposito->id->ViewAttributes() ?>>
+<?php echo $t23_deposito->id->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Alamat->Visible) { // Alamat ?>
-	<tr id="r_Alamat">
-		<td><span id="elh_t01_nasabah_Alamat"><?php echo $t01_nasabah->Alamat->FldCaption() ?></span></td>
-		<td data-name="Alamat"<?php echo $t01_nasabah->Alamat->CellAttributes() ?>>
-<span id="el_t01_nasabah_Alamat">
-<span<?php echo $t01_nasabah->Alamat->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Alamat->ViewValue ?></span>
+<?php if ($t23_deposito->Kontrak_No->Visible) { // Kontrak_No ?>
+	<tr id="r_Kontrak_No">
+		<td><span id="elh_t23_deposito_Kontrak_No"><?php echo $t23_deposito->Kontrak_No->FldCaption() ?></span></td>
+		<td data-name="Kontrak_No"<?php echo $t23_deposito->Kontrak_No->CellAttributes() ?>>
+<span id="el_t23_deposito_Kontrak_No">
+<span<?php echo $t23_deposito->Kontrak_No->ViewAttributes() ?>>
+<?php echo $t23_deposito->Kontrak_No->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->No_Telp_Hp->Visible) { // No_Telp_Hp ?>
-	<tr id="r_No_Telp_Hp">
-		<td><span id="elh_t01_nasabah_No_Telp_Hp"><?php echo $t01_nasabah->No_Telp_Hp->FldCaption() ?></span></td>
-		<td data-name="No_Telp_Hp"<?php echo $t01_nasabah->No_Telp_Hp->CellAttributes() ?>>
-<span id="el_t01_nasabah_No_Telp_Hp">
-<span<?php echo $t01_nasabah->No_Telp_Hp->ViewAttributes() ?>>
-<?php echo $t01_nasabah->No_Telp_Hp->ViewValue ?></span>
+<?php if ($t23_deposito->Kontrak_Tgl->Visible) { // Kontrak_Tgl ?>
+	<tr id="r_Kontrak_Tgl">
+		<td><span id="elh_t23_deposito_Kontrak_Tgl"><?php echo $t23_deposito->Kontrak_Tgl->FldCaption() ?></span></td>
+		<td data-name="Kontrak_Tgl"<?php echo $t23_deposito->Kontrak_Tgl->CellAttributes() ?>>
+<span id="el_t23_deposito_Kontrak_Tgl">
+<span<?php echo $t23_deposito->Kontrak_Tgl->ViewAttributes() ?>>
+<?php echo $t23_deposito->Kontrak_Tgl->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Pekerjaan->Visible) { // Pekerjaan ?>
-	<tr id="r_Pekerjaan">
-		<td><span id="elh_t01_nasabah_Pekerjaan"><?php echo $t01_nasabah->Pekerjaan->FldCaption() ?></span></td>
-		<td data-name="Pekerjaan"<?php echo $t01_nasabah->Pekerjaan->CellAttributes() ?>>
-<span id="el_t01_nasabah_Pekerjaan">
-<span<?php echo $t01_nasabah->Pekerjaan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan->ViewValue ?></span>
+<?php if ($t23_deposito->Kontrak_Lama->Visible) { // Kontrak_Lama ?>
+	<tr id="r_Kontrak_Lama">
+		<td><span id="elh_t23_deposito_Kontrak_Lama"><?php echo $t23_deposito->Kontrak_Lama->FldCaption() ?></span></td>
+		<td data-name="Kontrak_Lama"<?php echo $t23_deposito->Kontrak_Lama->CellAttributes() ?>>
+<span id="el_t23_deposito_Kontrak_Lama">
+<span<?php echo $t23_deposito->Kontrak_Lama->ViewAttributes() ?>>
+<?php echo $t23_deposito->Kontrak_Lama->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Pekerjaan_Alamat->Visible) { // Pekerjaan_Alamat ?>
-	<tr id="r_Pekerjaan_Alamat">
-		<td><span id="elh_t01_nasabah_Pekerjaan_Alamat"><?php echo $t01_nasabah->Pekerjaan_Alamat->FldCaption() ?></span></td>
-		<td data-name="Pekerjaan_Alamat"<?php echo $t01_nasabah->Pekerjaan_Alamat->CellAttributes() ?>>
-<span id="el_t01_nasabah_Pekerjaan_Alamat">
-<span<?php echo $t01_nasabah->Pekerjaan_Alamat->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan_Alamat->ViewValue ?></span>
+<?php if ($t23_deposito->Jatuh_Tempo_Tgl->Visible) { // Jatuh_Tempo_Tgl ?>
+	<tr id="r_Jatuh_Tempo_Tgl">
+		<td><span id="elh_t23_deposito_Jatuh_Tempo_Tgl"><?php echo $t23_deposito->Jatuh_Tempo_Tgl->FldCaption() ?></span></td>
+		<td data-name="Jatuh_Tempo_Tgl"<?php echo $t23_deposito->Jatuh_Tempo_Tgl->CellAttributes() ?>>
+<span id="el_t23_deposito_Jatuh_Tempo_Tgl">
+<span<?php echo $t23_deposito->Jatuh_Tempo_Tgl->ViewAttributes() ?>>
+<?php echo $t23_deposito->Jatuh_Tempo_Tgl->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Pekerjaan_No_Telp_Hp->Visible) { // Pekerjaan_No_Telp_Hp ?>
-	<tr id="r_Pekerjaan_No_Telp_Hp">
-		<td><span id="elh_t01_nasabah_Pekerjaan_No_Telp_Hp"><?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->FldCaption() ?></span></td>
-		<td data-name="Pekerjaan_No_Telp_Hp"<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->CellAttributes() ?>>
-<span id="el_t01_nasabah_Pekerjaan_No_Telp_Hp">
-<span<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Pekerjaan_No_Telp_Hp->ViewValue ?></span>
+<?php if ($t23_deposito->Deposito->Visible) { // Deposito ?>
+	<tr id="r_Deposito">
+		<td><span id="elh_t23_deposito_Deposito"><?php echo $t23_deposito->Deposito->FldCaption() ?></span></td>
+		<td data-name="Deposito"<?php echo $t23_deposito->Deposito->CellAttributes() ?>>
+<span id="el_t23_deposito_Deposito">
+<span<?php echo $t23_deposito->Deposito->ViewAttributes() ?>>
+<?php echo $t23_deposito->Deposito->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Status->Visible) { // Status ?>
-	<tr id="r_Status">
-		<td><span id="elh_t01_nasabah_Status"><?php echo $t01_nasabah->Status->FldCaption() ?></span></td>
-		<td data-name="Status"<?php echo $t01_nasabah->Status->CellAttributes() ?>>
-<span id="el_t01_nasabah_Status">
-<span<?php echo $t01_nasabah->Status->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Status->ViewValue ?></span>
+<?php if ($t23_deposito->Bunga_Suku->Visible) { // Bunga_Suku ?>
+	<tr id="r_Bunga_Suku">
+		<td><span id="elh_t23_deposito_Bunga_Suku"><?php echo $t23_deposito->Bunga_Suku->FldCaption() ?></span></td>
+		<td data-name="Bunga_Suku"<?php echo $t23_deposito->Bunga_Suku->CellAttributes() ?>>
+<span id="el_t23_deposito_Bunga_Suku">
+<span<?php echo $t23_deposito->Bunga_Suku->ViewAttributes() ?>>
+<?php echo $t23_deposito->Bunga_Suku->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->Keterangan->Visible) { // Keterangan ?>
-	<tr id="r_Keterangan">
-		<td><span id="elh_t01_nasabah_Keterangan"><?php echo $t01_nasabah->Keterangan->FldCaption() ?></span></td>
-		<td data-name="Keterangan"<?php echo $t01_nasabah->Keterangan->CellAttributes() ?>>
-<span id="el_t01_nasabah_Keterangan">
-<span<?php echo $t01_nasabah->Keterangan->ViewAttributes() ?>>
-<?php echo $t01_nasabah->Keterangan->ViewValue ?></span>
+<?php if ($t23_deposito->Bunga->Visible) { // Bunga ?>
+	<tr id="r_Bunga">
+		<td><span id="elh_t23_deposito_Bunga"><?php echo $t23_deposito->Bunga->FldCaption() ?></span></td>
+		<td data-name="Bunga"<?php echo $t23_deposito->Bunga->CellAttributes() ?>>
+<span id="el_t23_deposito_Bunga">
+<span<?php echo $t23_deposito->Bunga->ViewAttributes() ?>>
+<?php echo $t23_deposito->Bunga->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
-<?php if ($t01_nasabah->marketing_id->Visible) { // marketing_id ?>
-	<tr id="r_marketing_id">
-		<td><span id="elh_t01_nasabah_marketing_id"><?php echo $t01_nasabah->marketing_id->FldCaption() ?></span></td>
-		<td data-name="marketing_id"<?php echo $t01_nasabah->marketing_id->CellAttributes() ?>>
-<span id="el_t01_nasabah_marketing_id">
-<span<?php echo $t01_nasabah->marketing_id->ViewAttributes() ?>>
-<?php echo $t01_nasabah->marketing_id->ViewValue ?></span>
+<?php if ($t23_deposito->nasabah_id->Visible) { // nasabah_id ?>
+	<tr id="r_nasabah_id">
+		<td><span id="elh_t23_deposito_nasabah_id"><?php echo $t23_deposito->nasabah_id->FldCaption() ?></span></td>
+		<td data-name="nasabah_id"<?php echo $t23_deposito->nasabah_id->CellAttributes() ?>>
+<span id="el_t23_deposito_nasabah_id">
+<span<?php echo $t23_deposito->nasabah_id->ViewAttributes() ?>>
+<?php echo $t23_deposito->nasabah_id->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t23_deposito->bank_id->Visible) { // bank_id ?>
+	<tr id="r_bank_id">
+		<td><span id="elh_t23_deposito_bank_id"><?php echo $t23_deposito->bank_id->FldCaption() ?></span></td>
+		<td data-name="bank_id"<?php echo $t23_deposito->bank_id->CellAttributes() ?>>
+<span id="el_t23_deposito_bank_id">
+<span<?php echo $t23_deposito->bank_id->ViewAttributes() ?>>
+<?php echo $t23_deposito->bank_id->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t23_deposito->No_Ref->Visible) { // No_Ref ?>
+	<tr id="r_No_Ref">
+		<td><span id="elh_t23_deposito_No_Ref"><?php echo $t23_deposito->No_Ref->FldCaption() ?></span></td>
+		<td data-name="No_Ref"<?php echo $t23_deposito->No_Ref->CellAttributes() ?>>
+<span id="el_t23_deposito_No_Ref">
+<span<?php echo $t23_deposito->No_Ref->ViewAttributes() ?>>
+<?php echo $t23_deposito->No_Ref->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t23_deposito->Biaya_Administrasi->Visible) { // Biaya_Administrasi ?>
+	<tr id="r_Biaya_Administrasi">
+		<td><span id="elh_t23_deposito_Biaya_Administrasi"><?php echo $t23_deposito->Biaya_Administrasi->FldCaption() ?></span></td>
+		<td data-name="Biaya_Administrasi"<?php echo $t23_deposito->Biaya_Administrasi->CellAttributes() ?>>
+<span id="el_t23_deposito_Biaya_Administrasi">
+<span<?php echo $t23_deposito->Biaya_Administrasi->ViewAttributes() ?>>
+<?php echo $t23_deposito->Biaya_Administrasi->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t23_deposito->Biaya_Materai->Visible) { // Biaya_Materai ?>
+	<tr id="r_Biaya_Materai">
+		<td><span id="elh_t23_deposito_Biaya_Materai"><?php echo $t23_deposito->Biaya_Materai->FldCaption() ?></span></td>
+		<td data-name="Biaya_Materai"<?php echo $t23_deposito->Biaya_Materai->CellAttributes() ?>>
+<span id="el_t23_deposito_Biaya_Materai">
+<span<?php echo $t23_deposito->Biaya_Materai->ViewAttributes() ?>>
+<?php echo $t23_deposito->Biaya_Materai->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t23_deposito->Periode->Visible) { // Periode ?>
+	<tr id="r_Periode">
+		<td><span id="elh_t23_deposito_Periode"><?php echo $t23_deposito->Periode->FldCaption() ?></span></td>
+		<td data-name="Periode"<?php echo $t23_deposito->Periode->CellAttributes() ?>>
+<span id="el_t23_deposito_Periode">
+<span<?php echo $t23_deposito->Periode->ViewAttributes() ?>>
+<?php echo $t23_deposito->Periode->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t23_deposito->Kontrak_Status->Visible) { // Kontrak_Status ?>
+	<tr id="r_Kontrak_Status">
+		<td><span id="elh_t23_deposito_Kontrak_Status"><?php echo $t23_deposito->Kontrak_Status->FldCaption() ?></span></td>
+		<td data-name="Kontrak_Status"<?php echo $t23_deposito->Kontrak_Status->CellAttributes() ?>>
+<span id="el_t23_deposito_Kontrak_Status">
+<span<?php echo $t23_deposito->Kontrak_Status->ViewAttributes() ?>>
+<?php echo $t23_deposito->Kontrak_Status->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t23_deposito->Jatuh_Tempo_Status->Visible) { // Jatuh_Tempo_Status ?>
+	<tr id="r_Jatuh_Tempo_Status">
+		<td><span id="elh_t23_deposito_Jatuh_Tempo_Status"><?php echo $t23_deposito->Jatuh_Tempo_Status->FldCaption() ?></span></td>
+		<td data-name="Jatuh_Tempo_Status"<?php echo $t23_deposito->Jatuh_Tempo_Status->CellAttributes() ?>>
+<span id="el_t23_deposito_Jatuh_Tempo_Status">
+<span<?php echo $t23_deposito->Jatuh_Tempo_Status->ViewAttributes() ?>>
+<?php echo $t23_deposito->Jatuh_Tempo_Status->ViewValue ?></span>
+</span>
+</td>
+	</tr>
+<?php } ?>
+<?php if ($t23_deposito->Bunga_Status->Visible) { // Bunga_Status ?>
+	<tr id="r_Bunga_Status">
+		<td><span id="elh_t23_deposito_Bunga_Status"><?php echo $t23_deposito->Bunga_Status->FldCaption() ?></span></td>
+		<td data-name="Bunga_Status"<?php echo $t23_deposito->Bunga_Status->CellAttributes() ?>>
+<span id="el_t23_deposito_Bunga_Status">
+<span<?php echo $t23_deposito->Bunga_Status->ViewAttributes() ?>>
+<?php echo $t23_deposito->Bunga_Status->ViewValue ?></span>
 </span>
 </td>
 	</tr>
 <?php } ?>
 </table>
 <?php
-	if (in_array("t02_jaminan", explode(",", $t01_nasabah->getCurrentDetailTable())) && $t02_jaminan->DetailView) {
+	if (in_array("t24_deposito_detail", explode(",", $t23_deposito->getCurrentDetailTable())) && $t24_deposito_detail->DetailView) {
 ?>
-<?php if ($t01_nasabah->getCurrentDetailTable() <> "") { ?>
-<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t02_jaminan", "TblCaption") ?></h4>
+<?php if ($t23_deposito->getCurrentDetailTable() <> "") { ?>
+<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t24_deposito_detail", "TblCaption") ?></h4>
 <?php } ?>
-<?php include_once "t02_jaminangrid.php" ?>
+<?php include_once "t24_deposito_detailgrid.php" ?>
 <?php } ?>
 </form>
 <script type="text/javascript">
-ft01_nasabahview.Init();
+ft23_depositoview.Init();
 </script>
 <?php
-$t01_nasabah_view->ShowPageFooter();
+$t23_deposito_view->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1203,5 +1396,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t01_nasabah_view->Page_Terminate();
+$t23_deposito_view->Page_Terminate();
 ?>

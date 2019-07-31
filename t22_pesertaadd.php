@@ -5,9 +5,9 @@ ob_start(); // Turn on output buffering
 <?php include_once "ewcfg13.php" ?>
 <?php include_once ((EW_USE_ADODB) ? "adodb5/adodb.inc.php" : "ewmysql13.php") ?>
 <?php include_once "phpfn13.php" ?>
-<?php include_once "t21_bankinfo.php" ?>
 <?php include_once "t22_pesertainfo.php" ?>
 <?php include_once "t96_employeesinfo.php" ?>
+<?php include_once "t21_bankgridcls.php" ?>
 <?php include_once "userfn13.php" ?>
 <?php
 
@@ -15,9 +15,9 @@ ob_start(); // Turn on output buffering
 // Page class
 //
 
-$t21_bank_add = NULL; // Initialize page object first
+$t22_peserta_add = NULL; // Initialize page object first
 
-class ct21_bank_add extends ct21_bank {
+class ct22_peserta_add extends ct22_peserta {
 
 	// Page ID
 	var $PageID = 'add';
@@ -26,10 +26,10 @@ class ct21_bank_add extends ct21_bank {
 	var $ProjectID = "{C5FF1E3B-3DAB-4591-8A48-EB66171DE031}";
 
 	// Table name
-	var $TableName = 't21_bank';
+	var $TableName = 't22_peserta';
 
 	// Page object name
-	var $PageObjName = 't21_bank_add';
+	var $PageObjName = 't22_peserta_add';
 
 	// Page name
 	function PageName() {
@@ -227,14 +227,11 @@ class ct21_bank_add extends ct21_bank {
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t21_bank)
-		if (!isset($GLOBALS["t21_bank"]) || get_class($GLOBALS["t21_bank"]) == "ct21_bank") {
-			$GLOBALS["t21_bank"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t21_bank"];
-		}
-
 		// Table object (t22_peserta)
-		if (!isset($GLOBALS['t22_peserta'])) $GLOBALS['t22_peserta'] = new ct22_peserta();
+		if (!isset($GLOBALS["t22_peserta"]) || get_class($GLOBALS["t22_peserta"]) == "ct22_peserta") {
+			$GLOBALS["t22_peserta"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t22_peserta"];
+		}
 
 		// Table object (t96_employees)
 		if (!isset($GLOBALS['t96_employees'])) $GLOBALS['t96_employees'] = new ct96_employees();
@@ -245,7 +242,7 @@ class ct21_bank_add extends ct21_bank {
 
 		// Table name (for backward compatibility)
 		if (!defined("EW_TABLE_NAME"))
-			define("EW_TABLE_NAME", 't21_bank', TRUE);
+			define("EW_TABLE_NAME", 't22_peserta', TRUE);
 
 		// Start timer
 		if (!isset($GLOBALS["gTimer"])) $GLOBALS["gTimer"] = new cTimer();
@@ -276,7 +273,7 @@ class ct21_bank_add extends ct21_bank {
 			$Security->SaveLastUrl();
 			$this->setFailureMessage(ew_DeniedMsg()); // Set no permission
 			if ($Security->CanList())
-				$this->Page_Terminate(ew_GetUrl("t21_banklist.php"));
+				$this->Page_Terminate(ew_GetUrl("t22_pesertalist.php"));
 			else
 				$this->Page_Terminate(ew_GetUrl("login.php"));
 		}
@@ -289,11 +286,11 @@ class ct21_bank_add extends ct21_bank {
 		// Create form object
 		$objForm = new cFormObj();
 		$this->CurrentAction = (@$_GET["a"] <> "") ? $_GET["a"] : @$_POST["a_list"]; // Set up current action
-		$this->Nomor->SetVisibility();
-		$this->Pemilik->SetVisibility();
-		$this->Bank->SetVisibility();
-		$this->Kota->SetVisibility();
-		$this->Cabang->SetVisibility();
+		$this->Nama->SetVisibility();
+		$this->Alamat->SetVisibility();
+		$this->No_Telp_Hp->SetVisibility();
+		$this->Pekerjaan->SetVisibility();
+		$this->Keterangan->SetVisibility();
 
 		// Global Page Loading event (in userfn*.php)
 		Page_Loading();
@@ -310,6 +307,14 @@ class ct21_bank_add extends ct21_bank {
 
 		// Process auto fill
 		if (@$_POST["ajax"] == "autofill") {
+
+			// Process auto fill for detail table 't21_bank'
+			if (@$_POST["grid"] == "ft21_bankgrid") {
+				if (!isset($GLOBALS["t21_bank_grid"])) $GLOBALS["t21_bank_grid"] = new ct21_bank_grid;
+				$GLOBALS["t21_bank_grid"]->Page_Init();
+				$this->Page_Terminate();
+				exit();
+			}
 			$results = $this->GetAutoFill(@$_POST["name"], @$_POST["q"]);
 			if ($results) {
 
@@ -339,13 +344,13 @@ class ct21_bank_add extends ct21_bank {
 		Page_Unloaded();
 
 		// Export
-		global $EW_EXPORT, $t21_bank;
+		global $EW_EXPORT, $t22_peserta;
 		if ($this->CustomExport <> "" && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, $EW_EXPORT)) {
 				$sContent = ob_get_contents();
 			if ($gsExportFile == "") $gsExportFile = $this->TableVar;
 			$class = $EW_EXPORT[$this->CustomExport];
 			if (class_exists($class)) {
-				$doc = new $class($t21_bank);
+				$doc = new $class($t22_peserta);
 				$doc->Text = $sContent;
 				if ($this->Export == "email")
 					echo $this->ExportEmail($doc->Text);
@@ -397,9 +402,6 @@ class ct21_bank_add extends ct21_bank {
 		if ($this->IsModal)
 			$gbSkipHeaderFooter = TRUE;
 
-		// Set up master/detail parameters
-		$this->SetUpMasterParms();
-
 		// Process form if post back
 		if (@$_POST["a_add"] <> "") {
 			$this->CurrentAction = $_POST["a_add"]; // Get form action
@@ -426,6 +428,9 @@ class ct21_bank_add extends ct21_bank {
 		// Set up Breadcrumb
 		$this->SetupBreadcrumb();
 
+		// Set up detail parameters
+		$this->SetUpDetailParms();
+
 		// Validate form if post back
 		if (@$_POST["a_add"] <> "") {
 			if (!$this->ValidateForm()) {
@@ -446,23 +451,32 @@ class ct21_bank_add extends ct21_bank {
 			case "C": // Copy an existing record
 				if (!$this->LoadRow()) { // Load record based on key
 					if ($this->getFailureMessage() == "") $this->setFailureMessage($Language->Phrase("NoRecord")); // No record found
-					$this->Page_Terminate("t21_banklist.php"); // No matching record, return to list
+					$this->Page_Terminate("t22_pesertalist.php"); // No matching record, return to list
 				}
+
+				// Set up detail parameters
+				$this->SetUpDetailParms();
 				break;
 			case "A": // Add new record
 				$this->SendEmail = TRUE; // Send email on add success
 				if ($this->AddRow($this->OldRecordset)) { // Add successful
 					if ($this->getSuccessMessage() == "")
 						$this->setSuccessMessage($Language->Phrase("AddSuccess")); // Set up success message
-					$sReturnUrl = $this->getReturnUrl();
-					if (ew_GetPageName($sReturnUrl) == "t21_banklist.php")
+					if ($this->getCurrentDetailTable() <> "") // Master/detail add
+						$sReturnUrl = $this->GetDetailUrl();
+					else
+						$sReturnUrl = $this->getReturnUrl();
+					if (ew_GetPageName($sReturnUrl) == "t22_pesertalist.php")
 						$sReturnUrl = $this->AddMasterUrl($sReturnUrl); // List page, return to list page with correct master key if necessary
-					elseif (ew_GetPageName($sReturnUrl) == "t21_bankview.php")
+					elseif (ew_GetPageName($sReturnUrl) == "t22_pesertaview.php")
 						$sReturnUrl = $this->GetViewUrl(); // View page, return to view page with keyurl directly
 					$this->Page_Terminate($sReturnUrl); // Clean up and return
 				} else {
 					$this->EventCancelled = TRUE; // Event cancelled
 					$this->RestoreFormValues(); // Add failed, restore form values
+
+					// Set up detail parameters
+					$this->SetUpDetailParms();
 				}
 		}
 
@@ -483,16 +497,16 @@ class ct21_bank_add extends ct21_bank {
 
 	// Load default values
 	function LoadDefaultValues() {
-		$this->Nomor->CurrentValue = NULL;
-		$this->Nomor->OldValue = $this->Nomor->CurrentValue;
-		$this->Pemilik->CurrentValue = NULL;
-		$this->Pemilik->OldValue = $this->Pemilik->CurrentValue;
-		$this->Bank->CurrentValue = NULL;
-		$this->Bank->OldValue = $this->Bank->CurrentValue;
-		$this->Kota->CurrentValue = NULL;
-		$this->Kota->OldValue = $this->Kota->CurrentValue;
-		$this->Cabang->CurrentValue = NULL;
-		$this->Cabang->OldValue = $this->Cabang->CurrentValue;
+		$this->Nama->CurrentValue = NULL;
+		$this->Nama->OldValue = $this->Nama->CurrentValue;
+		$this->Alamat->CurrentValue = NULL;
+		$this->Alamat->OldValue = $this->Alamat->CurrentValue;
+		$this->No_Telp_Hp->CurrentValue = NULL;
+		$this->No_Telp_Hp->OldValue = $this->No_Telp_Hp->CurrentValue;
+		$this->Pekerjaan->CurrentValue = NULL;
+		$this->Pekerjaan->OldValue = $this->Pekerjaan->CurrentValue;
+		$this->Keterangan->CurrentValue = NULL;
+		$this->Keterangan->OldValue = $this->Keterangan->CurrentValue;
 	}
 
 	// Load form values
@@ -500,20 +514,20 @@ class ct21_bank_add extends ct21_bank {
 
 		// Load from form
 		global $objForm;
-		if (!$this->Nomor->FldIsDetailKey) {
-			$this->Nomor->setFormValue($objForm->GetValue("x_Nomor"));
+		if (!$this->Nama->FldIsDetailKey) {
+			$this->Nama->setFormValue($objForm->GetValue("x_Nama"));
 		}
-		if (!$this->Pemilik->FldIsDetailKey) {
-			$this->Pemilik->setFormValue($objForm->GetValue("x_Pemilik"));
+		if (!$this->Alamat->FldIsDetailKey) {
+			$this->Alamat->setFormValue($objForm->GetValue("x_Alamat"));
 		}
-		if (!$this->Bank->FldIsDetailKey) {
-			$this->Bank->setFormValue($objForm->GetValue("x_Bank"));
+		if (!$this->No_Telp_Hp->FldIsDetailKey) {
+			$this->No_Telp_Hp->setFormValue($objForm->GetValue("x_No_Telp_Hp"));
 		}
-		if (!$this->Kota->FldIsDetailKey) {
-			$this->Kota->setFormValue($objForm->GetValue("x_Kota"));
+		if (!$this->Pekerjaan->FldIsDetailKey) {
+			$this->Pekerjaan->setFormValue($objForm->GetValue("x_Pekerjaan"));
 		}
-		if (!$this->Cabang->FldIsDetailKey) {
-			$this->Cabang->setFormValue($objForm->GetValue("x_Cabang"));
+		if (!$this->Keterangan->FldIsDetailKey) {
+			$this->Keterangan->setFormValue($objForm->GetValue("x_Keterangan"));
 		}
 	}
 
@@ -521,11 +535,11 @@ class ct21_bank_add extends ct21_bank {
 	function RestoreFormValues() {
 		global $objForm;
 		$this->LoadOldRecord();
-		$this->Nomor->CurrentValue = $this->Nomor->FormValue;
-		$this->Pemilik->CurrentValue = $this->Pemilik->FormValue;
-		$this->Bank->CurrentValue = $this->Bank->FormValue;
-		$this->Kota->CurrentValue = $this->Kota->FormValue;
-		$this->Cabang->CurrentValue = $this->Cabang->FormValue;
+		$this->Nama->CurrentValue = $this->Nama->FormValue;
+		$this->Alamat->CurrentValue = $this->Alamat->FormValue;
+		$this->No_Telp_Hp->CurrentValue = $this->No_Telp_Hp->FormValue;
+		$this->Pekerjaan->CurrentValue = $this->Pekerjaan->FormValue;
+		$this->Keterangan->CurrentValue = $this->Keterangan->FormValue;
 	}
 
 	// Load row based on key values
@@ -558,12 +572,11 @@ class ct21_bank_add extends ct21_bank {
 		$row = &$rs->fields;
 		$this->Row_Selected($row);
 		$this->id->setDbValue($rs->fields('id'));
-		$this->nasabah_id->setDbValue($rs->fields('nasabah_id'));
-		$this->Nomor->setDbValue($rs->fields('Nomor'));
-		$this->Pemilik->setDbValue($rs->fields('Pemilik'));
-		$this->Bank->setDbValue($rs->fields('Bank'));
-		$this->Kota->setDbValue($rs->fields('Kota'));
-		$this->Cabang->setDbValue($rs->fields('Cabang'));
+		$this->Nama->setDbValue($rs->fields('Nama'));
+		$this->Alamat->setDbValue($rs->fields('Alamat'));
+		$this->No_Telp_Hp->setDbValue($rs->fields('No_Telp_Hp'));
+		$this->Pekerjaan->setDbValue($rs->fields('Pekerjaan'));
+		$this->Keterangan->setDbValue($rs->fields('Keterangan'));
 	}
 
 	// Load DbValue from recordset
@@ -571,12 +584,11 @@ class ct21_bank_add extends ct21_bank {
 		if (!$rs || !is_array($rs) && $rs->EOF) return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->nasabah_id->DbValue = $row['nasabah_id'];
-		$this->Nomor->DbValue = $row['Nomor'];
-		$this->Pemilik->DbValue = $row['Pemilik'];
-		$this->Bank->DbValue = $row['Bank'];
-		$this->Kota->DbValue = $row['Kota'];
-		$this->Cabang->DbValue = $row['Cabang'];
+		$this->Nama->DbValue = $row['Nama'];
+		$this->Alamat->DbValue = $row['Alamat'];
+		$this->No_Telp_Hp->DbValue = $row['No_Telp_Hp'];
+		$this->Pekerjaan->DbValue = $row['Pekerjaan'];
+		$this->Keterangan->DbValue = $row['Keterangan'];
 	}
 
 	// Load old record
@@ -613,12 +625,11 @@ class ct21_bank_add extends ct21_bank {
 
 		// Common render codes for all row types
 		// id
-		// nasabah_id
-		// Nomor
-		// Pemilik
-		// Bank
-		// Kota
-		// Cabang
+		// Nama
+		// Alamat
+		// No_Telp_Hp
+		// Pekerjaan
+		// Keterangan
 
 		if ($this->RowType == EW_ROWTYPE_VIEW) { // View row
 
@@ -626,126 +637,103 @@ class ct21_bank_add extends ct21_bank {
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// nasabah_id
-		if (strval($this->nasabah_id->CurrentValue) <> "") {
-			$sFilterWrk = "`id`" . ew_SearchString("=", $this->nasabah_id->CurrentValue, EW_DATATYPE_NUMBER, "");
-		$sSqlWrk = "SELECT `id`, `Nama` AS `DispFld`, '' AS `Disp2Fld`, '' AS `Disp3Fld`, '' AS `Disp4Fld` FROM `t01_nasabah`";
-		$sWhereWrk = "";
-		$this->nasabah_id->LookupFilters = array();
-		ew_AddFilter($sWhereWrk, $sFilterWrk);
-		$this->Lookup_Selecting($this->nasabah_id, $sWhereWrk); // Call Lookup selecting
-		if ($sWhereWrk <> "") $sSqlWrk .= " WHERE " . $sWhereWrk;
-			$rswrk = Conn()->Execute($sSqlWrk);
-			if ($rswrk && !$rswrk->EOF) { // Lookup values found
-				$arwrk = array();
-				$arwrk[1] = $rswrk->fields('DispFld');
-				$this->nasabah_id->ViewValue = $this->nasabah_id->DisplayValue($arwrk);
-				$rswrk->Close();
-			} else {
-				$this->nasabah_id->ViewValue = $this->nasabah_id->CurrentValue;
-			}
-		} else {
-			$this->nasabah_id->ViewValue = NULL;
-		}
-		$this->nasabah_id->ViewCustomAttributes = "";
+		// Nama
+		$this->Nama->ViewValue = $this->Nama->CurrentValue;
+		$this->Nama->ViewCustomAttributes = "";
 
-		// Nomor
-		$this->Nomor->ViewValue = $this->Nomor->CurrentValue;
-		$this->Nomor->ViewCustomAttributes = "";
+		// Alamat
+		$this->Alamat->ViewValue = $this->Alamat->CurrentValue;
+		$this->Alamat->ViewCustomAttributes = "";
 
-		// Pemilik
-		$this->Pemilik->ViewValue = $this->Pemilik->CurrentValue;
-		$this->Pemilik->ViewCustomAttributes = "";
+		// No_Telp_Hp
+		$this->No_Telp_Hp->ViewValue = $this->No_Telp_Hp->CurrentValue;
+		$this->No_Telp_Hp->ViewCustomAttributes = "";
 
-		// Bank
-		$this->Bank->ViewValue = $this->Bank->CurrentValue;
-		$this->Bank->ViewCustomAttributes = "";
+		// Pekerjaan
+		$this->Pekerjaan->ViewValue = $this->Pekerjaan->CurrentValue;
+		$this->Pekerjaan->ViewCustomAttributes = "";
 
-		// Kota
-		$this->Kota->ViewValue = $this->Kota->CurrentValue;
-		$this->Kota->ViewCustomAttributes = "";
+		// Keterangan
+		$this->Keterangan->ViewValue = $this->Keterangan->CurrentValue;
+		$this->Keterangan->ViewCustomAttributes = "";
 
-		// Cabang
-		$this->Cabang->ViewValue = $this->Cabang->CurrentValue;
-		$this->Cabang->ViewCustomAttributes = "";
+			// Nama
+			$this->Nama->LinkCustomAttributes = "";
+			$this->Nama->HrefValue = "";
+			$this->Nama->TooltipValue = "";
 
-			// Nomor
-			$this->Nomor->LinkCustomAttributes = "";
-			$this->Nomor->HrefValue = "";
-			$this->Nomor->TooltipValue = "";
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
+			$this->Alamat->TooltipValue = "";
 
-			// Pemilik
-			$this->Pemilik->LinkCustomAttributes = "";
-			$this->Pemilik->HrefValue = "";
-			$this->Pemilik->TooltipValue = "";
+			// No_Telp_Hp
+			$this->No_Telp_Hp->LinkCustomAttributes = "";
+			$this->No_Telp_Hp->HrefValue = "";
+			$this->No_Telp_Hp->TooltipValue = "";
 
-			// Bank
-			$this->Bank->LinkCustomAttributes = "";
-			$this->Bank->HrefValue = "";
-			$this->Bank->TooltipValue = "";
+			// Pekerjaan
+			$this->Pekerjaan->LinkCustomAttributes = "";
+			$this->Pekerjaan->HrefValue = "";
+			$this->Pekerjaan->TooltipValue = "";
 
-			// Kota
-			$this->Kota->LinkCustomAttributes = "";
-			$this->Kota->HrefValue = "";
-			$this->Kota->TooltipValue = "";
-
-			// Cabang
-			$this->Cabang->LinkCustomAttributes = "";
-			$this->Cabang->HrefValue = "";
-			$this->Cabang->TooltipValue = "";
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
+			$this->Keterangan->TooltipValue = "";
 		} elseif ($this->RowType == EW_ROWTYPE_ADD) { // Add row
 
-			// Nomor
-			$this->Nomor->EditAttrs["class"] = "form-control";
-			$this->Nomor->EditCustomAttributes = "";
-			$this->Nomor->EditValue = ew_HtmlEncode($this->Nomor->CurrentValue);
-			$this->Nomor->PlaceHolder = ew_RemoveHtml($this->Nomor->FldCaption());
+			// Nama
+			$this->Nama->EditAttrs["class"] = "form-control";
+			$this->Nama->EditCustomAttributes = "";
+			$this->Nama->EditValue = ew_HtmlEncode($this->Nama->CurrentValue);
+			$this->Nama->PlaceHolder = ew_RemoveHtml($this->Nama->FldCaption());
 
-			// Pemilik
-			$this->Pemilik->EditAttrs["class"] = "form-control";
-			$this->Pemilik->EditCustomAttributes = "";
-			$this->Pemilik->EditValue = ew_HtmlEncode($this->Pemilik->CurrentValue);
-			$this->Pemilik->PlaceHolder = ew_RemoveHtml($this->Pemilik->FldCaption());
+			// Alamat
+			$this->Alamat->EditAttrs["class"] = "form-control";
+			$this->Alamat->EditCustomAttributes = "";
+			$this->Alamat->EditValue = ew_HtmlEncode($this->Alamat->CurrentValue);
+			$this->Alamat->PlaceHolder = ew_RemoveHtml($this->Alamat->FldCaption());
 
-			// Bank
-			$this->Bank->EditAttrs["class"] = "form-control";
-			$this->Bank->EditCustomAttributes = "";
-			$this->Bank->EditValue = ew_HtmlEncode($this->Bank->CurrentValue);
-			$this->Bank->PlaceHolder = ew_RemoveHtml($this->Bank->FldCaption());
+			// No_Telp_Hp
+			$this->No_Telp_Hp->EditAttrs["class"] = "form-control";
+			$this->No_Telp_Hp->EditCustomAttributes = "";
+			$this->No_Telp_Hp->EditValue = ew_HtmlEncode($this->No_Telp_Hp->CurrentValue);
+			$this->No_Telp_Hp->PlaceHolder = ew_RemoveHtml($this->No_Telp_Hp->FldCaption());
 
-			// Kota
-			$this->Kota->EditAttrs["class"] = "form-control";
-			$this->Kota->EditCustomAttributes = "";
-			$this->Kota->EditValue = ew_HtmlEncode($this->Kota->CurrentValue);
-			$this->Kota->PlaceHolder = ew_RemoveHtml($this->Kota->FldCaption());
+			// Pekerjaan
+			$this->Pekerjaan->EditAttrs["class"] = "form-control";
+			$this->Pekerjaan->EditCustomAttributes = "";
+			$this->Pekerjaan->EditValue = ew_HtmlEncode($this->Pekerjaan->CurrentValue);
+			$this->Pekerjaan->PlaceHolder = ew_RemoveHtml($this->Pekerjaan->FldCaption());
 
-			// Cabang
-			$this->Cabang->EditAttrs["class"] = "form-control";
-			$this->Cabang->EditCustomAttributes = "";
-			$this->Cabang->EditValue = ew_HtmlEncode($this->Cabang->CurrentValue);
-			$this->Cabang->PlaceHolder = ew_RemoveHtml($this->Cabang->FldCaption());
+			// Keterangan
+			$this->Keterangan->EditAttrs["class"] = "form-control";
+			$this->Keterangan->EditCustomAttributes = "";
+			$this->Keterangan->EditValue = ew_HtmlEncode($this->Keterangan->CurrentValue);
+			$this->Keterangan->PlaceHolder = ew_RemoveHtml($this->Keterangan->FldCaption());
 
 			// Add refer script
-			// Nomor
+			// Nama
 
-			$this->Nomor->LinkCustomAttributes = "";
-			$this->Nomor->HrefValue = "";
+			$this->Nama->LinkCustomAttributes = "";
+			$this->Nama->HrefValue = "";
 
-			// Pemilik
-			$this->Pemilik->LinkCustomAttributes = "";
-			$this->Pemilik->HrefValue = "";
+			// Alamat
+			$this->Alamat->LinkCustomAttributes = "";
+			$this->Alamat->HrefValue = "";
 
-			// Bank
-			$this->Bank->LinkCustomAttributes = "";
-			$this->Bank->HrefValue = "";
+			// No_Telp_Hp
+			$this->No_Telp_Hp->LinkCustomAttributes = "";
+			$this->No_Telp_Hp->HrefValue = "";
 
-			// Kota
-			$this->Kota->LinkCustomAttributes = "";
-			$this->Kota->HrefValue = "";
+			// Pekerjaan
+			$this->Pekerjaan->LinkCustomAttributes = "";
+			$this->Pekerjaan->HrefValue = "";
 
-			// Cabang
-			$this->Cabang->LinkCustomAttributes = "";
-			$this->Cabang->HrefValue = "";
+			// Keterangan
+			$this->Keterangan->LinkCustomAttributes = "";
+			$this->Keterangan->HrefValue = "";
 		}
 		if ($this->RowType == EW_ROWTYPE_ADD ||
 			$this->RowType == EW_ROWTYPE_EDIT ||
@@ -768,20 +756,15 @@ class ct21_bank_add extends ct21_bank {
 		// Check if validation required
 		if (!EW_SERVER_VALIDATE)
 			return ($gsFormError == "");
-		if (!$this->Nomor->FldIsDetailKey && !is_null($this->Nomor->FormValue) && $this->Nomor->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Nomor->FldCaption(), $this->Nomor->ReqErrMsg));
+		if (!$this->Nama->FldIsDetailKey && !is_null($this->Nama->FormValue) && $this->Nama->FormValue == "") {
+			ew_AddMessage($gsFormError, str_replace("%s", $this->Nama->FldCaption(), $this->Nama->ReqErrMsg));
 		}
-		if (!$this->Pemilik->FldIsDetailKey && !is_null($this->Pemilik->FormValue) && $this->Pemilik->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Pemilik->FldCaption(), $this->Pemilik->ReqErrMsg));
-		}
-		if (!$this->Bank->FldIsDetailKey && !is_null($this->Bank->FormValue) && $this->Bank->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Bank->FldCaption(), $this->Bank->ReqErrMsg));
-		}
-		if (!$this->Kota->FldIsDetailKey && !is_null($this->Kota->FormValue) && $this->Kota->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Kota->FldCaption(), $this->Kota->ReqErrMsg));
-		}
-		if (!$this->Cabang->FldIsDetailKey && !is_null($this->Cabang->FormValue) && $this->Cabang->FormValue == "") {
-			ew_AddMessage($gsFormError, str_replace("%s", $this->Cabang->FldCaption(), $this->Cabang->ReqErrMsg));
+
+		// Validate detail grid
+		$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+		if (in_array("t21_bank", $DetailTblVar) && $GLOBALS["t21_bank"]->DetailAdd) {
+			if (!isset($GLOBALS["t21_bank_grid"])) $GLOBALS["t21_bank_grid"] = new ct21_bank_grid(); // get detail page object
+			$GLOBALS["t21_bank_grid"]->ValidateGridForm();
 		}
 
 		// Return validate result
@@ -799,27 +782,11 @@ class ct21_bank_add extends ct21_bank {
 	// Add record
 	function AddRow($rsold = NULL) {
 		global $Language, $Security;
-
-		// Check referential integrity for master table 't22_peserta'
-		$bValidMasterRecord = TRUE;
-		$sMasterFilter = $this->SqlMasterFilter_t22_peserta();
-		if ($this->nasabah_id->getSessionValue() <> "") {
-			$sMasterFilter = str_replace("@id@", ew_AdjustSql($this->nasabah_id->getSessionValue(), "DB"), $sMasterFilter);
-		} else {
-			$bValidMasterRecord = FALSE;
-		}
-		if ($bValidMasterRecord) {
-			if (!isset($GLOBALS["t22_peserta"])) $GLOBALS["t22_peserta"] = new ct22_peserta();
-			$rsmaster = $GLOBALS["t22_peserta"]->LoadRs($sMasterFilter);
-			$bValidMasterRecord = ($rsmaster && !$rsmaster->EOF);
-			$rsmaster->Close();
-		}
-		if (!$bValidMasterRecord) {
-			$sRelatedRecordMsg = str_replace("%t", "t22_peserta", $Language->Phrase("RelatedRecordRequired"));
-			$this->setFailureMessage($sRelatedRecordMsg);
-			return FALSE;
-		}
 		$conn = &$this->Connection();
+
+		// Begin transaction
+		if ($this->getCurrentDetailTable() <> "")
+			$conn->BeginTrans();
 
 		// Load db values from rsold
 		if ($rsold) {
@@ -827,25 +794,20 @@ class ct21_bank_add extends ct21_bank {
 		}
 		$rsnew = array();
 
-		// Nomor
-		$this->Nomor->SetDbValueDef($rsnew, $this->Nomor->CurrentValue, "", FALSE);
+		// Nama
+		$this->Nama->SetDbValueDef($rsnew, $this->Nama->CurrentValue, "", FALSE);
 
-		// Pemilik
-		$this->Pemilik->SetDbValueDef($rsnew, $this->Pemilik->CurrentValue, "", FALSE);
+		// Alamat
+		$this->Alamat->SetDbValueDef($rsnew, $this->Alamat->CurrentValue, NULL, FALSE);
 
-		// Bank
-		$this->Bank->SetDbValueDef($rsnew, $this->Bank->CurrentValue, "", FALSE);
+		// No_Telp_Hp
+		$this->No_Telp_Hp->SetDbValueDef($rsnew, $this->No_Telp_Hp->CurrentValue, NULL, FALSE);
 
-		// Kota
-		$this->Kota->SetDbValueDef($rsnew, $this->Kota->CurrentValue, "", FALSE);
+		// Pekerjaan
+		$this->Pekerjaan->SetDbValueDef($rsnew, $this->Pekerjaan->CurrentValue, NULL, FALSE);
 
-		// Cabang
-		$this->Cabang->SetDbValueDef($rsnew, $this->Cabang->CurrentValue, "", FALSE);
-
-		// nasabah_id
-		if ($this->nasabah_id->getSessionValue() <> "") {
-			$rsnew['nasabah_id'] = $this->nasabah_id->getSessionValue();
-		}
+		// Keterangan
+		$this->Keterangan->SetDbValueDef($rsnew, $this->Keterangan->CurrentValue, NULL, FALSE);
 
 		// Call Row Inserting event
 		$rs = ($rsold == NULL) ? NULL : $rsold->fields;
@@ -868,6 +830,29 @@ class ct21_bank_add extends ct21_bank {
 			}
 			$AddRow = FALSE;
 		}
+
+		// Add detail records
+		if ($AddRow) {
+			$DetailTblVar = explode(",", $this->getCurrentDetailTable());
+			if (in_array("t21_bank", $DetailTblVar) && $GLOBALS["t21_bank"]->DetailAdd) {
+				$GLOBALS["t21_bank"]->nasabah_id->setSessionValue($this->id->CurrentValue); // Set master key
+				if (!isset($GLOBALS["t21_bank_grid"])) $GLOBALS["t21_bank_grid"] = new ct21_bank_grid(); // Get detail page object
+				$Security->LoadCurrentUserLevel($this->ProjectID . "t21_bank"); // Load user level of detail table
+				$AddRow = $GLOBALS["t21_bank_grid"]->GridInsert();
+				$Security->LoadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+				if (!$AddRow)
+					$GLOBALS["t21_bank"]->nasabah_id->setSessionValue(""); // Clear master key if insert failed
+			}
+		}
+
+		// Commit/Rollback transaction
+		if ($this->getCurrentDetailTable() <> "") {
+			if ($AddRow) {
+				$conn->CommitTrans(); // Commit transaction
+			} else {
+				$conn->RollbackTrans(); // Rollback transaction
+			}
+		}
 		if ($AddRow) {
 
 			// Call Row Inserted event
@@ -877,64 +862,37 @@ class ct21_bank_add extends ct21_bank {
 		return $AddRow;
 	}
 
-	// Set up master/detail based on QueryString
-	function SetUpMasterParms() {
-		$bValidMaster = FALSE;
+	// Set up detail parms based on QueryString
+	function SetUpDetailParms() {
 
 		// Get the keys for master table
-		if (isset($_GET[EW_TABLE_SHOW_MASTER])) {
-			$sMasterTblVar = $_GET[EW_TABLE_SHOW_MASTER];
-			if ($sMasterTblVar == "") {
-				$bValidMaster = TRUE;
-				$this->DbMasterFilter = "";
-				$this->DbDetailFilter = "";
-			}
-			if ($sMasterTblVar == "t22_peserta") {
-				$bValidMaster = TRUE;
-				if (@$_GET["fk_id"] <> "") {
-					$GLOBALS["t22_peserta"]->id->setQueryStringValue($_GET["fk_id"]);
-					$this->nasabah_id->setQueryStringValue($GLOBALS["t22_peserta"]->id->QueryStringValue);
-					$this->nasabah_id->setSessionValue($this->nasabah_id->QueryStringValue);
-					if (!is_numeric($GLOBALS["t22_peserta"]->id->QueryStringValue)) $bValidMaster = FALSE;
-				} else {
-					$bValidMaster = FALSE;
-				}
-			}
-		} elseif (isset($_POST[EW_TABLE_SHOW_MASTER])) {
-			$sMasterTblVar = $_POST[EW_TABLE_SHOW_MASTER];
-			if ($sMasterTblVar == "") {
-				$bValidMaster = TRUE;
-				$this->DbMasterFilter = "";
-				$this->DbDetailFilter = "";
-			}
-			if ($sMasterTblVar == "t22_peserta") {
-				$bValidMaster = TRUE;
-				if (@$_POST["fk_id"] <> "") {
-					$GLOBALS["t22_peserta"]->id->setFormValue($_POST["fk_id"]);
-					$this->nasabah_id->setFormValue($GLOBALS["t22_peserta"]->id->FormValue);
-					$this->nasabah_id->setSessionValue($this->nasabah_id->FormValue);
-					if (!is_numeric($GLOBALS["t22_peserta"]->id->FormValue)) $bValidMaster = FALSE;
-				} else {
-					$bValidMaster = FALSE;
+		if (isset($_GET[EW_TABLE_SHOW_DETAIL])) {
+			$sDetailTblVar = $_GET[EW_TABLE_SHOW_DETAIL];
+			$this->setCurrentDetailTable($sDetailTblVar);
+		} else {
+			$sDetailTblVar = $this->getCurrentDetailTable();
+		}
+		if ($sDetailTblVar <> "") {
+			$DetailTblVar = explode(",", $sDetailTblVar);
+			if (in_array("t21_bank", $DetailTblVar)) {
+				if (!isset($GLOBALS["t21_bank_grid"]))
+					$GLOBALS["t21_bank_grid"] = new ct21_bank_grid;
+				if ($GLOBALS["t21_bank_grid"]->DetailAdd) {
+					if ($this->CopyRecord)
+						$GLOBALS["t21_bank_grid"]->CurrentMode = "copy";
+					else
+						$GLOBALS["t21_bank_grid"]->CurrentMode = "add";
+					$GLOBALS["t21_bank_grid"]->CurrentAction = "gridadd";
+
+					// Save current master table to detail table
+					$GLOBALS["t21_bank_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t21_bank_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t21_bank_grid"]->nasabah_id->FldIsDetailKey = TRUE;
+					$GLOBALS["t21_bank_grid"]->nasabah_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t21_bank_grid"]->nasabah_id->setSessionValue($GLOBALS["t21_bank_grid"]->nasabah_id->CurrentValue);
 				}
 			}
 		}
-		if ($bValidMaster) {
-
-			// Save current master table
-			$this->setCurrentMasterTable($sMasterTblVar);
-
-			// Reset start record counter (new master key)
-			$this->StartRec = 1;
-			$this->setStartRecordNumber($this->StartRec);
-
-			// Clear previous master key from Session
-			if ($sMasterTblVar <> "t22_peserta") {
-				if ($this->nasabah_id->CurrentValue == "") $this->nasabah_id->setSessionValue("");
-			}
-		}
-		$this->DbMasterFilter = $this->GetMasterFilter(); // Get master filter
-		$this->DbDetailFilter = $this->GetDetailFilter(); // Get detail filter
 	}
 
 	// Set up Breadcrumb
@@ -942,7 +900,7 @@ class ct21_bank_add extends ct21_bank {
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new cBreadcrumb();
 		$url = substr(ew_CurrentUrl(), strrpos(ew_CurrentUrl(), "/")+1);
-		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t21_banklist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->Add("list", $this->TableVar, $this->AddMasterUrl("t22_pesertalist.php"), "", $this->TableVar, TRUE);
 		$PageId = ($this->CurrentAction == "C") ? "Copy" : "Add";
 		$Breadcrumb->Add("add", $PageId, $url);
 	}
@@ -1035,29 +993,29 @@ class ct21_bank_add extends ct21_bank {
 <?php
 
 // Create page object
-if (!isset($t21_bank_add)) $t21_bank_add = new ct21_bank_add();
+if (!isset($t22_peserta_add)) $t22_peserta_add = new ct22_peserta_add();
 
 // Page init
-$t21_bank_add->Page_Init();
+$t22_peserta_add->Page_Init();
 
 // Page main
-$t21_bank_add->Page_Main();
+$t22_peserta_add->Page_Main();
 
 // Global Page Rendering event (in userfn*.php)
 Page_Rendering();
 
 // Page Rendering event
-$t21_bank_add->Page_Render();
+$t22_peserta_add->Page_Render();
 ?>
 <?php include_once "header.php" ?>
 <script type="text/javascript">
 
 // Form object
 var CurrentPageID = EW_PAGE_ID = "add";
-var CurrentForm = ft21_bankadd = new ew_Form("ft21_bankadd", "add");
+var CurrentForm = ft22_pesertaadd = new ew_Form("ft22_pesertaadd", "add");
 
 // Validate form
-ft21_bankadd.Validate = function() {
+ft22_pesertaadd.Validate = function() {
 	if (!this.ValidateRequired)
 		return true; // Ignore validation
 	var $ = jQuery, fobj = this.GetForm(), $fobj = $(fobj);
@@ -1071,21 +1029,9 @@ ft21_bankadd.Validate = function() {
 	for (var i = startcnt; i <= rowcnt; i++) {
 		var infix = ($k[0]) ? String(i) : "";
 		$fobj.data("rowindex", infix);
-			elm = this.GetElements("x" + infix + "_Nomor");
+			elm = this.GetElements("x" + infix + "_Nama");
 			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->Nomor->FldCaption(), $t21_bank->Nomor->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Pemilik");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->Pemilik->FldCaption(), $t21_bank->Pemilik->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Bank");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->Bank->FldCaption(), $t21_bank->Bank->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Kota");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->Kota->FldCaption(), $t21_bank->Kota->ReqErrMsg)) ?>");
-			elm = this.GetElements("x" + infix + "_Cabang");
-			if (elm && !ew_IsHidden(elm) && !ew_HasValue(elm))
-				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t21_bank->Cabang->FldCaption(), $t21_bank->Cabang->ReqErrMsg)) ?>");
+				return this.OnError(elm, "<?php echo ew_JsEncode2(str_replace("%s", $t22_peserta->Nama->FldCaption(), $t22_peserta->Nama->ReqErrMsg)) ?>");
 
 			// Fire Form_CustomValidate event
 			if (!this.Form_CustomValidate(fobj))
@@ -1104,7 +1050,7 @@ ft21_bankadd.Validate = function() {
 }
 
 // Form_CustomValidate event
-ft21_bankadd.Form_CustomValidate = 
+ft22_pesertaadd.Form_CustomValidate = 
  function(fobj) { // DO NOT CHANGE THIS LINE!
 
  	// Your custom validation code here, return false if invalid. 
@@ -1113,9 +1059,9 @@ ft21_bankadd.Form_CustomValidate =
 
 // Use JavaScript validation or not
 <?php if (EW_CLIENT_VALIDATE) { ?>
-ft21_bankadd.ValidateRequired = true;
+ft22_pesertaadd.ValidateRequired = true;
 <?php } else { ?>
-ft21_bankadd.ValidateRequired = false; 
+ft22_pesertaadd.ValidateRequired = false; 
 <?php } ?>
 
 // Dynamic selection lists
@@ -1126,99 +1072,100 @@ ft21_bankadd.ValidateRequired = false;
 
 // Write your client script here, no need to add script tags.
 </script>
-<?php if (!$t21_bank_add->IsModal) { ?>
+<?php if (!$t22_peserta_add->IsModal) { ?>
 <div class="ewToolbar">
 <?php $Breadcrumb->Render(); ?>
 <?php echo $Language->SelectionForm(); ?>
 <div class="clearfix"></div>
 </div>
 <?php } ?>
-<?php $t21_bank_add->ShowPageHeader(); ?>
+<?php $t22_peserta_add->ShowPageHeader(); ?>
 <?php
-$t21_bank_add->ShowMessage();
+$t22_peserta_add->ShowMessage();
 ?>
-<form name="ft21_bankadd" id="ft21_bankadd" class="<?php echo $t21_bank_add->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
-<?php if ($t21_bank_add->CheckToken) { ?>
-<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t21_bank_add->Token ?>">
+<form name="ft22_pesertaadd" id="ft22_pesertaadd" class="<?php echo $t22_peserta_add->FormClassName ?>" action="<?php echo ew_CurrentPage() ?>" method="post">
+<?php if ($t22_peserta_add->CheckToken) { ?>
+<input type="hidden" name="<?php echo EW_TOKEN_NAME ?>" value="<?php echo $t22_peserta_add->Token ?>">
 <?php } ?>
-<input type="hidden" name="t" value="t21_bank">
+<input type="hidden" name="t" value="t22_peserta">
 <input type="hidden" name="a_add" id="a_add" value="A">
-<?php if ($t21_bank_add->IsModal) { ?>
+<?php if ($t22_peserta_add->IsModal) { ?>
 <input type="hidden" name="modal" value="1">
 <?php } ?>
-<?php if ($t21_bank->getCurrentMasterTable() == "t22_peserta") { ?>
-<input type="hidden" name="<?php echo EW_TABLE_SHOW_MASTER ?>" value="t22_peserta">
-<input type="hidden" name="fk_id" value="<?php echo $t21_bank->nasabah_id->getSessionValue() ?>">
-<?php } ?>
 <div>
-<?php if ($t21_bank->Nomor->Visible) { // Nomor ?>
-	<div id="r_Nomor" class="form-group">
-		<label id="elh_t21_bank_Nomor" for="x_Nomor" class="col-sm-2 control-label ewLabel"><?php echo $t21_bank->Nomor->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t21_bank->Nomor->CellAttributes() ?>>
-<span id="el_t21_bank_Nomor">
-<input type="text" data-table="t21_bank" data-field="x_Nomor" name="x_Nomor" id="x_Nomor" size="15" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t21_bank->Nomor->getPlaceHolder()) ?>" value="<?php echo $t21_bank->Nomor->EditValue ?>"<?php echo $t21_bank->Nomor->EditAttributes() ?>>
+<?php if ($t22_peserta->Nama->Visible) { // Nama ?>
+	<div id="r_Nama" class="form-group">
+		<label id="elh_t22_peserta_Nama" for="x_Nama" class="col-sm-2 control-label ewLabel"><?php echo $t22_peserta->Nama->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
+		<div class="col-sm-10"><div<?php echo $t22_peserta->Nama->CellAttributes() ?>>
+<span id="el_t22_peserta_Nama">
+<input type="text" data-table="t22_peserta" data-field="x_Nama" name="x_Nama" id="x_Nama" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t22_peserta->Nama->getPlaceHolder()) ?>" value="<?php echo $t22_peserta->Nama->EditValue ?>"<?php echo $t22_peserta->Nama->EditAttributes() ?>>
 </span>
-<?php echo $t21_bank->Nomor->CustomMsg ?></div></div>
+<?php echo $t22_peserta->Nama->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
-<?php if ($t21_bank->Pemilik->Visible) { // Pemilik ?>
-	<div id="r_Pemilik" class="form-group">
-		<label id="elh_t21_bank_Pemilik" for="x_Pemilik" class="col-sm-2 control-label ewLabel"><?php echo $t21_bank->Pemilik->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t21_bank->Pemilik->CellAttributes() ?>>
-<span id="el_t21_bank_Pemilik">
-<input type="text" data-table="t21_bank" data-field="x_Pemilik" name="x_Pemilik" id="x_Pemilik" size="15" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t21_bank->Pemilik->getPlaceHolder()) ?>" value="<?php echo $t21_bank->Pemilik->EditValue ?>"<?php echo $t21_bank->Pemilik->EditAttributes() ?>>
+<?php if ($t22_peserta->Alamat->Visible) { // Alamat ?>
+	<div id="r_Alamat" class="form-group">
+		<label id="elh_t22_peserta_Alamat" for="x_Alamat" class="col-sm-2 control-label ewLabel"><?php echo $t22_peserta->Alamat->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t22_peserta->Alamat->CellAttributes() ?>>
+<span id="el_t22_peserta_Alamat">
+<textarea data-table="t22_peserta" data-field="x_Alamat" name="x_Alamat" id="x_Alamat" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t22_peserta->Alamat->getPlaceHolder()) ?>"<?php echo $t22_peserta->Alamat->EditAttributes() ?>><?php echo $t22_peserta->Alamat->EditValue ?></textarea>
 </span>
-<?php echo $t21_bank->Pemilik->CustomMsg ?></div></div>
+<?php echo $t22_peserta->Alamat->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
-<?php if ($t21_bank->Bank->Visible) { // Bank ?>
-	<div id="r_Bank" class="form-group">
-		<label id="elh_t21_bank_Bank" for="x_Bank" class="col-sm-2 control-label ewLabel"><?php echo $t21_bank->Bank->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t21_bank->Bank->CellAttributes() ?>>
-<span id="el_t21_bank_Bank">
-<input type="text" data-table="t21_bank" data-field="x_Bank" name="x_Bank" id="x_Bank" size="15" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t21_bank->Bank->getPlaceHolder()) ?>" value="<?php echo $t21_bank->Bank->EditValue ?>"<?php echo $t21_bank->Bank->EditAttributes() ?>>
+<?php if ($t22_peserta->No_Telp_Hp->Visible) { // No_Telp_Hp ?>
+	<div id="r_No_Telp_Hp" class="form-group">
+		<label id="elh_t22_peserta_No_Telp_Hp" for="x_No_Telp_Hp" class="col-sm-2 control-label ewLabel"><?php echo $t22_peserta->No_Telp_Hp->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t22_peserta->No_Telp_Hp->CellAttributes() ?>>
+<span id="el_t22_peserta_No_Telp_Hp">
+<input type="text" data-table="t22_peserta" data-field="x_No_Telp_Hp" name="x_No_Telp_Hp" id="x_No_Telp_Hp" size="30" maxlength="100" placeholder="<?php echo ew_HtmlEncode($t22_peserta->No_Telp_Hp->getPlaceHolder()) ?>" value="<?php echo $t22_peserta->No_Telp_Hp->EditValue ?>"<?php echo $t22_peserta->No_Telp_Hp->EditAttributes() ?>>
 </span>
-<?php echo $t21_bank->Bank->CustomMsg ?></div></div>
+<?php echo $t22_peserta->No_Telp_Hp->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
-<?php if ($t21_bank->Kota->Visible) { // Kota ?>
-	<div id="r_Kota" class="form-group">
-		<label id="elh_t21_bank_Kota" for="x_Kota" class="col-sm-2 control-label ewLabel"><?php echo $t21_bank->Kota->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t21_bank->Kota->CellAttributes() ?>>
-<span id="el_t21_bank_Kota">
-<input type="text" data-table="t21_bank" data-field="x_Kota" name="x_Kota" id="x_Kota" size="15" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t21_bank->Kota->getPlaceHolder()) ?>" value="<?php echo $t21_bank->Kota->EditValue ?>"<?php echo $t21_bank->Kota->EditAttributes() ?>>
+<?php if ($t22_peserta->Pekerjaan->Visible) { // Pekerjaan ?>
+	<div id="r_Pekerjaan" class="form-group">
+		<label id="elh_t22_peserta_Pekerjaan" for="x_Pekerjaan" class="col-sm-2 control-label ewLabel"><?php echo $t22_peserta->Pekerjaan->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t22_peserta->Pekerjaan->CellAttributes() ?>>
+<span id="el_t22_peserta_Pekerjaan">
+<input type="text" data-table="t22_peserta" data-field="x_Pekerjaan" name="x_Pekerjaan" id="x_Pekerjaan" size="30" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t22_peserta->Pekerjaan->getPlaceHolder()) ?>" value="<?php echo $t22_peserta->Pekerjaan->EditValue ?>"<?php echo $t22_peserta->Pekerjaan->EditAttributes() ?>>
 </span>
-<?php echo $t21_bank->Kota->CustomMsg ?></div></div>
+<?php echo $t22_peserta->Pekerjaan->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
-<?php if ($t21_bank->Cabang->Visible) { // Cabang ?>
-	<div id="r_Cabang" class="form-group">
-		<label id="elh_t21_bank_Cabang" for="x_Cabang" class="col-sm-2 control-label ewLabel"><?php echo $t21_bank->Cabang->FldCaption() ?><?php echo $Language->Phrase("FieldRequiredIndicator") ?></label>
-		<div class="col-sm-10"><div<?php echo $t21_bank->Cabang->CellAttributes() ?>>
-<span id="el_t21_bank_Cabang">
-<input type="text" data-table="t21_bank" data-field="x_Cabang" name="x_Cabang" id="x_Cabang" size="15" maxlength="50" placeholder="<?php echo ew_HtmlEncode($t21_bank->Cabang->getPlaceHolder()) ?>" value="<?php echo $t21_bank->Cabang->EditValue ?>"<?php echo $t21_bank->Cabang->EditAttributes() ?>>
+<?php if ($t22_peserta->Keterangan->Visible) { // Keterangan ?>
+	<div id="r_Keterangan" class="form-group">
+		<label id="elh_t22_peserta_Keterangan" for="x_Keterangan" class="col-sm-2 control-label ewLabel"><?php echo $t22_peserta->Keterangan->FldCaption() ?></label>
+		<div class="col-sm-10"><div<?php echo $t22_peserta->Keterangan->CellAttributes() ?>>
+<span id="el_t22_peserta_Keterangan">
+<textarea data-table="t22_peserta" data-field="x_Keterangan" name="x_Keterangan" id="x_Keterangan" cols="35" rows="4" placeholder="<?php echo ew_HtmlEncode($t22_peserta->Keterangan->getPlaceHolder()) ?>"<?php echo $t22_peserta->Keterangan->EditAttributes() ?>><?php echo $t22_peserta->Keterangan->EditValue ?></textarea>
 </span>
-<?php echo $t21_bank->Cabang->CustomMsg ?></div></div>
+<?php echo $t22_peserta->Keterangan->CustomMsg ?></div></div>
 	</div>
 <?php } ?>
 </div>
-<?php if (strval($t21_bank->nasabah_id->getSessionValue()) <> "") { ?>
-<input type="hidden" name="x_nasabah_id" id="x_nasabah_id" value="<?php echo ew_HtmlEncode(strval($t21_bank->nasabah_id->getSessionValue())) ?>">
+<?php
+	if (in_array("t21_bank", explode(",", $t22_peserta->getCurrentDetailTable())) && $t21_bank->DetailAdd) {
+?>
+<?php if ($t22_peserta->getCurrentDetailTable() <> "") { ?>
+<h4 class="ewDetailCaption"><?php echo $Language->TablePhrase("t21_bank", "TblCaption") ?></h4>
 <?php } ?>
-<?php if (!$t21_bank_add->IsModal) { ?>
+<?php include_once "t21_bankgrid.php" ?>
+<?php } ?>
+<?php if (!$t22_peserta_add->IsModal) { ?>
 <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
 <button class="btn btn-primary ewButton" name="btnAction" id="btnAction" type="submit"><?php echo $Language->Phrase("AddBtn") ?></button>
-<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t21_bank_add->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
+<button class="btn btn-default ewButton" name="btnCancel" id="btnCancel" type="button" data-href="<?php echo $t22_peserta_add->getReturnUrl() ?>"><?php echo $Language->Phrase("CancelBtn") ?></button>
 	</div>
 </div>
 <?php } ?>
 </form>
 <script type="text/javascript">
-ft21_bankadd.Init();
+ft22_pesertaadd.Init();
 </script>
 <?php
-$t21_bank_add->ShowPageFooter();
+$t22_peserta_add->ShowPageFooter();
 if (EW_DEBUG_ENABLED)
 	echo ew_DebugMsg();
 ?>
@@ -1230,5 +1177,5 @@ if (EW_DEBUG_ENABLED)
 </script>
 <?php include_once "footer.php" ?>
 <?php
-$t21_bank_add->Page_Terminate();
+$t22_peserta_add->Page_Terminate();
 ?>
