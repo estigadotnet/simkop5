@@ -352,9 +352,110 @@ $db =& DbHelper();
 					</tbody>
 				</table>
 			</div>
+			
 		</div>
 	</div>
 </div>
+
+<!-- koperasi -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#koperasi">Koperasi</a></strong></div>
+	<div id="koperasi" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div>
+				<table  ><!-- class='table table-striped table-hover table-condensed' -->
+					<tbody>
+					<tr>
+						<td><ul><li><div id="type"></div></li></ul></td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+<!-- deposito -->
+<div class="panel panel-default">
+	<div class="panel-heading"><strong><a class='collapsed' data-toggle="collapse" href="#deposito">Deposito</a></strong></div>
+	<div id="deposito" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div>
+				<table  ><!-- class='table table-striped table-hover table-condensed' -->
+					<tbody>
+					<tr>
+						<td><ul><li><div id="type2"></div></li></ul></td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+<!-- <style>
+#type {
+	margin-bottom: 15px;
+	font-size: 18px;
+	font-weight: 200;
+}
+@media screen and (min-width: 768px) {
+	#type {
+		font-size: 23px;
+	}
+}
+</style> -->
+
+<script>
+$.fn.typer = function(text, options){
+	options = $.extend({}, {
+		char: ' ',
+		delay: 1000,
+		duration: 600,
+		endless: true
+	}, options || text);
+
+	text = $.isPlainObject(text) ? options.text : text;
+
+	var elem = $(this),
+		isTag = false,
+		c = 0;
+	
+	(function typetext(i) {
+		var e = ({string:1, number:1}[typeof text] ? text : text[i]) + options.char,
+			char = e.substr(c++, 1);
+
+		if( char === '<' ){ isTag = true; }
+		if( char === '>' ){ isTag = false; }
+		elem.html(e.substr(0, c));
+		if(c <= e.length){
+			if( isTag ){
+				typetext(i);
+			} else {
+				setTimeout(typetext, options.duration/10, i);
+			}
+		} else {
+			c = 0;
+			i++;
+			
+			if (i === text.length && !options.endless) {
+				return;
+			} else if (i === text.length) {
+				i = 0;
+			}
+			setTimeout(typetext, options.delay, i);
+		}
+	})(0);
+};
+
+$('#type').typer(['a <b>cool</b> affect', 'made with <b>js<b>', 'format your <i>text</i> here', 'im watching <b>you</b>' ]);
+$('#type2').typer(['a <b>cool2</b> affect', 'made with <b>js<b>', 'format your <i>text</i> here', 'im watching <b>you</b>' ]);
+
+
+
+</script>
 
 
 
