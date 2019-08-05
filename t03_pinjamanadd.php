@@ -1731,7 +1731,9 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 	function Page_Load() {
 
 		//echo "Page Load";
-		$_SESSION["pinjaman_id"] = 0;
+		//$_SESSION["pinjaman_id"] = 0;
+		//$_SESSION["pinjaman_metode"] = (isset($_GET["metode"]) ? $_GET["metode"] : 0);
+
 	}
 
 	// Page Unload event
@@ -1778,6 +1780,7 @@ class ct03_pinjaman_add extends ct03_pinjaman {
 		// Example:
 		//$header = "your header";
 
+		$header = "Sistem Pembayaran : ".$_SESSION["pinjaman_metode"];
 	}
 
 	// Page Data Rendered event

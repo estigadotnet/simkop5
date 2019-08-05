@@ -12,10 +12,9 @@ function Page_Loading() {
 	//$_SESSION["pinjaman_id"] = 0;
 	//echo "0".$GLOBALS["Periode"]; //exit;
 	//$GLOBALS["t03_pinjaman"]->Angsuran_Denda->CurrentValue;
-
-	$_SESSION["pinjaman_id"] = 0;
-
+	//$_SESSION["pinjaman_id"] = 0;
 	//$_SESSION["deposito_id"] = 0;
+
 }
 
 // Page Rendering event
@@ -764,6 +763,15 @@ function f_create_rincian_angsuran($rsnew) { // --------------------------------
 		$Angsuran_Bunga        = $Angsuran_Total - $Angsuran_Pokok;
 		$Angsuran_Bunga_Total += $Angsuran_Bunga;
 		$Angsuran_Total_Grand += $Angsuran_Total;
+		if ($_SESSION["pinjaman_metode"] == "Bunga") {
+			$Angsuran_Pokok = 0;
+			if ($Angsuran_Ke == $rsnew["Angsuran_Lama"]) {
+				$Angsuran_Pokok = $rsnew["Pinjaman"];
+			}
+			$Angsuran_Bunga = $rsnew["Angsuran_Bunga"];
+			$Angsuran_Total = $Angsuran_Pokok + $Angsuran_Bunga;
+			$Sisa_Hutang = 0;
+		}
 		$q = "insert into t04_pinjamanangsurantemp (
 			pinjaman_id,
 			Angsuran_Ke,

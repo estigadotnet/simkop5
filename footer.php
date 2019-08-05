@@ -261,9 +261,17 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 				var pinjaman = parseFloat(pinjaman_clean);
 				var lama_angsuran = parseFloat($row["Angsuran_Lama"].val());
 				var bunga = parseFloat($row["Angsuran_Bunga_Prosen"].val());
-				var angsuran_pokok = pinjaman / lama_angsuran;
-				var angsuran_bunga = pinjaman * (bunga / 100);
-				var angsuran_total = angsuran_pokok + angsuran_bunga;
+				var pinjaman_metode = '<?php echo $_SESSION["pinjaman_metode"] ?>';
+				if (pinjaman_metode == "Bunga") {
+					var angsuran_pokok = pinjaman;
+					var angsuran_bunga = pinjaman * (bunga / 100);
+					var angsuran_total = pinjaman + (lama_angsuran * angsuran_bunga);
+				}
+				else {
+					var angsuran_pokok = pinjaman / lama_angsuran;
+					var angsuran_bunga = pinjaman * (bunga / 100);
+					var angsuran_total = angsuran_pokok + angsuran_bunga;
+				}
 				$row["Angsuran_Pokok"].val(angsuran_pokok);
 				$row["Angsuran_Bunga"].val(angsuran_bunga);
 				$row["Angsuran_Total"].val(angsuran_total);
@@ -281,9 +289,17 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 				var pinjaman = parseFloat(pinjaman_clean);
 				var lama_angsuran = parseFloat($row["Angsuran_Lama"].val());
 				var bunga = parseFloat($row["Angsuran_Bunga_Prosen"].val());
-				var angsuran_pokok = pinjaman / lama_angsuran;
-				var angsuran_bunga = pinjaman * (bunga / 100);
-				var angsuran_total = angsuran_pokok + angsuran_bunga;
+				var pinjaman_metode = '<?php echo $_SESSION["pinjaman_metode"] ?>';
+				if (pinjaman_metode == "Bunga") {
+					var angsuran_pokok = pinjaman;
+					var angsuran_bunga = pinjaman * (bunga / 100);
+					var angsuran_total = pinjaman + (lama_angsuran * angsuran_bunga);
+				}
+				else {
+					var angsuran_pokok = pinjaman / lama_angsuran;
+					var angsuran_bunga = pinjaman * (bunga / 100);
+					var angsuran_total = angsuran_pokok + angsuran_bunga;
+				}
 				$row["Angsuran_Pokok"].val(angsuran_pokok);
 				$row["Angsuran_Bunga"].val(angsuran_bunga);
 				$row["Angsuran_Total"].val(angsuran_total);
@@ -301,9 +317,17 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 				var pinjaman = parseFloat(pinjaman_clean);
 				var lama_angsuran = parseFloat($row["Angsuran_Lama"].val());
 				var bunga = parseFloat($row["Angsuran_Bunga_Prosen"].val());
-				var angsuran_pokok = pinjaman / lama_angsuran;
-				var angsuran_bunga = pinjaman * (bunga / 100);
-				var angsuran_total = angsuran_pokok + angsuran_bunga;
+				var pinjaman_metode = '<?php echo $_SESSION["pinjaman_metode"] ?>';
+				if (pinjaman_metode == "Bunga") {
+					var angsuran_pokok = pinjaman;
+					var angsuran_bunga = pinjaman * (bunga / 100);
+					var angsuran_total = pinjaman + (lama_angsuran * angsuran_bunga);
+				}
+				else {
+					var angsuran_pokok = pinjaman / lama_angsuran;
+					var angsuran_bunga = pinjaman * (bunga / 100);
+					var angsuran_total = angsuran_pokok + angsuran_bunga;
+				}
 				$row["Angsuran_Pokok"].val(angsuran_pokok);
 				$row["Angsuran_Bunga"].val(angsuran_bunga);
 				$row["Angsuran_Total"].val(angsuran_total);
@@ -347,6 +371,18 @@ jQuery.get("<?php echo $EW_RELATIVE_PATH ?>phpjs/userevt13.js");
 				var bunga_asli = (angsuran_bunga / pinjaman) * 100;
 				var bunga = bunga_asli.toFixed(2);
 				$row["Angsuran_Bunga_Prosen"].val(bunga);
+				var pinjaman_metode = '<?php echo $_SESSION["pinjaman_metode"] ?>';
+				if (pinjaman_metode == "Bunga") {
+
+					// var bunga = parseFloat($row["Angsuran_Bunga_Prosen"].val());
+					var lama_angsuran = parseFloat($row["Angsuran_Lama"].val());
+
+					// var angsuran_pokok = pinjaman;
+					// var angsuran_bunga = pinjaman * (bunga / 100);
+
+					var angsuran_total = pinjaman + (lama_angsuran * angsuran_bunga);
+					$row["Angsuran_Total"].val(angsuran_total);
+				}
 			}
 		}
 	);

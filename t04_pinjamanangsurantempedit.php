@@ -1315,7 +1315,12 @@ class ct04_pinjamanangsurantemp_edit extends ct04_pinjamanangsurantemp {
 		//echo strlen($r->fields["jaminan_id"]);
 		//if (strlen(trim($r->fields["jaminan_id"])) > 1) {
 
-		$ajaminans = explode(",", $r->fields["jaminan_id"]); //var_dump($ajaminans);
+		$ajaminans = explode(",", $r->fields["jaminan_id"]);
+
+		//echo $r->fields["jaminan_id"];
+		//var_dump($ajaminans);
+		//exit;
+
 		$jaminan = "";
 		foreach ($ajaminans as $ajaminan) {
 			$jaminan .= ew_ExecuteScalar("select Merk_Type from t02_jaminan where id = ".$ajaminan."") . ", ";
