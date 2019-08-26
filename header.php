@@ -135,7 +135,7 @@ var ewVar = <?php echo json_encode($EW_CLIENT_VAR); ?>;
 // Write your client script here, no need to add script tags.
 </script>
 <?php } ?>
-<meta name="generator" content="PHPMaker v2017.0.7">
+<meta name="generator" content="PHPMaker v2017">
 </head>
 <body>
 <?php if (@!$gbSkipHeaderFooter) { ?>
