@@ -316,7 +316,7 @@ INSERT INTO `t08_pinjamanpotongan` (`id`, `pinjaman_id`, `Tanggal`, `Keterangan`
 CREATE TABLE `t09_jurnaltransaksi` (
   `id` int(11) NOT NULL,
   `pinjaman_id` int(11) NOT NULL,
-  `tanggal` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `tanggal` datetime NOT NULL ,
   `periode` varchar(35) NOT NULL DEFAULT '',
   `model` varchar(35) NOT NULL DEFAULT '',
   `rekening` varchar(35) NOT NULL DEFAULT '',
